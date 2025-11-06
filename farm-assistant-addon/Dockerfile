@@ -4,8 +4,9 @@ FROM ${BUILD_FROM}
 # Set up the environment
 ENV LANG C.UTF-8
 
-# Install Python packages
-RUN pip install fastapi uvicorn
+# Install build dependencies and Python packages
+RUN apk add --no-cache postgresql-dev gcc musl-dev && \
+    pip install fastapi uvicorn asyncpg
 
 # Copy the addon files
 COPY . /data
