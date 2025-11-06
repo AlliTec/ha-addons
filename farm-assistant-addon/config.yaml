@@ -1,0 +1,17 @@
+name: Farm Assistant
+version: "0.1.0"
+slug: farm_assistant
+description: "An addon to manage your farm's livestock data."
+arch:
+  - armv7
+  - armhf
+  - aarch64
+  - amd64
+  - i386
+init: false
+panel_icon: mdi:barn
+panel_title: Farm Assistant
+ingress: true
+ingress_port: 8000
+ingress_stream: true
+uart: false
