@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.0 - 2025-11-06
+
+### Changed
+
+- Moved Livestock List table to the top of the page.
+- Added logging to debug database queries.
+
 ## 0.5.9 - 2025-11-06
 
 ### Added

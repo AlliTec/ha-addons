@@ -129,9 +129,11 @@ async def get_animals():
         conn = await asyncpg.connect(DATABASE_URL)
         records = await conn.fetch("SELECT id, tag_id, name, breed, birth_date, gender, health_status, notes, created_at, dam_id, sire_id, status, features, photo_path, pic, dod FROM livestock_records ORDER BY name")
         await conn.close()
+        logging.info(f"Fetched {len(records)} animals from database.")
         animals = [dict(record) for record in records]
         return animals
     except Exception as e:
+        logging.error(f"Error fetching animals: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/get_animal/{animal_id}")
