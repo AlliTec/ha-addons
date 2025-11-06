@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.3 - 2025-11-07
+
+### Fixed
+
+- Fixed an issue where the edit button was not working correctly due to an incorrect API endpoint.
+
 ## 0.9.2 - 2025-11-07
 
 ### Fixed

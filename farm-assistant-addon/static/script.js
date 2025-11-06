@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const cells = row.querySelectorAll("td");
             console.log(`script.js: Found ${cells.length} cells in the row.`);
 
-            const response = await fetch("/api/animals");
+            const response = await fetch("api/animals");
             const animals = await response.json();
 
             row.originalValues = [];
