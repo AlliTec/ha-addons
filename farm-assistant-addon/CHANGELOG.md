@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.5.2 - 2025-11-06
+## 0.5.3 - 2025-11-06
+
+### Changed
+
+- Implemented a "2001: A Space Odyssey" inspired high-contrast dark mode theme.
 
 ### Changed
 
