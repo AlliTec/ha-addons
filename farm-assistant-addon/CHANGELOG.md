@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.10 - 2025-11-07
+
+### Fixed
+
+- The "Add" functionality now correctly uses selection lists for relevant fields.
+- The "Cancel" button now correctly resets the "add" row.
+
 ## 0.9.9 - 2025-11-07
 
 ### Fixed

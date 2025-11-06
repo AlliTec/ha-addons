@@ -66,16 +66,70 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (event.target.classList.contains("add-btn")) {
+            const response = await fetch("api/animals");
+            const animals = await response.json();
             const row = event.target.closest("tr");
             const cells = row.querySelectorAll("td");
+            
+            row.originalValues = [];
             cells.forEach((cell, index) => {
-                if (index < cells.length - 1) {
-                    const input = document.createElement("input");
-                    input.type = "text";
+                row.originalValues.push(cell.innerHTML);
+                if (index < cells.length - 1) { // Exclude the last cell (actions)
+                    let input;
+                    if (index === 4) { // birth_date
+                        input = document.createElement("input");
+                        input.type = "date";
+                    } else if (index === 14) { // dod
+                        input = document.createElement("input");
+                        input.type = "date";
+                    } else if (index === 5) { // gender
+                        input = document.createElement("select");
+                        const options = ["Cock", "Hen", "Dog", "Bitch", "Cow", "Bull", "Steer", "Heifer"];
+                        options.forEach(optionValue => {
+                            const option = document.createElement("option");
+                            option.value = optionValue;
+                            option.textContent = optionValue;
+                            input.appendChild(option);
+                        });
+                    } else if (index === 10) { // status
+                        input = document.createElement("select");
+                        const options = ["On Property", "Deceased", "Sold"];
+                        options.forEach(optionValue => {
+                            const option = document.createElement("option");
+                            option.value = optionValue;
+                            option.textContent = optionValue;
+                            input.appendChild(option);
+                        });
+                    } else if (index === 7) { // notes
+                        input = document.createElement("textarea");
+                    } else if (index === 8) { // dam_id
+                        input = document.createElement("select");
+                        const dams = animals.filter(animal => ["Cow", "Hen", "Bitch"].includes(animal.gender));
+                        dams.forEach(dam => {
+                            const option = document.createElement("option");
+                            option.value = dam.id;
+                            option.textContent = dam.name;
+                            input.appendChild(option);
+                        });
+                    } else if (index === 9) { // sire_id
+                        input = document.createElement("select");
+                        const sires = animals.filter(animal => ["Bull", "Dog", "Cock"].includes(animal.gender));
+                        sires.forEach(sire => {
+                            const option = document.createElement("option");
+                            option.value = sire.id;
+                            option.textContent = sire.name;
+                            input.appendChild(option);
+                        });
+                    } else {
+                        input = document.createElement("input");
+                        input.type = "text";
+                    }
+                    input.classList.add("inline-edit-input");
                     cell.innerHTML = "";
                     cell.appendChild(input);
                 }
             });
+
             const addBtn = row.querySelector(".add-btn");
             addBtn.textContent = "Save";
             addBtn.classList.remove("add-btn");
@@ -94,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const allFields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
             cells.forEach((cell, index) => {
                 if (index < cells.length - 1) {
-                    const input = cell.querySelector("input");
+                    const input = cell.querySelector("input, select, textarea");
                     animalData[allFields[index]] = input ? input.value : "";
                 }
             });
@@ -125,6 +179,16 @@ document.addEventListener("DOMContentLoaded", () => {
             if (response.ok) {
                 alert("Animal added successfully!");
                 populateAnimalList();
+                const addRow = document.querySelector(".empty-row");
+                const addCells = addRow.querySelectorAll("td");
+                addCells.forEach(cell => cell.innerHTML = "");
+                const saveBtn = addRow.querySelector(".save-add-btn");
+                saveBtn.textContent = "Add";
+                saveBtn.classList.remove("save-add-btn");
+                saveBtn.classList.add("add-btn");
+                const cancelBtn = addRow.querySelector(".cancel-add-btn");
+                cancelBtn.remove();
+
             } else {
                 const error = await response.json();
                 alert(`Error: ${error.detail}`);
@@ -134,13 +198,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.target.classList.contains("cancel-add-btn")) {
             const row = event.target.closest("tr");
             const cells = row.querySelectorAll("td");
-            cells.forEach(cell => cell.innerHTML = "");
-            const saveBtn = row.querySelector(".save-add-btn");
-            saveBtn.textContent = "Add";
-            saveBtn.classList.remove("save-add-btn");
-            saveBtn.classList.add("add-btn");
-            const cancelBtn = row.querySelector(".cancel-add-btn");
-            cancelBtn.remove();
+            cells.forEach((cell, index) => {
+                cell.innerHTML = row.originalValues[index];
+            });
         }
 
         if (event.target.classList.contains("edit-btn")) {
