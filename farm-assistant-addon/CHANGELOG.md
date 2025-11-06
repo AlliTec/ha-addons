@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.4 - 2025-11-06
+## 0.2.5 - 2025-11-06
+
+### Fixed
+
+- Corrected the `run.sh` script to change to the correct working directory before starting the application.
 
 ### Fixed
 
