@@ -115,7 +115,15 @@ animal_data = {
 
 @app.get("/", response_class=HTMLResponse)
 async def read_item(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    addon_version = config.get("version", "unknown")
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        records = await conn.fetch("SELECT id, animal_type, name, gender, breed, birth_date, features, status FROM livestock_records ORDER BY name")
+        await conn.close()
+        animals = [dict(record) for record in records]
+    except Exception as e:
+        animals = []
+    return templates.TemplateResponse("index.html", {"request": request, "addon_version": addon_version, "animals": animals})
 
 @app.post("/add_animal")
 async def add_animal(animal: Animal):

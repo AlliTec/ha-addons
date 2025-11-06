@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.6 - 2025-11-06
+
+### Added
+
+- Server-side rendering of animal list table for immediate display on page load.
+
 ## 0.5.5 - 2025-11-06
 
 ### Fixed

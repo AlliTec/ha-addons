@@ -53,6 +53,21 @@
             </tr>
         </thead>
         <tbody>
+            {% for animal in animals %}
+            <tr>
+                <td>{{ animal.name }}</td>
+                <td>{{ animal.animal_type }}</td>
+                <td>{{ animal.gender }}</td>
+                <td>{{ animal.breed }}</td>
+                <td>{{ animal.birth_date }}</td>
+                <td>{{ animal.features }}</td>
+                <td>{{ animal.status }}</td>
+                <td>
+                    <button class="edit-btn" data-id="{{ animal.id }}">Edit</button>
+                    <button class="delete-btn" data-id="{{ animal.id }}">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
 
