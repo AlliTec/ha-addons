@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.4.1 - 2025-11-06
+## 0.4.2 - 2025-11-06
+
+### Fixed
+
+- Simplified `run.sh` to its bare essentials for debugging.
 
 ### Fixed
 
