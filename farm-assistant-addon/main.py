@@ -90,6 +90,7 @@ class Animal(BaseModel):
     photo_path: Optional[str] = None
     pic: Optional[str] = None
     dod: Optional[str] = None
+    status: Optional[str] = None
 
 
 
@@ -184,13 +185,17 @@ async def update_animal(animal_id: int, animal: Animal):
         birth_date = None
         dod = None
 
+    # Clear dod if status is not 'Deceased'
+    if animal.status != 'Deceased':
+        dod = None
+
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         await conn.execute("""
             UPDATE livestock_records
-            SET tag_id = $1, name = $2, gender = $3, breed = $4, birth_date = $5, health_status = $6, notes = $7, dam_id = $8, sire_id = $9, features = $10, photo_path = $11, pic = $12, dod = $13
-            WHERE id = $14
-        """, animal.tag_id, animal.name, animal.gender, animal.breed, birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, dod, animal_id)
+            SET tag_id = $1, name = $2, gender = $3, breed = $4, birth_date = $5, health_status = $6, notes = $7, dam_id = $8, sire_id = $9, features = $10, photo_path = $11, pic = $12, dod = $13, status = $14
+            WHERE id = $15
+        """, animal.tag_id, animal.name, animal.gender, animal.breed, birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, dod, animal.status, animal_id)
         await conn.close()
         return {"message": "Animal updated successfully"}
     except Exception as e:

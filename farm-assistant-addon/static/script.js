@@ -165,10 +165,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     row.originalValues.push(currentValue);
                     
                     let input;
-                    if (index === 4 || index === 14) { // birth_date and dod
+                    if (index === 4) { // birth_date
                         input = document.createElement("input");
                         input.type = "date";
-                        input.value = currentValue;
+                        if (currentValue && currentValue !== 'null') {
+                            input.value = new Date(currentValue).toISOString().split('T')[0];
+                        }
+                    } else if (index === 14) { // dod
+                        input = document.createElement("input");
+                        input.type = "date";
+                        if (row.querySelector('td:nth-child(11)').textContent.trim() === 'Deceased') {
+                            input.value = new Date().toISOString().split('T')[0];
+                        } else if (currentValue && currentValue !== 'null') {
+                            input.value = new Date(currentValue).toISOString().split('T')[0];
+                        }
                     } else if (index === 5) { // gender
                         input = document.createElement("select");
                         const options = ["Cock", "Hen", "Dog", "Bitch", "Cow", "Bull", "Steer", "Heifer"];
