@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.4 - 2025-11-06
+
+### Added
+
+- Added logging to add_animal endpoint and JS form detection.
+
 ## 0.6.3 - 2025-11-06
 
 ### Added

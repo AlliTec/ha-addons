@@ -3,6 +3,7 @@ console.log("Script loaded");
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM loaded");
     const addAnimalForm = document.getElementById("add-animal-form");
+    console.log("Form found:", addAnimalForm);
 
     addAnimalForm.addEventListener("submit", async (event) => {
         event.preventDefault();

@@ -110,6 +110,7 @@ async def read_item(request: Request):
 
 @app.post("/add_animal")
 async def add_animal(animal: Animal):
+    logging.info(f"Adding animal: {animal}")
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         await conn.execute("""
@@ -117,8 +118,10 @@ async def add_animal(animal: Animal):
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'On Property', NOW())
         """, animal.tag_id, animal.name, animal.gender, animal.breed, animal.birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, animal.dod)
         await conn.close()
+        logging.info("Animal added successfully")
         return {"message": "Animal added successfully"}
     except Exception as e:
+        logging.error(f"Error adding animal: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
