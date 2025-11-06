@@ -123,6 +123,19 @@ document.addEventListener("DOMContentLoaded", () => {
             deleteBtn.classList.add("cancel-btn");
             console.log("script.js: Buttons changed.");
         }
+            });
+            // Change buttons
+            const editBtn = row.querySelector(".edit-btn");
+            const deleteBtn = row.querySelector(".delete-btn");
+            console.log("script.js: Changing buttons to Save/Cancel.");
+            editBtn.textContent = "Save";
+            editBtn.classList.remove("edit-btn");
+            editBtn.classList.add("save-btn");
+            deleteBtn.textContent = "Cancel";
+            deleteBtn.classList.remove("delete-btn");
+            deleteBtn.classList.add("cancel-btn");
+            console.log("script.js: Buttons changed.");
+        }
 
         if (event.target.classList.contains("save-btn")) {
             const row = event.target.closest("tr");
