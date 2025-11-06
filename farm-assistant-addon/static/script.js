@@ -89,28 +89,39 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (event.target.classList.contains("edit-btn")) {
+            console.log("script.js: 'Edit' button clicked.");
             const row = event.target.closest("tr");
+            console.log("script.js: Found row:", row);
             const cells = row.querySelectorAll("td");
+            console.log("script.js: Found cells:", cells);
+
             row.originalValues = [];
             cells.forEach((cell, index) => {
+                console.log(`script.js: Processing cell ${index}:`, cell);
                 if (index < cells.length - 1) { // not actions
+                    console.log(`script.js: Cell ${index} is an editable cell.`);
                     row.originalValues.push(cell.textContent);
                     const input = document.createElement("input");
                     input.type = "text";
                     input.value = cell.textContent;
                     cell.innerHTML = "";
                     cell.appendChild(input);
+                    console.log(`script.js: Appended input to cell ${index}.`);
+                } else {
+                    console.log(`script.js: Cell ${index} is the action cell, skipping.`);
                 }
             });
             // Change buttons
             const editBtn = row.querySelector(".edit-btn");
             const deleteBtn = row.querySelector(".delete-btn");
+            console.log("script.js: Changing buttons to Save/Cancel.");
             editBtn.textContent = "Save";
             editBtn.classList.remove("edit-btn");
             editBtn.classList.add("save-btn");
             deleteBtn.textContent = "Cancel";
             deleteBtn.classList.remove("delete-btn");
             deleteBtn.classList.add("cancel-btn");
+            console.log("script.js: Buttons changed.");
         }
 
         if (event.target.classList.contains("save-btn")) {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.1 - 2025-11-06
+
+### Fixed
+
+- Corrected a major JavaScript syntax error that was preventing all button functionality.
+
 ## 0.7.0 - 2025-11-06
 
 ### Fixed
