@@ -1,38 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const animalTypeSelect = document.getElementById("animal-type");
-    const animalGenderSelect = document.getElementById("animal-gender");
-    const animalBreedSelect = document.getElementById("animal-breed");
     const addAnimalForm = document.getElementById("add-animal-form");
-
-    const updateAnimalDetails = async () => {
-        const animalType = animalTypeSelect.value;
-        const response = await fetch("/get_animal_details", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ animal_type: animalType }),
-        });
-        const data = await response.json();
-
-        animalGenderSelect.innerHTML = "";
-        data.genders.forEach(gender => {
-            const option = document.createElement("option
-            option.value = gender;
-            option.textContent = gender;
-            animalGenderSelect.appendChild(option);
-        });
-
-        animalBreedSelect.innerHTML = "";
-        data.breeds.forEach(breed => {
-            const option = document.createElement("option");
-            option.value = breed;
-            option.textContent = breed;
-            animalBreedSelect.appendChild(option);
-        });
-    };
-
-    animalTypeSelect.addEventListener("change", updateAnimalDetails);
 
     addAnimalForm.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -63,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const submitButton = document.querySelector("#add-animal-form button");
             submitButton.textContent = "Add Animal";
             submitButton.dataset.action = "add";
-            updateAnimalDetails();
             populateAnimalList();
         } else {
             const error = await response.json();
@@ -72,7 +38,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Initial population
-    updateAnimalDetails();
     populateAnimalList();
 });
 
@@ -86,13 +51,22 @@ async function populateAnimalList() {
     animals.forEach(animal => {
         const row = document.createElement("tr");
         row.innerHTML = `
+            <td>${animal.id}</td>
+            <td>${animal.tag_id}</td>
             <td>${animal.name}</td>
-            <td>${animal.animal_type}</td>
-            <td>${animal.gender}</td>
             <td>${animal.breed}</td>
             <td>${animal.birth_date}</td>
-            <td>${animal.features}</td>
+            <td>${animal.gender}</td>
+            <td>${animal.health_status}</td>
+            <td>${animal.notes}</td>
+            <td>${animal.created_at}</td>
+            <td>${animal.dam_id}</td>
+            <td>${animal.sire_id}</td>
             <td>${animal.status}</td>
+            <td>${animal.features}</td>
+            <td>${animal.photo_path}</td>
+            <td>${animal.pic}</td>
+            <td>${animal.dod}</td>
             <td>
                 <button class="edit-btn" data-id="${animal.id}">Edit</button>
                 <button class="delete-btn" data-id="${animal.id}">Delete</button>
@@ -125,10 +99,17 @@ async function populateAnimalList() {
             const animal = await response.json();
 
             document.getElementById("animal-id").value = animal.id;
-            document.getElementById("animal-type").value = animal.animal_type;
+            document.getElementById("animal-tag-id").value = animal.tag_id;
             document.getElementById("animal-name").value = animal.name;
             document.getElementById("animal-birth-date").value = animal.birth_date;
+            document.getElementById("animal-health-status").value = animal.health_status;
+            document.getElementById("animal-notes").value = animal.notes;
+            document.getElementById("animal-dam-id").value = animal.dam_id;
+            document.getElementById("animal-sire-id").value = animal.sire_id;
             document.getElementById("animal-features").value = animal.features;
+            document.getElementById("animal-photo-path").value = animal.photo_path;
+            document.getElementById("animal-pic").value = animal.pic;
+            document.getElementById("animal-dod").value = animal.dod;
 
             updateAnimalDetails().then(() => {
                 document.getElementById("animal-gender").value = animal.gender;

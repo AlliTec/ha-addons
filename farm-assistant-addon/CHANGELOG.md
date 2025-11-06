@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.8 - 2025-11-06
+
+### Changed
+
+- Updated database schema to match actual columns from data.csv: added tag_id, health_status, notes, created_at, dam_id, sire_id, photo_path, pic, dod; removed animal_type.
+- Updated form, table, and API to include all columns.
+- Simplified form to static Cattle breeds and genders.
+
 ## 0.5.7 - 2025-11-06
 
 ### Changed
