@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.5.1 - 2025-11-06
+## 0.5.2 - 2025-11-06
+
+### Changed
+
+- Improved CSS styling with proper dark mode support and modern design.
 
 ### Fixed
 
