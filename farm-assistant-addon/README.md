@@ -17,6 +17,10 @@ An addon to manage your farm's livestock data.
 
 ## Configuration
 
-The addon requires a TimescaleDB database to store the livestock data. You will need to provide the following information in the addon's configuration:
+The addon requires a TimescaleDB database to store the livestock data. You will need to provide the following information in the addon's configuration tab:
 
-- `database_url`: The connection URL for your TimescaleDB database.
+- `db_host`: The hostname or IP address of your database server.
+- `db_port`: The port number of your database server (usually 5432).
+- `db_user`: The username for your database.
+- `db_password`: The password for your database.
+- `db_name`: The name of your database.

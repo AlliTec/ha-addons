@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.5 - 2025-11-06
+## 0.2.6 - 2025-11-06
+
+### Changed
+
+- Refactored database connection to use configuration options instead of a hardcoded URL.
 
 ### Fixed
 
