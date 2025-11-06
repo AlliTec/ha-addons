@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.7 - 2025-11-06
+
+### Fixed
+
+- Overwrote script.js with a clean, correct version to eliminate persistent syntax errors.
+
 ## 0.7.6 - 2025-11-06
 
 ### Fixed
