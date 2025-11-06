@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.0 - 2025-11-07
+
+### Fixed
+
+- Fixed a `toordinal` error by converting `birth_date` and `dod` strings to date objects before database insertion or update.
+
 ## 0.7.9 - 2025-11-07
 
 ### Fixed

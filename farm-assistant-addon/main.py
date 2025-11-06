@@ -4,6 +4,7 @@ import os
 import sys
 import asyncpg
 import logging
+from datetime import datetime
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
@@ -112,11 +113,18 @@ async def read_item(request: Request):
 async def add_animal(animal: Animal):
     logging.info(f"Adding animal: {animal}")
     try:
+        birth_date = datetime.fromisoformat(animal.birth_date).date() if animal.birth_date else None
+        dod = datetime.fromisoformat(animal.dod).date() if animal.dod else None
+    except ValueError:
+        birth_date = None
+        dod = None
+
+    try:
         conn = await asyncpg.connect(DATABASE_URL)
         await conn.execute("""
             INSERT INTO livestock_records (tag_id, name, gender, breed, birth_date, health_status, notes, dam_id, sire_id, features, photo_path, pic, dod, status, created_at)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'On Property', NOW())
-        """, animal.tag_id, animal.name, animal.gender, animal.breed, animal.birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, animal.dod)
+        """, animal.tag_id, animal.name, animal.gender, animal.breed, birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, dod)
         await conn.close()
         logging.info("Animal added successfully")
         return {"message": "Animal added successfully"}
@@ -162,12 +170,19 @@ async def delete_animal(animal_id: int):
 @app.put("/update_animal/{animal_id}")
 async def update_animal(animal_id: int, animal: Animal):
     try:
+        birth_date = datetime.fromisoformat(animal.birth_date).date() if animal.birth_date else None
+        dod = datetime.fromisoformat(animal.dod).date() if animal.dod else None
+    except ValueError:
+        birth_date = None
+        dod = None
+
+    try:
         conn = await asyncpg.connect(DATABASE_URL)
         await conn.execute("""
             UPDATE livestock_records
             SET tag_id = $1, name = $2, gender = $3, breed = $4, birth_date = $5, health_status = $6, notes = $7, dam_id = $8, sire_id = $9, features = $10, photo_path = $11, pic = $12, dod = $13
             WHERE id = $14
-        """, animal.tag_id, animal.name, animal.gender, animal.breed, animal.birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, animal.dod, animal_id)
+        """, animal.tag_id, animal.name, animal.gender, animal.breed, birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, dod, animal_id)
         await conn.close()
         return {"message": "Animal updated successfully"}
     except Exception as e:
