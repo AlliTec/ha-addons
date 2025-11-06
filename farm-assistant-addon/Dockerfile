@@ -16,6 +16,3 @@ WORKDIR /data
 
 # Expose the port
 EXPOSE 8000
-
-# Start the addon
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

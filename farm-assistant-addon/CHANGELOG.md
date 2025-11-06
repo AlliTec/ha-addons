@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.4.5 - 2025-11-06
+## 0.4.6 - 2025-11-06
+
+### Fixed
+
+- Removed the `CMD` line from the `Dockerfile` that was preventing the `run.sh` script from executing.
 
 ### Fixed
 
