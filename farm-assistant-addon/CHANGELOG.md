@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.4 - 2025-11-06
+
+### Fixed
+
+- Fixed static directory path to use absolute path, resolving startup failure and CSS not being applied.
+
 ## 0.5.3 - 2025-11-06
 
 ### Changed
