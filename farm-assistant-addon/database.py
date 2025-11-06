@@ -39,6 +39,8 @@ DB_USER = config.get("db_user")
 DB_PASSWORD = config.get("db_password")
 DB_NAME = config.get("db_name")
 
+logging.info(f"Database configuration loaded: Host={DB_HOST}, Port={DB_PORT}, User={DB_USER}, DB={DB_NAME}")
+
 DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 async def check_connection():

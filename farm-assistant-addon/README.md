@@ -19,7 +19,7 @@ An addon to manage your farm's livestock data.
 
 The addon requires a TimescaleDB database to store the livestock data. You will need to provide the following information in the addon's configuration tab:
 
-- `db_host`: The hostname or IP address of your database server.
+- `db_host`: The hostname of your database server. If you are using the official Home Assistant TimescaleDB addon, this will be the slug of that addon (e.g., `77b2833f-timescaledb`).
 - `db_port`: The port number of your database server (usually 5432).
 - `db_user`: The username for your database.
 - `db_password`: The password for your database.

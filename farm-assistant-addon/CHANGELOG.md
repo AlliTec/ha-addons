@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.2.9 - 2025-11-06
+## 0.3.0 - 2025-11-06
+
+### Changed
+
+- Added verbose logging to the startup process to aid in debugging configuration issues.
+- Clarified in the README that the database host should be the slug of the TimescaleDB addon.
 
 ### Added
 
