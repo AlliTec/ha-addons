@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.3.0 - 2025-11-06
+## 0.4.0 - 2025-11-06
+
+### Changed
+
+- Consolidated all Python code into a single `main.py` file to resolve persistent import errors.
 
 ### Changed
 
