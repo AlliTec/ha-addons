@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.target.classList.contains("delete-btn")) {
             const animalId = event.target.dataset.id;
             if (confirm("Are you sure you want to delete this animal?")) {
-                const response = await fetch(`/delete_animal/${animalId}`, {
+                const response = await fetch(`delete_animal/${animalId}`, {
                     method: "DELETE",
                 });
 
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     animal[fields[index]] = input ? input.value : "";
                 }
             });
-            const response = await fetch("/add_animal", {
+            const response = await fetch("add_animal", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(animal)
