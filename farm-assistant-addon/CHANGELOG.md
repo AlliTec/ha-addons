@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1 - 2025-11-06
+
+### Fixed
+
+- Removed initial JS populate call to prevent overwriting server-side rendered table.
+
 ## 0.6.0 - 2025-11-06
 
 ### Changed

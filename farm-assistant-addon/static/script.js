@@ -37,8 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Initial population
-    populateAnimalList();
+    // Initial population done server-side
 });
 
 async function populateAnimalList() {
