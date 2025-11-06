@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List, Dict
 
-app = FastAPI()
+router = APIRouter()
 
 class Animal(BaseModel):
     animal_type: str
@@ -40,7 +40,7 @@ animal_data = {
     }
 }
 
-@app.post("/add_animal")
+@router.post("/add_animal")
 async def add_animal(animal: Animal):
     try:
         conn = await asyncpg.connect("postgresql://postgres:homeassistant@77b2833f-timescaledb/hal_farm_db")
@@ -53,11 +53,11 @@ async def add_animal(animal: Animal):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/get_animal_details")
+@router.post("/get_animal_details")
 def get_animal_details(data: AnimalData):
     return animal_data.get(data.animal_type, {})
 
-@app.get("/get_animals")
+@router.get("/get_animals")
 async def get_animals():
     try:
         conn = await asyncpg.connect("postgresql://postgres:homeassistant@77b2833f-timescaledb/hal_farm_db")
@@ -68,7 +68,7 @@ async def get_animals():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/get_animal/{animal_id}")
+@router.get("/get_animal/{animal_id}")
 async def get_animal(animal_id: int):
     try:
         conn = await asyncpg.connect("postgresql://postgres:homeassistant@77b2833f-timescaledb/hal_farm_db")
@@ -78,7 +78,7 @@ async def get_animal(animal_id: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.delete("/delete_animal/{animal_id}")
+@router.delete("/delete_animal/{animal_id}")
 async def delete_animal(animal_id: int):
     try:
         conn = await asyncpg.connect("postgresql://postgres:homeassistant@77b2833f-timescaledb/hal_farm_db")
@@ -88,7 +88,7 @@ async def delete_animal(animal_id: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.put("/update_animal/{animal_id}")
+@router.put("/update_animal/{animal_id}")
 async def update_animal(animal_id: int, animal: Animal):
     try:
         conn = await asyncpg.connect("postgresql://postgres:homeassistant@77b2833f-timescaledb/hal_farm_db")
@@ -102,6 +102,6 @@ async def update_animal(animal_id: int, animal: Animal):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/")
+@router.get("/")
 def read_root():
     return {"message": "Welcome to the Farm Assistant addon!"}

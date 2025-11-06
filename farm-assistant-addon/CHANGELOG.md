@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.3 - 2025-11-06
+## 0.2.4 - 2025-11-06
+
+### Fixed
+
+- Refactored the FastAPI application to use `APIRouter` to resolve a startup error.
 
 ### Fixed
 

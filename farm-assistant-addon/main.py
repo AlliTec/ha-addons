@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-from . import animal_management
+from animal_management import router as animal_router
 
 app = FastAPI()
 
@@ -15,5 +15,4 @@ templates = Jinja2Templates(directory="templates")
 async def read_item(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-app.include_router(animal_management.app)
-
+app.include_router(animal_router)
