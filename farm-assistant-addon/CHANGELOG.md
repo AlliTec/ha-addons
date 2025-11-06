@@ -1,6 +1,13 @@
 # Changelog
 
-## 0.4.7 - 2025-11-06
+## 0.5.0 - 2025-11-06
+
+### Changed
+
+- Restructured addon to follow the proven pattern from rain-predictor-addon.
+- Moved application files to `/app/` instead of `/data/`.
+- Moved `run.sh` to `/` (root) instead of `/data/`.
+- Re-added `CMD [ "/run.sh" ]` to the Dockerfile.
 
 ### Fixed
 

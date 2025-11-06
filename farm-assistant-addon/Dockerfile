@@ -8,14 +8,19 @@ ENV LANG C.UTF-8
 RUN apk add --no-cache python3 py3-pip postgresql-dev gcc musl-dev && \
     pip3 install --break-system-packages fastapi uvicorn asyncpg jinja2
 
-# Copy the addon files
-COPY . /data
+# Create app directory
+RUN mkdir -p /app/templates /app/static
 
-# Make run.sh executable
-RUN chmod +x /data/run.sh
+# Copy addon files
+COPY run.sh /
+COPY main.py /app/
+COPY templates/ /app/templates/
+COPY static/ /app/static/
 
-# Set the working directory
-WORKDIR /data
+# Make run script executable
+RUN chmod a+x /run.sh
 
 # Expose the port
 EXPOSE 8000
+
+CMD [ "/run.sh" ]
