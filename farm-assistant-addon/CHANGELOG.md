@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.1 - 2025-11-06
+## 0.2.2 - 2025-11-06
+
+### Fixed
+
+- Resolved Docker build failure by explicitly installing `python3` and `py3-pip`.
 
 ### Fixed
 
