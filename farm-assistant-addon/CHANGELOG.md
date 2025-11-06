@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.5 - 2025-11-06
+
+### Changed
+
+- Implemented inline editing for table rows: click Edit to make fields editable, Save to update, Cancel to revert.
+
 ## 0.6.4 - 2025-11-06
 
 ### Added

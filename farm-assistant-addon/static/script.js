@@ -98,31 +98,82 @@ async function populateAnimalList() {
         }
 
         if (event.target.classList.contains("edit-btn")) {
-            const animalId = event.target.dataset.id;
-            const response = await fetch(`/get_animal/${animalId}`);
-            const animal = await response.json();
-
-            document.getElementById("animal-id").value = animal.id;
-            document.getElementById("animal-tag-id").value = animal.tag_id;
-            document.getElementById("animal-name").value = animal.name;
-            document.getElementById("animal-birth-date").value = animal.birth_date;
-            document.getElementById("animal-health-status").value = animal.health_status;
-            document.getElementById("animal-notes").value = animal.notes;
-            document.getElementById("animal-dam-id").value = animal.dam_id;
-            document.getElementById("animal-sire-id").value = animal.sire_id;
-            document.getElementById("animal-features").value = animal.features;
-            document.getElementById("animal-photo-path").value = animal.photo_path;
-            document.getElementById("animal-pic").value = animal.pic;
-            document.getElementById("animal-dod").value = animal.dod;
-
-            updateAnimalDetails().then(() => {
-                document.getElementById("animal-gender").value = animal.gender;
-                document.getElementById("animal-breed").value = animal.breed;
+            const row = event.target.closest("tr");
+            const cells = row.querySelectorAll("td");
+            row.originalValues = [];
+            cells.forEach((cell, index) => {
+                if (index < cells.length - 1) { // not actions
+                    row.originalValues.push(cell.textContent);
+                    const input = document.createElement("input");
+                    input.type = "text";
+                    input.value = cell.textContent;
+                    cell.innerHTML = "";
+                    cell.appendChild(input);
+                }
             });
+            // Change buttons
+            const editBtn = row.querySelector(".edit-btn");
+            const deleteBtn = row.querySelector(".delete-btn");
+            editBtn.textContent = "Save";
+            editBtn.classList.remove("edit-btn");
+            editBtn.classList.add("save-btn");
+            deleteBtn.textContent = "Cancel";
+            deleteBtn.classList.remove("delete-btn");
+            deleteBtn.classList.add("cancel-btn");
+        }
 
-            const submitButton = document.querySelector("#add-animal-form button");
-            submitButton.textContent = "Update Animal";
-            submitButton.dataset.action = "update";
+        if (event.target.classList.contains("save-btn")) {
+            const row = event.target.closest("tr");
+            const cells = row.querySelectorAll("td");
+            const animalId = event.target.dataset.id;
+            const animal = {};
+            const fields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "created_at", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
+            cells.forEach((cell, index) => {
+                if (index < cells.length - 1) {
+                    const input = cell.querySelector("input");
+                    animal[fields[index]] = input.value;
+                    cell.textContent = input.value;
+                }
+            });
+            const response = await fetch(`/update_animal/${animalId}`, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(animal)
+            });
+            if (response.ok) {
+                alert("Animal updated successfully!");
+                // Change buttons back
+                const saveBtn = row.querySelector(".save-btn");
+                const cancelBtn = row.querySelector(".cancel-btn");
+                saveBtn.textContent = "Edit";
+                saveBtn.classList.remove("save-btn");
+                saveBtn.classList.add("edit-btn");
+                cancelBtn.textContent = "Delete";
+                cancelBtn.classList.remove("cancel-btn");
+                cancelBtn.classList.add("delete-btn");
+            } else {
+                const error = await response.json();
+                alert(`Error: ${error.detail}`);
+            }
+        }
+
+        if (event.target.classList.contains("cancel-btn")) {
+            const row = event.target.closest("tr");
+            const cells = row.querySelectorAll("td");
+            cells.forEach((cell, index) => {
+                if (index < cells.length - 1) {
+                    cell.textContent = row.originalValues[index];
+                }
+            });
+            // Change buttons back
+            const saveBtn = row.querySelector(".save-btn");
+            const cancelBtn = row.querySelector(".cancel-btn");
+            saveBtn.textContent = "Edit";
+            saveBtn.classList.remove("save-btn");
+            saveBtn.classList.add("edit-btn");
+            cancelBtn.textContent = "Delete";
+            cancelBtn.classList.remove("cancel-btn");
+            cancelBtn.classList.add("delete-btn");
         }
     });
 }
