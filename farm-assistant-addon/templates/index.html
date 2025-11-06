@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Assistant</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Farm Assistant</h1>
+    <h2>Add Animal</h2>
+    <form id="add-animal-form">
+        <label for="animal-type">Animal Type:</label>
+        <select id="animal-type" name="animal_type">
+            <option value="Cattle">Cattle</option>
+            <option value="Dog">Dog</option>
+            <option value="Cat">Cat</option>
+            <option value="Chicken">Chicken</option>
+            <option value="Guinea Fowl">Guinea Fowl</option>
+        </select>
+        <br>
+        <label for="animal-name">Name:</label>
+        <input type="text" id="animal-name" name="name">
+        <br>
+        <label for="animal-gender">Gender:</label>
+        <select id="animal-gender" name="gender"></select>
+        <br>
+        <label for="animal-breed">Breed:</label>
+        <select id="animal-breed" name="breed"></select>
+        <br>
+        <label for="animal-birth-date">Birth Date:</label>
+        <input type="date" id="animal-birth-date" name="birth_date">
+        <br>
+        <label for="animal-features">Features:</label>
+        <textarea id="animal-features" name="features"></textarea>
+        <br>
+        <button type="submit">Add Animal</button>
+    </form>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
