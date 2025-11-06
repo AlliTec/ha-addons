@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.8 - 2025-11-06
+
+### Fixed
+
+- Reverted fetch URLs to absolute paths (/add_animal) for ingress compatibility.
+
 ## 0.6.7 - 2025-11-06
 
 ### Fixed
