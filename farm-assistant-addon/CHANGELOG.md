@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.2 - 2025-11-06
+
+### Added
+
+- Added console logs to debug JS loading and form submission.
+
 ## 0.6.1 - 2025-11-06
 
 ### Fixed

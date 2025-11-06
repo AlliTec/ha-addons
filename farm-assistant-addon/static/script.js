@@ -1,8 +1,12 @@
+console.log("Script loaded");
+
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM loaded");
     const addAnimalForm = document.getElementById("add-animal-form");
 
     addAnimalForm.addEventListener("submit", async (event) => {
         event.preventDefault();
+        console.log("Form submitted");
 
         const formData = new FormData(addAnimalForm);
         const animal = Object.fromEntries(formData.entries());
