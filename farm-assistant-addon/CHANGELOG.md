@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.4.3 - 2025-11-06
+## 0.4.4 - 2025-11-06
+
+### Fixed
+
+- Added missing `jinja2` dependency to the `Dockerfile`.
 
 ### Fixed
 
