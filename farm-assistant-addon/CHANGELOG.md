@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.9 - 2025-11-07
+
+### Fixed
+
+- Resolved `422 Unprocessable Content` error by making Pydantic `Animal` model fields optional to correctly handle null or omitted values from the frontend.
+
 ## 0.7.8 - 2025-11-06
 
 ### Fixed

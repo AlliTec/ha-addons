@@ -9,7 +9,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -76,19 +76,19 @@ templates = Jinja2Templates(directory="/app/templates")
 # --- Pydantic Models ---
 
 class Animal(BaseModel):
-    tag_id: str
+    tag_id: Optional[str] = None
     name: str
-    gender: str
-    breed: str
-    birth_date: str
-    health_status: str
-    notes: str
-    dam_id: int
-    sire_id: int
-    features: str
-    photo_path: str
-    pic: str
-    dod: str
+    gender: Optional[str] = None
+    breed: Optional[str] = None
+    birth_date: Optional[str] = None
+    health_status: Optional[str] = None
+    notes: Optional[str] = None
+    dam_id: Optional[int] = None
+    sire_id: Optional[int] = None
+    features: Optional[str] = None
+    photo_path: Optional[str] = None
+    pic: Optional[str] = None
+    dod: Optional[str] = None
 
 
 
