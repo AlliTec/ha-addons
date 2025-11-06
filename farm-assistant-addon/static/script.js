@@ -15,7 +15,7 @@ async function populateAnimalList() {
         }
     });
 
-    const response = await fetch("/get_animals");
+    const response = await fetch("get_animals");
     const animals = await response.json();
 
     const emptyRow = animalListBody.querySelector(".empty-row");
@@ -50,7 +50,7 @@ async function populateAnimalList() {
         if (event.target.classList.contains("delete-btn")) {
             const animalId = event.target.dataset.id;
             if (confirm("Are you sure you want to delete this animal?")) {
-                const response = await fetch(`/delete_animal/${animalId}`, {
+                const response = await fetch(`delete_animal/${animalId}`, {
                     method: "DELETE",
                 });
 
@@ -96,7 +96,7 @@ async function populateAnimalList() {
                     animal[fields[index]] = input ? input.value : "";
                 }
             });
-            const response = await fetch("/add_animal", {
+            const response = await fetch("add_animal", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(animal)
@@ -160,7 +160,7 @@ async function populateAnimalList() {
                     cell.textContent = input.value;
                 }
             });
-            const response = await fetch(`/update_animal/${animalId}`, {
+            const response = await fetch(`update_animal/${animalId}`, {
                 method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(animal)

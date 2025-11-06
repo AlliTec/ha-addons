@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.7 - 2025-11-06
+
+### Fixed
+
+- Changed fetch URLs to relative paths for compatibility with Home Assistant ingress.
+
 ## 0.6.6 - 2025-11-06
 
 ### Changed
