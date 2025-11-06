@@ -91,33 +91,49 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.target.classList.contains("edit-btn")) {
             console.log("script.js: 'Edit' button clicked.");
             const row = event.target.closest("tr");
+            if (!row) {
+                console.error("script.js: Could not find parent row for edit button.");
+                return;
+            }
             console.log("script.js: Found row:", row);
             const cells = row.querySelectorAll("td");
-            console.log("script.js: Found cells:", cells);
+            console.log(`script.js: Found ${cells.length} cells in the row.`);
 
             row.originalValues = [];
             cells.forEach((cell, index) => {
-                if (index < cells.length - 1) { // not actions
+                console.log(`script.js: Processing cell ${index}...`);
+                if (index < cells.length - 1) { // Exclude the last cell (actions)
                     const currentValue = cell.textContent.trim();
+                    console.log(`script.js: Cell ${index} current value: '${currentValue}'`);
                     row.originalValues.push(currentValue);
+                    
                     const input = document.createElement("input");
                     input.type = "text";
                     input.value = currentValue;
                     input.classList.add("inline-edit-input");
-                    cell.replaceChildren(input); // Use replaceChildren for robust replacement
+                    
+                    cell.replaceChildren(input);
+                    console.log(`script.js: Cell ${index} replaced with an input field.`);
+                } else {
+                    console.log(`script.js: Cell ${index} is the action cell, skipping.`);
                 }
             });
+
             // Change buttons
             const editBtn = row.querySelector(".edit-btn");
             const deleteBtn = row.querySelector(".delete-btn");
-            console.log("script.js: Changing buttons to Save/Cancel.");
-            editBtn.textContent = "Save";
-            editBtn.classList.remove("edit-btn");
-            editBtn.classList.add("save-btn");
-            deleteBtn.textContent = "Cancel";
-            deleteBtn.classList.remove("delete-btn");
-            deleteBtn.classList.add("cancel-btn");
-            console.log("script.js: Buttons changed.");
+            if (editBtn && deleteBtn) {
+                console.log("script.js: Changing buttons to Save/Cancel.");
+                editBtn.textContent = "Save";
+                editBtn.classList.remove("edit-btn");
+                editBtn.classList.add("save-btn");
+                deleteBtn.textContent = "Cancel";
+                deleteBtn.classList.remove("delete-btn");
+                deleteBtn.classList.add("cancel-btn");
+                console.log("script.js: Buttons changed successfully.");
+            } else {
+                console.error("script.js: Could not find edit/delete buttons to change.");
+            }
         }
 
         if (event.target.classList.contains("save-btn")) {
