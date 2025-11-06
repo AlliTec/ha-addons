@@ -20,7 +20,7 @@ Advanced rain prediction using radar image analysis, converted from AppDaemon to
 1. **Add the addon repository** to Home Assistant:
    - Go to **Settings** → **Add-ons** → **Add-on Store**
    - Click the **⋮** menu → **Repositories**
-   - Add: `https://github.com/AlliTec/ha-addons`
+   - Add: `https://github.com/AlliTec/ha-addons/`
 
 2. **Install the addon**:
    - Find "Rain Predictor" in the addon store
