@@ -1,7 +1,42 @@
 console.log("script.js: File loaded.");
 
+async function populateAnimalList() {
+    const response = await fetch("/get_animals");
+    const animals = await response.json();
+    const tableBody = document.querySelector("#livestock-list tbody");
+    tableBody.innerHTML = ""; // Clear existing rows
+
+    animals.forEach(animal => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${animal.id}</td>
+            <td>${animal.tag_id}</td>
+            <td>${animal.name}</td>
+            <td>${animal.breed}</td>
+            <td>${animal.birth_date}</td>
+            <td>${animal.gender}</td>
+            <td>${animal.health_status}</td>
+            <td>${animal.notes}</td>
+            <td>${animal.dam_id}</td>
+            <td>${animal.sire_id}</td>
+            <td>${animal.status}</td>
+            <td>${animal.features}</td>
+            <td>${animal.photo_path}</td>
+            <td><a href="${animal.pic}" target="_blank">View</a></td>
+            <td>${animal.dod}</td>
+            <td>
+                <button class=\"edit-btn\" data-id=\"${animal.id}\">Edit</button>
+                <button class=\"delete-btn\" data-id=\"${animal.id}\">Delete</button>
+            </td>
+        `;
+        tableBody.appendChild(row);
+    });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     console.log("script.js: DOMContentLoaded event fired.");
+
+    populateAnimalList();
 
     const animalListTable = document.querySelector("#livestock-list");
     if (!animalListTable) {
@@ -22,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (response.ok) {
                     alert("Animal deleted successfully!");
-                    location.reload();
+                    populateAnimalList();
                 } else {
                     const error = await response.json();
                     alert(`Error: ${error.detail}`);
@@ -88,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             if (response.ok) {
                 alert("Animal added successfully!");
-                location.reload();
+                populateAnimalList();
             } else {
                 const error = await response.json();
                 alert(`Error: ${error.detail}`);
@@ -267,7 +302,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 alert("Animal updated successfully!");
                 // Change buttons back
                 const saveBtn = row.querySelector(".save-btn");
-                const cancelBtn = row.querySelector(".cancel-btn");
+                const cancelBtn = row.querySelector("cancel-btn");
                 saveBtn.textContent = "Edit";
                 saveBtn.classList.remove("save-btn");
                 saveBtn.classList.add("edit-btn");

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.1 - 2025-11-07
+
+### Fixed
+
+- Fixed an issue where the table was not being populated with data on initial load.
+
 ## 0.9.0 - 2025-11-07
 
 ### Added
