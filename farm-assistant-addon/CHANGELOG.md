@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.6 - 2025-11-07
+
+### Changed
+
+- Set default values for the addon configuration.
+
 ## 0.9.5 - 2025-11-07
 
 ### Changed
