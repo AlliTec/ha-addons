@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.6 - 2025-11-06
+
+### Fixed
+
+- Corrected the URL path for API requests to be compatible with Home Assistant ingress.
+- Made inline-edit input fields more prominent to ensure visibility.
+
 ## 0.7.5 - 2025-11-06
 
 ### Fixed

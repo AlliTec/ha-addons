@@ -1,0 +1,137 @@
+version.js:22 The Material theme is deprecated and will be removed in Vaadin 25.
+22698 @ version.js:22
+script.js:1 script.js: File loaded.
+script.js:4 script.js: DOMContentLoaded event fired.
+script.js:11 script.js: Found table element: <table id=​"livestock-list">​…​</table>​
+script.js:14 script.js: Click detected inside table. Target: <button class=​"save-btn" data-id=​"7">​Save​</button>​
+script.js:92 script.js: 'Edit' button clicked.
+script.js:98 script.js: Found row: <tr>​…​</tr>​
+script.js:100 script.js: Found 17 cells in the row.
+script.js:104 script.js: Processing cell 0...
+script.js:107 script.js: Cell 0 current value: '7'
+script.js:116 script.js: Cell 0 replaced with an input field.
+script.js:104 script.js: Processing cell 1...
+script.js:107 script.js: Cell 1 current value: '12345-6'
+script.js:116 script.js: Cell 1 replaced with an input field.
+script.js:104 script.js: Processing cell 2...
+script.js:107 script.js: Cell 2 current value: 'Mjolka'
+script.js:116 script.js: Cell 2 replaced with an input field.
+script.js:104 script.js: Processing cell 3...
+script.js:107 script.js: Cell 3 current value: 'Santa Gertrudis'
+script.js:116 script.js: Cell 3 replaced with an input field.
+script.js:104 script.js: Processing cell 4...
+script.js:107 script.js: Cell 4 current value: '2018-07-01'
+script.js:116 script.js: Cell 4 replaced with an input field.
+script.js:104 script.js: Processing cell 5...
+script.js:107 script.js: Cell 5 current value: 'Cow'
+script.js:116 script.js: Cell 5 replaced with an input field.
+script.js:104 script.js: Processing cell 6...
+script.js:107 script.js: Cell 6 current value: 'healthy'
+script.js:116 script.js: Cell 6 replaced with an input field.
+script.js:104 script.js: Processing cell 7...
+script.js:107 script.js: Cell 7 current value: 'None'
+script.js:116 script.js: Cell 7 replaced with an input field.
+script.js:104 script.js: Processing cell 8...
+script.js:107 script.js: Cell 8 current value: '2025-08-31 06:21:00.694351+00:00'
+script.js:116 script.js: Cell 8 replaced with an input field.
+script.js:104 script.js: Processing cell 9...
+script.js:107 script.js: Cell 9 current value: 'None'
+script.js:116 script.js: Cell 9 replaced with an input field.
+script.js:104 script.js: Processing cell 10...
+script.js:107 script.js: Cell 10 current value: '2'
+script.js:116 script.js: Cell 10 replaced with an input field.
+script.js:104 script.js: Processing cell 11...
+script.js:107 script.js: Cell 11 current value: 'On Property'
+script.js:116 script.js: Cell 11 replaced with an input field.
+script.js:104 script.js: Processing cell 12...
+script.js:107 script.js: Cell 12 current value: 'None'
+script.js:116 script.js: Cell 12 replaced with an input field.
+script.js:104 script.js: Processing cell 13...
+script.js:107 script.js: Cell 13 current value: 'None'
+script.js:116 script.js: Cell 13 replaced with an input field.
+script.js:104 script.js: Processing cell 14...
+script.js:107 script.js: Cell 14 current value: 'None'
+script.js:116 script.js: Cell 14 replaced with an input field.
+script.js:104 script.js: Processing cell 15...
+script.js:107 script.js: Cell 15 current value: 'None'
+script.js:116 script.js: Cell 15 replaced with an input field.
+script.js:104 script.js: Processing cell 16...
+script.js:118 script.js: Cell 16 is the action cell, skipping.
+script.js:126 script.js: Changing buttons to Save/Cancel.
+script.js:133 script.js: Buttons changed successfully.
+:8123/update_animal/7:1  Failed to load resource: the server responded with a status of 404 (Not Found)
+V6U8xshnj8U-ZD9cgzbk…AJu-xW9UVoZIkWLk/:1 Uncaught (in promise) SyntaxError: Unexpected non-whitespace character after JSON at position 3 (line 1 column 4)
+script.js:14 script.js: Click detected inside table. Target: <td>​None​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​None​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​On Property​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​2​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​None​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​2025-08-31 06:21:00.694351+00:00​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​None​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​healthy​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​Cow​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​2018-07-01​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​Santa Gertrudis​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​Mjolka​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​12345-6​</td>​
+script.js:14 script.js: Click detected inside table. Target: <td>​On Property​</td>​
+script.js:14 script.js: Click detected inside table. Target: <button class=​"delete-btn" data-id=​"7">​Delete​</button>​
+script.js:14 script.js: Click detected inside table. Target: <button class=​"save-btn" data-id=​"7">​Save​</button>​
+script.js:92 script.js: 'Edit' button clicked.
+script.js:98 script.js: Found row: <tr>​…​</tr>​
+script.js:100 script.js: Found 17 cells in the row.
+script.js:104 script.js: Processing cell 0...
+script.js:107 script.js: Cell 0 current value: '7'
+script.js:116 script.js: Cell 0 replaced with an input field.
+script.js:104 script.js: Processing cell 1...
+script.js:107 script.js: Cell 1 current value: '12345-6'
+script.js:116 script.js: Cell 1 replaced with an input field.
+script.js:104 script.js: Processing cell 2...
+script.js:107 script.js: Cell 2 current value: 'Mjolka'
+script.js:116 script.js: Cell 2 replaced with an input field.
+script.js:104 script.js: Processing cell 3...
+script.js:107 script.js: Cell 3 current value: 'Santa Gertrudis'
+script.js:116 script.js: Cell 3 replaced with an input field.
+script.js:104 script.js: Processing cell 4...
+script.js:107 script.js: Cell 4 current value: '2018-07-01'
+script.js:116 script.js: Cell 4 replaced with an input field.
+script.js:104 script.js: Processing cell 5...
+script.js:107 script.js: Cell 5 current value: 'Cow'
+script.js:116 script.js: Cell 5 replaced with an input field.
+script.js:104 script.js: Processing cell 6...
+script.js:107 script.js: Cell 6 current value: 'healthy'
+script.js:116 script.js: Cell 6 replaced with an input field.
+script.js:104 script.js: Processing cell 7...
+script.js:107 script.js: Cell 7 current value: 'None'
+script.js:116 script.js: Cell 7 replaced with an input field.
+script.js:104 script.js: Processing cell 8...
+script.js:107 script.js: Cell 8 current value: '2025-08-31 06:21:00.694351+00:00'
+script.js:116 script.js: Cell 8 replaced with an input field.
+script.js:104 script.js: Processing cell 9...
+script.js:107 script.js: Cell 9 current value: 'None'
+script.js:116 script.js: Cell 9 replaced with an input field.
+script.js:104 script.js: Processing cell 10...
+script.js:107 script.js: Cell 10 current value: '2'
+script.js:116 script.js: Cell 10 replaced with an input field.
+script.js:104 script.js: Processing cell 11...
+script.js:107 script.js: Cell 11 current value: 'On Property'
+script.js:116 script.js: Cell 11 replaced with an input field.
+script.js:104 script.js: Processing cell 12...
+script.js:107 script.js: Cell 12 current value: 'None'
+script.js:116 script.js: Cell 12 replaced with an input field.
+script.js:104 script.js: Processing cell 13...
+script.js:107 script.js: Cell 13 current value: 'None'
+script.js:116 script.js: Cell 13 replaced with an input field.
+script.js:104 script.js: Processing cell 14...
+script.js:107 script.js: Cell 14 current value: 'None'
+script.js:116 script.js: Cell 14 replaced with an input field.
+script.js:104 script.js: Processing cell 15...
+script.js:107 script.js: Cell 15 current value: 'None'
+script.js:116 script.js: Cell 15 replaced with an input field.
+script.js:104 script.js: Processing cell 16...
+script.js:118 script.js: Cell 16 is the action cell, skipping.
+script.js:126 script.js: Changing buttons to Save/Cancel.
+script.js:133 script.js: Buttons changed successfully.
+script.js:152  PUT http://192.168.1.130:8123/update_animal/7 404 (Not Found)
+(anonymous) @ script.js:152
+VM3193:1 Uncaught (in promise) SyntaxError: Unexpected non-whitespace character after JSON at position 3 (line 1 column 4)
