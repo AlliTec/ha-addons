@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rain Predictor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <style>
+        body, html { 
+            height: 100%; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #1c1c1c; 
+            color: #e0e0e0; 
+            font-family: Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+        }
+        
+        #map {
+            width: 100%;
+            height: 100%;
+            border: none;
+            flex-grow: 1;
+            background-color: #2d3748;
+        }
+        
+        .leaflet-container {
+            font-family: inherit;
+        }
+        
+        #data-panel { 
+            background-color: #2a2a2a; 
+            padding: 10px; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            border-top: 1px solid #444; 
+            flex-shrink: 0; 
+            position: relative;
+            z-index: 1000;
+        }
+        
+        .data-item { 
+            text-align: center; 
+        }
+        
+        .data-value { 
+            font-size: 1.5em; 
+            font-weight: bold; 
+        }
+        
+        .data-label { 
+            font-size: 0.8em; 
+            color: #aaa; 
+        }
+
+        .animation-controls {
+            position: absolute;
+            top: 10px;
+            left: 70px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            min-width: 50px;
+            max-width: 250px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .animation-controls.collapsed {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 8px;
+            width: 80px;
+            height: 40px;
+        }
+
+        .animation-controls.expanded {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            width: 220px;
+            height: auto;
+            cursor: default;
+        }
+
+        .animation-controls:hover {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .animation-controls.expanded:hover {
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .controls-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .controls-icon {
+            font-size: 16px;
+            color: #333;
+            transition: transform 0.3s ease;
+        }
+
+        .animation-controls.expanded .controls-icon {
+            display: none;
+        }
+
+        .animation-controls.collapsed .controls-icon {
+            display: block;
+        }
+
+        .time-display-mini {
+            color: #333;
+            font-size: 10px;
+            font-weight: bold;
+            background: rgba(247, 250, 252, 0.8);
+            padding: 2px 6px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+
+        .animation-controls.expanded .time-display-mini {
+            display: none;
+        }
+
+        .animation-controls.collapsed .time-display-mini {
+            display: block;
+        }
+
+        .controls-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .animation-controls.expanded .controls-content {
+            display: block;
+            opacity: 1;
+        }
+
+        .animation-controls.collapsed .controls-content {
+            display: none;
+        }
+
+        .control-section {
+            margin-bottom: 10px;
+        }
+
+        .control-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .control-btn {
+            background: #4a5568;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        .control-btn:hover {
+            background: #2d3748;
+        }
+
+        .control-btn.active {
+            background: #3182ce;
+        }
+
+        .color-select {
+            width: 100%;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            background: white;
+        }
+
+        .time-display {
+            color: #333;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 5px;
+            background: #f7fafc;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 8px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: #666;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(0,0,0,0.1);
+            color: #333;
+        }
+
+        .animation-controls.collapsed .close-btn {
+            display: none;
+        }
+
+        .location-marker {
+            background: #ff4444;
+            border: 3px solid white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        #save-location-btn {
+            background: #48bb78;
+            color: white;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        #save-location-btn:hover {
+            background: #38a169;
+            transform: translateY(-1px);
+        }
+
+        .manual-mode-control {
+            margin-bottom: 10px;
+        }
+
+        .manual-mode-btn {
+            width: 100%;
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .manual-mode-btn:hover {
+            background: #3182ce;
+        }
+
+        .manual-mode-btn.active {
+            background: #e53e3e;
+        }
+
+        .mode-indicator {
+            position: absolute;
+            top: 60px;
+            right: 10px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            display: none;
+        }
+
+        .mode-indicator.manual-mode {
+            display: block;
+            background: rgba(229, 62, 62, 0.9);
+        }
+
+        /* Rain tracker styles */
+        .rain-tracker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .rain-tracker-auto {
+            background: #48bb78;
+        }
+
+        .rain-tracker-manual {
+            background: #e53e3e;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+
+        .tracker-pulse {
+            animation: pulse-ring 2s ease-out infinite;
+        }
+
+        .tracker-arrow {
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-bottom: 20px solid;
+            transform-origin: center bottom;
+        }
+
+        .data-value.now {
+            color: #ff6b6b !important;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* Slider styles */
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slider-label {
+            font-size: 12px;
+            color: #666;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            background: #ddd;
+            height: 4px;
+            border-radius: 2px;
+            outline: none;
+            transition: background 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #3182ce;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #2b6cb0;
+        }
+
+        /* Click instruction overlay */
+        .click-instruction {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(229, 62, 62, 0.95);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 1500;
+            pointer-events: none;
+            animation: fadeInOut 3s ease-in-out;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body data-latitude="{{ user_latitude }}" data-longitude="{{ user_longitude }}">
+
+    <div id="map"></div>
+    <button class="control-btn" id="save-location-btn">Save Location</button>
+    <div class="mode-indicator" id="mode-indicator">Click on the map where you see rain</div>
+
+    <div id="data-panel">
+        <div class="data-item"><div class="data-value" id="time-to-rain">--</div><div class="data-label">TIME TO RAIN</div></div>
+        <div class="data-item"><div class="data-value" id="distance">--</div><div class="data-label">DISTANCE</div></div>
+        <div class="data-item"><div class="data-value" id="speed">--</div><div class="data-label">SPEED</div></div>
+        <div class="data-item"><div class="data-value" id="direction">--</div><div class="data-label">DIRECTION</div></div>
+        <div class="data-item"><div class="data-value" id="bearing">--</div><div class="data-label">BEARING</div></div>
+    </div>
+
+    <div class="animation-controls collapsed" id="animation-controls">
+        <div class="controls-header">
+            <div class="controls-icon">⚙️</div>
+            <div class="time-display-mini" id="time-display-mini">Loading...</div>
+        </div>
+        
+        <button class="close-btn" id="close-controls">×</button>
+        
+        <div class="controls-content">
+            <div class="control-section manual-mode-control">
+                <button class="manual-mode-btn" id="manual-mode-btn">Manual Select</button>
+            </div>
+            
+            <div class="control-section">
+                <span class="control-label">Animation</span>
+                <button class="control-btn" id="play-pause-btn">⏸️</button>
+                <div class="time-display" id="time-display">Loading...</div>
+            </div>
+            
+            <div class="control-section">
+                <label class="control-label" for="color-scheme">Radar Colors</label>
+                <select class="color-select" id="color-scheme">
+                    <option value="2">Original (Blue-Green-Yellow-Red)</option>
+                    <option value="0">Universal Blue</option>
+                    <option value="1">TITAN</option>
+                    <option value="3">The Weather Channel</option>
+                    <option value="4">Meteored</option>
+                    <option value="5">NEXRAD Level-III</option>
+                    <option value="6">RAINBOW @ SELEX-SI</option>
+                    <option value="7">Dark Sky</option>
+                </select>
+            </div>
+            
+            <div class="control-section">
+                <label class="control-label" for="map-style">Map Style</label>
+                <select class="color-select" id="map-style">
+                    <option value="light">Light</option>
+                    <option value="standard">Standard</option>
+                    <option value="satellite">Satellite</option>
+                    <option value="terrain">Terrain</option>
+                </select>
+            </div>
+            
+            <div class="control-section">
+                <label class="control-label" for="animation-speed">Animation Speed</label>
+                <div class="slider-container">
+                    <span class="slider-label">Slow</span>
+                    <input type="range" id="animation-speed" min="1" max="10" value="5" step="1">
+                    <span class="slider-label">Fast</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Settings persistence functions
+        function getSavedSettings() {
+            const saved = localStorage.getItem('rainPredictor_settings');
+            if (saved) {
+                try {
+                    return JSON.parse(saved);
+                } catch (e) {
+                    console.error('Error parsing saved settings:', e);
+                }
+            }
+            return {
+                colorScheme: 2,
+                mapStyle: 'light',
+                zoomLevel: 10,
+                animationSpeedLevel: 5
+            };
+        }
+
+        function saveSettings() {
+            localStorage.setItem('rainPredictor_settings', JSON.stringify(currentSettings));
+        }
+
+        // Load saved settings
+        let currentSettings = getSavedSettings();
+
+        let currentLocation = {
+            latitude: parseFloat(document.body.dataset.latitude) || -27.4698,
+            longitude: parseFloat(document.body.dataset.longitude) || 153.0251
+        };
+
+        let map;
+        let radarLayers = [];
+        let animationPosition = 0;
+        let animating = true;
+        let animationTimer;
+        let radarData = [];
+        let currentColorScheme = currentSettings.colorScheme;
+        let baseLayer;
+        let locationMarker;
+        let manualMode = false;
+        
+        // Tracking markers and data
+        let trackerMarkers = {};
+        let trackerPositions = [];
+        let cellData = {
+            manual: null,
+            auto: null
+        };
+        
+        // Time tracking for frame interpolation
+        let frameTimestamps = [];
+        let timePerFrame = 300; // 5 minutes per frame typical for weather radar
+        
+        let radarAnimationSpeed = Math.round(1000 / currentSettings.animationSpeedLevel);
+
+        // API URLs
+        const baseUrl = window.location.origin + window.location.pathname.replace(/\/$/, '');
+        const apiDataUrl = `${baseUrl}/api/data`;
+        const apiSetLocationUrl = `${baseUrl}/api/set_location`;
+        const apiManualSelectionUrl = `${baseUrl}/api/manual_selection`;
+
+        function formatTimeToRain(minutes) {
+            if (minutes <= 0) return 'NOW';
+            if (minutes < 60) return `${Math.round(minutes)} min`;
+            
+            const hours = Math.floor(minutes / 60);
+            const remainingMinutes = Math.round(minutes % 60);
+            
+            if (remainingMinutes === 0) {
+                return `${hours}h`;
+            } else if (hours >= 24) {
+                const days = Math.floor(hours / 24);
+                const remainingHours = hours % 24;
+                return remainingHours === 0 ? `${days}d` : `${days}d ${remainingHours}h`;
+            } else {
+                return `${hours}h ${remainingMinutes}m`;
+            }
+        }
+
+        function initializeMap() {
+            console.log('Initializing map...');
+            
+            map = L.map('map', {
+                center: [currentLocation.latitude, currentLocation.longitude],
+                zoom: currentSettings.zoomLevel,
+                zoomControl: true,
+                attributionControl: false
+            });
+
+            createBaseLayerForStyle(currentSettings.mapStyle);
+
+            L.control.scale({
+                position: 'bottomleft',
+                metric: true,
+                imperial: false,
+                maxWidth: 150
+            }).addTo(map);
+
+            map.on('zoomend', function() {
+                currentSettings.zoomLevel = map.getZoom();
+                saveSettings();
+            });
+
+            const locationIcon = L.divIcon({
+                className: 'location-marker',
+                iconSize: [20, 20],
+                iconAnchor: [10, 10]
+            });
+
+            locationMarker = L.marker([currentLocation.latitude, currentLocation.longitude], { 
+                icon: locationIcon,
+                draggable: true
+            })
+            .addTo(map)
+            .bindPopup('Your Location (Drag to move)')
+            .openPopup();
+
+            locationMarker.on('dragstart', function() {
+                document.getElementById('save-location-btn').style.display = 'block';
+            });
+
+            locationMarker.on('dragend', function() {
+                const newPos = locationMarker.getLatLng();
+                currentLocation.latitude = newPos.lat;
+                currentLocation.longitude = newPos.lng;
+                console.log('Marker moved to:', newPos.lat, newPos.lng);
+            });
+
+            console.log('Map initialized successfully');
+            loadRadarData();
+        }
+
+        function createBaseLayerForStyle(style) {
+            switch(style) {
+                case 'light':
+                    baseLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                        attribution: '© OpenStreetMap contributors, © CARTO',
+                        subdomains: 'abcd',
+                        maxZoom: 20
+                    });
+                    break;
+                case 'standard':
+                    baseLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors',
+                        maxZoom: 20
+                    });
+                    break;
+                case 'satellite':
+                    baseLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                        attribution: '© Esri, © OpenStreetMap contributors',
+                        maxZoom: 20
+                    });
+                    break;
+                case 'terrain':
+                    baseLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenTopoMap, © OpenStreetMap contributors',
+                        maxZoom: 20
+                    });
+                    break;
+                default:
+                    baseLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                        attribution: '© OpenStreetMap contributors, © CARTO',
+                        subdomains: 'abcd',
+                        maxZoom: 20
+                    });
+            }
+            
+            baseLayer.addTo(map);
+        }
+
+        async function loadRadarData() {
+            try {
+                console.log('Loading radar data...');
+                const response = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+                const data = await response.json();
+                
+                radarData = data.radar.past;
+                console.log(`Loaded ${radarData.length} radar frames`);
+                
+                // Store frame timestamps for interpolation
+                frameTimestamps = radarData.map(frame => frame.time);
+                
+                // Calculate actual time between frames
+                if (frameTimestamps.length > 1) {
+                    timePerFrame = (frameTimestamps[frameTimestamps.length - 1] - frameTimestamps[0]) / (frameTimestamps.length - 1);
+                }
+                
+                radarLayers.forEach(function(layer) {
+                    if (map.hasLayer(layer)) {
+                        map.removeLayer(layer);
+                    }
+                });
+                radarLayers = [];
+                
+                radarData.forEach(function(frame, index) {
+                    const radarLayer = L.tileLayer(`https://tilecache.rainviewer.com/v2/radar/${frame.time}/256/{z}/{x}/{y}/${currentColorScheme}/1_1.png`, {
+                        tileSize: 256,
+                        opacity: index === 0 ? 0.6 : 0,
+                        transparent: true,
+                        fadeAnimation: false,
+                        zoomAnimation: false
+                    });
+                    
+                    radarLayer.addTo(map);
+                    radarLayers.push(radarLayer);
+                });
+
+                animationPosition = 0;
+                updateTimeDisplay();
+                startAnimation();
+                
+                // Initialize tracker positions for each frame
+                initializeTrackerPositions();
+                
+            } catch (error) {
+                console.error('Error loading radar data:', error);
+                const timeDisplay = document.getElementById('time-display');
+                const timeMini = document.getElementById('time-display-mini');
+                if (timeDisplay) timeDisplay.textContent = 'Error loading radar';
+                if (timeMini) timeMini.textContent = 'Error';
+            }
+        }
+
+        function initializeTrackerPositions() {
+            trackerPositions = [];
+            const activeCell = manualMode ? cellData.manual : cellData.auto;
+            
+            if (!activeCell || !activeCell.center || !radarData || radarData.length === 0) return;
+
+            // Calculate positions for each frame based on movement
+            for (let i = 0; i < radarData.length; i++) {
+                const timeDiff = i * (timePerFrame / 3600); // Hours difference
+                const distance = activeCell.speed * timeDiff; // km traveled
+                
+                // Convert to lat/lng offset
+                const theta = activeCell.direction * Math.PI / 180; // 0°=N, 90°=E
+                const latOffset = (distance * Math.cos(theta)) / 111;
+                const lngOffset = (distance * Math.sin(theta)) / (111 * Math.cos(activeCell.center.lat * Math.PI / 180));
+
+                trackerPositions.push({
+                    lat: activeCell.center.lat + latOffset,
+                    lng: activeCell.center.lng + lngOffset
+                });
+            }
+        }
+
+        function startAnimation() {
+            if (animationTimer) clearInterval(animationTimer);
+            
+            animationTimer = setInterval(function() {
+                if (animating && radarLayers.length > 0) {
+                    // Hide current frame
+                    radarLayers[animationPosition].setOpacity(0);
+                    
+                    // Move to next frame
+                    animationPosition = (animationPosition + 1) % radarLayers.length;
+                    
+                    // Show next frame
+                    radarLayers[animationPosition].setOpacity(0.6);
+                    
+                    // Update tracker position synchronized with frame
+                    updateTrackerForFrame(animationPosition);
+                    
+                    updateTimeDisplay();
+                }
+            }, radarAnimationSpeed);
+        }
+
+        function updateTrackerForFrame(frameIndex) {
+            const activeMode = manualMode ? 'manual' : 'auto';
+            const activeCell = cellData[activeMode];
+            if (!activeCell || !activeCell.center) return;
+
+            // If radar frames/timestamps are not ready, just pin at center
+            if (!frameTimestamps || frameTimestamps.length === 0 || frameIndex >= frameTimestamps.length) {
+                updateTracker(activeCell.center.lat, activeCell.center.lng, activeMode);
+                return;
+            }
+
+            const frameTime = frameTimestamps[frameIndex];
+            const startTime = frameTimestamps[0];
+            const timeDiffSeconds = frameTime - startTime;
+            const timeDiffHours = timeDiffSeconds / 3600;
+
+            const distance = activeCell.speed * timeDiffHours; // km
+
+            const theta = activeCell.direction * Math.PI / 180; // 0°=N, 90°=E
+            const latOffset = (distance * Math.cos(theta)) / 111;
+            const lngOffset = (distance * Math.sin(theta)) / (111 * Math.cos(activeCell.center.lat * Math.PI / 180));
+
+            const newLat = activeCell.center.lat + latOffset;
+            const newLng = activeCell.center.lng + lngOffset;
+
+            if (Number.isFinite(newLat) && Number.isFinite(newLng)) {
+                updateTracker(newLat, newLng, activeMode);
+            } else {
+                // Fallback to center if anything is off
+                updateTracker(activeCell.center.lat, activeCell.center.lng, activeMode);
+            }
+        }
+
+        function createTracker(mode) {
+            console.log(`Creating tracker for mode: ${mode}`);
+            if (!cellData[mode] || !cellData[mode].center) {
+                console.log(`No cell data for mode: ${mode}`);
+                return;
+            }
+
+            const lat = cellData[mode].center.lat;
+            const lng = cellData[mode].center.lng;
+            console.log(`Tracker coordinates: lat=${lat}, lng=${lng}`);
+
+            if (isNaN(lat) || isNaN(lng)) {
+                console.error('Invalid tracker coordinates');
+                return;
+            }
+
+            const color = mode === 'manual' ? '#e53e3e' : '#00FF00';
+            const trackerKey = mode + 'Tracker';
+
+            // Remove old tracker if exists
+            removeTracker(mode);
+
+            // Create a circle to highlight the tracked cell
+            console.log('Creating circle...');
+            const circle = L.circle([lat, lng], {
+                radius: 5000, // 5km radius
+                color: '#00FF00', // Lime green border
+                weight: 1,
+                fillColor: '#008000', // Dark green fill
+                fillOpacity: 0.8,
+                zIndex: 10000 // Ensure it's on top
+            }).addTo(map);
+            console.log('Circle added to map');
+
+            trackerMarkers[trackerKey] = circle;
+            console.log('Tracker markers object:', trackerMarkers);
+
+            // Add pulse effect
+            const pulseCircle = L.circle([lat, lng], {
+                radius: 1000,
+                color: color,
+                fillColor: color,
+                fillOpacity: 0.2,
+                weight: 2,
+                className: 'tracker-pulse'
+            }).addTo(map);
+
+            trackerMarkers[trackerKey + 'Pulse'] = pulseCircle;
+
+            // Add direction arrow
+            const arrow = createTrackerArrow(lat, lng, cellData[mode]);
+            if (arrow) {
+                trackerMarkers[trackerKey + 'Arrow'] = arrow;
+            }
+
+            // Add prediction line
+            const predictionPath = calculatePredictionPath(lat, lng, cellData[mode]);
+            const predictionLine = L.polyline(predictionPath, {
+                color: color,
+                weight: 3,
+                opacity: 0.7,
+                dashArray: '5, 10'
+            }).addTo(map);
+            trackerMarkers[trackerKey + 'PredictionLine'] = predictionLine;
+
+            // Add label for manual mode
+            if (mode === 'manual') {
+                trackerMarkers[trackerKey].bindTooltip('Manual Point', {
+                    permanent: false,
+                    direction: 'top',
+                    offset: [0, -20]
+                });
+            }
+        }
+
+        function updatePredictionLine(mode) {
+            const color = mode === 'manual' ? '#e53e3e' : '#48bb78';
+            const trackerKey = mode + 'Tracker';
+            const lat = cellData[mode].center.lat;
+            const lng = cellData[mode].center.lng;
+
+            // Remove old prediction line if exists
+            if (trackerMarkers[trackerKey + 'PredictionLine']) {
+                map.removeLayer(trackerMarkers[trackerKey + 'PredictionLine']);
+                delete trackerMarkers[trackerKey + 'PredictionLine'];
+            }
+
+            // Add new prediction line
+            const predictionPath = calculatePredictionPath(lat, lng, cellData[mode]);
+            const predictionLine = L.polyline(predictionPath, {
+                color: color,
+                weight: 3,
+                opacity: 0.7,
+                dashArray: '5, 10'
+            }).addTo(map);
+            trackerMarkers[trackerKey + 'PredictionLine'] = predictionLine;
+        }
+
+        function createTrackerArrow(lat, lng, cellInfo) {
+            if (!cellInfo || !cellInfo.direction) return null;
+            
+            const arrowLength = 0.01; // Length of arrow in degrees
+            const theta = cellInfo.direction * Math.PI / 180; // 0°=N, 90°=E
+            const endLat = lat + Math.cos(theta) * arrowLength;
+            const endLng = lng + Math.sin(theta) * arrowLength;
+
+            const arrow = L.polyline([[lat, lng], [endLat, endLng]], {
+                color: '#ffffff',
+                weight: 3,
+                opacity: 0.8
+            }).addTo(map);
+            
+            return arrow;
+        }
+
+        function updateTrackerArrow(arrow, lat, lng, cellInfo) {
+            if (!arrow || !cellInfo || !cellInfo.direction) return;
+            
+            const arrowLength = 0.01;
+            const theta = cellInfo.direction * Math.PI / 180; // 0°=N, 90°=E
+            const endLat = lat + Math.cos(theta) * arrowLength;
+            const endLng = lng + Math.sin(theta) * arrowLength;
+
+            arrow.setLatLngs([[lat, lng], [endLat, endLng]]);
+        }
+
+        function removeTracker(mode) {
+            const trackerKey = mode + 'Tracker';
+            
+            ['', 'Pulse', 'Arrow', 'PredictionLine'].forEach(suffix => {
+                const key = trackerKey + suffix;
+                if (trackerMarkers[key]) {
+                    map.removeLayer(trackerMarkers[key]);
+                    delete trackerMarkers[key];
+                }
+            });
+        }
+
+        function toggleAnimation() {
+            animating = !animating;
+            const btn = document.getElementById('play-pause-btn');
+            btn.textContent = animating ? '⏸️' : '▶️';
+            btn.classList.toggle('active', animating);
+            
+            if (animating && !animationTimer) {
+                startAnimation();
+            }
+        }
+
+        function updateTimeDisplay() {
+            if (radarData && radarData[animationPosition]) {
+                const time = new Date(radarData[animationPosition].time * 1000);
+                const now = new Date();
+                const diffMinutes = Math.round((now - time) / 60000);
+                
+                let timeText = diffMinutes === 0 ? 'Now' : `-${diffMinutes}m`;
+                
+                const timeDisplay = document.getElementById('time-display');
+                const timeMini = document.getElementById('time-display-mini');
+                
+                if (timeDisplay) timeDisplay.textContent = timeText;
+                if (timeMini) timeMini.textContent = timeText;
+            }
+        }
+
+        function changeColorScheme(colorScheme) {
+            if (!map || radarLayers.length === 0) return;
+            
+            currentColorScheme = colorScheme;
+            currentSettings.colorScheme = colorScheme;
+            saveSettings();
+            
+            radarLayers.forEach(function(layer) {
+                map.removeLayer(layer);
+            });
+            radarLayers = [];
+            
+            radarData.forEach(function(frame, index) {
+                const radarLayer = L.tileLayer(`https://tilecache.rainviewer.com/v2/radar/${frame.time}/256/{z}/{x}/{y}/${colorScheme}/1_1.png`, {
+                    tileSize: 256,
+                    opacity: index === animationPosition ? 0.6 : 0,
+                    transparent: true,
+                    fadeAnimation: false,
+                    zoomAnimation: false
+                });
+                
+                radarLayer.addTo(map);
+                radarLayers.push(radarLayer);
+            });
+        }
+
+        function changeMapStyle(style) {
+            if (!map) return;
+            
+            const currentRadarOpacities = radarLayers.map(layer => layer.options.opacity);
+            const wasAnimating = animating;
+            
+            if (baseLayer) {
+                map.removeLayer(baseLayer);
+            }
+            
+            createBaseLayerForStyle(style);
+            currentSettings.mapStyle = style;
+            saveSettings();
+            
+            radarLayers.forEach((layer, index) => {
+                if (map.hasLayer(layer)) {
+                    map.removeLayer(layer);
+                    layer.addTo(map);
+                    layer.setOpacity(currentRadarOpacities[index] || 0);
+                }
+            });
+            
+            if (wasAnimating) {
+                startAnimation();
+            }
+        }
+
+        function degreesToCardinal(degrees) {
+            if (degrees === null || degrees === undefined || degrees === 'N/A' || degrees < 0) {
+                return '--';
+            }
+            
+            const normalizedDegrees = ((parseFloat(degrees) % 360) + 360) % 360;
+            
+            const directions = [
+                { name: 'N', min: 348.75, max: 360 },
+                { name: 'N', min: 0, max: 11.25 },
+                { name: 'NNE', min: 11.25, max: 33.75 },
+                { name: 'NE', min: 33.75, max: 56.25 },
+                { name: 'ENE', min: 56.25, max: 78.75 },
+                { name: 'E', min: 78.75, max: 101.25 },
+                { name: 'ESE', min: 101.25, max: 123.75 },
+                { name: 'SE', min: 123.75, max: 146.25 },
+                { name: 'SSE', min: 146.25, max: 168.75 },
+                { name: 'S', min: 168.75, max: 191.25 },
+                { name: 'SSW', min: 191.25, max: 213.75 },
+                { name: 'SW', min: 213.75, max: 236.25 },
+                { name: 'WSW', min: 236.25, max: 258.75 },
+                { name: 'W', min: 258.75, max: 281.25 },
+                { name: 'WNW', min: 281.25, max: 303.75 },
+                { name: 'NW', min: 303.75, max: 326.25 },
+                { name: 'NNW', min: 326.25, max: 348.75 }
+            ];
+            
+            for (let direction of directions) {
+                if (normalizedDegrees >= direction.min && normalizedDegrees < direction.max) {
+                    return `${direction.name} (${Math.round(normalizedDegrees)}°)`;
+                }
+            }
+            
+            return `N (${Math.round(normalizedDegrees)}°)`;
+        }
+
+        function toggleControls() {
+            const controls = document.getElementById('animation-controls');
+            controls.classList.toggle('collapsed');
+            controls.classList.toggle('expanded');
+        }
+
+        function collapseControls() {
+            const controls = document.getElementById('animation-controls');
+            controls.classList.add('collapsed');
+            controls.classList.remove('expanded');
+        }
+
+        function toggleManualMode() {
+            manualMode = !manualMode;
+            const btn = document.getElementById('manual-mode-btn');
+            const indicator = document.getElementById('mode-indicator');
+            
+            if (manualMode) {
+                btn.textContent = 'Exit Manual';
+                btn.classList.add('active');
+                indicator.classList.add('manual-mode');
+                indicator.style.display = 'block';
+                indicator.textContent = 'Click on the map to track a point';
+                
+                // Remove auto tracker
+                removeTracker('auto');
+                
+                // Show instruction overlay
+                const instruction = document.createElement('div');
+                instruction.className = 'click-instruction';
+                instruction.textContent = 'Click anywhere on the map to track a point';
+                document.body.appendChild(instruction);
+                setTimeout(() => instruction.remove(), 3000);
+                
+                enableClickSelection();
+            } else {
+                btn.textContent = 'Manual Select';
+                btn.classList.remove('active');
+                indicator.classList.remove('manual-mode');
+                indicator.style.display = 'none';
+                
+                // Remove manual tracker
+                removeTracker('manual');
+                cellData.manual = null;
+                
+                disableClickSelection();
+                
+                // Restore automatic tracking
+                fetchAndUpdateData();
+            }
+        }
+
+        function enableClickSelection() {
+            map.on('click', handleManualClick);
+            map.getContainer().style.cursor = 'crosshair';
+        }
+
+        function disableClickSelection() {
+            map.off('click', handleManualClick);
+            map.getContainer().style.cursor = '';
+        }
+
+        async function handleManualClick(e) {
+            if (!manualMode) return;
+
+            const clickLat = e.latlng.lat;
+            const clickLng = e.latlng.lng;
+            const indicator = document.getElementById('mode-indicator');
+
+            // Visual click blip
+            const clickMarker = L.circleMarker([clickLat, clickLng], {
+                radius: 5,
+                fillColor: '#ff0000',
+                fillOpacity: 0.8,
+                color: 'white',
+                weight: 2
+            }).addTo(map);
+            setTimeout(() => map.removeLayer(clickMarker), 500);
+
+            // Check if we have data for average speed/direction from the auto-tracked cell.
+            // This data is populated by the regular fetchAndUpdateData calls in auto mode.
+            if (!cellData.auto || typeof cellData.auto.speed !== 'number' || typeof cellData.auto.direction !== 'number') {
+                console.error('Cannot perform manual track: auto-tracking data (speed/direction) is not available.');
+                indicator.textContent = 'No storm data available. Exit and wait for auto-track.';
+                
+                // We can't proceed, so we just show a message. The user can click again or exit manual mode.
+                return;
+            }
+
+            indicator.textContent = 'Calculating track...';
+
+            // Use the clicked location as the center, and the auto-tracked cell's speed and direction.
+            cellData.manual = {
+                center: { lat: clickLat, lng: clickLng },
+                speed: cellData.auto.speed,
+                direction: cellData.auto.direction,
+                intensity: null // Not relevant for this type of manual tracking
+            };
+
+            // Update tracker positions synchronized with radar frames
+            initializeTrackerPositions();
+            updateTrackerForFrame(animationPosition);
+            updateDataDisplay(cellData.manual);
+
+            indicator.textContent = 'Tracking selected point';
+        }
+
+        async function saveLocation() {
+            if (!locationMarker) return;
+
+            const newPos = locationMarker.getLatLng();
+            const saveBtn = document.getElementById('save-location-btn');
+            
+            saveBtn.textContent = 'Saving...';
+            saveBtn.disabled = true;
+
+            try {
+                const response = await fetch(apiSetLocationUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ latitude: newPos.lat, longitude: newPos.lng })
+                });
+
+                if (response.ok) {
+                    saveBtn.textContent = 'Saved!';
+                    saveBtn.style.background = '#48bb78';
+                    
+                    setTimeout(() => {
+                        saveBtn.style.display = 'none';
+                        saveBtn.textContent = 'Save Location';
+                        saveBtn.style.background = '#48bb78';
+                        saveBtn.disabled = false;
+                    }, 2000);
+
+                    locationMarker.bindPopup(`Location Updated<br>Lat: ${newPos.lat.toFixed(6)}<br>Lng: ${newPos.lng.toFixed(6)}`).openPopup();
+                    fetchAndUpdateData();
+                } else {
+                    throw new Error('Failed to save location');
+                }
+            } catch (error) {
+                console.error('Error saving location:', error);
+                saveBtn.textContent = 'Error';
+                saveBtn.disabled = false;
+            }
+        }
+
+        function calculatePredictionPath(startLat, startLng, cellInfo, durationMinutes = 60, steps = 4) {
+            if (!cellInfo || typeof cellInfo.speed !== 'number' || typeof cellInfo.direction !== 'number' || cellInfo.speed <= 0) {
+                return [];
+            }
+
+            const path = [L.latLng(startLat, startLng)];
+            const theta = cellInfo.direction * Math.PI / 180; // Radians from North, 0°=N, 90°=E
+
+            for (let i = 1; i <= steps; i++) {
+                const minutes = (durationMinutes / steps) * i;
+                const timeDiffHours = minutes / 60;
+                const distance = cellInfo.speed * timeDiffHours; // km
+
+                const latOffset = (distance * Math.cos(theta)) / 111;
+                const lngOffset = (distance * Math.sin(theta)) / (111 * Math.cos(startLat * Math.PI / 180));
+
+                const futureLat = startLat + latOffset;
+                const futureLng = startLng + lngOffset;
+                
+                if (Number.isFinite(futureLat) && Number.isFinite(futureLng)) {
+                    path.push(L.latLng(futureLat, futureLng));
+                }
+            }
+            return path;
+        }
+
+        function calculateBearing(from, to) {
+            const lat1 = from.lat * Math.PI / 180;
+            const lat2 = to.lat * Math.PI / 180;
+            const deltaLng = (to.lng - from.lng) * Math.PI / 180;
+            
+            const x = Math.sin(deltaLng) * Math.cos(lat2);
+            const y = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(deltaLng);
+            
+            const bearing = Math.atan2(x, y) * 180 / Math.PI;
+            return (bearing + 360) % 360;
+        }
+
+        function updateDataDisplay(data) {
+            const timeElement = document.getElementById('time-to-rain');
+            if (data) {
+                const timeToRain = parseFloat(data.time_to_rain);
+                const distance = parseFloat(data.distance);
+                const speed = parseFloat(data.speed);
+                const direction = parseFloat(data.direction);
+                const bearing = parseFloat(data.bearing);
+
+                const formattedTime = (timeToRain === 999) ? '--' : formatTimeToRain(timeToRain);
+                timeElement.classList.toggle('now', formattedTime === 'NOW');
+                timeElement.innerText = formattedTime;
+
+                document.getElementById('distance').innerText = (distance === 999) ? '--' : `${distance.toFixed(1)} km`;
+                document.getElementById('speed').innerText = (speed === 0) ? '--' : `${speed.toFixed(1)} kph`;
+                document.getElementById('direction').innerText = (direction === -1) ? '--' : degreesToCardinal(direction);
+                document.getElementById('bearing').innerText = (bearing === -1) ? '--' : degreesToCardinal(bearing);
+            } else {
+                timeElement.classList.remove('now');
+                timeElement.innerText = '--';
+                document.getElementById('distance').innerText = '--';
+                document.getElementById('speed').innerText = '--';
+                document.getElementById('direction').innerText = '--';
+                document.getElementById('bearing').innerText = '--';
+            }
+        }
+
+        async function fetchAndUpdateData() {
+            if (manualMode) return;
+            
+            try {
+                const response = await fetch(apiDataUrl);
+                if (response.ok) {
+                    const data = await response.json();
+                    cellData.auto = {
+                        ...data,
+                        center: { lat: parseFloat(data.latitude), lng: parseFloat(data.longitude) }
+                    };
+                    
+                    // Create/Update auto tracker marker and prediction line
+                    createTracker('auto');
+                    updatePredictionLine('auto');
+                    
+                    updateDataDisplay(data);
+                } else {
+                    console.error(`API request failed: ${response.status}`);
+                    // Use simulated data for demo
+                    const simData = {
+                        time_to_rain: (Math.random() * 60).toFixed(0),
+                        distance: (Math.random() * 100).toFixed(1),
+                        speed: (Math.random() * 100).toFixed(1),
+                        direction: (Math.random() * 360).toFixed(1),
+                        bearing: (Math.random() * 360).toFixed(1),
+                        latitude: currentLocation.latitude + (Math.random() - 0.5) * 0.5,
+                        longitude: currentLocation.longitude + (Math.random() - 0.5) * 0.5
+                    };
+                    cellData.auto = {
+                        ...simData,
+                        center: { lat: simData.latitude, lng: simData.longitude }
+                    };
+                    createTracker('auto');
+                    updatePredictionLine('auto');
+                    updateDataDisplay(simData);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                // Use simulated data for demo
+                const simData = {
+                    time_to_rain: (Math.random() * 60).toFixed(0),
+                    distance: (Math.random() * 100).toFixed(1),
+                    speed: (Math.random() * 100).toFixed(1),
+                    direction: (Math.random() * 360).toFixed(1),
+                    bearing: (Math.random() * 360).toFixed(1),
+                    latitude: currentLocation.latitude + (Math.random() - 0.5) * 0.5,
+                    longitude: currentLocation.longitude + (Math.random() - 0.5) * 0.5
+                };
+                cellData.auto = {
+                    ...simData,
+                    center: { lat: simData.latitude, lng: simData.longitude }
+                };
+                createTracker('auto');
+                updatePredictionLine('auto');
+                updateDataDisplay(simData);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeMap();
+            fetchAndUpdateData();
+            setInterval(() => {
+                if (!manualMode) {
+                    fetchAndUpdateData();
+                }
+            }, 5000);
+            
+            const controlsPanel = document.getElementById('animation-controls');
+            const controlsHeader = controlsPanel.querySelector('.controls-header');
+            const closeBtn = document.getElementById('close-controls');
+            
+            controlsHeader.addEventListener('click', function(e) {
+                if (controlsPanel.classList.contains('collapsed')) {
+                    e.stopPropagation();
+                    toggleControls();
+                }
+            });
+            
+            closeBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                collapseControls();
+            });
+            
+            const controlsContent = controlsPanel.querySelector('.controls-content');
+            controlsContent.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+            
+            document.addEventListener('click', function(e) {
+                if (!controlsPanel.contains(e.target) && controlsPanel.classList.contains('expanded')) {
+                    collapseControls();
+                }
+            });
+
+            document.getElementById('play-pause-btn').addEventListener('click', toggleAnimation);
+            document.getElementById('save-location-btn').addEventListener('click', saveLocation);
+            document.getElementById('manual-mode-btn').addEventListener('click', toggleManualMode);
+
+            const colorSchemeSelect = document.getElementById('color-scheme');
+            colorSchemeSelect.value = String(currentSettings.colorScheme);
+            colorSchemeSelect.addEventListener('change', function() {
+                changeColorScheme(parseInt(this.value));
+            });
+
+            const mapStyleSelect = document.getElementById('map-style');
+            mapStyleSelect.value = currentSettings.mapStyle;
+            mapStyleSelect.addEventListener('change', function() {
+                changeMapStyle(this.value);
+            });
+
+            const animationSpeedSlider = document.getElementById('animation-speed');
+            if (animationSpeedSlider) {
+                animationSpeedSlider.value = currentSettings.animationSpeedLevel;
+                animationSpeedSlider.addEventListener('input', function() {
+                    currentSettings.animationSpeedLevel = parseInt(this.value);
+                    radarAnimationSpeed = Math.round(1000 / currentSettings.animationSpeedLevel);
+                    saveSettings();
+                    if (animating) {
+                        clearInterval(animationTimer);
+                        startAnimation();
+                    }
+                });
+            }
+            
+            setInterval(function() {
+                radarLayers.forEach(function(layer) {
+                    if (map.hasLayer(layer)) {
+                        map.removeLayer(layer);
+                    }
+                });
+                radarLayers = [];
+                loadRadarData();
+            }, 600000);
+        });
+    </script>
+</body>
+</html>
