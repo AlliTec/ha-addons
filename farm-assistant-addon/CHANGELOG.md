@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.2 - 2025-11-06
+## 0.2.3 - 2025-11-06
+
+### Fixed
+
+- Resolved Docker build failure by adding the `--break-system-packages` flag to the `pip3 install` command.
 
 ### Fixed
 
