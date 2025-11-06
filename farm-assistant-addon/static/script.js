@@ -167,4 +167,4 @@ document.addEventListener("DOMContentLoaded", () => {
             cancelBtn.classList.add("delete-btn");
         }
     });
-}
+});
