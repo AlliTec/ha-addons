@@ -70,8 +70,8 @@ async def startup_event():
     if not await check_connection():
         logging.error("Database connection failed. The application will not work correctly.")
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="/app/static"), name="static")
+templates = Jinja2Templates(directory="/app/templates")
 
 # --- Pydantic Models ---
 

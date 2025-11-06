@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.5.0 - 2025-11-06
+## 0.5.1 - 2025-11-06
+
+### Fixed
+
+- Fixed static and templates directory paths to use absolute paths.
 
 ### Changed
 
