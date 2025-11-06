@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.4 - 2025-11-07
+
+### Changed
+
+- The `dod` field is now automatically cleared if the animal's status is not 'Deceased'.
+
 ## 0.9.3 - 2025-11-07
 
 ### Fixed

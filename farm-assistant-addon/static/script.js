@@ -276,6 +276,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const damId = parseInt(animalData.dam_id);
             const sireId = parseInt(animalData.sire_id);
+
+            if (animalData.status !== "Deceased") {
+                animalData.dod = null;
+            }
+
             const pydanticFields = {
                 "tag_id": animalData.tag_id,
                 "name": animalData.name,
