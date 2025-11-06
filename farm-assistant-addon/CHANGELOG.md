@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.4.0 - 2025-11-06
+## 0.4.1 - 2025-11-06
+
+### Fixed
+
+- Added a file listing command to `run.sh` to debug the `Could not import module "main"` error.
 
 ### Changed
 
