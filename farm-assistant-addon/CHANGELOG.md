@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.4.4 - 2025-11-06
+## 0.4.5 - 2025-11-06
+
+### Fixed
+
+- Implemented a robust debugging `run.sh` script to diagnose the persistent startup error.
 
 ### Fixed
 
