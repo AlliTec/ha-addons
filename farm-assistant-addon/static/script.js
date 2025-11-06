@@ -54,18 +54,37 @@ document.addEventListener("DOMContentLoaded", () => {
         if (event.target.classList.contains("save-add-btn")) {
             const row = event.target.closest("tr");
             const cells = row.querySelectorAll("td");
-            const animal = {};
-            const fields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "created_at", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
+            const animalData = {};
+            const allFields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "created_at", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
             cells.forEach((cell, index) => {
                 if (index < cells.length - 1) {
                     const input = cell.querySelector("input");
-                    animal[fields[index]] = input ? input.value : "";
+                    animalData[allFields[index]] = input ? input.value : "";
                 }
             });
+
+            const damId = parseInt(animalData.dam_id);
+            const sireId = parseInt(animalData.sire_id);
+            const pydanticFields = {
+                "tag_id": animalData.tag_id,
+                "name": animalData.name,
+                "gender": animalData.gender,
+                "breed": animalData.breed,
+                "birth_date": animalData.birth_date,
+                "health_status": animalData.health_status,
+                "notes": animalData.notes,
+                "dam_id": isNaN(damId) ? null : damId,
+                "sire_id": isNaN(sireId) ? null : sireId,
+                "features": animalData.features,
+                "photo_path": animalData.photo_path,
+                "pic": animalData.pic,
+                "dod": animalData.dod
+            };
+
             const response = await fetch("add_animal", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(animal)
+                body: JSON.stringify(pydanticFields)
             });
             if (response.ok) {
                 alert("Animal added successfully!");
@@ -140,19 +159,38 @@ document.addEventListener("DOMContentLoaded", () => {
             const row = event.target.closest("tr");
             const cells = row.querySelectorAll("td");
             const animalId = event.target.dataset.id;
-            const animal = {};
-            const fields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "created_at", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
+            const animalData = {};
+            const allFields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "created_at", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
             cells.forEach((cell, index) => {
                 if (index < cells.length - 1) {
                     const input = cell.querySelector("input");
-                    animal[fields[index]] = input.value;
+                    animalData[allFields[index]] = input.value;
                     cell.textContent = input.value;
                 }
             });
+
+            const damId = parseInt(animalData.dam_id);
+            const sireId = parseInt(animalData.sire_id);
+            const pydanticFields = {
+                "tag_id": animalData.tag_id,
+                "name": animalData.name,
+                "gender": animalData.gender,
+                "breed": animalData.breed,
+                "birth_date": animalData.birth_date,
+                "health_status": animalData.health_status,
+                "notes": animalData.notes,
+                "dam_id": isNaN(damId) ? null : damId,
+                "sire_id": isNaN(sireId) ? null : sireId,
+                "features": animalData.features,
+                "photo_path": animalData.photo_path,
+                "pic": animalData.pic,
+                "dod": animalData.dod
+            };
+
             const response = await fetch(`update_animal/${animalId}`, {
                 method: "PUT",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify(animal)
+                body: JSON.stringify(pydanticFields)
             });
             if (response.ok) {
                 alert("Animal updated successfully!");

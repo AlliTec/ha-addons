@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.8 - 2025-11-06
+
+### Fixed
+
+- Corrected the data format for add/update operations to prevent `422 Unprocessable Content` errors.
+
 ## 0.7.7 - 2025-11-06
 
 ### Fixed
