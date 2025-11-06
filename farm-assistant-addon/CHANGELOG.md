@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.9 - 2025-11-06
+
+### Added
+
+- Added import_data.py script to populate the database from data.csv.
+
 ## 0.5.8 - 2025-11-06
 
 ### Changed
