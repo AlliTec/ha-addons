@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function populateAnimalList() {
-    const animalListBody = document.querySelector("#animal-list tbody");
+    const animalListBody = document.querySelector("#livestock-list tbody");
     animalListBody.innerHTML = "";
 
     const response = await fetch("/get_animals");

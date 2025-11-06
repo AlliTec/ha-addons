@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.7 - 2025-11-06
+
+### Changed
+
+- Renamed "Animal List" to "Livestock List" for better terminology.
+
 ## 0.5.6 - 2025-11-06
 
 ### Added
