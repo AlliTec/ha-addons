@@ -1,7 +1,7 @@
 console.log("script.js: File loaded.");
 
 async function populateAnimalList() {
-    const response = await fetch("/get_animals");
+    const response = await fetch("get_animals");
     const animals = await response.json();
     const tableBody = document.querySelector("#livestock-list tbody");
     tableBody.innerHTML = ""; // Clear existing rows
