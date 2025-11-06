@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farm Assistant</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
     <h1>Farm Assistant</h1>
     <h2>Add Animal</h2>
     <form id="add-animal-form">
+        <input type="hidden" id="animal-id" name="id">
         <label for="animal-type">Animal Type:</label>
         <select id="animal-type" name="animal_type">
             <option value="Cattle">Cattle</option>
@@ -55,6 +56,6 @@
         </tbody>
     </table>
 
-    <script src="/static/script.js"></script>
+    <script src="static/script.js"></script>
 </body>
 </html>

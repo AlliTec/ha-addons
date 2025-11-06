@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.5 - 2025-11-06
+
+### Fixed
+
+- Changed static file links to relative paths for proper loading with Home Assistant ingress.
+
 ## 0.5.4 - 2025-11-06
 
 ### Fixed
