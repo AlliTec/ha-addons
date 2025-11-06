@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.2 - 2025-11-06
+
+### Fixed
+
+- Implemented a more robust method for inline editing to fix non-editable cells.
+
 ## 0.7.1 - 2025-11-06
 
 ### Fixed

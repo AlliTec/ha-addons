@@ -97,18 +97,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             row.originalValues = [];
             cells.forEach((cell, index) => {
-                console.log(`script.js: Processing cell ${index}:`, cell);
                 if (index < cells.length - 1) { // not actions
-                    console.log(`script.js: Cell ${index} is an editable cell.`);
-                    row.originalValues.push(cell.textContent);
+                    const currentValue = cell.textContent.trim();
+                    row.originalValues.push(currentValue);
                     const input = document.createElement("input");
                     input.type = "text";
-                    input.value = cell.textContent;
-                    cell.innerHTML = "";
-                    cell.appendChild(input);
-                    console.log(`script.js: Appended input to cell ${index}.`);
-                } else {
-                    console.log(`script.js: Cell ${index} is the action cell, skipping.`);
+                    input.value = currentValue;
+                    input.classList.add("inline-edit-input");
+                    cell.replaceChildren(input); // Use replaceChildren for robust replacement
                 }
             });
             // Change buttons
