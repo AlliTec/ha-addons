@@ -1,18 +1,11 @@
-import os
-import asyncpg
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Dict
+import asyncpg
+
+from database import DATABASE_URL
 
 router = APIRouter()
-
-DB_HOST = os.environ.get("DB_HOST")
-DB_PORT = os.environ.get("DB_PORT")
-DB_USER = os.environ.get("DB_USER")
-DB_PASSWORD = os.environ.get("DB_PASSWORD")
-DB_NAME = os.environ.get("DB_NAME")
-
-DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 class Animal(BaseModel):
     animal_type: str

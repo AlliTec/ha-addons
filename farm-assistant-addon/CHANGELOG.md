@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.8 - 2025-11-06
+## 0.2.9 - 2025-11-06
+
+### Added
+
+- Added a database connection check on startup to validate the addon's configuration.
 
 ### Fixed
 
