@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.6 - 2025-11-06
+
+### Changed
+
+- Removed separate add form; added empty row at bottom of table for inline adding livestock.
+
 ## 0.6.5 - 2025-11-06
 
 ### Changed

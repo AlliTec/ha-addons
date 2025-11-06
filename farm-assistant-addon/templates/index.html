@@ -56,64 +56,29 @@
                 </td>
             </tr>
             {% endfor %}
+            <tr class="empty-row">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><button class="add-btn">Add</button></td>
+            </tr>
         </tbody>
     </table>
 
-    <h2>Add Animal</h2>
-    <form id="add-animal-form">
-        <input type="hidden" id="animal-id" name="id">
-        <label for="animal-tag-id">Tag ID:</label>
-        <input type="text" id="animal-tag-id" name="tag_id">
-        <br>
-        <label for="animal-name">Name:</label>
-        <input type="text" id="animal-name" name="name">
-        <br>
-        <label for="animal-gender">Gender:</label>
-        <select id="animal-gender" name="gender">
-            <option value="Bull">Bull</option>
-            <option value="Cow">Cow</option>
-            <option value="Steer">Steer</option>
-            <option value="Heifer">Heifer</option>
-        </select>
-        <br>
-        <label for="animal-breed">Breed:</label>
-        <select id="animal-breed" name="breed">
-            <option value="Santa Gertrudis">Santa Gertrudis</option>
-            <option value="Brahman">Brahman</option>
-            <option value="Angus">Angus</option>
-            <option value="Hereford">Hereford</option>
-            <option value="Other">Other</option>
-        </select>
-        <br>
-        <label for="animal-birth-date">Birth Date:</label>
-        <input type="date" id="animal-birth-date" name="birth_date">
-        <br>
-        <label for="animal-health-status">Health Status:</label>
-        <input type="text" id="animal-health-status" name="health_status">
-        <br>
-        <label for="animal-notes">Notes:</label>
-        <textarea id="animal-notes" name="notes"></textarea>
-        <br>
-        <label for="animal-dam-id">Dam ID:</label>
-        <input type="number" id="animal-dam-id" name="dam_id">
-        <br>
-        <label for="animal-sire-id">Sire ID:</label>
-        <input type="number" id="animal-sire-id" name="sire_id">
-        <br>
-        <label for="animal-features">Features:</label>
-        <textarea id="animal-features" name="features"></textarea>
-        <br>
-        <label for="animal-photo-path">Photo Path:</label>
-        <input type="text" id="animal-photo-path" name="photo_path">
-        <br>
-        <label for="animal-pic">Pic:</label>
-        <input type="text" id="animal-pic" name="pic">
-        <br>
-        <label for="animal-dod">DOD:</label>
-        <input type="date" id="animal-dod" name="dod">
-        <br>
-        <button type="submit">Add Animal</button>
-    </form>
+
 
     <script src="static/script.js"></script>
 </body>

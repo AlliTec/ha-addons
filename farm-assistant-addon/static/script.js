@@ -2,56 +2,23 @@ console.log("Script loaded");
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM loaded");
-    const addAnimalForm = document.getElementById("add-animal-form");
-    console.log("Form found:", addAnimalForm);
-
-    addAnimalForm.addEventListener("submit", async (event) => {
-        event.preventDefault();
-        console.log("Form submitted");
-
-        const formData = new FormData(addAnimalForm);
-        const animal = Object.fromEntries(formData.entries());
-        const action = event.submitter.dataset.action;
-
-        let url = "/add_animal";
-        let method = "POST";
-
-        if (action === "update") {
-            url = `/update_animal/${animal.id}`;
-            method = "PUT";
-        }
-
-        const response = await fetch(url, {
-            method: method,
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(animal),
-        });
-
-        if (response.ok) {
-            alert(`Animal ${action === "update" ? "updated" : "added"} successfully!`);
-            addAnimalForm.reset();
-            const submitButton = document.querySelector("#add-animal-form button");
-            submitButton.textContent = "Add Animal";
-            submitButton.dataset.action = "add";
-            populateAnimalList();
-        } else {
-            const error = await response.json();
-            alert(`Error: ${error.detail}`);
-        }
-    });
 
     // Initial population done server-side
 });
 
 async function populateAnimalList() {
     const animalListBody = document.querySelector("#livestock-list tbody");
-    animalListBody.innerHTML = "";
+    const rows = animalListBody.querySelectorAll("tr");
+    rows.forEach(row => {
+        if (!row.classList.contains("empty-row")) {
+            row.remove();
+        }
+    });
 
     const response = await fetch("/get_animals");
     const animals = await response.json();
 
+    const emptyRow = animalListBody.querySelector(".empty-row");
     animals.forEach(animal => {
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -76,7 +43,7 @@ async function populateAnimalList() {
                 <button class="delete-btn" data-id="${animal.id}">Delete</button>
             </td>
         `;
-        animalListBody.appendChild(row);
+        animalListBody.insertBefore(row, emptyRow);
     });
 
     animalListBody.addEventListener("click", async (event) => {
@@ -95,6 +62,64 @@ async function populateAnimalList() {
                     alert(`Error: ${error.detail}`);
                 }
             }
+        }
+
+        if (event.target.classList.contains("add-btn")) {
+            const row = event.target.closest("tr");
+            const cells = row.querySelectorAll("td");
+            cells.forEach((cell, index) => {
+                if (index < cells.length - 1) {
+                    const input = document.createElement("input");
+                    input.type = "text";
+                    cell.innerHTML = "";
+                    cell.appendChild(input);
+                }
+            });
+            const addBtn = row.querySelector(".add-btn");
+            addBtn.textContent = "Save";
+            addBtn.classList.remove("add-btn");
+            addBtn.classList.add("save-add-btn");
+            const cancelBtn = document.createElement("button");
+            cancelBtn.textContent = "Cancel";
+            cancelBtn.classList.add("cancel-add-btn");
+            row.querySelector("td:last-child").appendChild(cancelBtn);
+        }
+
+        if (event.target.classList.contains("save-add-btn")) {
+            const row = event.target.closest("tr");
+            const cells = row.querySelectorAll("td");
+            const animal = {};
+            const fields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "created_at", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
+            cells.forEach((cell, index) => {
+                if (index < cells.length - 1) {
+                    const input = cell.querySelector("input");
+                    animal[fields[index]] = input ? input.value : "";
+                }
+            });
+            const response = await fetch("/add_animal", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify(animal)
+            });
+            if (response.ok) {
+                alert("Animal added successfully!");
+                populateAnimalList();
+            } else {
+                const error = await response.json();
+                alert(`Error: ${error.detail}`);
+            }
+        }
+
+        if (event.target.classList.contains("cancel-add-btn")) {
+            const row = event.target.closest("tr");
+            const cells = row.querySelectorAll("td");
+            cells.forEach(cell => cell.innerHTML = "");
+            const saveBtn = row.querySelector(".save-add-btn");
+            saveBtn.textContent = "Add";
+            saveBtn.classList.remove("save-add-btn");
+            saveBtn.classList.add("add-btn");
+            const cancelBtn = row.querySelector(".cancel-add-btn");
+            cancelBtn.remove();
         }
 
         if (event.target.classList.contains("edit-btn")) {
