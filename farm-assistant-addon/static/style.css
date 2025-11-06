@@ -95,6 +95,10 @@ th, td {
     border: 1px solid var(--table-border);
 }
 
+tr:hover {
+    background-color: #333333;
+}
+
 th {
     font-weight: 500;
     color: var(--text-color);

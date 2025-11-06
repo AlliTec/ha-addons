@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.3 - 2025-11-06
+
+### Added
+
+- Added hover highlight for table rows.
+
 ## 0.6.2 - 2025-11-06
 
 ### Added
