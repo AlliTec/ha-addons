@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.4.6 - 2025-11-06
+## 0.4.7 - 2025-11-06
+
+### Fixed
+
+- Added execute permissions to `run.sh` in the `Dockerfile`.
 
 ### Fixed
 
