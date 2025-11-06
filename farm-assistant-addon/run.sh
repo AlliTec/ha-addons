@@ -2,5 +2,7 @@
 
 # Start the FastAPI server
 bashio::log.info "Starting the Farm Assistant backend..."
-cd /data
+
+export PYTHONPATH=/data
+
 uvicorn main:app --host 0.0.0.0 --port 8000

@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.2.6 - 2025-11-06
+## 0.2.7 - 2025-11-06
+
+### Fixed
+
+- Set `PYTHONPATH` in `run.sh` to resolve module import errors.
 
 ### Changed
 
