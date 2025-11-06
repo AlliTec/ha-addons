@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 - 2025-11-06
+
+### Fixed
+
+- Added detailed diagnostic logging to JavaScript to debug unresponsive buttons.
+
 ## 0.6.9 - 2025-11-06
 
 ### Fixed

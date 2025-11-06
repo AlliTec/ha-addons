@@ -1,86 +1,18 @@
-console.log("Script loaded");
+console.log("script.js: File loaded.");
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM loaded");
+    console.log("script.js: DOMContentLoaded event fired.");
 
-    // Initial population done server-side
-});
-
-async function populateAnimalList() {
     const animalListTable = document.querySelector("#livestock-list");
-    const tbody = animalListTable.querySelector("tbody");
-    const rows = tbody.querySelectorAll("tr");
-    rows.forEach(row => {
-        if (!row.classList.contains("empty-row")) {
-            row.remove();
-        }
-    });
-
-    const response = await fetch("/get_animals");
-    const animals = await response.json();
-
-    const emptyRow = tbody.querySelector(".empty-row");
-    animals.forEach(animal => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${animal.id}</td>
-            <td>${animal.tag_id}</td>
-            <td>${animal.name}</td>
-            <td>${animal.breed}</td>
-            <td>${animal.birth_date}</td>
-            <td>${animal.gender}</td>
-            <td>${animal.health_status}</td>
-            <td>${animal.notes}</td>
-            <td>${animal.created_at}</td>
-            <td>${animal.dam_id}</td>
-            <td>${animal.sire_id}</td>
-            <td>${animal.status}</td>
-            <td>${animal.features}</td>
-            <td>${animal.photo_path}</td>
-            <td>${animal.pic}</td>
-            <td>${animal.dod}</td>
-            <td>
-                <button class="edit-btn" data-id="${animal.id}">Edit</button>
-                <button class="delete-btn" data-id="${animal.id}">Delete</button>
-            </td>
-        `;
-        tbody.insertBefore(row, emptyRow);
-    });
-}
-    });
-
-    const response = await fetch("/get_animals");
-    const animals = await response.json();
-
-    const emptyRow = animalListBody.querySelector(".empty-row");
-    animals.forEach(animal => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${animal.id}</td>
-            <td>${animal.tag_id}</td>
-            <td>${animal.name}</td>
-            <td>${animal.breed}</td>
-            <td>${animal.birth_date}</td>
-            <td>${animal.gender}</td>
-            <td>${animal.health_status}</td>
-            <td>${animal.notes}</td>
-            <td>${animal.created_at}</td>
-            <td>${animal.dam_id}</td>
-            <td>${animal.sire_id}</td>
-            <td>${animal.status}</td>
-            <td>${animal.features}</td>
-            <td>${animal.photo_path}</td>
-            <td>${animal.pic}</td>
-            <td>${animal.dod}</td>
-            <td>
-                <button class="edit-btn" data-id="${animal.id}">Edit</button>
-                <button class="delete-btn" data-id="${animal.id}">Delete</button>
-            </td>
-        `;
-        animalListBody.insertBefore(row, emptyRow);
-    });
+    if (!animalListTable) {
+        console.error("script.js: Could not find table with ID #livestock-list.");
+        return;
+    }
+    console.log("script.js: Found table element:", animalListTable);
 
     animalListTable.addEventListener("click", async (event) => {
+        console.log("script.js: Click detected inside table. Target:", event.target);
+
         if (event.target.classList.contains("delete-btn")) {
             const animalId = event.target.dataset.id;
             if (confirm("Are you sure you want to delete this animal?")) {
