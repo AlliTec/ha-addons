@@ -147,6 +147,14 @@ async def get_animals():
         logging.error(f"Error fetching animals: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/animals")
+async def get_animals_for_dropdown():
+    conn = await asyncpg.connect(DATABASE_URL)
+    records = await conn.fetch("SELECT id, name, gender FROM livestock_records ORDER BY name")
+    await conn.close()
+    animals = [dict(record) for record in records]
+    return animals
+
 @app.get("/get_animal/{animal_id}")
 async def get_animal(animal_id: int):
     try:

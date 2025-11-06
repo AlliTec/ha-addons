@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.9.0 - 2025-11-07
+
+### Added
+
+- Implemented a complete overhaul of the edit functionality.
+- Clicking the "Edit" button now makes the entire row editable, with appropriate input types for each field.
+- Implemented date pickers for `birth_date` and `dod` fields.
+- Implemented dropdown menus for `gender`, `status`, `dam_id`, and `sire_id` fields.
+- The `dam_id` and `sire_id` dropdowns are now populated with relevant animals from the database.
+- Implemented a textarea for the `notes` field for easier multi-line input.
+- The `pic` field is now a clickable link that opens the image in a new tab.
+- Removed the `created_at` field from the table view.
+
+### Fixed
+
+- Fixed a bug where clicking the "Edit" button would immediately save the row without allowing for edits.
+
 ## 0.8.0 - 2025-11-07
 
 ### Fixed
