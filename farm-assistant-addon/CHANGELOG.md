@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.2.7 - 2025-11-06
+## 0.2.8 - 2025-11-06
+
+### Fixed
+
+- Added `chmod` to `run.sh` to ensure correct file permissions.
+- Combined `cd` and `uvicorn` commands to guarantee correct working directory.
 
 ### Fixed
 
