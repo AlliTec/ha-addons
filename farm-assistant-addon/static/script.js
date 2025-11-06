@@ -7,12 +7,46 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function populateAnimalList() {
-    const animalListBody = document.querySelector("#livestock-list tbody");
-    const rows = animalListBody.querySelectorAll("tr");
+    const animalListTable = document.querySelector("#livestock-list");
+    const tbody = animalListTable.querySelector("tbody");
+    const rows = tbody.querySelectorAll("tr");
     rows.forEach(row => {
         if (!row.classList.contains("empty-row")) {
             row.remove();
         }
+    });
+
+    const response = await fetch("/get_animals");
+    const animals = await response.json();
+
+    const emptyRow = tbody.querySelector(".empty-row");
+    animals.forEach(animal => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${animal.id}</td>
+            <td>${animal.tag_id}</td>
+            <td>${animal.name}</td>
+            <td>${animal.breed}</td>
+            <td>${animal.birth_date}</td>
+            <td>${animal.gender}</td>
+            <td>${animal.health_status}</td>
+            <td>${animal.notes}</td>
+            <td>${animal.created_at}</td>
+            <td>${animal.dam_id}</td>
+            <td>${animal.sire_id}</td>
+            <td>${animal.status}</td>
+            <td>${animal.features}</td>
+            <td>${animal.photo_path}</td>
+            <td>${animal.pic}</td>
+            <td>${animal.dod}</td>
+            <td>
+                <button class="edit-btn" data-id="${animal.id}">Edit</button>
+                <button class="delete-btn" data-id="${animal.id}">Delete</button>
+            </td>
+        `;
+        tbody.insertBefore(row, emptyRow);
+    });
+}
     });
 
     const response = await fetch("/get_animals");
@@ -46,7 +80,7 @@ async function populateAnimalList() {
         animalListBody.insertBefore(row, emptyRow);
     });
 
-    animalListBody.addEventListener("click", async (event) => {
+    animalListTable.addEventListener("click", async (event) => {
         if (event.target.classList.contains("delete-btn")) {
             const animalId = event.target.dataset.id;
             if (confirm("Are you sure you want to delete this animal?")) {
