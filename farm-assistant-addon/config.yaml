@@ -1,5 +1,5 @@
 name: Farm Assistant
-version: "0.9.6"
+version: "0.9.7"
 slug: farm_assistant
 description: "An addon to manage your farm's livestock data."
 arch:
@@ -20,7 +20,7 @@ options:
   db_port: 5432
   db_user: "postgres"
   db_password: "homeassistant"
-  db_name: "hall_farm_db"
+  db_name: "hal_farm_db"
 schema:
   db_host: str
   db_port: int

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.7 - 2025-11-07
+
+### Fixed
+
+- Corrected a typo in the default database name.
+
 ## 0.9.6 - 2025-11-07
 
 ### Changed
