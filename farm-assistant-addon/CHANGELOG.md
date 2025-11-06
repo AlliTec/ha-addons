@@ -1,6 +1,10 @@
 # Changelog
 
-## 0.4.2 - 2025-11-06
+## 0.4.3 - 2025-11-06
+
+### Fixed
+
+- Used the `--app-dir` flag in `run.sh` to explicitly specify the application directory.
 
 ### Fixed
 
