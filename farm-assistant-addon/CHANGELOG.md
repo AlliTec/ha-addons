@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.7.4 - 2025-11-06
+
+### Fixed
+
+- Removed duplicated code that caused a critical JavaScript syntax error.
+
+## 0.7.3 - 2025-11-06
+
+### Fixed
+
+- Implemented a more robust method for inline editing to fix non-editable cells.
+
 ## 0.7.2 - 2025-11-06
 
 ### Fixed
