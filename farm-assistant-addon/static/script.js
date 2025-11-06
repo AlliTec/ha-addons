@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
             cancelBtn.textContent = "Cancel";
             cancelBtn.classList.add("cancel-add-btn");
             row.querySelector("td:last-child").appendChild(cancelBtn);
+            return;
         }
 
         if (event.target.classList.contains("save-add-btn")) {

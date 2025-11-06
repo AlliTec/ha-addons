@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.9 - 2025-11-07
+
+### Fixed
+
+- Fixed an issue where the "Add" button was not making the new row editable.
+
 ## 0.9.8 - 2025-11-07
 
 ### Fixed
