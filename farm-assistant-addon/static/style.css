@@ -101,6 +101,7 @@ th, td {
     background-color: var(--input-bg);
     color: var(--text-color);
     border: 2px solid red !important; /* Make it obvious */
+    z-index: 100;
 }
 
 tr:hover {

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.7.5 - 2025-11-06
+
+### Fixed
+
+- Unified button styles to prevent size changes during edit mode.
+- Added enhanced diagnostics for non-editable row issue.
+
 ## 0.7.4 - 2025-11-06
 
 ### Fixed

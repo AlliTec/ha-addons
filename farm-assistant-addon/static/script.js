@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     cell.textContent = input.value;
                 }
             });
-            const response = await fetch(`/update_animal/${animalId}`, {
+            const response = await fetch(`update_animal/${animalId}`, {
                 method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(animal)
