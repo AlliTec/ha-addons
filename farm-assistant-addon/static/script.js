@@ -22,11 +22,11 @@ async function populateAnimalList() {
             <td>${animal.status}</td>
             <td>${animal.features}</td>
             <td>${animal.photo_path}</td>
-            <td><a href="${animal.pic}" target="_blank">View</a></td>
+            <td><a href="${animal.pic}" target="_blank">${animal.pic}</a></td>
             <td>${animal.dod}</td>
             <td>
-                <button class=\"edit-btn\" data-id=\"${animal.id}\">Edit</button>
-                <button class=\"delete-btn\" data-id=\"${animal.id}\">Delete</button>
+                <button class="edit-btn" data-id="${animal.id}">Edit</button>
+                <button class="delete-btn" data-id="${animal.id}">Delete</button>
             </td>
         `;
         tableBody.appendChild(row);
@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
             row.originalValues = [];
             cells.forEach((cell, index) => {
                 console.log(`script.js: Processing cell ${index}...`);
-                if (index < cells.length - 1) { // Exclude the last cell (actions)
+                if (index > 0 && index < cells.length - 1) { // Exclude ID and actions
                     const currentValue = cell.textContent.trim();
                     console.log(`script.js: Cell ${index} current value: '${currentValue}'`);
                     row.originalValues.push(currentValue);
@@ -230,14 +230,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             }
                             input.appendChild(option);
                         });
-                    } else if (index === 13) { // pic
-                        const link = document.createElement("a");
-                        link.href = currentValue;
-                        link.target = "_blank";
-                        link.textContent = currentValue;
-                        cell.innerHTML = "";
-                        cell.appendChild(link);
-                        return;
                     } else {
                         input = document.createElement("input");
                         input.type = "text";
@@ -248,7 +240,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     cell.replaceChildren(input);
                     console.log(`script.js: Cell ${index} replaced with an input field.`);
                 } else {
-                    console.log(`script.js: Cell ${index} is the action cell, skipping.`);
+                    row.originalValues.push(cell.textContent.trim());
+                    console.log(`script.js: Cell ${index} is the action/id cell, skipping.`);
                 }
             });
 
@@ -276,11 +269,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const animalId = event.target.dataset.id;
             const animalData = {};
             const allFields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
+            
             cells.forEach((cell, index) => {
-                if (index < cells.length - 1) {
+                if (index > 0 && index < cells.length - 1) {
                     const input = cell.querySelector("input, select, textarea");
                     animalData[allFields[index]] = input.value;
-                    cell.textContent = input.value;
+                } else if (index === 0) {
+                    animalData.id = cell.textContent.trim();
                 }
             });
 
@@ -315,15 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             if (response.ok) {
                 alert("Animal updated successfully!");
-                // Change buttons back
-                const saveBtn = row.querySelector(".save-btn");
-                const cancelBtn = row.querySelector("cancel-btn");
-                saveBtn.textContent = "Edit";
-                saveBtn.classList.remove("save-btn");
-                saveBtn.classList.add("edit-btn");
-                cancelBtn.textContent = "Delete";
-                cancelBtn.classList.remove("cancel-btn");
-                cancelBtn.classList.add("delete-btn");
+                populateAnimalList();
             } else {
                 const error = await response.json();
                 alert(`Error: ${error.detail}`);

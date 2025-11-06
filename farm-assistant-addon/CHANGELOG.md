@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.8 - 2025-11-07
+
+### Fixed
+
+- Fixed an issue where the update functionality was not working correctly.
+- Removed the red border from the `dod` field after saving.
+
 ## 0.9.7 - 2025-11-07
 
 ### Fixed
