@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.17 - 2025-11-07
+
+### Changed
+
+- Replaced Material Design Icons with Font Awesome icons.
+- Updated button styling to be more aesthetically pleasing with transparent backgrounds and larger icons.
+
 ## 0.9.16 - 2025-11-07
 
 ### Changed
