@@ -2,6 +2,12 @@
 
 bashio::log.info "Starting Farm Assistant Addon..."
 
+if bashio::config.true 'run_schema_update'; then
+    bashio::log.info "Running schema update..."
+    /run_update.sh
+    bashio::log.info "Schema update finished."
+fi
+
 bashio::log.info "Current directory: $(pwd)"
 bashio::log.info "Listing files in /app..."
 ls -la /app

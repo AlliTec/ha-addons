@@ -16,6 +16,7 @@ async function populateAnimalList() {
             <td>${formatCell(animal.id)}</td>
             <td>${formatCell(animal.tag_id)}</td>
             <td>${formatCell(animal.name)}</td>
+            <td>${formatCell(animal.species)}</td>
             <td>${formatCell(animal.breed)}</td>
             <td>${formatCell(animal.birth_date)}</td>
             <td>${formatCell(animal.gender)}</td>
@@ -81,55 +82,64 @@ document.addEventListener("DOMContentLoaded", () => {
             cells.forEach((cell, index) => {
                 row.originalValues.push(cell.innerHTML);
                 if (index < cells.length - 1) { // Exclude the last cell (actions)
-                    let input;
-                    if (index === 4) { // birth_date
-                        input = document.createElement("input");
-                        input.type = "date";
-                    } else if (index === 14) { // dod
-                        input = document.createElement("input");
-                        input.type = "date";
-                    } else if (index === 5) { // gender
+let input;
+                     if (index === 3) { // species
                         input = document.createElement("select");
-                        const options = ["Cock", "Hen", "Dog", "Bitch", "Cow", "Bull", "Steer", "Heifer"];
+                        const options = ["Cattle", "Dog", "Cat", "Chicken", "Guinea Fowl"];
                         options.forEach(optionValue => {
                             const option = document.createElement("option");
                             option.value = optionValue;
                             option.textContent = optionValue;
                             input.appendChild(option);
                         });
-                    } else if (index === 10) { // status
-                        input = document.createElement("select");
-                        const options = ["On Property", "Deceased", "Sold"];
-                        options.forEach(optionValue => {
-                            const option = document.createElement("option");
-                            option.value = optionValue;
-                            option.textContent = optionValue;
-                            input.appendChild(option);
-                        });
-                    } else if (index === 7) { // notes
-                        input = document.createElement("textarea");
-                    } else if (index === 8) { // dam_id
-                        input = document.createElement("select");
-                        const dams = animals.filter(animal => ["Cow", "Hen", "Bitch"].includes(animal.gender));
-                        dams.forEach(dam => {
-                            const option = document.createElement("option");
-                            option.value = dam.id;
-                            option.textContent = dam.name;
-                            input.appendChild(option);
-                        });
-                    } else if (index === 9) { // sire_id
-                        input = document.createElement("select");
-                        const sires = animals.filter(animal => ["Bull", "Dog", "Cock"].includes(animal.gender));
-                        sires.forEach(sire => {
-                            const option = document.createElement("option");
-                            option.value = sire.id;
-                            option.textContent = sire.name;
-                            input.appendChild(option);
-                        });
-                    } else {
-                        input = document.createElement("input");
-                        input.type = "text";
-                    }
+                    } else if (index === 5) { // birth_date
+                         input = document.createElement("input");
+                         input.type = "date";
+                     } else if (index === 14) { // dod
+                         input = document.createElement("input");
+                         input.type = "date";
+                     } else if (index === 6) { // gender
+                         input = document.createElement("select");
+                         const options = ["Cock", "Hen", "Dog", "Bitch", "Cow", "Bull", "Steer", "Heifer"];
+                         options.forEach(optionValue => {
+                             const option = document.createElement("option");
+                             option.value = optionValue;
+                             option.textContent = optionValue;
+                             input.appendChild(option);
+                         });
+                     } else if (index === 11) { // status
+                         input = document.createElement("select");
+                         const options = ["On Property", "Deceased", "Sold"];
+                         options.forEach(optionValue => {
+                             const option = document.createElement("option");
+                             option.value = optionValue;
+                             option.textContent = optionValue;
+                             input.appendChild(option);
+                         });
+                     } else if (index === 8) { // notes
+                         input = document.createElement("textarea");
+                     } else if (index === 9) { // dam_id
+                         input = document.createElement("select");
+                         const dams = animals.filter(animal => ["Cow", "Hen", "Bitch"].includes(animal.gender));
+                         dams.forEach(dam => {
+                             const option = document.createElement("option");
+                             option.value = dam.id;
+                             option.textContent = dam.name;
+                             input.appendChild(option);
+                         });
+                     } else if (index === 10) { // sire_id
+                         input = document.createElement("select");
+                         const sires = animals.filter(animal => ["Bull", "Dog", "Cock"].includes(animal.gender));
+                         sires.forEach(sire => {
+                             const option = document.createElement("option");
+                             option.value = sire.id;
+                             option.textContent = sire.name;
+                             input.appendChild(option);
+                         });
+                     } else {
+                         input = document.createElement("input");
+                         input.type = "text";
+                     }
                     input.classList.add("inline-edit-input");
                     cell.innerHTML = "";
                     cell.appendChild(input);
@@ -151,7 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const row = button.closest("tr");
             const cells = row.querySelectorAll("td");
             const animalData = {};
-            const allFields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
+            const allFields = ["id", "tag_id", "name", "species", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
             cells.forEach((cell, index) => {
                 if (index < cells.length - 1) {
                     const input = cell.querySelector("input, select, textarea");
@@ -164,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const pydanticFields = {
                 "tag_id": animalData.tag_id,
                 "name": animalData.name,
+                "species": animalData.species,
                 "gender": animalData.gender,
                 "breed": animalData.breed,
                 "birth_date": animalData.birth_date,
@@ -231,24 +242,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.log(`script.js: Cell ${index} current value: '${currentValue}'`);
                     row.originalValues.push(currentValue);
                     
-                    let input;
-                    if (index === 4) { // birth_date
-                        input = document.createElement("input");
-                        input.type = "date";
-                        if (currentValue && currentValue !== 'null') {
-                            input.value = new Date(currentValue).toISOString().split('T')[0];
-                        }
-                    } else if (index === 14) { // dod
-                        input = document.createElement("input");
-                        input.type = "date";
-                        if (row.querySelector('td:nth-child(11)').textContent.trim() === 'Deceased') {
-                            input.value = new Date().toISOString().split('T')[0];
-                        } else if (currentValue && currentValue !== 'null') {
-                            input.value = new Date(currentValue).toISOString().split('T')[0];
-                        }
-                    } else if (index === 5) { // gender
+let input;
+                    if (index === 3) { // species
                         input = document.createElement("select");
-                        const options = ["Cock", "Hen", "Dog", "Bitch", "Cow", "Bull", "Steer", "Heifer"];
+                        const options = ["Cattle", "Dog", "Cat", "Chicken", "Guinea Fowl"];
                         options.forEach(optionValue => {
                             const option = document.createElement("option");
                             option.value = optionValue;
@@ -258,50 +255,76 @@ document.addEventListener("DOMContentLoaded", () => {
                             }
                             input.appendChild(option);
                         });
-                    } else if (index === 10) { // status
-                        input = document.createElement("select");
-                        const options = ["On Property", "Deceased", "Sold"];
-                        options.forEach(optionValue => {
-                            const option = document.createElement("option");
-                            option.value = optionValue;
-                            option.textContent = optionValue;
-                            if (optionValue === currentValue) {
-                                option.selected = true;
-                            }
-                            input.appendChild(option);
-                        });
-                    } else if (index === 7) { // notes
-                        input = document.createElement("textarea");
-                        input.value = currentValue;
-                    } else if (index === 8) { // dam_id
-                        input = document.createElement("select");
-                        const dams = animals.filter(animal => ["Cow", "Hen", "Bitch"].includes(animal.gender));
-                        dams.forEach(dam => {
-                            const option = document.createElement("option");
-                            option.value = dam.id;
-                            option.textContent = dam.name;
-                            if (dam.id == currentValue) {
-                                option.selected = true;
-                            }
-                            input.appendChild(option);
-                        });
-                    } else if (index === 9) { // sire_id
-                        input = document.createElement("select");
-                        const sires = animals.filter(animal => ["Bull", "Dog", "Cock"].includes(animal.gender));
-                        sires.forEach(sire => {
-                            const option = document.createElement("option");
-                            option.value = sire.id;
-                            option.textContent = sire.name;
-                            if (sire.id == currentValue) {
-                                option.selected = true;
-                            }
-                            input.appendChild(option);
-                        });
-                    } else {
-                        input = document.createElement("input");
-                        input.type = "text";
-                        input.value = currentValue;
-                    }
+                    } else if (index === 5) { // birth_date
+                         input = document.createElement("input");
+                         input.type = "date";
+                         if (currentValue && currentValue !== 'null') {
+                             input.value = new Date(currentValue).toISOString().split('T')[0];
+                         }
+                     } else if (index === 14) { // dod
+                         input = document.createElement("input");
+                         input.type = "date";
+                         if (row.querySelector('td:nth-child(11)').textContent.trim() === 'Deceased') {
+                             input.value = new Date().toISOString().split('T')[0];
+                         } else if (currentValue && currentValue !== 'null') {
+                             input.value = new Date(currentValue).toISOString().split('T')[0];
+                         }
+                     } else if (index === 6) { // gender
+                         input = document.createElement("select");
+                         const options = ["Cock", "Hen", "Dog", "Bitch", "Cow", "Bull", "Steer", "Heifer"];
+                         options.forEach(optionValue => {
+                             const option = document.createElement("option");
+                             option.value = optionValue;
+                             option.textContent = optionValue;
+                             if (optionValue === currentValue) {
+                                 option.selected = true;
+                             }
+                             input.appendChild(option);
+                         });
+                     } else if (index === 11) { // status
+                         input = document.createElement("select");
+                         const options = ["On Property", "Deceased", "Sold"];
+                         options.forEach(optionValue => {
+                             const option = document.createElement("option");
+                             option.value = optionValue;
+                             option.textContent = optionValue;
+                             if (optionValue === currentValue) {
+                                 option.selected = true;
+                             }
+                             input.appendChild(option);
+                         });
+                     } else if (index === 8) { // notes
+                         input = document.createElement("textarea");
+                         input.value = currentValue;
+                     } else if (index === 9) { // dam_id
+                         input = document.createElement("select");
+                         const dams = animals.filter(animal => ["Cow", "Hen", "Bitch"].includes(animal.gender));
+                         dams.forEach(dam => {
+                             const option = document.createElement("option");
+                             option.value = dam.id;
+                             option.textContent = dam.name;
+                             if (dam.id == currentValue) {
+                                 option.selected = true;
+                             }
+                             input.appendChild(option);
+                         });
+                     } else if (index === 10) { // sire_id
+                         input = document.createElement("select");
+                         const sires = animals.filter(animal => ["Bull", "Dog", "Cock"].includes(animal.gender));
+                         sires.forEach(sire => {
+                             const option = document.createElement("option");
+                             option.value = sire.id;
+                             option.textContent = sire.name;
+                             if (sire.id == currentValue) {
+                                 option.selected = true;
+                             }
+                             input.appendChild(option);
+                         });
+                     } else {
+                         input = document.createElement("input");
+                         input.type = "text";
+                         input.value = currentValue;
+                     }
                     input.classList.add("inline-edit-input");
                     
                     cell.replaceChildren(input);
@@ -335,7 +358,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const cells = row.querySelectorAll("td");
             const animalId = button.dataset.id;
             const animalData = {};
-            const allFields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
+            const allFields = ["id", "tag_id", "name", "species", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
             
             cells.forEach((cell, index) => {
                 if (index > 0 && index < cells.length - 1) {
@@ -356,6 +379,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const pydanticFields = {
                 "tag_id": animalData.tag_id,
                 "name": animalData.name,
+                "species": animalData.species,
                 "gender": animalData.gender,
                 "breed": animalData.breed,
                 "birth_date": animalData.birth_date,

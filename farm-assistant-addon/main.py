@@ -79,6 +79,7 @@ templates = Jinja2Templates(directory="/app/templates")
 class Animal(BaseModel):
     tag_id: Optional[str] = None
     name: str
+    species: Optional[str] = None
     gender: Optional[str] = None
     breed: Optional[str] = None
     birth_date: Optional[str] = None
@@ -103,7 +104,7 @@ async def read_item(request: Request):
     addon_version = config.get("version", "unknown")
     try:
         conn = await asyncpg.connect(DATABASE_URL)
-        records = await conn.fetch("SELECT id, tag_id, name, breed, birth_date, gender, health_status, notes, created_at, dam_id, sire_id, status, features, photo_path, pic, dod FROM livestock_records ORDER BY name")
+        records = await conn.fetch("SELECT id, tag_id, name, species, breed, birth_date, gender, health_status, notes, created_at, dam_id, sire_id, status, features, photo_path, pic, dod FROM livestock_records ORDER BY name")
         await conn.close()
         animals = [dict(record) for record in records]
     except Exception as e:
@@ -123,9 +124,9 @@ async def add_animal(animal: Animal):
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         await conn.execute("""
-            INSERT INTO livestock_records (tag_id, name, gender, breed, birth_date, health_status, notes, dam_id, sire_id, features, photo_path, pic, dod, status, created_at)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'On Property', NOW())
-        """, animal.tag_id, animal.name, animal.gender, animal.breed, birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, dod)
+            INSERT INTO livestock_records (tag_id, name, species, gender, breed, birth_date, health_status, notes, dam_id, sire_id, features, photo_path, pic, dod, status, created_at)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, 'On Property', NOW())
+        """, animal.tag_id, animal.name, animal.species, animal.gender, animal.breed, birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, dod)
         await conn.close()
         logging.info("Animal added successfully")
         return {"message": "Animal added successfully"}
@@ -139,7 +140,16 @@ async def add_animal(animal: Animal):
 async def get_animals():
     try:
         conn = await asyncpg.connect(DATABASE_URL)
-        records = await conn.fetch("SELECT id, tag_id, name, breed, birth_date, gender, health_status, notes, created_at, dam_id, sire_id, status, features, photo_path, pic, dod FROM livestock_records ORDER BY name")
+        records = await conn.fetch("""
+            SELECT
+                lr.id, lr.tag_id, lr.name, lr.species, lr.breed, lr.birth_date, lr.gender, lr.health_status, lr.notes, lr.created_at, 
+                dam.name as dam_name, sire.name as sire_name, 
+                lr.status, lr.features, lr.photo_path, lr.pic, lr.dod
+            FROM livestock_records lr
+            LEFT JOIN livestock_records dam ON lr.dam_id = dam.id
+            LEFT JOIN livestock_records sire ON lr.sire_id = sire.id
+            ORDER BY lr.name
+        """)
         await conn.close()
         logging.info(f"Fetched {len(records)} animals from database.")
         animals = [dict(record) for record in records]
@@ -160,7 +170,7 @@ async def get_animals_for_dropdown():
 async def get_animal(animal_id: int):
     try:
         conn = await asyncpg.connect(DATABASE_URL)
-        record = await conn.fetchrow("SELECT id, tag_id, name, breed, birth_date, gender, health_status, notes, created_at, dam_id, sire_id, status, features, photo_path, pic, dod FROM livestock_records WHERE id = $1", animal_id)
+        record = await conn.fetchrow("SELECT id, tag_id, name, species, breed, birth_date, gender, health_status, notes, created_at, dam_id, sire_id, status, features, photo_path, pic, dod FROM livestock_records WHERE id = $1", animal_id)
         await conn.close()
         return dict(record)
     except Exception as e:
@@ -193,9 +203,9 @@ async def update_animal(animal_id: int, animal: Animal):
         conn = await asyncpg.connect(DATABASE_URL)
         await conn.execute("""
             UPDATE livestock_records
-            SET tag_id = $1, name = $2, gender = $3, breed = $4, birth_date = $5, health_status = $6, notes = $7, dam_id = $8, sire_id = $9, features = $10, photo_path = $11, pic = $12, dod = $13, status = $14
-            WHERE id = $15
-        """, animal.tag_id, animal.name, animal.gender, animal.breed, birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, dod, animal.status, animal_id)
+            SET tag_id = $1, name = $2, species = $3, gender = $4, breed = $5, birth_date = $6, health_status = $7, notes = $8, dam_id = $9, sire_id = $10, features = $11, photo_path = $12, pic = $13, dod = $14, status = $15
+            WHERE id = $16
+        """, animal.tag_id, animal.name, animal.species, animal.gender, animal.breed, birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, dod, animal.status, animal_id)
         await conn.close()
         return {"message": "Animal updated successfully"}
     except Exception as e:
