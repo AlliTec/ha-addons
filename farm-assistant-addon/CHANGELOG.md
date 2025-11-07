@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.13 - 2025-11-07
+
+### Fixed
+
+- Added Material Design Icons stylesheet to `index.html` to ensure icons are displayed correctly.
+
 ## 0.9.12 - 2025-11-07
 
 ### Changed
