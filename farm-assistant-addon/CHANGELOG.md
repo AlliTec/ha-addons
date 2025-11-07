@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.11 - 2025-11-07
+
+### Fixed
+
+- Standardized button sizes across the application, resolving issues where 'Add' and edit-mode buttons appeared disproportionately large.
+
 ## 0.9.10 - 2025-11-07
 
 ### Fixed

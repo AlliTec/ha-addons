@@ -60,13 +60,13 @@ textarea {
 
 button {
     margin-top: 15px;
-    padding: 12px 24px;
+    padding: 6px 12px; /* Smaller padding */
     background-color: var(--accent-color);
     color: white;
     border: none;
     border-radius: 0;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px; /* Smaller font size */
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -75,6 +75,37 @@ button {
 
 button:hover {
     background-color: var(--button-hover);
+}
+
+/* Styles for dynamically changed buttons */
+.save-btn, .cancel-btn, .save-add-btn, .cancel-add-btn {
+    padding: 6px 12px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.save-btn, .save-add-btn {
+    background-color: #00BFFF; /* Blue for Save */
+    color: white;
+}
+
+.save-btn:hover, .save-add-btn:hover {
+    background-color: #40CFFF;
+}
+
+.cancel-btn, .cancel-add-btn {
+    background-color: #6c757d; /* Gray for Cancel */
+    color: white;
+}
+
+.cancel-btn:hover, .cancel-add-btn:hover {
+    background-color: #8a939b;
 }
 
 table {
