@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.16 - 2025-11-07
+
+### Changed
+
+- Implemented a new, more mellow color scheme with earthy tones to better fit the farm theme.
+
 ## 0.9.15 - 2025-11-07
 
 ### Fixed

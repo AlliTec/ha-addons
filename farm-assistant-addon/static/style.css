@@ -1,12 +1,16 @@
 :root {
-    --bg-color: #000000;
-    --text-color: #FFFFFF;
-    --accent-color: #FF0000; /* HAL 9000 Red */
-    --input-bg: #111111;
-    --input-border: #555555;
-    --table-header-bg: #222222;
-    --table-border: #555555;
-    --button-hover: #FF4444;
+    --bg-color: #F5F5DC; /* Beige */
+    --text-color: #5D4037; /* Dark Brown */
+    --accent-color: #8BC34A; /* Light Green */
+    --button-hover: #A5D6A7; /* Lighter Green */
+    --input-bg: #FFFFFF; /* White */
+    --input-border: #D7CCC8; /* Light Brownish Gray */
+    --table-header-bg: #EFEBE9; /* Light Grayish Brown */
+    --table-border: #D7CCC8; /* Light Brownish Gray */
+    --delete-color: #EF5350; /* Red */
+    --delete-hover: #E57373; /* Lighter Red */
+    --cancel-color: #BDBDBD; /* Gray */
+    --cancel-hover: #E0E0E0; /* Lighter Gray */
 }
 
 body {
@@ -91,21 +95,21 @@ button:hover {
 }
 
 .save-btn, .save-add-btn {
-    background-color: #00BFFF; /* Blue for Save */
+    background-color: var(--accent-color);
     color: white;
 }
 
 .save-btn:hover, .save-add-btn:hover {
-    background-color: #40CFFF;
+    background-color: var(--button-hover);
 }
 
 .cancel-btn, .cancel-add-btn {
-    background-color: #6c757d; /* Gray for Cancel */
+    background-color: var(--cancel-color);
     color: white;
 }
 
 .cancel-btn:hover, .cancel-add-btn:hover {
-    background-color: #8a939b;
+    background-color: var(--cancel-hover);
 }
 
 table {
@@ -136,7 +140,7 @@ th, td {
 }
 
 tr:hover {
-    background-color: #333333;
+    background-color: #f0f0f0;
 }
 
 th {
@@ -159,19 +163,19 @@ th {
 }
 
 .edit-btn {
-    background-color: #00BFFF; /* A bright blue for contrast */
-    color: white;
-}
-
-.edit-btn:hover {
-    background-color: #40CFFF;
-}
-
-.delete-btn {
     background-color: var(--accent-color);
     color: white;
 }
 
-.delete-btn:hover {
+.edit-btn:hover {
     background-color: var(--button-hover);
+}
+
+.delete-btn {
+    background-color: var(--delete-color);
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: var(--delete-hover);
 }
