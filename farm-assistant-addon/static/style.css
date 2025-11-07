@@ -115,6 +115,31 @@ th {
     letter-spacing: 1px;
 }
 
+.heading-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#filter-bar {
+    display: flex;
+    justify-content: center;
+}
+
+.filter-img {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    margin: 0 5px;
+    border: 2px solid transparent;
+    border-radius: 5px;
+    transition: border-color 0.3s;
+}
+
+.filter-img:hover, .filter-img.active {
+    border-color: var(--accent-color);
+}
+
 .edit-btn, .delete-btn {
     padding: 6px 12px;
     margin-right: 5px;

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.21 - 2025-11-07
+
+### Changed
+
+- Removed the "Animal" column from the table.
+- Repositioned the filter icons to be on the same line as the "Livestock List" heading.
+- Replaced hardcoded buttons with Font Awesome icons.
+- Themed the UI with a beige and brown color scheme.
+
 ## 0.7.5 - 2025-11-06
 
 ### Fixed

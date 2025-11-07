@@ -3,6 +3,20 @@ console.log("script.js: File loaded.");
 document.addEventListener("DOMContentLoaded", () => {
     console.log("script.js: DOMContentLoaded event fired.");
 
+    populateAnimalList();
+
+    const filterBar = document.getElementById("filter-bar");
+    filterBar.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target.classList.contains("filter-img")) {
+            const filter = target.alt;
+            const activeImages = document.querySelectorAll(".filter-img.active");
+            activeImages.forEach(img => img.classList.remove("active"));
+            target.classList.add("active");
+            populateAnimalList(filter);
+        }
+    });
+
     const animalListTable = document.querySelector("#livestock-list");
     if (!animalListTable) {
         console.error("script.js: Could not find table with ID #livestock-list.");
@@ -159,12 +173,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Change buttons back
                 const saveBtn = row.querySelector(".save-btn");
                 const cancelBtn = row.querySelector(".cancel-btn");
-                saveBtn.textContent = "Edit";
-                saveBtn.classList.remove("save-btn");
-                saveBtn.classList.add("edit-btn");
-                cancelBtn.textContent = "Delete";
-                cancelBtn.classList.remove("cancel-btn");
-                cancelBtn.classList.add("delete-btn");
+             saveBtn.innerHTML = "<i class=\"fa-solid fa-pencil\" aria-label=\"Edit\"></i>";
+             saveBtn.classList.remove("save-btn");
+             saveBtn.classList.add("edit-btn");
+             cancelBtn.innerHTML = "<i class=\"fa-solid fa-trash-can\" aria-label=\"Delete\"></i>";
+             cancelBtn.classList.remove("cancel-btn");
+             cancelBtn.classList.add("delete-btn");
             } else {
                 const error = await response.json();
                 alert(`Error: ${error.detail}`);
