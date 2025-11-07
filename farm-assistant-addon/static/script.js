@@ -48,8 +48,11 @@ document.addEventListener("DOMContentLoaded", () => {
     animalListTable.addEventListener("click", async (event) => {
         console.log("script.js: Click detected inside table. Target:", event.target);
 
-        if (event.target.classList.contains("delete-btn")) {
-            const animalId = event.target.dataset.id;
+        const button = event.target.closest('button');
+        if (!button) return; // Exit if the click was not on a button
+
+        if (button.classList.contains("delete-btn")) {
+            const animalId = button.dataset.id;
             if (confirm("Are you sure you want to delete this animal?")) {
                 const response = await fetch(`delete_animal/${animalId}`, {
                     method: "DELETE",
@@ -65,10 +68,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        if (event.target.classList.contains("add-btn")) {
+        if (button.classList.contains("add-btn")) {
             const response = await fetch("api/animals");
             const animals = await response.json();
-            const row = event.target.closest("tr");
+            const row = button.closest("tr");
             const cells = row.querySelectorAll("td");
             
             row.originalValues = [];
@@ -141,8 +144,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if (event.target.classList.contains("save-add-btn")) {
-            const row = event.target.closest("tr");
+        if (button.classList.contains("save-add-btn")) {
+            const row = button.closest("tr");
             const cells = row.querySelectorAll("td");
             const animalData = {};
             const allFields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
@@ -195,17 +198,17 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        if (event.target.classList.contains("cancel-add-btn")) {
-            const row = event.target.closest("tr");
+        if (button.classList.contains("cancel-add-btn")) {
+            const row = button.closest("tr");
             const cells = row.querySelectorAll("td");
             cells.forEach((cell, index) => {
                 cell.innerHTML = row.originalValues[index];
             });
         }
 
-        if (event.target.classList.contains("edit-btn")) {
+        if (button.classList.contains("edit-btn")) {
             console.log("script.js: 'Edit' button clicked.");
-            const row = event.target.closest("tr");
+            const row = button.closest("tr");
             if (!row) {
                 console.error("script.js: Could not find parent row for edit button.");
                 return;
@@ -324,10 +327,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return; // Prevent event from bubbling up
         }
 
-        if (event.target.classList.contains("save-btn")) {
-            const row = event.target.closest("tr");
+        if (button.classList.contains("save-btn")) {
+            const row = button.closest("tr");
             const cells = row.querySelectorAll("td");
-            const animalId = event.target.dataset.id;
+            const animalId = button.dataset.id;
             const animalData = {};
             const allFields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
             
@@ -378,8 +381,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        if (event.target.classList.contains("cancel-btn")) {
-            const row = event.target.closest("tr");
+        if (button.classList.contains("cancel-btn")) {
+            const row = button.closest("tr");
             const cells = row.querySelectorAll("td");
             cells.forEach((cell, index) => {
                 if (index < cells.length - 1) {

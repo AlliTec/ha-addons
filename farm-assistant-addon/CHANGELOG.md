@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.15 - 2025-11-07
+
+### Fixed
+
+- Fixed an issue where buttons with icons were not responding to clicks due to incorrect event handling.
+
 ## 0.9.14 - 2025-11-07
 
 ### Fixed
