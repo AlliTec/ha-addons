@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.34 - 2025-11-08
+
+### Changed
+
+- Removed the shadow effect from the active tab.
+
 ## 0.9.33 - 2025-11-08
 
 ### Changed

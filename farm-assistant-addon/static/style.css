@@ -167,5 +167,4 @@ th {
 .filter-btn.active {
     background-color: var(--table-header-bg);
     z-index: 3;
-    box-shadow: -5px -5px 5px -5px rgba(0,0,0,0.2), 5px -5px 5px -5px rgba(0,0,0,0.2);
 }
