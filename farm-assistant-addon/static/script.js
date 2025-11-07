@@ -54,11 +54,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const filterBar = document.getElementById("filter-bar");
     filterBar.addEventListener("click", (event) => {
-        const target = event.target;
-        if (target.classList.contains("filter-img")) {
-            const filter = target.alt;
-            const activeImages = document.querySelectorAll(".filter-img.active");
-            activeImages.forEach(img => img.classList.remove("active"));
+        const target = event.target.closest(".filter-btn");
+        if (target) {
+            const filter = target.dataset.filter;
+            const activeButtons = document.querySelectorAll(".filter-btn.active");
+            activeButtons.forEach(btn => btn.classList.remove("active"));
             target.classList.add("active");
             populateAnimalList(filter);
         }
@@ -111,9 +111,9 @@ let input;
                      } else if (index === 12) { // dod
                          input = document.createElement("input");
                          input.type = "date";
-                     } else if (index === 4) { // gender
-                         input = document.createElement("select");
-                         const options = ["Cock", "Hen", "Dog", "Bitch", "Cow", "Bull", "Steer", "Heifer"];
+                      } else if (index === 4) { // gender
+                          input = document.createElement("select");
+                          const options = ["Cock", "Hen", "Dog", "Bitch", "Cow", "Bull", "Steer", "Heifer", "Queen", "Tom"];
                          options.forEach(optionValue => {
                              const option = document.createElement("option");
                              option.value = optionValue;
@@ -296,9 +296,9 @@ let input;
                      } else if (index === 7) { // notes
                          input = document.createElement("textarea");
                          input.value = currentValue;
-                     } else if (index === 8) { // dam_id
-                         input = document.createElement("select");
-                         const dams = animals.filter(animal => ["Cow", "Hen", "Bitch"].includes(animal.gender));
+                      } else if (index === 8) { // dam_id
+                          input = document.createElement("select");
+                          const dams = animals.filter(animal => ["Cow", "Hen", "Bitch", "Queen"].includes(animal.gender));
                          dams.forEach(dam => {
                              const option = document.createElement("option");
                              option.value = dam.id;

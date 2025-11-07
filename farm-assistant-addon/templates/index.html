@@ -12,10 +12,11 @@
     <div class="heading-container">
         <h2>Livestock List</h2>
         <div id="filter-bar">
-             <img src="/static/farm.png" alt="All" id="filter-all" class="filter-img active">
-             <img src="/static/cow.png" alt="Cattle" id="filter-cattle" class="filter-img">
-             <img src="/static/dog.png" alt="Dog" id="filter-dog" class="filter-img">
-             <img src="/static/chicken.png" alt="Fowl" id="filter-fowl" class="filter-img">
+            <button class="filter-btn active" data-filter="All"><i class="fa-solid fa-house-chimney"></i> All</button>
+            <button class="filter-btn" data-filter="Cattle"><i class="fa-solid fa-cow"></i> Cattle</button>
+            <button class="filter-btn" data-filter="Dog"><i class="fa-solid fa-dog"></i> Dog</button>
+            <button class="filter-btn" data-filter="Cat"><i class="fa-solid fa-cat"></i> Cats</button>
+            <button class="filter-btn" data-filter="Fowl"><i class="fa-solid fa-crow"></i> Fowl</button>
         </div>
     </div>
     <table id="livestock-list">

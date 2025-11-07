@@ -98,6 +98,8 @@ def get_animal_type(gender):
         return "Cattle"
     elif gender in ["Bitch", "Dog"]:
         return "Dog"
+    elif gender in ["Queen", "Tom"]:
+        return "Cat"
     elif gender in ["Hen", "Cock"]:
         return "Fowl"
     else:

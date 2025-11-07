@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.24 - 2025-11-08
+
+### Changed
+
+- Replaced the filter images with Font Awesome icons.
+- Added a "Cat" filter.
+- Restyled the filter bar to appear as folder tabs.
+
 ## 0.9.23 - 2025-11-08
 
 ### Changed
