@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.29 - 2025-11-08
+
+### Changed
+
+- Implemented an overlapping folder tab design with a 45-degree angle on the right side of each tab.
+
 ## 0.9.28 - 2025-11-08
 
 ### Changed
