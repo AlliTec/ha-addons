@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.32 - 2025-11-08
+
+### Changed
+
+- Beveled the top-right corner of the filter tabs.
+
 ## 0.9.31 - 2025-11-08
 
 ### Changed
