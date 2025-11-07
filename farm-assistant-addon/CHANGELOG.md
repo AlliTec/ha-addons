@@ -1,13 +1,5 @@
 # Changelog
 
-## 0.9.20 - 2025-11-07
-
-### Added
-
-- Added a new `species` field to the `livestock_records` table.
-- The UI now includes a dropdown for selecting the species when adding or editing an animal.
-- Implemented a schema update mechanism to automatically add the new `species` column to the database.
-
 ## 0.9.19 - 2025-11-07
 
 ### Changed

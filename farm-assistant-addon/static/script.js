@@ -16,7 +16,7 @@ async function populateAnimalList() {
             <td>${formatCell(animal.id)}</td>
             <td>${formatCell(animal.tag_id)}</td>
             <td>${formatCell(animal.name)}</td>
-            <td>${formatCell(animal.species)}</td>
+            <td>${formatCell(animal.animal_type)}</td>
             <td>${formatCell(animal.breed)}</td>
             <td>${formatCell(animal.birth_date)}</td>
             <td>${formatCell(animal.gender)}</td>
@@ -83,22 +83,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 row.originalValues.push(cell.innerHTML);
                 if (index < cells.length - 1) { // Exclude the last cell (actions)
 let input;
-                     if (index === 3) { // species
-                        input = document.createElement("select");
-                        const options = ["Cattle", "Dog", "Cat", "Chicken", "Guinea Fowl"];
-                        options.forEach(optionValue => {
-                            const option = document.createElement("option");
-                            option.value = optionValue;
-                            option.textContent = optionValue;
-                            input.appendChild(option);
-                        });
-                    } else if (index === 5) { // birth_date
+                     if (index === 4) { // birth_date
                          input = document.createElement("input");
                          input.type = "date";
-                     } else if (index === 14) { // dod
+                     } else if (index === 13) { // dod
                          input = document.createElement("input");
                          input.type = "date";
-                     } else if (index === 6) { // gender
+                     } else if (index === 5) { // gender
                          input = document.createElement("select");
                          const options = ["Cock", "Hen", "Dog", "Bitch", "Cow", "Bull", "Steer", "Heifer"];
                          options.forEach(optionValue => {
@@ -107,7 +98,7 @@ let input;
                              option.textContent = optionValue;
                              input.appendChild(option);
                          });
-                     } else if (index === 11) { // status
+                     } else if (index === 10) { // status
                          input = document.createElement("select");
                          const options = ["On Property", "Deceased", "Sold"];
                          options.forEach(optionValue => {
@@ -116,9 +107,9 @@ let input;
                              option.textContent = optionValue;
                              input.appendChild(option);
                          });
-                     } else if (index === 8) { // notes
+                     } else if (index === 7) { // notes
                          input = document.createElement("textarea");
-                     } else if (index === 9) { // dam_id
+                     } else if (index === 8) { // dam_id
                          input = document.createElement("select");
                          const dams = animals.filter(animal => ["Cow", "Hen", "Bitch"].includes(animal.gender));
                          dams.forEach(dam => {
@@ -127,7 +118,7 @@ let input;
                              option.textContent = dam.name;
                              input.appendChild(option);
                          });
-                     } else if (index === 10) { // sire_id
+                     } else if (index === 9) { // sire_id
                          input = document.createElement("select");
                          const sires = animals.filter(animal => ["Bull", "Dog", "Cock"].includes(animal.gender));
                          sires.forEach(sire => {
@@ -161,7 +152,7 @@ let input;
             const row = button.closest("tr");
             const cells = row.querySelectorAll("td");
             const animalData = {};
-            const allFields = ["id", "tag_id", "name", "species", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
+            const allFields = ["id", "tag_id", "name", "animal_type", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
             cells.forEach((cell, index) => {
                 if (index < cells.length - 1) {
                     const input = cell.querySelector("input, select, textarea");
@@ -174,7 +165,6 @@ let input;
             const pydanticFields = {
                 "tag_id": animalData.tag_id,
                 "name": animalData.name,
-                "species": animalData.species,
                 "gender": animalData.gender,
                 "breed": animalData.breed,
                 "birth_date": animalData.birth_date,
@@ -243,19 +233,7 @@ let input;
                     row.originalValues.push(currentValue);
                     
 let input;
-                    if (index === 3) { // species
-                        input = document.createElement("select");
-                        const options = ["Cattle", "Dog", "Cat", "Chicken", "Guinea Fowl"];
-                        options.forEach(optionValue => {
-                            const option = document.createElement("option");
-                            option.value = optionValue;
-                            option.textContent = optionValue;
-                            if (optionValue === currentValue) {
-                                option.selected = true;
-                            }
-                            input.appendChild(option);
-                        });
-                    } else if (index === 5) { // birth_date
+                     if (index === 5) { // birth_date
                          input = document.createElement("input");
                          input.type = "date";
                          if (currentValue && currentValue !== 'null') {
@@ -358,7 +336,7 @@ let input;
             const cells = row.querySelectorAll("td");
             const animalId = button.dataset.id;
             const animalData = {};
-            const allFields = ["id", "tag_id", "name", "species", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
+            const allFields = ["id", "tag_id", "name", "animal_type", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
             
             cells.forEach((cell, index) => {
                 if (index > 0 && index < cells.length - 1) {
@@ -379,7 +357,6 @@ let input;
             const pydanticFields = {
                 "tag_id": animalData.tag_id,
                 "name": animalData.name,
-                "species": animalData.species,
                 "gender": animalData.gender,
                 "breed": animalData.breed,
                 "birth_date": animalData.birth_date,

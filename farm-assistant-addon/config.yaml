@@ -1,5 +1,5 @@
 name: Farm Assistant
-version: "0.9.20"
+version: "0.9.19"
 slug: farm_assistant
 description: "An addon to manage your farm's livestock data."
 arch:
@@ -27,4 +27,3 @@ schema:
   db_user: str
   db_password: password
   db_name: str
-  run_schema_update: bool?

@@ -13,16 +13,12 @@ RUN mkdir -p /app/templates /app/static
 
 # Copy addon files
 COPY run.sh /
-COPY run_update.sh /
 COPY main.py /app/
-COPY import_data.py /app/
-COPY update_schema.py /app/
 COPY templates/ /app/templates/
 COPY static/ /app/static/
 
 # Make run script executable
 RUN chmod a+x /run.sh
-RUN chmod a+x /run_update.sh
 
 # Expose the port
 EXPOSE 8000
