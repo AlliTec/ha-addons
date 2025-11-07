@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.22 - 2025-11-08
+
+### Changed
+
+- Removed the ID column from the web UI.
+- The Dam and Sire columns now display the names of the animals instead of their IDs.
+- The Status column now displays icons instead of text for "On Property", "Deceased", and "Sold".
+
 ## 0.9.21 - 2025-11-07
 
 ### Changed

@@ -2,6 +2,19 @@ function formatCell(value) {
     return value === null || value === undefined ? "" : value;
 }
 
+function getStatusIcon(status) {
+    switch (status) {
+        case 'On Property':
+            return '<i class="fa-solid fa-house"></i>';
+        case 'Deceased':
+            return '<i class="fa-solid fa-skull-crossbones"></i>';
+        case 'Sold':
+            return '<i class="fa-solid fa-money-bill-wave"></i>';
+        default:
+            return '';
+    }
+}
+
 async function populateAnimalList(filter = "All") {
     const response = await fetch("get_animals");
     const animals = await response.json();
@@ -12,7 +25,6 @@ async function populateAnimalList(filter = "All") {
     filteredAnimals.forEach(animal => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${formatCell(animal.id)}</td>
             <td>${formatCell(animal.tag_id)}</td>
             <td>${formatCell(animal.name)}</td>
             <td>${formatCell(animal.breed)}</td>
@@ -20,9 +32,9 @@ async function populateAnimalList(filter = "All") {
             <td>${formatCell(animal.gender)}</td>
             <td>${formatCell(animal.health_status)}</td>
             <td>${formatCell(animal.notes)}</td>
-            <td>${formatCell(animal.dam_id)}</td>
-            <td>${formatCell(animal.sire_id)}</td>
-            <td>${formatCell(animal.status)}</td>
+            <td>${formatCell(animal.dam_name)}</td>
+            <td>${formatCell(animal.sire_name)}</td>
+            <td>${getStatusIcon(animal.status)}</td>
             <td>${formatCell(animal.features)}</td>
             <td><a href="${formatCell(animal.pic)}" target="_blank">${formatCell(animal.pic)}</a></td>
             <td>${formatCell(animal.dod)}</td>

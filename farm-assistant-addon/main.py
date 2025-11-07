@@ -114,7 +114,16 @@ async def read_item(request: Request):
     addon_version = config.get("version", "unknown")
     try:
         conn = await asyncpg.connect(DATABASE_URL)
-        records = await conn.fetch("SELECT id, tag_id, name, breed, birth_date, gender, health_status, notes, created_at, dam_id, sire_id, status, features, photo_path, pic, dod FROM livestock_records ORDER BY name")
+        records = await conn.fetch("""
+            SELECT
+                lr.id, lr.tag_id, lr.name, lr.breed, lr.birth_date, lr.gender, lr.health_status, lr.notes, lr.created_at, 
+                dam.name as dam_name, sire.name as sire_name, 
+                lr.status, lr.features, lr.photo_path, lr.pic, lr.dod
+            FROM livestock_records lr
+            LEFT JOIN livestock_records dam ON lr.dam_id = dam.id
+            LEFT JOIN livestock_records sire ON lr.sire_id = sire.id
+            ORDER BY lr.name
+        """)
         await conn.close()
         animals = [dict(record) for record in records]
         for animal in animals:
