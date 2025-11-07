@@ -94,9 +94,9 @@ button:hover {
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
     background-color: var(--input-bg);
     border: 1px solid var(--table-border);
+    margin-top: 0;
 }
 
 thead {
@@ -138,8 +138,7 @@ th {
     display: flex;
     justify-content: flex-start;
     margin-left: 0;
-    border-bottom: 1px solid var(--table-border);
-    margin-bottom: 0;
+    margin-bottom: -1px;
 }
 
 .filter-btn {

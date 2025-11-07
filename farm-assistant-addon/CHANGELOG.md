@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.26 - 2025-11-08
+
+### Changed
+
+- Restructured the HTML and adjusted the CSS to make the filter tabs look attached to the table.
+
 ## 0.9.25 - 2025-11-08
 
 ### Changed
