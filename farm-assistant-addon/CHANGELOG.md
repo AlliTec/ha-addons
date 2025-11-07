@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.30 - 2025-11-08
+
+### Changed
+
+- Corrected the direction of the folder tab slope.
+
 ## 0.9.29 - 2025-11-08
 
 ### Changed
