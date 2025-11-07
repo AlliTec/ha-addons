@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.14 - 2025-11-07
+
+### Fixed
+
+- Replaced the static 'Add' button text with a plus icon to match the other buttons.
+
 ## 0.9.13 - 2025-11-07
 
 ### Fixed
