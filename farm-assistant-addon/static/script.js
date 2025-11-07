@@ -4,13 +4,14 @@ function formatCell(value) {
     return value === null || value === undefined ? "" : value;
 }
 
-async function populateAnimalList() {
+async function populateAnimalList(filter = "All") {
     const response = await fetch("get_animals");
     const animals = await response.json();
+    const filteredAnimals = filter === "All" ? animals : animals.filter(animal => animal.animal_type === filter);
     const tableBody = document.querySelector("#livestock-list tbody");
     tableBody.innerHTML = ""; // Clear existing rows
 
-    animals.forEach(animal => {
+    filteredAnimals.forEach(animal => {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${formatCell(animal.id)}</td>
@@ -41,6 +42,18 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log("script.js: DOMContentLoaded event fired.");
 
     populateAnimalList();
+
+    const filterBar = document.getElementById("filter-bar");
+    filterBar.addEventListener("click", (event) => {
+        const target = event.target;
+        if (target.classList.contains("filter-img")) {
+            const filter = target.alt;
+            const activeImages = document.querySelectorAll(".filter-img.active");
+            activeImages.forEach(img => img.classList.remove("active"));
+            target.classList.add("active");
+            populateAnimalList(filter);
+        }
+    });
 
     const animalListTable = document.querySelector("#livestock-list");
     if (!animalListTable) {
@@ -81,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
             row.originalValues = [];
             cells.forEach((cell, index) => {
                 row.originalValues.push(cell.innerHTML);
-                if (index < cells.length - 1) { // Exclude the last cell (actions)
+                if (index < cells.length - 2) { // Exclude the last two cells (actions)
 let input;
                      if (index === 4) { // birth_date
                          input = document.createElement("input");
@@ -154,7 +167,7 @@ let input;
             const animalData = {};
             const allFields = ["id", "tag_id", "name", "animal_type", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
             cells.forEach((cell, index) => {
-                if (index < cells.length - 1) {
+                if (index < cells.length - 2) {
                     const input = cell.querySelector("input, select, textarea");
                     animalData[allFields[index]] = input ? input.value : "";
                 }
@@ -227,7 +240,7 @@ let input;
             row.originalValues = [];
             cells.forEach((cell, index) => {
                 console.log(`script.js: Processing cell ${index}...`);
-                if (index > 0 && index < cells.length - 1) { // Exclude ID and actions
+                if (index > 0 && index < cells.length - 2) { // Exclude ID and actions
                     const currentValue = cell.textContent.trim();
                     console.log(`script.js: Cell ${index} current value: '${currentValue}'`);
                     row.originalValues.push(currentValue);
@@ -339,7 +352,7 @@ let input;
             const allFields = ["id", "tag_id", "name", "animal_type", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
             
             cells.forEach((cell, index) => {
-                if (index > 0 && index < cells.length - 1) {
+                if (index > 0 && index < cells.length - 2) {
                     const input = cell.querySelector("input, select, textarea");
                     animalData[allFields[index]] = input.value;
                 } else if (index === 0) {
@@ -389,7 +402,7 @@ let input;
             const row = button.closest("tr");
             const cells = row.querySelectorAll("td");
             cells.forEach((cell, index) => {
-                if (index < cells.length - 1) {
+                if (index < cells.length - 2) {
                     cell.textContent = row.originalValues[index];
                 }
             });

@@ -2,6 +2,15 @@
 
 ## 0.9.19 - 2025-11-07
 
+### Added
+
+- Added an image-based filter bar to filter animals by type (Cattle, Dog, Fowl).
+- Added a farmhouse image to show all animals.
+
+### Changed
+
+- Moved the "Add" button to the "Actions" column.
+
 ### Changed
 
 - Condensed the table by reducing row padding.
