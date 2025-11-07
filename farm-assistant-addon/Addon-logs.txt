@@ -1,0 +1,150 @@
+app.1d24f37c18c00da1.js:60 The Material theme is deprecated and will be removed in Vaadin 25.
+22698 @ version.js:22
+c @ app.1d24f37c18c00da1.js:60
+29797 @ 34699.77a80428a6e35f25.js:4
+c @ app.1d24f37c18c00da1.js:60
+8808 @ 34699.77a80428a6e35f25.js:7
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ 34699.77a80428a6e35f25.js:31
+c.a @ async_module:58
+10167 @ 34699.77a80428a6e35f25.js:31
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ 34699.77a80428a6e35f25.js:31
+c.a @ async_module:58
+83077 @ 34699.77a80428a6e35f25.js:31
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ 34699.77a80428a6e35f25.js:31
+c.a @ async_module:58
+67056 @ 34699.77a80428a6e35f25.js:31
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ 34699.77a80428a6e35f25.js:28
+c.a @ async_module:58
+99973 @ 34699.77a80428a6e35f25.js:28
+c @ app.1d24f37c18c00da1.js:60
+Promise.then
+firstUpdated @ more-info-mixin.ts:22
+firstUpdated @ translations-mixin.ts:85
+firstUpdated @ themes-mixin.ts:28
+firstUpdated @ auth-mixin.ts:16
+firstUpdated @ quick-bar-mixin.ts:32
+firstUpdated @ home-assistant.ts:104
+_$AE @ reactive-element.ts:1551
+performUpdate @ reactive-element.ts:1518
+t.performUpdate @ storage.ts:172
+scheduleUpdate @ reactive-element.ts:1400
+_$EP @ reactive-element.ts:1372
+await in _$EP
+requestUpdate @ reactive-element.ts:1311
+_$Ev @ reactive-element.ts:1055
+S @ reactive-element.ts:1038
+i @ lit-element.ts:130
+te @ hass-base-mixin.ts:6
+(anonymous) @ context-mixin.ts:27
+(anonymous) @ logging-mixin.ts:24
+(anonymous) @ panel-title-mixin.ts:12
+(anonymous) @ haptic-mixin.ts:38
+(anonymous) @ url-sync-mixin.ts:18
+(anonymous) @ dialog-manager-mixin.ts:28
+(anonymous) @ notification-mixin.ts:5
+(anonymous) @ connection-mixin.ts:41
+(anonymous) @ disconnect-toast-mixin.ts:16
+(anonymous) @ sidebar-mixin.ts:28
+(anonymous) @ action-mixin.ts:16
+(anonymous) @ automation-editor-mixin.ts:21
+(anonymous) @ more-info-mixin.ts:16
+(anonymous) @ state-display-mixin.ts:8
+(anonymous) @ translations-mixin.ts:75
+(anonymous) @ themes-mixin.ts:24
+(anonymous) @ auth-mixin.ts:14
+Te @ hass-element.ts:24
+(anonymous) @ quick-bar-mixin.ts:30
+w @ home-assistant.ts:53
+P @ scoped-custom-element-registry.ts:642
+t @ scoped-custom-element-registry.ts:408
+A.define @ scoped-custom-element-registry.ts:243
+(anonymous) @ custom-element.ts:60
+s @ tslib.es6.mjs:58
+(anonymous) @ app.1d24f37c18c00da1.js:14
+await in (anonymous)
+c.a @ async_module:58
+29627 @ app.1d24f37c18c00da1.js:14
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ app.1d24f37c18c00da1.js:14
+c.a @ async_module:58
+32494 @ app.1d24f37c18c00da1.js:14
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ app.1d24f37c18c00da1.js:60
+script.js:1 script.js: File loaded.
+script.js:37 script.js: DOMContentLoaded event fired.
+script.js:46 script.js: Found table element: <table id=​"livestock-list">​…​</table>​<thead>​…​</thead>​<tbody>​…​</tbody>​<tr>​…​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<input type=​"date" class=​"inline-edit-input">​</td>​<td>​…​</td>​<select class=​"inline-edit-input">​…​</select>​</td>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<textarea class=​"inline-edit-input">​</textarea>​</td>​<td>​…​</td>​<select class=​"inline-edit-input">​…​</select>​</td>​<td>​…​</td>​<select class=​"inline-edit-input">​…​</select>​</td>​<td>​…​</td>​<select class=​"inline-edit-input">​…​</select>​</td>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<td>​…​</td>​<input type=​"date" class=​"inline-edit-input">​</td>​<td>​…​</td>​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​<tr>​…​</tr>​</tbody>​<tfoot>​…​</tfoot>​</table>​
+script.js:49 script.js: Click detected inside table. Target: <button class=​"edit-btn" data-id=​"7">​Edit​</button>​
+script.js:146 script.js: 'Edit' button clicked.
+script.js:152 script.js: Found row: <tr>​…​</tr>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<input type=​"date" class=​"inline-edit-input">​</td>​<td>​…​</td>​<select class=​"inline-edit-input">​…​</select>​</td>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<textarea class=​"inline-edit-input">​</textarea>​</td>​<td>​…​</td>​<select class=​"inline-edit-input">​…​</select>​</td>​<td>​…​</td>​<select class=​"inline-edit-input">​…​</select>​</td>​<td>​…​</td>​<select class=​"inline-edit-input">​…​</select>​</td>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<input type=​"text" class=​"inline-edit-input">​</td>​<td>​…​</td>​<td>​…​</td>​<input type=​"date" class=​"inline-edit-input">​</td>​<td>​…​</td>​</tr>​
+script.js:154 script.js: Found 16 cells in the row.
+script.js:161 script.js: Processing cell 0...
+script.js:164 script.js: Cell 0 current value: '7'
+script.js:239 script.js: Cell 0 replaced with an input field.
+script.js:161 script.js: Processing cell 1...
+script.js:164 script.js: Cell 1 current value: '12345-6'
+script.js:239 script.js: Cell 1 replaced with an input field.
+script.js:161 script.js: Processing cell 2...
+script.js:164 script.js: Cell 2 current value: 'Mjolka'
+script.js:239 script.js: Cell 2 replaced with an input field.
+script.js:161 script.js: Processing cell 3...
+script.js:164 script.js: Cell 3 current value: 'Santa Gertrudis'
+script.js:239 script.js: Cell 3 replaced with an input field.
+script.js:161 script.js: Processing cell 4...
+script.js:164 script.js: Cell 4 current value: 'null'
+script.js:239 script.js: Cell 4 replaced with an input field.
+script.js:161 script.js: Processing cell 5...
+script.js:164 script.js: Cell 5 current value: 'Cow'
+script.js:239 script.js: Cell 5 replaced with an input field.
+script.js:161 script.js: Processing cell 6...
+script.js:164 script.js: Cell 6 current value: 'healthy'
+script.js:239 script.js: Cell 6 replaced with an input field.
+script.js:161 script.js: Processing cell 7...
+script.js:164 script.js: Cell 7 current value: 'None'
+script.js:239 script.js: Cell 7 replaced with an input field.
+script.js:161 script.js: Processing cell 8...
+script.js:164 script.js: Cell 8 current value: 'null'
+script.js:239 script.js: Cell 8 replaced with an input field.
+script.js:161 script.js: Processing cell 9...
+script.js:164 script.js: Cell 9 current value: '2'
+script.js:239 script.js: Cell 9 replaced with an input field.
+script.js:161 script.js: Processing cell 10...
+script.js:164 script.js: Cell 10 current value: 'On Property'
+script.js:239 script.js: Cell 10 replaced with an input field.
+script.js:161 script.js: Processing cell 11...
+script.js:164 script.js: Cell 11 current value: 'None'
+script.js:239 script.js: Cell 11 replaced with an input field.
+script.js:161 script.js: Processing cell 12...
+script.js:164 script.js: Cell 12 current value: 'None'
+script.js:239 script.js: Cell 12 replaced with an input field.
+script.js:161 script.js: Processing cell 13...
+script.js:164 script.js: Cell 13 current value: 'View'
+script.js:161 script.js: Processing cell 14...
+script.js:164 script.js: Cell 14 current value: 'null'
+script.js:239 script.js: Cell 14 replaced with an input field.
+script.js:161 script.js: Processing cell 15...
+script.js:241 script.js: Cell 15 is the action cell, skipping.
+script.js:249 script.js: Changing buttons to Save/Cancel.
+script.js:256 script.js: Buttons changed successfully.
+script.js:49 script.js: Click detected inside table. Target: <select class=​"inline-edit-input">​…​</select>​
+script.js:49 script.js: Click detected inside table. Target: <select class=​"inline-edit-input">​…​</select>​
+script.js:49 script.js: Click detected inside table. Target: <input type=​"date" class=​"inline-edit-input">​
+script.js:49 script.js: Click detected inside table. Target: <input type=​"date" class=​"inline-edit-input">​
+script.js:49 script.js: Click detected inside table. Target: <textarea class=​"inline-edit-input">​</textarea>​
+script.js:49 script.js: Click detected inside table. Target: <button class=​"save-btn" data-id=​"7">​Save​</button>​
+script.js:272 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'value')
+    at script.js:272:58
+    at NodeList.forEach (<anonymous>)
+    at HTMLTableElement.<anonymous> (script.js:269:19)
+(anonymous) @ script.js:272
+(anonymous) @ script.js:269
+script.js:49 script.js: Click detected inside table. Target: <button class=​"save-btn" data-id=​"7">​Save​</button>​
+script.js:272 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'value')
+    at script.js:272:58
+    at NodeList.forEach (<anonymous>)
+    at HTMLTableElement.<anonymous> (script.js:269:19)
+(anonymous) @ script.js:272
+(anonymous) @ script.js:269

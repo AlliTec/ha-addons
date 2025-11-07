@@ -1,12 +1,16 @@
 :root {
-    --bg-color: #000000;
-    --text-color: #FFFFFF;
-    --accent-color: #FF0000; /* HAL 9000 Red */
-    --input-bg: #111111;
-    --input-border: #555555;
-    --table-header-bg: #222222;
-    --table-border: #555555;
-    --button-hover: #FF4444;
+    --bg-color: #F5F5DC; /* Beige */
+    --text-color: #5D4037; /* Dark Brown */
+    --accent-color: #607D8B; /* Blue Grey */
+    --button-hover: #78909C; /* Lighter Blue Grey */
+    --input-bg: #FFFFFF; /* White */
+    --input-border: #D7CCC8; /* Light Brownish Gray */
+    --table-header-bg: #EFEBE9; /* Light Grayish Brown */
+    --table-border: #D7CCC8; /* Light Brownish Gray */
+    --delete-color: #9E9E9E; /* Grey */
+    --delete-hover: #BDBDBD; /* Lighter Grey */
+    --cancel-color: #BDBDBD; /* Gray */
+    --cancel-hover: #E0E0E0; /* Lighter Gray */
 }
 
 body {
@@ -59,22 +63,32 @@ textarea {
 }
 
 button {
-    margin-top: 15px;
-    padding: 12px 24px;
-    background-color: var(--accent-color);
-    color: white;
+    background-color: transparent;
     border: none;
-    border-radius: 0;
     cursor: pointer;
-    font-size: 16px;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: background-color 0.3s;
+    font-size: 1.2rem;
+    color: var(--accent-color);
+    transition: color 0.3s;
 }
 
 button:hover {
-    background-color: var(--button-hover);
+    color: var(--button-hover);
+}
+
+.delete-btn i {
+    color: var(--delete-color);
+}
+
+.delete-btn:hover i {
+    color: var(--delete-hover);
+}
+
+.cancel-btn i, .cancel-add-btn i {
+    color: var(--cancel-color);
+}
+
+.cancel-btn:hover i, .cancel-add-btn:hover i {
+    color: var(--cancel-hover);
 }
 
 table {
@@ -90,7 +104,7 @@ thead {
 }
 
 th, td {
-    padding: 12px;
+    padding: 6px; /* Reduced padding */
     text-align: left;
     border: 1px solid var(--table-border);
 }
@@ -100,12 +114,12 @@ th, td {
     padding: 5px;
     background-color: var(--input-bg);
     color: var(--text-color);
-    border: 2px solid red !important; /* Make it obvious */
+    border: 1px solid var(--input-border);
     z-index: 100;
 }
 
 tr:hover {
-    background-color: #333333;
+    background-color: #f0f0f0;
 }
 
 th {
@@ -138,34 +152,4 @@ th {
 
 .filter-img:hover, .filter-img.active {
     border-color: var(--accent-color);
-}
-
-.edit-btn, .delete-btn {
-    padding: 6px 12px;
-    margin-right: 5px;
-    border: none;
-    border-radius: 0;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.edit-btn {
-    background-color: #00BFFF; /* A bright blue for contrast */
-    color: white;
-}
-
-.edit-btn:hover {
-    background-color: #40CFFF;
-}
-
-.delete-btn {
-    background-color: var(--accent-color);
-    color: white;
-}
-
-.delete-btn:hover {
-    background-color: var(--button-hover);
 }

@@ -4,12 +4,13 @@ import os
 import sys
 import asyncpg
 import logging
+from datetime import datetime
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -76,19 +77,31 @@ templates = Jinja2Templates(directory="/app/templates")
 # --- Pydantic Models ---
 
 class Animal(BaseModel):
-    tag_id: str
+    tag_id: Optional[str] = None
     name: str
-    gender: str
-    breed: str
-    birth_date: str
-    health_status: str
-    notes: str
-    dam_id: int
-    sire_id: int
-    features: str
-    photo_path: str
-    pic: str
-    dod: str
+    animal_type: Optional[str] = None
+    gender: Optional[str] = None
+    breed: Optional[str] = None
+    birth_date: Optional[str] = None
+    health_status: Optional[str] = None
+    notes: Optional[str] = None
+    dam_id: Optional[int] = None
+    sire_id: Optional[int] = None
+    features: Optional[str] = None
+    photo_path: Optional[str] = None
+    pic: Optional[str] = None
+    dod: Optional[str] = None
+    status: Optional[str] = None
+
+def get_animal_type(gender):
+    if gender in ["Cow", "Bull", "Steer", "Heifer"]:
+        return "Cattle"
+    elif gender in ["Bitch", "Dog"]:
+        return "Dog"
+    elif gender in ["Hen", "Cock"]:
+        return "Fowl"
+    else:
+        return None
 
 
 
@@ -104,6 +117,8 @@ async def read_item(request: Request):
         records = await conn.fetch("SELECT id, tag_id, name, breed, birth_date, gender, health_status, notes, created_at, dam_id, sire_id, status, features, photo_path, pic, dod FROM livestock_records ORDER BY name")
         await conn.close()
         animals = [dict(record) for record in records]
+        for animal in animals:
+            animal['animal_type'] = get_animal_type(animal['gender'])
     except Exception as e:
         animals = []
     return templates.TemplateResponse("index.html", {"request": request, "addon_version": addon_version, "animals": animals})
@@ -112,11 +127,18 @@ async def read_item(request: Request):
 async def add_animal(animal: Animal):
     logging.info(f"Adding animal: {animal}")
     try:
+        birth_date = datetime.fromisoformat(animal.birth_date).date() if animal.birth_date else None
+        dod = datetime.fromisoformat(animal.dod).date() if animal.dod else None
+    except ValueError:
+        birth_date = None
+        dod = None
+
+    try:
         conn = await asyncpg.connect(DATABASE_URL)
         await conn.execute("""
             INSERT INTO livestock_records (tag_id, name, gender, breed, birth_date, health_status, notes, dam_id, sire_id, features, photo_path, pic, dod, status, created_at)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'On Property', NOW())
-        """, animal.tag_id, animal.name, animal.gender, animal.breed, animal.birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, animal.dod)
+        """, animal.tag_id, animal.name, animal.gender, animal.breed, birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, dod)
         await conn.close()
         logging.info("Animal added successfully")
         return {"message": "Animal added successfully"}
@@ -130,14 +152,33 @@ async def add_animal(animal: Animal):
 async def get_animals():
     try:
         conn = await asyncpg.connect(DATABASE_URL)
-        records = await conn.fetch("SELECT id, tag_id, name, breed, birth_date, gender, health_status, notes, created_at, dam_id, sire_id, status, features, photo_path, pic, dod FROM livestock_records ORDER BY name")
+        records = await conn.fetch("""
+            SELECT
+                lr.id, lr.tag_id, lr.name, lr.breed, lr.birth_date, lr.gender, lr.health_status, lr.notes, lr.created_at, 
+                dam.name as dam_name, sire.name as sire_name, 
+                lr.status, lr.features, lr.photo_path, lr.pic, lr.dod
+            FROM livestock_records lr
+            LEFT JOIN livestock_records dam ON lr.dam_id = dam.id
+            LEFT JOIN livestock_records sire ON lr.sire_id = sire.id
+            ORDER BY lr.name
+        """)
         await conn.close()
         logging.info(f"Fetched {len(records)} animals from database.")
         animals = [dict(record) for record in records]
+        for animal in animals:
+            animal['animal_type'] = get_animal_type(animal['gender'])
         return animals
     except Exception as e:
         logging.error(f"Error fetching animals: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/animals")
+async def get_animals_for_dropdown():
+    conn = await asyncpg.connect(DATABASE_URL)
+    records = await conn.fetch("SELECT id, name, gender FROM livestock_records ORDER BY name")
+    await conn.close()
+    animals = [dict(record) for record in records]
+    return animals
 
 @app.get("/get_animal/{animal_id}")
 async def get_animal(animal_id: int):
@@ -162,12 +203,23 @@ async def delete_animal(animal_id: int):
 @app.put("/update_animal/{animal_id}")
 async def update_animal(animal_id: int, animal: Animal):
     try:
+        birth_date = datetime.fromisoformat(animal.birth_date).date() if animal.birth_date else None
+        dod = datetime.fromisoformat(animal.dod).date() if animal.dod else None
+    except ValueError:
+        birth_date = None
+        dod = None
+
+    # Clear dod if status is not 'Deceased'
+    if animal.status != 'Deceased':
+        dod = None
+
+    try:
         conn = await asyncpg.connect(DATABASE_URL)
         await conn.execute("""
             UPDATE livestock_records
-            SET tag_id = $1, name = $2, gender = $3, breed = $4, birth_date = $5, health_status = $6, notes = $7, dam_id = $8, sire_id = $9, features = $10, photo_path = $11, pic = $12, dod = $13
-            WHERE id = $14
-        """, animal.tag_id, animal.name, animal.gender, animal.breed, animal.birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, animal.dod, animal_id)
+            SET tag_id = $1, name = $2, gender = $3, breed = $4, birth_date = $5, health_status = $6, notes = $7, dam_id = $8, sire_id = $9, features = $10, photo_path = $11, pic = $12, dod = $13, status = $14
+            WHERE id = $15
+        """, animal.tag_id, animal.name, animal.gender, animal.breed, birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, dod, animal.status, animal_id)
         await conn.close()
         return {"message": "Animal updated successfully"}
     except Exception as e:

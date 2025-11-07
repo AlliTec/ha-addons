@@ -4,11 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Farm Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
     <h1>Farm Assistant</h1>
-    <h2>Livestock List</h2>
+    <div class="heading-container">
+        <h2>Livestock List</h2>
+        <div id="filter-bar">
+            <img src="static/farm.png" alt="All" id="filter-all" class="filter-img active">
+            <img src="static/cow.png" alt="Cattle" id="filter-cattle" class="filter-img">
+            <img src="static/dog.png" alt="Dog" id="filter-dog" class="filter-img">
+            <img src="static/chicken.png" alt="Fowl" id="filter-fowl" class="filter-img">
+        </div>
+    </div>
     <table id="livestock-list">
         <thead>
             <tr>
@@ -20,42 +29,18 @@
                 <th>Gender</th>
                 <th>Health Status</th>
                 <th>Notes</th>
-                <th>Created At</th>
                 <th>Dam ID</th>
                 <th>Sire ID</th>
                 <th>Status</th>
                 <th>Features</th>
-                <th>Photo Path</th>
                 <th>Pic</th>
                 <th>DOD</th>
                 <th>Actions</th>
             </tr>
         </thead>
-        <tbody>
-            {% for animal in animals %}
-            <tr>
-                <td>{{ animal.id }}</td>
-                <td>{{ animal.tag_id }}</td>
-                <td>{{ animal.name }}</td>
-                <td>{{ animal.breed }}</td>
-                <td>{{ animal.birth_date }}</td>
-                <td>{{ animal.gender }}</td>
-                <td>{{ animal.health_status }}</td>
-                <td>{{ animal.notes }}</td>
-                <td>{{ animal.created_at }}</td>
-                <td>{{ animal.dam_id }}</td>
-                <td>{{ animal.sire_id }}</td>
-                <td>{{ animal.status }}</td>
-                <td>{{ animal.features }}</td>
-                <td>{{ animal.photo_path }}</td>
-                <td>{{ animal.pic }}</td>
-                <td>{{ animal.dod }}</td>
-                <td>
-                    <button class="edit-btn" data-id="{{ animal.id }}">Edit</button>
-                    <button class="delete-btn" data-id="{{ animal.id }}">Delete</button>
-                </td>
-            </tr>
-            {% endfor %}
+         <tbody>
+        </tbody>
+        <tfoot>
             <tr class="empty-row">
                 <td></td>
                 <td></td>
@@ -69,9 +54,11 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                <td><button class="add-btn">Add</button></td>
+                <td></td>
+                <td></td>
+                <td><button class="add-btn"><i class="fa-solid fa-plus-circle" aria-label="Add"></i></button></td>
             </tr>
-        </tbody>
+        </tfoot>
     </table>
 
 
