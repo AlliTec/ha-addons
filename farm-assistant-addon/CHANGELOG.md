@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.23 - 2025-11-08
+
+### Changed
+
+- Moved the filter icons to the left side of the screen.
+- Corrected the image paths for the filter icons.
+
 ## 0.9.22 - 2025-11-08
 
 ### Changed

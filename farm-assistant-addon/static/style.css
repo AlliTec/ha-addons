@@ -131,13 +131,13 @@ th {
 
 .heading-container {
     display: flex;
-    justify-content: space-between;
     align-items: center;
 }
 
 #filter-bar {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    margin-left: 20px;
 }
 
 .filter-img {
