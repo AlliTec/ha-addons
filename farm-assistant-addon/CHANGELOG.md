@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.31 - 2025-11-08
+
+### Changed
+
+- Corrected the folder tab design to have a vertical left edge and a right edge that slopes from a narrower top to a wider bottom.
+
 ## 0.9.30 - 2025-11-08
 
 ### Changed
