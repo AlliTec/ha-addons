@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.33 - 2025-11-08
+
+### Changed
+
+- Added a subtle shadow effect to the sides of the selected tab.
+
 ## 0.9.32 - 2025-11-08
 
 ### Changed
