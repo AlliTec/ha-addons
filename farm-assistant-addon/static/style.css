@@ -1,14 +1,14 @@
 :root {
     --bg-color: #F5F5DC; /* Beige */
     --text-color: #5D4037; /* Dark Brown */
-    --accent-color: #8BC34A; /* Light Green */
-    --button-hover: #A5D6A7; /* Lighter Green */
+    --accent-color: #607D8B; /* Blue Grey */
+    --button-hover: #78909C; /* Lighter Blue Grey */
     --input-bg: #FFFFFF; /* White */
     --input-border: #D7CCC8; /* Light Brownish Gray */
     --table-header-bg: #EFEBE9; /* Light Grayish Brown */
     --table-border: #D7CCC8; /* Light Brownish Gray */
-    --delete-color: #EF5350; /* Red */
-    --delete-hover: #E57373; /* Lighter Red */
+    --delete-color: #9E9E9E; /* Grey */
+    --delete-hover: #BDBDBD; /* Lighter Grey */
     --cancel-color: #BDBDBD; /* Gray */
     --cancel-hover: #E0E0E0; /* Lighter Gray */
 }
@@ -104,7 +104,7 @@ thead {
 }
 
 th, td {
-    padding: 12px;
+    padding: 6px; /* Reduced padding */
     text-align: left;
     border: 1px solid var(--table-border);
 }

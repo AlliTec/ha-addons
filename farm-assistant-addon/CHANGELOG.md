@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.19 - 2025-11-07
+
+### Changed
+
+- Condensed the table by reducing row padding.
+- Null values are now displayed as empty strings.
+- Updated button colors to a more neutral palette.
+- Removed the "Photo Path" column from the table.
+
 ## 0.9.18 - 2025-11-07
 
 ### Fixed

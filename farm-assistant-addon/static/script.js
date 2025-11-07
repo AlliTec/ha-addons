@@ -1,5 +1,9 @@
 console.log("script.js: File loaded.");
 
+function formatCell(value) {
+    return value === null || value === undefined ? "" : value;
+}
+
 async function populateAnimalList() {
     const response = await fetch("get_animals");
     const animals = await response.json();
@@ -9,21 +13,20 @@ async function populateAnimalList() {
     animals.forEach(animal => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${animal.id}</td>
-            <td>${animal.tag_id}</td>
-            <td>${animal.name}</td>
-            <td>${animal.breed}</td>
-            <td>${animal.birth_date}</td>
-            <td>${animal.gender}</td>
-            <td>${animal.health_status}</td>
-            <td>${animal.notes}</td>
-            <td>${animal.dam_id}</td>
-            <td>${animal.sire_id}</td>
-            <td>${animal.status}</td>
-            <td>${animal.features}</td>
-            <td>${animal.photo_path}</td>
-            <td><a href="${animal.pic}" target="_blank">${animal.pic}</a></td>
-            <td>${animal.dod}</td>
+            <td>${formatCell(animal.id)}</td>
+            <td>${formatCell(animal.tag_id)}</td>
+            <td>${formatCell(animal.name)}</td>
+            <td>${formatCell(animal.breed)}</td>
+            <td>${formatCell(animal.birth_date)}</td>
+            <td>${formatCell(animal.gender)}</td>
+            <td>${formatCell(animal.health_status)}</td>
+            <td>${formatCell(animal.notes)}</td>
+            <td>${formatCell(animal.dam_id)}</td>
+            <td>${formatCell(animal.sire_id)}</td>
+            <td>${formatCell(animal.status)}</td>
+            <td>${formatCell(animal.features)}</td>
+            <td><a href="${formatCell(animal.pic)}" target="_blank">${formatCell(animal.pic)}</a></td>
+            <td>${formatCell(animal.dod)}</td>
             <td>
                 <button class="edit-btn" data-id="${animal.id}"><i class="fa-solid fa-pencil" aria-label="Edit"></i></button>
                 <button class="delete-btn" data-id="${animal.id}"><i class="fa-solid fa-trash-can" aria-label="Delete"></i></button>
