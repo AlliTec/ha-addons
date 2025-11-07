@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.25 - 2025-11-08
+
+### Changed
+
+- Adjusted the CSS to make the filter tabs sit directly on top of the table.
+
 ## 0.9.24 - 2025-11-08
 
 ### Changed

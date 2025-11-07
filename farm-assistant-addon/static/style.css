@@ -139,7 +139,7 @@ th {
     justify-content: flex-start;
     margin-left: 0;
     border-bottom: 1px solid var(--table-border);
-    margin-bottom: -1px;
+    margin-bottom: 0;
 }
 
 .filter-btn {
