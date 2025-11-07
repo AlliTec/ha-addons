@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.12 - 2025-11-07
+
+### Changed
+
+- Replaced button text with Material Design Icons for 'Add', 'Edit', 'Save', 'Delete', and 'Cancel' actions to prevent table re-alignment issues and improve aesthetics. Added `aria-label` for accessibility.
+
 ## 0.9.11 - 2025-11-07
 
 ### Fixed

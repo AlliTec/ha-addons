@@ -25,8 +25,8 @@ async function populateAnimalList() {
             <td><a href="${animal.pic}" target="_blank">${animal.pic}</a></td>
             <td>${animal.dod}</td>
             <td>
-                <button class="edit-btn" data-id="${animal.id}">Edit</button>
-                <button class="delete-btn" data-id="${animal.id}">Delete</button>
+                <button class="edit-btn" data-id="${animal.id}"><i class="mdi mdi-pencil" aria-label="Edit"></i></button>
+                <button class="delete-btn" data-id="${animal.id}"><i class="mdi mdi-delete" aria-label="Delete"></i></button>
             </td>
         `;
         tableBody.appendChild(row);
@@ -131,11 +131,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             const addBtn = row.querySelector(".add-btn");
-            addBtn.textContent = "Save";
+            addBtn.innerHTML = "<i class=\"mdi mdi-content-save\" aria-label=\"Save\"></i>";
             addBtn.classList.remove("add-btn");
             addBtn.classList.add("save-add-btn");
             const cancelBtn = document.createElement("button");
-            cancelBtn.textContent = "Cancel";
+            cancelBtn.innerHTML = "<i class=\"mdi mdi-close-circle\" aria-label=\"Cancel\"></i>";
             cancelBtn.classList.add("cancel-add-btn");
             row.querySelector("td:last-child").appendChild(cancelBtn);
             return;
@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const addCells = addRow.querySelectorAll("td");
                 addCells.forEach(cell => cell.innerHTML = "");
                 const saveBtn = addRow.querySelector(".save-add-btn");
-                saveBtn.textContent = "Add";
+                saveBtn.innerHTML = "<i class=\"mdi mdi-plus-circle\" aria-label=\"Add\"></i>";
                 saveBtn.classList.remove("save-add-btn");
                 saveBtn.classList.add("add-btn");
                 const cancelBtn = addRow.querySelector(".cancel-add-btn");
@@ -311,10 +311,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const deleteBtn = row.querySelector(".delete-btn");
             if (editBtn && deleteBtn) {
                 console.log("script.js: Changing buttons to Save/Cancel.");
-                editBtn.textContent = "Save";
+                editBtn.innerHTML = "<i class=\"mdi mdi-content-save\" aria-label=\"Save\"></i>";
                 editBtn.classList.remove("edit-btn");
                 editBtn.classList.add("save-btn");
-                deleteBtn.textContent = "Cancel";
+                deleteBtn.innerHTML = "<i class=\"mdi mdi-close-circle\" aria-label=\"Cancel\"></i>";
                 deleteBtn.classList.remove("delete-btn");
                 deleteBtn.classList.add("cancel-btn");
                 console.log("script.js: Buttons changed successfully.");
@@ -389,10 +389,10 @@ document.addEventListener("DOMContentLoaded", () => {
             // Change buttons back
             const saveBtn = row.querySelector(".save-btn");
             const cancelBtn = row.querySelector(".cancel-btn");
-            saveBtn.textContent = "Edit";
+            saveBtn.innerHTML = "<i class=\"mdi mdi-pencil\" aria-label=\"Edit\"></i>";
             saveBtn.classList.remove("save-btn");
             saveBtn.classList.add("edit-btn");
-            cancelBtn.textContent = "Delete";
+            cancelBtn.innerHTML = "<i class=\"mdi mdi-delete\" aria-label=\"Delete\"></i>";
             cancelBtn.classList.remove("cancel-btn");
             cancelBtn.classList.add("delete-btn");
         }
