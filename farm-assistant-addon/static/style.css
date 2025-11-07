@@ -145,13 +145,20 @@ th {
     background-color: var(--input-bg);
     border: 1px solid var(--table-border);
     border-bottom: none;
-    padding: 10px 15px;
+    padding: 10px 25px;
     cursor: pointer;
     font-size: 1rem;
     color: var(--text-color);
     transition: background-color 0.3s;
-    border-radius: 5px 5px 0 0;
-    margin-right: 5px;
+    border-radius: 10px 10px 0 0;
+    margin-right: 0;
+    transform: skewX(-25deg);
+    margin-left: 15px;
+}
+
+.filter-btn > * {
+    transform: skewX(25deg);
+    display: inline-block;
 }
 
 .filter-btn:hover {

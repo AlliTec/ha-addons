@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.28 - 2025-11-08
+
+### Changed
+
+- Styled the filter tabs to be touching, with rounded top corners and a 45-degree angle on the left side of each tab.
+
 ## 0.9.27 - 2025-11-08
 
 ### Changed
