@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.27 - 2025-11-08
+
+### Changed
+
+- Reversed the color scheme for the filter tabs.
+
 ## 0.9.26 - 2025-11-08
 
 ### Changed

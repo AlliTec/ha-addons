@@ -142,7 +142,7 @@ th {
 }
 
 .filter-btn {
-    background-color: var(--table-header-bg);
+    background-color: var(--input-bg);
     border: 1px solid var(--table-border);
     border-bottom: none;
     padding: 10px 15px;
@@ -155,11 +155,11 @@ th {
 }
 
 .filter-btn:hover {
-    background-color: var(--input-bg);
+    background-color: var(--table-header-bg);
 }
 
 .filter-btn.active {
-    background-color: var(--input-bg);
-    border-bottom: 1px solid var(--input-bg);
+    background-color: var(--table-header-bg);
+    border-bottom: 1px solid var(--table-header-bg);
     margin-bottom: -1px;
 }
