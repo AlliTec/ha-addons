@@ -2,6 +2,11 @@
 
 ## 0.9.20 - 2025-11-07
 
+### Changed
+
+- Removed the "Animal" column from the table.
+- Repositioned the filter icons to be on the same line as the "Livestock List" heading.
+
 ### Added
 
 - Added an image-based filter bar to filter animals by type (Cattle, Dog, Fowl).

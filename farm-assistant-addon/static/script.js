@@ -17,7 +17,6 @@ async function populateAnimalList(filter = "All") {
             <td>${formatCell(animal.id)}</td>
             <td>${formatCell(animal.tag_id)}</td>
             <td>${formatCell(animal.name)}</td>
-            <td>${formatCell(animal.animal_type)}</td>
             <td>${formatCell(animal.breed)}</td>
             <td>${formatCell(animal.birth_date)}</td>
             <td>${formatCell(animal.gender)}</td>
@@ -96,13 +95,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 row.originalValues.push(cell.innerHTML);
                 if (index < cells.length - 2) { // Exclude the last two cells (actions)
 let input;
-                     if (index === 4) { // birth_date
+                     if (index === 3) { // birth_date
                          input = document.createElement("input");
                          input.type = "date";
-                     } else if (index === 13) { // dod
+                     } else if (index === 12) { // dod
                          input = document.createElement("input");
                          input.type = "date";
-                     } else if (index === 5) { // gender
+                     } else if (index === 4) { // gender
                          input = document.createElement("select");
                          const options = ["Cock", "Hen", "Dog", "Bitch", "Cow", "Bull", "Steer", "Heifer"];
                          options.forEach(optionValue => {
@@ -111,7 +110,7 @@ let input;
                              option.textContent = optionValue;
                              input.appendChild(option);
                          });
-                     } else if (index === 10) { // status
+                     } else if (index === 9) { // status
                          input = document.createElement("select");
                          const options = ["On Property", "Deceased", "Sold"];
                          options.forEach(optionValue => {
@@ -120,9 +119,9 @@ let input;
                              option.textContent = optionValue;
                              input.appendChild(option);
                          });
-                     } else if (index === 7) { // notes
+                     } else if (index === 6) { // notes
                          input = document.createElement("textarea");
-                     } else if (index === 8) { // dam_id
+                     } else if (index === 7) { // dam_id
                          input = document.createElement("select");
                          const dams = animals.filter(animal => ["Cow", "Hen", "Bitch"].includes(animal.gender));
                          dams.forEach(dam => {
@@ -131,7 +130,7 @@ let input;
                              option.textContent = dam.name;
                              input.appendChild(option);
                          });
-                     } else if (index === 9) { // sire_id
+                     } else if (index === 8) { // sire_id
                          input = document.createElement("select");
                          const sires = animals.filter(animal => ["Bull", "Dog", "Cock"].includes(animal.gender));
                          sires.forEach(sire => {
@@ -165,7 +164,7 @@ let input;
             const row = button.closest("tr");
             const cells = row.querySelectorAll("td");
             const animalData = {};
-            const allFields = ["id", "tag_id", "name", "animal_type", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
+            const allFields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
             cells.forEach((cell, index) => {
                 if (index < cells.length - 2) {
                     const input = cell.querySelector("input, select, textarea");
@@ -246,21 +245,21 @@ let input;
                     row.originalValues.push(currentValue);
                     
 let input;
-                     if (index === 5) { // birth_date
+                     if (index === 4) { // birth_date
                          input = document.createElement("input");
                          input.type = "date";
                          if (currentValue && currentValue !== 'null') {
                              input.value = new Date(currentValue).toISOString().split('T')[0];
                          }
-                     } else if (index === 14) { // dod
+                     } else if (index === 13) { // dod
                          input = document.createElement("input");
                          input.type = "date";
-                         if (row.querySelector('td:nth-child(11)').textContent.trim() === 'Deceased') {
+                         if (row.querySelector('td:nth-child(10)').textContent.trim() === 'Deceased') {
                              input.value = new Date().toISOString().split('T')[0];
                          } else if (currentValue && currentValue !== 'null') {
                              input.value = new Date(currentValue).toISOString().split('T')[0];
                          }
-                     } else if (index === 6) { // gender
+                     } else if (index === 5) { // gender
                          input = document.createElement("select");
                          const options = ["Cock", "Hen", "Dog", "Bitch", "Cow", "Bull", "Steer", "Heifer"];
                          options.forEach(optionValue => {
@@ -272,7 +271,7 @@ let input;
                              }
                              input.appendChild(option);
                          });
-                     } else if (index === 11) { // status
+                     } else if (index === 10) { // status
                          input = document.createElement("select");
                          const options = ["On Property", "Deceased", "Sold"];
                          options.forEach(optionValue => {
@@ -284,10 +283,10 @@ let input;
                              }
                              input.appendChild(option);
                          });
-                     } else if (index === 8) { // notes
+                     } else if (index === 7) { // notes
                          input = document.createElement("textarea");
                          input.value = currentValue;
-                     } else if (index === 9) { // dam_id
+                     } else if (index === 8) { // dam_id
                          input = document.createElement("select");
                          const dams = animals.filter(animal => ["Cow", "Hen", "Bitch"].includes(animal.gender));
                          dams.forEach(dam => {
@@ -299,7 +298,7 @@ let input;
                              }
                              input.appendChild(option);
                          });
-                     } else if (index === 10) { // sire_id
+                     } else if (index === 9) { // sire_id
                          input = document.createElement("select");
                          const sires = animals.filter(animal => ["Bull", "Dog", "Cock"].includes(animal.gender));
                          sires.forEach(sire => {
@@ -349,7 +348,7 @@ let input;
             const cells = row.querySelectorAll("td");
             const animalId = button.dataset.id;
             const animalData = {};
-            const allFields = ["id", "tag_id", "name", "animal_type", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
+            const allFields = ["id", "tag_id", "name", "breed", "birth_date", "gender", "health_status", "notes", "dam_id", "sire_id", "status", "features", "photo_path", "pic", "dod"];
             
             cells.forEach((cell, index) => {
                 if (index > 0 && index < cells.length - 2) {
