@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.18 - 2025-11-07
+
+### Fixed
+
+- Restored the table styling that was accidentally removed, making the table visible again.
+
 ## 0.9.17 - 2025-11-07
 
 ### Changed

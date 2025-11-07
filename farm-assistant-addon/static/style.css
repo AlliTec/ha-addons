@@ -90,3 +90,41 @@ button:hover {
 .cancel-btn:hover i, .cancel-add-btn:hover i {
     color: var(--cancel-hover);
 }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--table-border);
+}
+
+thead {
+    background-color: var(--table-header-bg);
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid var(--table-border);
+}
+
+.inline-edit-input {
+    width: 90%;
+    padding: 5px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--input-border);
+    z-index: 100;
+}
+
+tr:hover {
+    background-color: #f0f0f0;
+}
+
+th {
+    font-weight: 500;
+    color: var(--text-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
