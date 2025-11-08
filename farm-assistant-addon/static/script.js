@@ -836,7 +836,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function openAddAssetForm() {
+        // Reset the form
         document.getElementById('add-asset-form').reset();
+        
+        // Set default values
+        document.getElementById('add-asset-quantity').value = 1;
+        document.getElementById('add-asset-status').value = 'operational';
+        document.getElementById('add-asset-condition').value = 'good';
+        document.getElementById('add-asset-permit-required').value = 'false';
+        document.getElementById('add-asset-usage-type').value = 'hours';
+        
         document.getElementById('add-asset-modal').style.display = 'block';
     }
 
@@ -849,19 +858,48 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             // Populate form fields
             document.getElementById('edit-asset-id').value = asset.id;
+            
+            // Basic Information
             document.getElementById('edit-asset-name').value = asset.name || '';
             document.getElementById('edit-asset-category').value = asset.category || '';
             document.getElementById('edit-asset-make').value = asset.make || '';
             document.getElementById('edit-asset-model').value = asset.model || '';
+            document.getElementById('edit-asset-serial-number').value = asset.serial_number || '';
+            
+            // Status & Location
             document.getElementById('edit-asset-location').value = asset.location || '';
             document.getElementById('edit-asset-quantity').value = asset.quantity || 1;
             document.getElementById('edit-asset-status').value = asset.status || 'operational';
-            document.getElementById('edit-asset-notes').value = asset.notes || '';
+            document.getElementById('edit-asset-condition').value = asset.condition || '';
             
-            // Clear usage fields for new entry
+            // Purchase Information
+            document.getElementById('edit-asset-purchase-date').value = asset.purchase_date || '';
+            document.getElementById('edit-asset-purchase-price').value = asset.purchase_price || '';
+            document.getElementById('edit-asset-purchase-from').value = asset.purchase_from || '';
+            
+            // Registration & Insurance
+            document.getElementById('edit-asset-registration-no').value = asset.registration_no || '';
+            document.getElementById('edit-asset-registration-due').value = asset.registration_due || '';
+            document.getElementById('edit-asset-insurance-provider').value = asset.insurance_provider || '';
+            document.getElementById('edit-asset-insurance-policy-no').value = asset.insurance_policy_no || '';
+            document.getElementById('edit-asset-insurance-due').value = asset.insurance_due || '';
+            
+            // Permits & Documentation
+            document.getElementById('edit-asset-permit-required').value = asset.permit_required ? 'true' : 'false';
+            document.getElementById('edit-asset-permit-type').value = asset.permit_type || '';
+            document.getElementById('edit-asset-permit-expiry').value = asset.permit_expiry || '';
+            
+            // Warranty Information
+            document.getElementById('edit-asset-warranty-provider').value = asset.warranty_provider || '';
+            document.getElementById('edit-asset-warranty-expiry-date').value = asset.warranty_expiry_date || '';
+            
+            // Usage Information (clear for new entry)
             document.getElementById('edit-asset-usage-type').value = 'hours';
             document.getElementById('edit-asset-usage-value').value = '';
             document.getElementById('edit-asset-usage-notes').value = '';
+            
+            // General Notes
+            document.getElementById('edit-asset-notes').value = asset.notes || '';
             
             // Hide details modal and show edit modal
             document.getElementById('asset-details-modal').style.display = 'none';
@@ -1147,17 +1185,47 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log('Asset form submitted. Form data:', Object.fromEntries(formData));
             
             const assetData = {
+                // Basic Information
                 name: formData.get('name'),
                 category: formData.get('category'),
                 make: formData.get('make'),
                 model: formData.get('model'),
+                serial_number: formData.get('serial_number'),
+                
+                // Status & Location
                 location: formData.get('location'),
                 quantity: formData.get('quantity') ? parseInt(formData.get('quantity')) : 1,
                 status: formData.get('status'),
-                notes: formData.get('notes'),
+                condition: formData.get('condition'),
+                
+                // Purchase Information
+                purchase_date: formData.get('purchase_date') || null,
+                purchase_price: formData.get('purchase_price') ? parseFloat(formData.get('purchase_price')) : null,
+                purchase_from: formData.get('purchase_from'),
+                
+                // Registration & Insurance
+                registration_no: formData.get('registration_no'),
+                registration_due: formData.get('registration_due') || null,
+                insurance_provider: formData.get('insurance_provider'),
+                insurance_policy_no: formData.get('insurance_policy_no'),
+                insurance_due: formData.get('insurance_due') || null,
+                
+                // Permits & Documentation
+                permit_required: formData.get('permit_required') === 'true',
+                permit_type: formData.get('permit_type'),
+                permit_expiry: formData.get('permit_expiry') || null,
+                
+                // Warranty Information
+                warranty_provider: formData.get('warranty_provider'),
+                warranty_expiry_date: formData.get('warranty_expiry_date') || null,
+                
+                // Usage Information
                 usage_type: formData.get('usage_type'),
                 usage_value: formData.get('usage_value') ? parseFloat(formData.get('usage_value')) : null,
-                usage_notes: formData.get('usage_notes')
+                usage_notes: formData.get('usage_notes'),
+                
+                // General Notes
+                notes: formData.get('notes')
             };
             
             try {
@@ -1200,17 +1268,47 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log('Edit asset form submitted. Asset ID:', assetId, 'Form data:', Object.fromEntries(formData));
             
             const assetData = {
+                // Basic Information
                 name: formData.get('name'),
                 category: formData.get('category'),
                 make: formData.get('make'),
                 model: formData.get('model'),
+                serial_number: formData.get('serial_number'),
+                
+                // Status & Location
                 location: formData.get('location'),
                 quantity: formData.get('quantity') ? parseInt(formData.get('quantity')) : 1,
                 status: formData.get('status'),
-                notes: formData.get('notes'),
+                condition: formData.get('condition'),
+                
+                // Purchase Information
+                purchase_date: formData.get('purchase_date') || null,
+                purchase_price: formData.get('purchase_price') ? parseFloat(formData.get('purchase_price')) : null,
+                purchase_from: formData.get('purchase_from'),
+                
+                // Registration & Insurance
+                registration_no: formData.get('registration_no'),
+                registration_due: formData.get('registration_due') || null,
+                insurance_provider: formData.get('insurance_provider'),
+                insurance_policy_no: formData.get('insurance_policy_no'),
+                insurance_due: formData.get('insurance_due') || null,
+                
+                // Permits & Documentation
+                permit_required: formData.get('permit_required') === 'true',
+                permit_type: formData.get('permit_type'),
+                permit_expiry: formData.get('permit_expiry') || null,
+                
+                // Warranty Information
+                warranty_provider: formData.get('warranty_provider'),
+                warranty_expiry_date: formData.get('warranty_expiry_date') || null,
+                
+                // Usage Information
                 usage_type: formData.get('usage_type'),
                 usage_value: formData.get('usage_value') ? parseFloat(formData.get('usage_value')) : null,
-                usage_notes: formData.get('usage_notes')
+                usage_notes: formData.get('usage_notes'),
+                
+                // General Notes
+                notes: formData.get('notes')
             };
             
             try {

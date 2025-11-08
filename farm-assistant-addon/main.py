@@ -297,27 +297,40 @@ async def update_animal(animal_id: int, animal: Animal):
 # --- Asset Management Endpoints ---
 
 class AssetCreate(BaseModel):
+    # Basic Information
     name: str
     category: Optional[str] = None
     make: Optional[str] = None
     model: Optional[str] = None
     serial_number: Optional[str] = None
-    purchase_date: Optional[str] = None
-    status: Optional[str] = "operational"
-    parent_asset_id: Optional[int] = None
-    location: Optional[str] = None
     quantity: Optional[int] = 1
-    registration_no: Optional[str] = None
-    registration_due: Optional[str] = None
-    permit_info: Optional[str] = None
-    insurance_info: Optional[str] = None
-    insurance_due: Optional[str] = None
+    
+    # Status & Location
+    status: Optional[str] = "operational"
+    location: Optional[str] = None
+    parent_asset_id: Optional[int] = None
+    
+    # Purchase Information
+    purchase_date: Optional[str] = None
+    purchase_price: Optional[float] = None
+    purchase_location: Optional[str] = None
     warranty_provider: Optional[str] = None
     warranty_expiry_date: Optional[str] = None
-    purchase_price: Optional[str] = None
-    purchase_location: Optional[str] = None
+    
+    # Registration & Insurance
+    registration_no: Optional[str] = None
+    registration_due: Optional[str] = None
+    insurance_info: Optional[str] = None
+    insurance_due: Optional[str] = None
+    
+    # Permits & Documentation
+    permit_info: Optional[str] = None
     manual_or_doc_path: Optional[str] = None
+    
+    # General Notes
     notes: Optional[str] = None
+    
+    # Usage Information
     usage_type: Optional[str] = None
     usage_value: Optional[float] = None
     usage_notes: Optional[str] = None
@@ -374,7 +387,7 @@ async def add_asset(asset: AssetCreate):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
         async with conn.transaction():
-            # Insert asset
+            # Insert asset with all fields
             result = await conn.fetchrow("""
                 INSERT INTO asset_inventory 
                 (name, category, make, model, serial_number, purchase_date, status,
@@ -383,7 +396,7 @@ async def add_asset(asset: AssetCreate):
                  warranty_expiry_date, purchase_price, purchase_location,
                  manual_or_doc_path, notes, created_at)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
-                        $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW())
+                        $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, NOW())
                 RETURNING id
             """, asset.name, asset.category, asset.make, asset.model, asset.serial_number,
                 asset.purchase_date, asset.status, asset.parent_asset_id, asset.location,
@@ -411,7 +424,7 @@ async def update_asset(asset_id: int, asset: AssetCreate):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
         async with conn.transaction():
-            # Update asset
+            # Update asset with all fields
             await conn.execute("""
                 UPDATE asset_inventory 
                 SET name = $1, category = $2, make = $3, model = $4, serial_number = $5,

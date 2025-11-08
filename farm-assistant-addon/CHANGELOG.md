@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.2.4 - 2025-11-08
+
+### Added
+- **Comprehensive Asset Forms**: Expanded add/edit asset forms to include all 22+ editable fields from asset_inventory schema
+- **Complete Field Coverage**: Added Basic Information, Status & Location, Purchase Information, Registration & Insurance, Permits & Documentation, Warranty Information, and General Notes sections
+- **Professional Form Organization**: Logical grouping of fields with clear section headers and proper form structure
+- **Enhanced Asset Management**: Full CRUD operations now support all database fields including purchase details, insurance, permits, and warranties
+
+### Updated
+- **JavaScript Form Handlers**: Updated both add and edit asset form handlers to process all new fields with proper data type handling
+- **AssetCreate Pydantic Model**: Extended to include all editable fields from asset_inventory table
+- **Form Population**: Enhanced enableAssetEditMode to populate all comprehensive form fields when editing
+- **Default Value Management**: Improved openAddAssetForm to set appropriate defaults for all new fields
+
+### Technical Improvements
+- **Data Type Handling**: Proper conversion for numeric fields (quantity, purchase_price) and boolean fields (permit_required)
+- **Date Field Processing**: Correct handling of date fields (purchase_date, registration_due, insurance_due, permit_expiry, warranty_expiry_date)
+- **Form Validation**: Enhanced client-side validation for all new form fields
+- **API Integration**: Backend endpoints now process and store all comprehensive asset data
+
 ## 1.2.3 - 2025-11-08
 
 ### Added

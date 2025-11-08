@@ -215,71 +215,164 @@
                 <h2>Add New Asset</h2>
             </div>
             <form id="add-asset-form">
-                <div class="form-grid">
-                    <div>
-                        <label for="add-asset-name">Asset Name:</label>
-                        <input type="text" id="add-asset-name" name="name" required>
-                    </div>
-                    <div>
-                        <label for="add-asset-category">Category:</label>
-                        <select id="add-asset-category" name="category">
-                            <option value="">Select Category</option>
-                            <option value="Equipment">Equipment</option>
-                            <option value="Vehicle">Vehicle</option>
-                            <option value="Building">Building</option>
-                            <option value="Tool">Tool</option>
-                            <option value="Machinery">Machinery</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="add-asset-make">Make:</label>
-                        <input type="text" id="add-asset-make" name="make">
-                    </div>
-                    <div>
-                        <label for="add-asset-model">Model:</label>
-                        <input type="text" id="add-asset-model" name="model">
-                    </div>
-                    <div>
-                        <label for="add-asset-location">Location:</label>
-                        <input type="text" id="add-asset-location" name="location">
-                    </div>
-                    <div>
-                        <label for="add-asset-quantity">Quantity:</label>
-                        <input type="number" id="add-asset-quantity" name="quantity" value="1" min="1">
-                    </div>
-                </div>
+                <!-- Basic Information -->
                 <div class="form-section">
-                    <label for="add-asset-status">Status:</label>
-                    <select id="add-asset-status" name="status">
-                        <option value="operational">Operational</option>
-                        <option value="maintenance">Under Maintenance</option>
-                        <option value="repair">Needs Repair</option>
-                        <option value="retired">Retired</option>
-                    </select>
-                </div>
-                <div class="form-section">
-                    <label for="add-asset-notes">Notes:</label>
-                    <textarea id="add-asset-notes" name="notes" rows="3"></textarea>
-                </div>
-                <div class="form-grid">
-                    <div>
-                        <label for="add-asset-usage-type">Usage Type:</label>
-                        <select id="add-asset-usage-type" name="usage_type">
-                            <option value="hours">Hours</option>
-                            <option value="ODO">ODO</option>
-                            <option value="km">Kilometers</option>
-                            <option value="cycles">Cycles</option>
-                        </select>
+                    <h3>Basic Information</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="add-asset-name">Asset Name:</label>
+                            <input type="text" id="add-asset-name" name="name" required>
+                        </div>
+                        <div>
+                            <label for="add-asset-category">Category:</label>
+                            <select id="add-asset-category" name="category">
+                                <option value="">Select Category</option>
+                                <option value="Equipment">Equipment</option>
+                                <option value="Vehicle">Vehicle</option>
+                                <option value="Building">Building</option>
+                                <option value="Tool">Tool</option>
+                                <option value="Machinery">Machinery</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="add-asset-make">Make:</label>
+                            <input type="text" id="add-asset-make" name="make">
+                        </div>
+                        <div>
+                            <label for="add-asset-model">Model:</label>
+                            <input type="text" id="add-asset-model" name="model">
+                        </div>
+                        <div>
+                            <label for="add-asset-serial">Serial Number:</label>
+                            <input type="text" id="add-asset-serial" name="serial_number">
+                        </div>
+                        <div>
+                            <label for="add-asset-quantity">Quantity:</label>
+                            <input type="number" id="add-asset-quantity" name="quantity" value="1" min="1">
+                        </div>
                     </div>
-                    <div>
-                        <label for="add-asset-usage-value">Usage Value:</label>
-                        <input type="number" id="add-asset-usage-value" name="usage_value" step="0.1" placeholder="Current hours/ODO reading">
+                </div>
+
+                <!-- Status & Location -->
+                <div class="form-section">
+                    <h3>Status & Location</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="add-asset-status">Status:</label>
+                            <select id="add-asset-status" name="status">
+                                <option value="operational">Operational</option>
+                                <option value="maintenance">Under Maintenance</option>
+                                <option value="repair">Needs Repair</option>
+                                <option value="retired">Retired</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="add-asset-location">Location:</label>
+                            <input type="text" id="add-asset-location" name="location">
+                        </div>
+                        <div>
+                            <label for="add-asset-parent">Parent Asset ID:</label>
+                            <input type="number" id="add-asset-parent" name="parent_asset_id" min="1" placeholder="Optional">
+                        </div>
                     </div>
                 </div>
+
+                <!-- Purchase Information -->
                 <div class="form-section">
-                    <label for="add-asset-usage-notes">Usage Notes:</label>
-                    <textarea id="add-asset-usage-notes" name="usage_notes" rows="2" placeholder="Optional notes about this usage entry"></textarea>
+                    <h3>Purchase Information</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="add-asset-purchase-date">Purchase Date:</label>
+                            <input type="date" id="add-asset-purchase-date" name="purchase_date">
+                        </div>
+                        <div>
+                            <label for="add-asset-purchase-price">Purchase Price:</label>
+                            <input type="number" id="add-asset-purchase-price" name="purchase_price" step="0.01" min="0">
+                        </div>
+                        <div>
+                            <label for="add-asset-purchase-location">Purchase Location:</label>
+                            <input type="text" id="add-asset-purchase-location" name="purchase_location">
+                        </div>
+                        <div>
+                            <label for="add-asset-warranty-provider">Warranty Provider:</label>
+                            <input type="text" id="add-asset-warranty-provider" name="warranty_provider">
+                        </div>
+                        <div>
+                            <label for="add-asset-warranty-expiry">Warranty Expiry:</label>
+                            <input type="date" id="add-asset-warranty-expiry" name="warranty_expiry_date">
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Registration & Insurance -->
+                <div class="form-section">
+                    <h3>Registration & Insurance</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="add-asset-registration">Registration No:</label>
+                            <input type="text" id="add-asset-registration" name="registration_no">
+                        </div>
+                        <div>
+                            <label for="add-asset-registration-due">Registration Due:</label>
+                            <input type="date" id="add-asset-registration-due" name="registration_due">
+                        </div>
+                        <div>
+                            <label for="add-asset-insurance">Insurance Info:</label>
+                            <input type="text" id="add-asset-insurance" name="insurance_info">
+                        </div>
+                        <div>
+                            <label for="add-asset-insurance-due">Insurance Due:</label>
+                            <input type="date" id="add-asset-insurance-due" name="insurance_due">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permits & Documentation -->
+                <div class="form-section">
+                    <h3>Permits & Documentation</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="add-asset-permit">Permit Info:</label>
+                            <textarea id="add-asset-permit" name="permit_info" rows="2"></textarea>
+                        </div>
+                        <div>
+                            <label for="add-asset-manual">Manual/Doc Path:</label>
+                            <input type="text" id="add-asset-manual" name="manual_or_doc_path">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usage Information -->
+                <div class="form-section">
+                    <h3>Usage Information</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="add-asset-usage-type">Usage Type:</label>
+                            <select id="add-asset-usage-type" name="usage_type">
+                                <option value="">Select Usage Type</option>
+                                <option value="hours">Hours</option>
+                                <option value="ODO">ODO</option>
+                                <option value="km">Kilometers</option>
+                                <option value="cycles">Cycles</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="add-asset-usage-value">Usage Value:</label>
+                            <input type="number" id="add-asset-usage-value" name="usage_value" step="0.1" placeholder="Current hours/ODO reading">
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <label for="add-asset-usage-notes">Usage Notes:</label>
+                        <textarea id="add-asset-usage-notes" name="usage_notes" rows="2" placeholder="Optional notes about this usage entry"></textarea>
+                    </div>
+                </div>
+
+                <!-- General Notes -->
+                <div class="form-section">
+                    <h3>General Notes</h3>
+                    <textarea id="add-asset-notes" name="notes" rows="3" placeholder="Any additional notes about this asset"></textarea>
+                </div>
+
                 <div class="modal-actions">
                     <button type="submit" class="action-btn add-btn">
                         <i class="fa-solid fa-plus"></i> Add Asset
@@ -328,71 +421,165 @@
             </div>
             <form id="edit-asset-form">
                 <input type="hidden" id="edit-asset-id">
-                <div class="form-grid">
-                    <div>
-                        <label for="edit-asset-name">Asset Name:</label>
-                        <input type="text" id="edit-asset-name" name="name" required>
-                    </div>
-                    <div>
-                        <label for="edit-asset-category">Category:</label>
-                        <select id="edit-asset-category" name="category">
-                            <option value="">Select Category</option>
-                            <option value="Equipment">Equipment</option>
-                            <option value="Vehicle">Vehicle</option>
-                            <option value="Building">Building</option>
-                            <option value="Tool">Tool</option>
-                            <option value="Machinery">Machinery</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="edit-asset-make">Make:</label>
-                        <input type="text" id="edit-asset-make" name="make">
-                    </div>
-                    <div>
-                        <label for="edit-asset-model">Model:</label>
-                        <input type="text" id="edit-asset-model" name="model">
-                    </div>
-                    <div>
-                        <label for="edit-asset-location">Location:</label>
-                        <input type="text" id="edit-asset-location" name="location">
-                    </div>
-                    <div>
-                        <label for="edit-asset-quantity">Quantity:</label>
-                        <input type="number" id="edit-asset-quantity" name="quantity" min="1">
-                    </div>
-                </div>
+                
+                <!-- Basic Information -->
                 <div class="form-section">
-                    <label for="edit-asset-status">Status:</label>
-                    <select id="edit-asset-status" name="status">
-                        <option value="operational">Operational</option>
-                        <option value="maintenance">Under Maintenance</option>
-                        <option value="repair">Needs Repair</option>
-                        <option value="retired">Retired</option>
-                    </select>
-                </div>
-                <div class="form-section">
-                    <label for="edit-asset-notes">Notes:</label>
-                    <textarea id="edit-asset-notes" name="notes" rows="3"></textarea>
-                </div>
-                <div class="form-grid">
-                    <div>
-                        <label for="edit-asset-usage-type">Usage Type:</label>
-                        <select id="edit-asset-usage-type" name="usage_type">
-                            <option value="hours">Hours</option>
-                            <option value="ODO">ODO</option>
-                            <option value="km">Kilometers</option>
-                            <option value="cycles">Cycles</option>
-                        </select>
+                    <h3>Basic Information</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="edit-asset-name">Asset Name:</label>
+                            <input type="text" id="edit-asset-name" name="name" required>
+                        </div>
+                        <div>
+                            <label for="edit-asset-category">Category:</label>
+                            <select id="edit-asset-category" name="category">
+                                <option value="">Select Category</option>
+                                <option value="Equipment">Equipment</option>
+                                <option value="Vehicle">Vehicle</option>
+                                <option value="Building">Building</option>
+                                <option value="Tool">Tool</option>
+                                <option value="Machinery">Machinery</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="edit-asset-make">Make:</label>
+                            <input type="text" id="edit-asset-make" name="make">
+                        </div>
+                        <div>
+                            <label for="edit-asset-model">Model:</label>
+                            <input type="text" id="edit-asset-model" name="model">
+                        </div>
+                        <div>
+                            <label for="edit-asset-serial">Serial Number:</label>
+                            <input type="text" id="edit-asset-serial" name="serial_number">
+                        </div>
+                        <div>
+                            <label for="edit-asset-quantity">Quantity:</label>
+                            <input type="number" id="edit-asset-quantity" name="quantity" min="1">
+                        </div>
                     </div>
-                    <div>
-                        <label for="edit-asset-usage-value">Usage Value:</label>
-                        <input type="number" id="edit-asset-usage-value" name="usage_value" step="0.1" placeholder="Current hours/ODO reading">
+                </div>
+
+                <!-- Status & Location -->
+                <div class="form-section">
+                    <h3>Status & Location</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="edit-asset-status">Status:</label>
+                            <select id="edit-asset-status" name="status">
+                                <option value="operational">Operational</option>
+                                <option value="maintenance">Under Maintenance</option>
+                                <option value="repair">Needs Repair</option>
+                                <option value="retired">Retired</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="edit-asset-location">Location:</label>
+                            <input type="text" id="edit-asset-location" name="location">
+                        </div>
+                        <div>
+                            <label for="edit-asset-parent">Parent Asset ID:</label>
+                            <input type="number" id="edit-asset-parent" name="parent_asset_id" min="1" placeholder="Optional">
+                        </div>
                     </div>
                 </div>
+
+                <!-- Purchase Information -->
                 <div class="form-section">
-                    <label for="edit-asset-usage-notes">Usage Notes:</label>
-                    <textarea id="edit-asset-usage-notes" name="usage_notes" rows="2" placeholder="Optional notes about this usage entry"></textarea>
+                    <h3>Purchase Information</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="edit-asset-purchase-date">Purchase Date:</label>
+                            <input type="date" id="edit-asset-purchase-date" name="purchase_date">
+                        </div>
+                        <div>
+                            <label for="edit-asset-purchase-price">Purchase Price:</label>
+                            <input type="number" id="edit-asset-purchase-price" name="purchase_price" step="0.01" min="0">
+                        </div>
+                        <div>
+                            <label for="edit-asset-purchase-location">Purchase Location:</label>
+                            <input type="text" id="edit-asset-purchase-location" name="purchase_location">
+                        </div>
+                        <div>
+                            <label for="edit-asset-warranty-provider">Warranty Provider:</label>
+                            <input type="text" id="edit-asset-warranty-provider" name="warranty_provider">
+                        </div>
+                        <div>
+                            <label for="edit-asset-warranty-expiry">Warranty Expiry:</label>
+                            <input type="date" id="edit-asset-warranty-expiry" name="warranty_expiry_date">
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Registration & Insurance -->
+                <div class="form-section">
+                    <h3>Registration & Insurance</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="edit-asset-registration">Registration No:</label>
+                            <input type="text" id="edit-asset-registration" name="registration_no">
+                        </div>
+                        <div>
+                            <label for="edit-asset-registration-due">Registration Due:</label>
+                            <input type="date" id="edit-asset-registration-due" name="registration_due">
+                        </div>
+                        <div>
+                            <label for="edit-asset-insurance">Insurance Info:</label>
+                            <input type="text" id="edit-asset-insurance" name="insurance_info">
+                        </div>
+                        <div>
+                            <label for="edit-asset-insurance-due">Insurance Due:</label>
+                            <input type="date" id="edit-asset-insurance-due" name="insurance_due">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permits & Documentation -->
+                <div class="form-section">
+                    <h3>Permits & Documentation</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="edit-asset-permit">Permit Info:</label>
+                            <textarea id="edit-asset-permit" name="permit_info" rows="2"></textarea>
+                        </div>
+                        <div>
+                            <label for="edit-asset-manual">Manual/Doc Path:</label>
+                            <input type="text" id="edit-asset-manual" name="manual_or_doc_path">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usage Information -->
+                <div class="form-section">
+                    <h3>Usage Information</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="edit-asset-usage-type">Usage Type:</label>
+                            <select id="edit-asset-usage-type" name="usage_type">
+                                <option value="">Select Usage Type</option>
+                                <option value="hours">Hours</option>
+                                <option value="ODO">ODO</option>
+                                <option value="km">Kilometers</option>
+                                <option value="cycles">Cycles</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="edit-asset-usage-value">Usage Value:</label>
+                            <input type="number" id="edit-asset-usage-value" name="usage_value" step="0.1" placeholder="Current hours/ODO reading">
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <label for="edit-asset-usage-notes">Usage Notes:</label>
+                        <textarea id="edit-asset-usage-notes" name="usage_notes" rows="2" placeholder="Optional notes about this usage entry"></textarea>
+                    </div>
+                </div>
+
+                <!-- General Notes -->
+                <div class="form-section">
+                    <h3>General Notes</h3>
+                    <textarea id="edit-asset-notes" name="notes" rows="3" placeholder="Any additional notes about this asset"></textarea>
+                </div>
+
                 <div class="modal-actions">
                     <button type="submit" class="action-btn update-btn">
                         <i class="fa-solid fa-save"></i> Save Changes
