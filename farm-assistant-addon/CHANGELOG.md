@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.9.79 - 2025-11-08
+
+### Added
+- **Dynamic Filter Tabs**: Filter tabs now generated from actual animal data
+- **Smart Animal Type Detection**: Added comprehensive gender-to-type mapping
+- **Breed-Based Classification**: Enhanced detection using breed information
+- **Support for New Species**: Added Fish, Deer, Rabbit, Llama, Alpaca categories
+
+### Features
+- **Automatic Tab Creation**: Adding "Queen" creates Cat tab, "Doe" + deer breed creates Deer tab
+- **Fish Support**: Adding "Silver Perch" automatically creates Fish filter tab
+- **Comprehensive Coverage**: Supports Cattle, Dogs, Cats, Sheep, Goats, Pigs, Horses, Donkeys, Fowl, Fish, Deer, Rabbits, Llamas, Alpacas
+- **Intelligent Classification**: Uses both gender terms and breed names for accurate categorization
+
+### Technical Improvements
+- **Real-time Type Detection**: Filter tabs update based on actual database content
+- **Gender Mapping**: Comprehensive mapping of gender terms to animal categories
+- **Breed Analysis**: Breed-specific detection for ambiguous gender terms
+- **Consistent Logic**: Same detection function used for filtering and counting
+
 ## 0.9.78 - 2025-11-08
 
 ### Fixed

@@ -79,23 +79,8 @@ async function populateFilterTabs() {
     try {
         console.log("Populating filter tabs...");
         
-        // Get animal types first
-        console.log("Fetching animal types...");
-        const animalTypesResponse = await fetch("api/animal-types");
-        console.log("Animal types response status:", animalTypesResponse.status);
-        
-        let animalTypes;
-        if (!animalTypesResponse.ok) {
-            console.error("Failed to fetch animal types, using fallback");
-            // Fallback to basic types if API fails
-            animalTypes = ["All", "Cattle", "Dog"];
-        } else {
-            animalTypes = await animalTypesResponse.json();
-            console.log("Available animal types:", animalTypes);
-        }
-        
-        // Get animals for counting
-        console.log("Fetching animals for counting...");
+        // Get animals first - we'll derive types from the actual data
+        console.log("Fetching animals for dynamic type extraction...");
         const animalsResponse = await fetch("get_animals");
         console.log("Animals response status:", animalsResponse.status);
         
@@ -107,6 +92,71 @@ async function populateFilterTabs() {
         const allAnimals = await animalsResponse.json();
         console.log("All animals:", allAnimals);
         
+        // Extract unique animal types from the actual animal records
+        const animalTypeSet = new Set();
+        allAnimals.forEach(animal => {
+            // Function to determine animal type from gender and breed
+            function getAnimalTypeFromGender(gender, breed) {
+                if (!gender) return "Unknown";
+                
+                const genderLower = gender.toLowerCase();
+                
+                // Cattle
+                if (['bull', 'steer', 'cow', 'heifer'].includes(genderLower)) return "Cattle";
+                // Cats  
+                if (['tom', 'queen'].includes(genderLower)) return "Cat";
+                // Dogs
+                if (['dog', 'bitch'].includes(genderLower)) return "Dog";
+                // Sheep
+                if (['ram', 'ewe', 'wether'].includes(genderLower)) return "Sheep";
+                // Goats
+                if (['billy', 'nanny', 'wether'].includes(genderLower)) return "Goat";
+                // Pigs
+                if (['boar', 'barrow', 'sow', 'gilt'].includes(genderLower)) return "Pig";
+                // Horses
+                if (['stallion', 'gelding', 'mare', 'filly', 'colt'].includes(genderLower)) return "Horse";
+                // Donkeys
+                if (['jack', 'jenny'].includes(genderLower)) return "Donkey";
+                // Fowl (Chickens, Ducks, Turkeys, etc.)
+                if (['rooster', 'cockerel', 'hen', 'pullet', 'capon', 'drake'].includes(genderLower)) return "Fowl";
+                
+                // Special cases that need breed info
+                if (breed) {
+                    const breedLower = breed.toLowerCase();
+                    
+                    // Llamas/Alpacas
+                    if (['stud', 'gelding', 'female'].includes(genderLower)) {
+                        if (breedLower.includes('llama')) return "Llama";
+                        if (breedLower.includes('alpaca')) return "Alpaca";
+                    }
+                    
+                    // Rabbits
+                    if (['buck', 'doe'].includes(genderLower) && breedLower.includes('rabbit')) return "Rabbit";
+                    
+                    // Fish
+                    if (['silver perch', 'barramundi', 'tilapia', 'trout', 'salmon', 'catfish'].some(fish => 
+                        breedLower.includes(fish))) return "Fish";
+                    
+                    // Deer
+                    if (['buck', 'doe'].includes(genderLower) && breedLower.includes('deer')) return "Deer";
+                    
+                    // Default fallback - try to guess from breed
+                    if (breedLower.includes('cat')) return "Cat";
+                    if (breedLower.includes('dog') || breedLower.includes('shepherd') || breedLower.includes('husky') || breedLower.includes('labrador')) return "Dog";
+                    if (breedLower.includes('santa') || breedLower.includes('hereford') || breedLower.includes('angus')) return "Cattle";
+                }
+                
+                return "Other";
+            }
+            
+            const animalType = getAnimalTypeFromGender(animal.gender, animal.breed);
+            animalTypeSet.add(animalType);
+        });
+        
+        // Convert to array and add "All" at the beginning
+        const animalTypes = ["All", ...Array.from(animalTypeSet).sort()];
+        console.log("Dynamic animal types extracted:", animalTypes);
+        
         const filterBar = document.getElementById("filter-bar");
         if (!filterBar) {
             console.error("Filter bar not found!");
@@ -116,10 +166,64 @@ async function populateFilterTabs() {
         // Clear existing tabs (except Add button which we'll add back)
         filterBar.innerHTML = '';
         
-        // Count animals by type
+        // Count animals by type using same function as filter tabs
         const animalCounts = {};
         allAnimals.forEach(animal => {
-            const type = animal.animal_type || 'Unknown';
+            // Function to determine animal type from gender and breed
+            function getAnimalTypeFromGender(gender, breed) {
+                if (!gender) return "Unknown";
+                
+                const genderLower = gender.toLowerCase();
+                
+                // Cattle
+                if (['bull', 'steer', 'cow', 'heifer'].includes(genderLower)) return "Cattle";
+                // Cats  
+                if (['tom', 'queen'].includes(genderLower)) return "Cat";
+                // Dogs
+                if (['dog', 'bitch'].includes(genderLower)) return "Dog";
+                // Sheep
+                if (['ram', 'ewe', 'wether'].includes(genderLower)) return "Sheep";
+                // Goats
+                if (['billy', 'nanny', 'wether'].includes(genderLower)) return "Goat";
+                // Pigs
+                if (['boar', 'barrow', 'sow', 'gilt'].includes(genderLower)) return "Pig";
+                // Horses
+                if (['stallion', 'gelding', 'mare', 'filly', 'colt'].includes(genderLower)) return "Horse";
+                // Donkeys
+                if (['jack', 'jenny'].includes(genderLower)) return "Donkey";
+                // Fowl (Chickens, Ducks, Turkeys, etc.)
+                if (['rooster', 'cockerel', 'hen', 'pullet', 'capon', 'drake'].includes(genderLower)) return "Fowl";
+                
+                // Special cases that need breed info
+                if (breed) {
+                    const breedLower = breed.toLowerCase();
+                    
+                    // Llamas/Alpacas
+                    if (['stud', 'gelding', 'female'].includes(genderLower)) {
+                        if (breedLower.includes('llama')) return "Llama";
+                        if (breedLower.includes('alpaca')) return "Alpaca";
+                    }
+                    
+                    // Rabbits
+                    if (['buck', 'doe'].includes(genderLower) && breedLower.includes('rabbit')) return "Rabbit";
+                    
+                    // Fish
+                    if (['silver perch', 'barramundi', 'tilapia', 'trout', 'salmon', 'catfish'].some(fish => 
+                        breedLower.includes(fish))) return "Fish";
+                    
+                    // Deer
+                    if (['buck', 'doe'].includes(genderLower) && breedLower.includes('deer')) return "Deer";
+                    
+                    // Default fallback - try to guess from breed
+                    if (breedLower.includes('cat')) return "Cat";
+                    if (breedLower.includes('dog') || breedLower.includes('shepherd') || breedLower.includes('husky') || breedLower.includes('labrador')) return "Dog";
+                    if (breedLower.includes('santa') || breedLower.includes('hereford') || breedLower.includes('angus')) return "Cattle";
+                }
+                
+                return "Other";
+            }
+            
+            const type = getAnimalTypeFromGender(animal.gender, animal.breed);
             animalCounts[type] = (animalCounts[type] || 0) + 1;
         });
         
@@ -199,7 +303,61 @@ async function populateAnimalList(filter = "All") {
         console.log("Animals data received:", animals);
         console.log("Number of animals:", animals.length);
         
-        const filteredAnimals = filter === "All" ? animals : animals.filter(animal => animal.animal_type === filter);
+        // Function to determine animal type from gender and breed
+        function getAnimalTypeFromGender(gender, breed) {
+            if (!gender) return "Unknown";
+            
+            const genderLower = gender.toLowerCase();
+            
+            // Cattle
+            if (['bull', 'steer', 'cow', 'heifer'].includes(genderLower)) return "Cattle";
+            // Cats  
+            if (['tom', 'queen'].includes(genderLower)) return "Cat";
+            // Dogs
+            if (['dog', 'bitch'].includes(genderLower)) return "Dog";
+            // Sheep
+            if (['ram', 'ewe', 'wether'].includes(genderLower)) return "Sheep";
+            // Goats
+            if (['billy', 'nanny', 'wether'].includes(genderLower)) return "Goat";
+            // Pigs
+            if (['boar', 'barrow', 'sow', 'gilt'].includes(genderLower)) return "Pig";
+            // Horses
+            if (['stallion', 'gelding', 'mare', 'filly', 'colt'].includes(genderLower)) return "Horse";
+            // Donkeys
+            if (['jack', 'jenny'].includes(genderLower)) return "Donkey";
+            // Fowl (Chickens, Ducks, Turkeys, etc.)
+            if (['rooster', 'cockerel', 'hen', 'pullet', 'capon', 'drake'].includes(genderLower)) return "Fowl";
+            
+            // Special cases that need breed info
+            if (breed) {
+                const breedLower = breed.toLowerCase();
+                
+                // Llamas/Alpacas
+                if (['stud', 'gelding', 'female'].includes(genderLower)) {
+                    if (breedLower.includes('llama')) return "Llama";
+                    if (breedLower.includes('alpaca')) return "Alpaca";
+                }
+                
+                // Rabbits
+                if (['buck', 'doe'].includes(genderLower) && breedLower.includes('rabbit')) return "Rabbit";
+                
+                // Fish
+                if (['silver perch', 'barramundi', 'tilapia', 'trout', 'salmon', 'catfish'].some(fish => 
+                    breedLower.includes(fish))) return "Fish";
+                
+                // Deer
+                if (['buck', 'doe'].includes(genderLower) && breedLower.includes('deer')) return "Deer";
+                
+                // Default fallback - try to guess from breed
+                if (breedLower.includes('cat')) return "Cat";
+                if (breedLower.includes('dog') || breedLower.includes('shepherd') || breedLower.includes('husky') || breedLower.includes('labrador')) return "Dog";
+                if (breedLower.includes('santa') || breedLower.includes('hereford') || breedLower.includes('angus')) return "Cattle";
+            }
+            
+            return "Other";
+        }
+        
+        const filteredAnimals = filter === "All" ? animals : animals.filter(animal => getAnimalTypeFromGender(animal.gender, animal.breed) === filter);
         console.log("Filtered animals count:", filteredAnimals.length);
         
         const tableBody = document.querySelector("#livestock-list tbody");
