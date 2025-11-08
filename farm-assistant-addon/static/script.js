@@ -505,6 +505,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
     console.log("script.js: Found table element:", animalListTable);
+
+    animalListTable.addEventListener("click", async (event) => {
+        const target = event.target;
+
+        // Handle details icon click
+        if (target.classList.contains('details-icon')) {
+            const animalId = target.dataset.id;
+            await showAnimalDetails(animalId);
+            return;
+        }
+
+        // Handle row click for animal details (anywhere on row except details icon)
+        if (target.closest('tr') && !target.classList.contains('details-icon')) {
+            const row = target.closest('tr');
+            const animalId = row.dataset.animalId;
+            await showAnimalDetails(animalId);
+            return;
+        }
+    });
 });
 
     const modal = document.getElementById("image-modal");
@@ -561,25 +580,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
     }
-
-    animalListTable.addEventListener("click", async (event) => {
-        const target = event.target;
-
-        // Handle details icon click
-        if (target.classList.contains('details-icon')) {
-            const animalId = target.dataset.id;
-            await showAnimalDetails(animalId);
-            return;
-        }
-
-        // Handle row click for animal details (anywhere on row except details icon)
-        if (target.closest('tr') && !target.classList.contains('details-icon')) {
-            const row = target.closest('tr');
-            const animalId = row.dataset.animalId;
-            await showAnimalDetails(animalId);
-            return;
-        }
-    });
 
     // Handle modal action buttons
     document.addEventListener("click", async (event) => {

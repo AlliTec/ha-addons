@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.9.81 - 2025-11-08
+
+### Fixed
+- **JavaScript Scope Issues**: Fixed multiple variable scope errors preventing functionality
+- **animalListTable ReferenceError**: Moved event listener inside DOMContentLoaded scope
+- **Duplicate Event Listeners**: Removed duplicate animalListTable event listener
+- **Form Submission**: Fixed add animal form submission functionality
+
+### Technical Fixes
+- **Variable Scope**: Moved animalListTable event listener to correct scope
+- **Event Handler Organization**: Consolidated event listeners inside DOMContentLoaded
+- **Error Prevention**: Eliminated "animalListTable is not defined" errors
+- **Code Cleanup**: Removed duplicate event listener code
+
 ## 0.9.80 - 2025-11-08
 
 ### Fixed
