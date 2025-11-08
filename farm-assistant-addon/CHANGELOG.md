@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.72 - 2025-11-08
+
+### Documentation
+- **Updated AGENTS.md**: Improved build/lint/test commands and comprehensive code style guidelines
+- **Enhanced Guidelines**: Added specific Python, JavaScript, and database coding standards
+- **Better Structure**: Organized guidelines by addon with clear syntax checking commands
+- **Rule Compliance**: Documented Four Rules of Programming for all agents to follow
+
 ## 0.9.71 - 2025-11-08
 
 ### Debug

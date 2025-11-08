@@ -2,32 +2,40 @@
 
 This repository contains multiple Home Assistant addons. Each addon has its own directory and specific guidelines.
 
-## rain-predictor-addon
+## Build/Lint/Test Commands
 
-- **Tech Stack**: Python (Flask, NumPy), JavaScript
-- **Dependencies**: `pip3 install -r rain-predictor-addon/requirements.txt`
-- **Local Dev**: Run `./run_local.sh` from the `rain-predictor-addon` directory.
-- **Lint/Test**: Check syntax with `python3 -m py_compile rain_predictor.py web_ui.py`.
-- **Code Style**:
-    - Python: PEP 8, snake_case for variables, PascalCase for classes. Use type hints and docstrings.
-    - JS: ES6+, camelCase.
+### rain-predictor-addon
+- **Install**: `pip3 install -r rain-predictor-addon/requirements.txt`
+- **Syntax Check**: `python3 -m py_compile rain_predictor.py web_ui.py`
+- **Local Dev**: `cd rain-predictor-addon && ./run_local.sh`
+- **Test**: No test framework configured - use `pytest` for new tests
 
-## farm-assistant-addon
+### farm-assistant-addon  
+- **Install**: Dependencies in Dockerfile - `fastapi uvicorn asyncpg jinja2`
+- **Syntax Check**: `python3 -m py_compile main.py`
+- **Local Dev**: `cd farm-assistant-addon && uvicorn main:app --host 0.0.0.0 --port 8000`
+- **Test**: No test framework configured - use `pytest` for new tests
 
-- **Tech Stack**: Python (FastAPI)
-- **Dependencies**: See `farm-assistant-addon/Dockerfile`. Uses `uvicorn` and `fastapi`.
-- **Local Dev**: Run `uvicorn main:app --host 0.0.0.0 --port 8000` from the `farm-assistant-addon` directory.
-- **Lint/Test**: No specific test command found. Use `pytest` for new tests.
-- **Code Style**:
-    - Python: PEP 8, snake_case for variables, PascalCase for classes. Use type hints.
+## Code Style Guidelines
 
-## General
+### Python (Both Addons)
+- **Style**: PEP 8 compliance
+- **Naming**: snake_case for variables/functions, PascalCase for classes, UPPER_CASE for constants
+- **Type Hints**: Required for all function signatures and class attributes
+- **Docstrings**: Use triple quotes for all classes and public functions
+- **Imports**: Group standard library, third-party, and local imports separately
+- **Error Handling**: Use try/except with specific exceptions, log errors appropriately
 
-- **Repository**: https://github.com/allitec/ha-addons
+### JavaScript (rain-predictor-addon)
+- **Style**: ES6+, camelCase for variables/functions, PascalCase for classes
+- **Functions**: Use arrow functions for callbacks, regular functions for methods
+- **Async**: Use async/await over Promise chains
+- **DOM**: Use event delegation for dynamic content
 
-- No `.cursor` or `.github/copilot` rules were found.
-- Follow existing code style and conventions within each addon.
-- Update Home Assistant entities using the provided APIs.
+### Database (farm-assistant-addon)
+- **Queries**: Use parameterized queries with asyncpg
+- **Connections**: Always close connections in try/finally blocks
+- **Models**: Use Pydantic for request/response validation
 
 ## The Four Rules of Programming (MANDATORY)
 
