@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.4 - 2025-11-08
+
+### Fixed
+- **URL Path Issue**: Fixed fetch URL from '/api/animals' to 'api/animals' (relative path) 
+- **Request Routing**: Corrected absolute vs relative URL for addon API calls
+- **DAM/Sire Dropdown**: Now properly routes to addon server instead of Home Assistant domain
+
 ## 1.0.3 - 2025-11-08
 
 ### Fixed

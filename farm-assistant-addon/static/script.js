@@ -372,7 +372,7 @@ async function populateAnimalList(filter = "All") {
 async function populateParentDropdowns() {
     console.log("populateParentDropdowns called");
     try {
-        const response = await fetch('/api/animals');
+        const response = await fetch('api/animals');
         console.log("Animals response status:", response.status);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
