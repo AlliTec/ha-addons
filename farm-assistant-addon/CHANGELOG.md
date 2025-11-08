@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.38 - 2025-11-08
+
+### Fixed
+
+- Corrected the image icon display in the "Image" column.
+
 ## 0.9.37 - 2025-11-08
 
 ### Fixed
