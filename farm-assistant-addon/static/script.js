@@ -80,13 +80,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     animalListTable.addEventListener("click", async (event) => {
-        if (event.target.classList.contains('pic-icon')) {
-            const picPath = event.target.dataset.picPath;
+        const target = event.target;
+
+        if (target.classList.contains('pic-icon')) {
+            const picPath = target.dataset.picPath;
             if (picPath) {
                 modalImg.src = picPath;
                 modal.style.display = "block";
             } else {
-                const animalId = event.target.dataset.animalId;
+                const animalId = target.dataset.animalId;
                 const fileInput = document.createElement('input');
                 fileInput.type = 'file';
                 fileInput.accept = 'image/*';
@@ -107,9 +109,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
                 fileInput.click();
             }
+            return; // Stop further execution
         }
 
-        const button = event.target.closest('button');
+        const button = target.closest('button');
         if (!button) return; // Exit if the click was not on a button
 
         if (button.classList.contains("delete-btn")) {

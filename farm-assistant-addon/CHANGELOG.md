@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.41 - 2025-11-08
+
+### Fixed
+
+- Rewrote the event listener for the PIC column to ensure clicks are registered correctly.
+
 ## 0.9.40 - 2025-11-08
 
 ### Fixed
