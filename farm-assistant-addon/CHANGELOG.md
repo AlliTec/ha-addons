@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.0 - 2025-11-09
+
+### Fixed
+- **SQL INSERT Error**: Fixed "INSERT has more expressions than target columns" error
+- **Column/Value Mismatch**: Corrected SQL query to have matching placeholders and values
+- **Asset Creation**: Resolved internal server error when adding new vehicles
+- **Database Query**: Fixed add_asset endpoint SQL statement structure
+
 ## 1.4.9 - 2025-11-09
 
 ### Fixed

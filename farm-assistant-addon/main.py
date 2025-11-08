@@ -456,7 +456,7 @@ async def add_asset(asset: AssetCreate):
                  warranty_expiry_date, purchase_price, purchase_location,
                  manual_or_doc_path, notes, created_at)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
-                        $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, NOW())
+                        $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW())
                 RETURNING id
             """, asset.name, asset.category, asset.make, asset.model, asset.serial_number,
                 purchase_date, asset.status, asset.parent_asset_id, asset.location,
