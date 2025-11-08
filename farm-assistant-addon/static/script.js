@@ -702,6 +702,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     document.getElementById('livestock-section').style.display = 'block';
                 } else if (section === 'assets') {
                     document.getElementById('assets-section').style.display = 'block';
+                    populateAssetFilterTabs(); // Populate asset filter tabs
                     populateAssetList(); // Load assets when switching to assets tab
                     setupAssetFilterBar(); // Setup assets filter bar with Add button
                 }
@@ -711,9 +712,77 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // --- Asset Management Functions ---
 
-    async function populateAssetList() {
+        // Function to populate asset filter tabs
+    async function populateAssetFilterTabs() {
         try {
-            console.log("populateAssetList called");
+            console.log("Populating asset filter tabs...");
+            const response = await fetch("api/assets");
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const assets = await response.json();
+            console.log("Assets data received for filter tabs:", assets);
+            
+            // Extract unique categories
+            const categories = [...new Set(assets.map(asset => asset.category).filter(cat => cat))];
+            console.log("Asset categories found:", categories);
+            
+            const filterBar = document.getElementById("assets-filter-bar");
+            if (!filterBar) {
+                console.error("Assets filter bar not found!");
+                return;
+            }
+            
+            // Create filter tabs HTML
+            let filterTabsHtml = '<div class="filter-btn active" data-category="All"><i class="fa-solid fa-house"></i> All</div>';
+            
+            // Add category-specific tabs
+            categories.forEach(category => {
+                const count = assets.filter(asset => asset.category === category).length;
+                const icon = getAssetCategoryIcon(category);
+                filterTabsHtml += `<div class="filter-btn" data-category="${category}"><i class="${icon}"></i> ${category}<sup style="color: var(--accent-color); font-size: 0.7em; margin-left: 2px;">${count}</sup></div>`;
+            });
+            
+            filterBar.innerHTML = filterTabsHtml;
+            
+            // Add click event listeners to filter tabs
+            document.querySelectorAll("#assets-filter-bar .filter-btn").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    // Remove active class from all tabs
+                    document.querySelectorAll("#assets-filter-bar .filter-btn").forEach(tab => {
+                        tab.classList.remove("active");
+                    });
+                    // Add active class to clicked tab
+                    btn.classList.add("active");
+                    
+                    const selectedCategory = btn.dataset.category;
+                    console.log("Asset filter selected:", selectedCategory);
+                    populateAssetList(selectedCategory);
+                });
+            });
+            
+            console.log("Asset filter tabs populated successfully");
+        } catch (error) {
+            console.error("Error populating asset filter tabs:", error);
+        }
+    }
+
+    // Function to get icon for asset category
+    function getAssetCategoryIcon(category) {
+        switch (category) {
+            case 'Equipment': return 'fa-solid fa-tools';
+            case 'Vehicle': return 'fa-solid fa-car';
+            case 'Building': return 'fa-solid fa-building';
+            case 'Tool': return 'fa-solid fa-hammer';
+            case 'Machinery': return 'fa-solid fa-cogs';
+            default: return 'fa-solid fa-box';
+        }
+    }
+
+    async function populateAssetList(filterCategory = 'All') {
+        try {
+            console.log("populateAssetList called with filter:", filterCategory);
             const response = await fetch("api/assets");
             console.log("Assets fetch response status:", response.status);
             
@@ -725,6 +794,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("Assets data received:", assets);
             console.log("Number of assets:", assets.length);
             
+            // Filter assets by category
+            const filteredAssets = filterCategory === 'All' 
+                ? assets 
+                : assets.filter(asset => asset.category === filterCategory);
+            
+            console.log("Filtered assets count:", filteredAssets.length);
+            
             const tableBody = document.querySelector("#assets-list tbody");
             if (!tableBody) {
                 console.error("Assets table body not found!");
@@ -733,7 +809,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             tableBody.innerHTML = ""; // Clear existing rows
 
-            assets.forEach((asset, index) => {
+            filteredAssets.forEach((asset, index) => {
                 console.log(`Processing asset ${index + 1}:`, asset);
                 
                 const row = document.createElement("tr");

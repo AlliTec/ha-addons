@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.3 - 2025-11-09
+
+### Added
+- **Asset Filter Tabs**: Added category-based filtering for asset register
+- **Dynamic Category Tabs**: Automatically creates filter tabs based on asset categories in database
+- **Category Icons**: Added appropriate icons for Equipment, Vehicle, Building, Tool, Machinery
+- **Asset Counts**: Shows item count in superscript on each category tab
+- **Filter Functionality**: Assets list filters by selected category (All, Equipment, Vehicle, etc.)
+
+### Updated
+- **Asset Table Headers**: Updated headers to match displayed data (Make/Model, Location, Quantity)
+- **Tab Integration**: Asset filter tabs integrate with existing section switching logic
+
 ## 1.3.2 - 2025-11-09
 
 ### Fixed
