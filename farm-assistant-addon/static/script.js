@@ -147,6 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
     animalListTable.addEventListener("click", async (event) => {
         const target = event.target;
 
+        // Handle row click for animal details
         if (target.closest('tr') && !target.closest('button') && !target.classList.contains('pic-icon')) {
             const row = target.closest('tr');
             const animalId = row.dataset.animalId;
@@ -167,9 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
             animalDetailsModal.style.display = "block";
         }
 
-    animalListTable.addEventListener("click", async (event) => {
-        const target = event.target;
-
+        // Handle image icon click
         if (target.classList.contains('pic-icon')) {
             const picPath = target.dataset.picPath;
             if (picPath) {

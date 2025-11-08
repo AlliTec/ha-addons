@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.47 - 2025-11-08
+
+### Fixed
+
+- Fixed critical JavaScript syntax error preventing script.js from loading properly.
+- Removed duplicate event listeners that were causing syntax errors.
+- Fixed nested event handler structure in table click events.
+
 ## 0.9.46 - 2025-11-08
 
 ### Fixed
