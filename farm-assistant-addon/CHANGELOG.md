@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.9.59 - 2025-11-08
+
+### Bug Fixes
+- **Gender Options Not Showing**: Fixed issue where specific gender terms weren't displaying
+- **Category Detection**: Added fallback to detect animal type from existing gender if category is missing
+- **Edit Form Enhancement**: Gender dropdown now properly populates with all species-specific options
+
+### Features
+- **Smart Category Detection**: Automatically detects animal type from gender when category field is empty
+- **Complete Gender Options**: All requested gender terms now available (Bull, Cow, Steer, Heifer, etc.)
+- **Improved User Experience**: Users can now select specific gender terms like Heifer or Cow instead of generic Female
+
+### Technical Improvements
+- **Fallback Logic**: Detects category from gender if database category field is not set
+- **Debug Logging**: Added console logging to troubleshoot gender option issues
+- **Form Synchronization**: Category dropdown updates when animal type is detected from gender
+
 ## 0.9.58 - 2025-11-08
 
 ### Process Correction

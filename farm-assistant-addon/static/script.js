@@ -488,7 +488,28 @@ async function enableEditMode(animalId) {
         document.getElementById('edit-notes').value = animal.notes || '';
         
         // Set gender options based on category first, then set the current gender value
-        const category = animal.category || '';
+        let category = animal.category || '';
+        
+        // If no category, try to detect from gender
+        if (!category && animal.gender) {
+            if (animal.gender === 'Cow' || animal.gender === 'Bull' || animal.gender === 'Steer' || animal.gender === 'Heifer') {
+                category = 'Cattle';
+            } else if (animal.gender === 'Tom' || animal.gender === 'Queen') {
+                category = 'Cat';
+            } else if (animal.gender === 'Dog' || animal.gender === 'Bitch') {
+                category = 'Dog';
+            } else if (animal.gender === 'Ram' || animal.gender === 'Ewe' || animal.gender === 'Wether') {
+                category = 'Sheep';
+            } else if (animal.gender === 'Billy' || animal.gender === 'Nanny' || animal.gender === 'Wether') {
+                category = 'Goat';
+            } else if (animal.gender === 'Boar' || animal.gender === 'Sow' || animal.gender === 'Barrow' || animal.gender === 'Gilt') {
+                category = 'Pig';
+            }
+            // Update the category dropdown to match detected type
+            document.getElementById('edit-category').value = category;
+        }
+        
+        console.log("Edit mode - Category:", category, "Animal data:", animal);
         updateGenderOptions(category);
         
         // Set gender after options are populated
