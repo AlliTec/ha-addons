@@ -28,3 +28,22 @@ This repository contains multiple Home Assistant addons. Each addon has its own 
 - No `.cursor` or `.github/copilot` rules were found.
 - Follow existing code style and conventions within each addon.
 - Update Home Assistant entities using the provided APIs.
+
+## The Four Rules of Programming (MANDATORY)
+
+**ALL CODE CHANGES MUST FOLLOW THESE FOUR RULES:**
+
+1. **Check Python Syntax**: Always run `python3 -m py_compile main.py` to check for syntax errors before proceeding.
+
+2. **Validate JSON Configuration**: Run `python3 -c "import json; json.load(open('data/options.json'))"` to ensure JSON files are valid.
+
+3. **Follow Mandatory Process**: Always complete these three steps when making changes:
+   - Update version in config.yaml
+   - Update changelog with changes made
+   - Commit and push using `./run_gitpush.sh`
+
+4. **Path Correction**: 
+   - If you get "No such file or directory" error, add `/farm-assistant-addon/` to the path and try again.
+   - **Exception 4a**: `run_gitpush.sh` is located at `/home/sog/ai-projects/ha-addons/run_gitpush.sh`
+
+**REMEMBER: Filter everything you do against these four rules!**
