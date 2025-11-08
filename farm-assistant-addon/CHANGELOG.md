@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.9 - 2025-11-09
+
+### Fixed
+- **Add Vehicle Form**: Fixed internal server error when adding new vehicles
+- **Field Mapping**: Corrected field mapping in add asset form to match AssetCreate model
+- **Removed Invalid Fields**: Eliminated non-existent fields (condition, purchase_from, insurance_provider, etc.)
+- **Corrected Field Names**: Updated to use proper model fields (purchase_location, insurance_info, permit_info)
+- **Form Consistency**: Both add and edit forms now use identical field mapping
+
 ## 1.4.8 - 2025-11-09
 
 ### Fixed

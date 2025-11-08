@@ -1425,24 +1425,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                 location: formData.get('location'),
                 quantity: formData.get('quantity') ? parseInt(formData.get('quantity')) : 1,
                 status: formData.get('status'),
-                condition: formData.get('condition'),
                 
                 // Purchase Information
                 purchase_date: formData.get('purchase_date') || null,
                 purchase_price: formData.get('purchase_price') ? parseFloat(formData.get('purchase_price')) : null,
-                purchase_from: formData.get('purchase_from'),
+                purchase_location: formData.get('purchase_location'),
                 
                 // Registration & Insurance
                 registration_no: formData.get('registration_no'),
                 registration_due: formData.get('registration_due') || null,
-                insurance_provider: formData.get('insurance_provider'),
-                insurance_policy_no: formData.get('insurance_policy_no'),
+                insurance_info: formData.get('insurance_info'),
                 insurance_due: formData.get('insurance_due') || null,
                 
                 // Permits & Documentation
-                permit_required: formData.get('permit_required') === 'true',
-                permit_type: formData.get('permit_type'),
-                permit_expiry: formData.get('permit_expiry') || null,
+                permit_info: formData.get('permit_info'),
+                manual_or_doc_path: formData.get('manual_or_doc_path'),
                 
                 // Warranty Information
                 warranty_provider: formData.get('warranty_provider'),
