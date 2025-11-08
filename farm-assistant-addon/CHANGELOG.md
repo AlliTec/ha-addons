@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.4.3 - 2025-11-09
+
+### Fixed
+- **Section Title Switching**: Main heading now updates based on selected register
+- **List Visibility**: Correctly hides livestock list when viewing assets and vice versa
+- **Dynamic Headings**: "Livestock List" ↔ "Asset Register" based on active tab
+- **Clean Layout**: Removed duplicate "Asset Register" heading from assets section
+
+### Features
+- **Smart Section Switching**: Only shows relevant table and heading for each register
+- **Better UX**: Clear visual separation between livestock and asset management
+- **Responsive Interface**: Proper show/hide behavior for all UI elements
+
 ## 1.4.2 - 2025-11-09
 
 ### Fixed

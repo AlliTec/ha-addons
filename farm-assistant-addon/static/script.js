@@ -693,15 +693,22 @@ document.addEventListener("DOMContentLoaded", async () => {
                 // Add active class to clicked tab
                 tab.classList.add('active');
                 
-                // Hide all sections
+                // Hide all sections and tables
                 document.getElementById('livestock-section').style.display = 'none';
                 document.getElementById('assets-section').style.display = 'none';
+                document.getElementById('livestock-list').style.display = 'none';
+                document.getElementById('assets-list').style.display = 'none';
                 
-                // Show selected section
+                // Update heading and show appropriate section and table
+                const headingElement = document.querySelector('.heading-container h2');
                 if (section === 'livestock') {
                     document.getElementById('livestock-section').style.display = 'block';
+                    document.getElementById('livestock-list').style.display = 'block';
+                    headingElement.textContent = 'Livestock List';
                 } else if (section === 'assets') {
                     document.getElementById('assets-section').style.display = 'block';
+                    document.getElementById('assets-list').style.display = 'block';
+                    headingElement.textContent = 'Asset Register';
                     populateAssetFilterTabs(); // Populate asset filter tabs
                     populateAssetList(); // Load assets when switching to assets tab
                 }
