@@ -87,7 +87,6 @@ templates = Jinja2Templates(directory=templates_dir)
 class Animal(BaseModel):
     tag_id: Optional[str] = None
     name: str
-    animal_type: Optional[str] = None
     gender: Optional[str] = None
     breed: Optional[str] = None
     birth_date: Optional[str] = None

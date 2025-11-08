@@ -105,19 +105,11 @@
                         <input type="date" id="edit-date-of-birth" name="date_of_birth" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                     </div>
                     <div>
-                        <label for="edit-color" style="display: block; margin-bottom: 5px; font-weight: bold;">Color:</label>
-                        <input type="text" id="edit-color" name="color" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <label for="edit-features" style="display: block; margin-bottom: 5px; font-weight: bold;">Features/Color:</label>
+                        <input type="text" id="edit-features" name="features" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                     </div>
                     <div>
-                        <label for="edit-weight" style="display: block; margin-bottom: 5px; font-weight: bold;">Weight (kg):</label>
-                        <input type="number" id="edit-weight" name="weight" step="0.1" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    </div>
-                    <div>
-                        <label for="edit-price" style="display: block; margin-bottom: 5px; font-weight: bold;">Price:</label>
-                        <input type="number" id="edit-price" name="price" step="0.01" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    </div>
-                    <div>
-                        <label for="edit-category" style="display: block; margin-bottom: 5px; font-weight: bold;">Category:</label>
+                        <label for="edit-category" style="display: block; margin-bottom: 5px; font-weight: bold;">Category (for gender selection):</label>
                         <select id="edit-category" name="category" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                             <option value="">Select Category</option>
                             <option value="Cattle">Cattle</option>
@@ -149,6 +141,30 @@
                 <div style="margin-bottom: 15px;">
                     <label for="edit-notes" style="display: block; margin-bottom: 5px; font-weight: bold;">Notes:</label>
                     <textarea id="edit-notes" name="notes" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"></textarea>
+                </div>
+                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <label for="edit-dam-id" style="display: block; margin-bottom: 5px; font-weight: bold;">Dam (Mother) ID:</label>
+                        <input type="number" id="edit-dam-id" name="dam_id" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label for="edit-sire-id" style="display: block; margin-bottom: 5px; font-weight: bold;">Sire (Father) ID:</label>
+                        <input type="number" id="edit-sire-id" name="sire_id" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label for="edit-health-status" style="display: block; margin-bottom: 5px; font-weight: bold;">Health Status:</label>
+                        <input type="text" id="edit-health-status" name="health_status" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                </div>
+                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <label for="edit-photo-path" style="display: block; margin-bottom: 5px; font-weight: bold;">Photo Path:</label>
+                        <input type="text" id="edit-photo-path" name="photo_path" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label for="edit-pic" style="display: block; margin-bottom: 5px; font-weight: bold;">Photo Filename:</label>
+                        <input type="text" id="edit-pic" name="pic" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
                 </div>
                 <div class="modal-actions" style="margin-top: 20px; text-align: center; border-top: 1px solid #ddd; padding-top: 15px;">
                     <button type="submit" class="action-btn update-btn" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-right: 10px;">

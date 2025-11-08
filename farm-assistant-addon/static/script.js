@@ -426,13 +426,13 @@ if (editForm) {
         gender: formData.get('gender'),
         breed: formData.get('breed'),
         birth_date: formData.get('date_of_birth') || null,
-        health_status: 'Healthy', // Default value
+        health_status: formData.get('health_status') || 'Healthy',
         notes: formData.get('notes'),
-        dam_id: null, // Not implemented in form yet
-        sire_id: null, // Not implemented in form yet
-        features: formData.get('color'),
-        photo_path: null, // Not implemented in form yet
-        pic: null, // Not implemented in form yet
+        dam_id: formData.get('dam_id') ? parseInt(formData.get('dam_id')) : null,
+        sire_id: formData.get('sire_id') ? parseInt(formData.get('sire_id')) : null,
+        features: formData.get('features'),
+        photo_path: formData.get('photo_path'),
+        pic: formData.get('pic'),
         dod: null, // Will be set based on status
         status: formData.get('status')
     };
@@ -532,9 +532,12 @@ async function showAnimalDetails(animalId) {
         document.getElementById('edit-name').value = '';
         document.getElementById('edit-breed').value = '';
         document.getElementById('edit-date-of-birth').value = '';
-        document.getElementById('edit-color').value = '';
-        document.getElementById('edit-weight').value = '';
-        document.getElementById('edit-price').value = '';
+        document.getElementById('edit-features').value = '';
+        document.getElementById('edit-dam-id').value = '';
+        document.getElementById('edit-sire-id').value = '';
+        document.getElementById('edit-health-status').value = '';
+        document.getElementById('edit-photo-path').value = '';
+        document.getElementById('edit-pic').value = '';
         document.getElementById('edit-category').value = '';
         document.getElementById('edit-status').value = 'Active';
         document.getElementById('edit-notes').value = '';
@@ -575,9 +578,12 @@ async function enableEditMode(animalId) {
         document.getElementById('edit-name').value = animal.name || '';
         document.getElementById('edit-breed').value = animal.breed || '';
         document.getElementById('edit-date-of-birth').value = animal.birth_date ? animal.birth_date.split('T')[0] : '';
-        document.getElementById('edit-color').value = animal.features || '';
-        document.getElementById('edit-weight').value = animal.weight || '';
-        document.getElementById('edit-price').value = animal.price || '';
+        document.getElementById('edit-features').value = animal.features || '';
+        document.getElementById('edit-dam-id').value = animal.dam_id || '';
+        document.getElementById('edit-sire-id').value = animal.sire_id || '';
+        document.getElementById('edit-health-status').value = animal.health_status || '';
+        document.getElementById('edit-photo-path').value = animal.photo_path || '';
+        document.getElementById('edit-pic').value = animal.pic || '';
         document.getElementById('edit-category').value = animal.category || '';
         document.getElementById('edit-status').value = animal.status || 'Active';
         document.getElementById('edit-notes').value = animal.notes || '';

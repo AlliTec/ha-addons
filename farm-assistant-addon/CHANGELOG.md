@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.9.62 - 2025-11-08
+
+### Fixed
+- **Database Field Mismatch**: Removed non-existent fields (weight, price) from add/update forms
+- **Field Mapping Corrections**: Fixed color→features mapping and removed category from database operations
+- **Missing Database Fields**: Added dam_id, sire_id, health_status, photo_path, pic to forms
+- **Form Validation**: Ensured all form fields match actual database schema
+
+### Technical Improvements
+- **Database Alignment**: All form fields now match livestock_records table structure exactly
+- **Generated Fields**: Category field now only used for gender selection, not stored in database
+- **Data Type Handling**: Proper integer conversion for dam_id and sire_id fields
+- **Complete Field Coverage**: All database fields now available in add/update forms
+
 ## 0.9.61 - 2025-11-08
 
 ### Added
