@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.9.85 - 2025-11-08
+
+### Fixed
+- **Add Animal Modal**: Fixed null reference error when opening add animal form
+- **Modal Title**: Updated selector to use existing h2 element instead of missing edit-modal-title
+- **DOM Reference**: Fixed Cannot set properties of null error
+
+## 0.9.84 - 2025-11-08
+
+### Fixed
+- **Complete JavaScript Syntax Error**: Rewrote entire script.js with proper structure
+- **Duplicate Functions**: Removed duplicate getAnimalTypeFromGender functions
+- **Missing Closing Braces**: Fixed syntax errors that broke all functionality
+- **Code Organization**: Consolidated and cleaned up JavaScript structure
+
 ## 0.9.83 - 2025-11-08
 
 ### Fixed
