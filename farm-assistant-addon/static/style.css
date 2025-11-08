@@ -215,6 +215,13 @@ th {
     transition: 0.3s;
 }
 
+.close-modal.close-top-left {
+    top: 15px;
+    left: 20px;
+    right: auto;
+    font-size: 28px;
+}
+
 .close-modal:hover,
 .close-modal:focus {
     color: #bbb;

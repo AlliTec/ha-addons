@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.9.50 - 2025-11-08
+## 0.9.51 - 2025-11-08
+
+### Added
+
+- Added X close button to top-left of animal details modal.
+- Enhanced modal UX with additional close option for better accessibility.
+- Styled close button with appropriate positioning and size.
 
 ### Fixed
 
