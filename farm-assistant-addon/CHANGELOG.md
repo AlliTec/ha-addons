@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.2.7 - 2025-11-08
+
+### Added
+- **Maintenance Scheduling System**: Complete maintenance schedule management for assets
+- **Maintenance Schedule Modal**: Comprehensive form with all maintenance_schedules schema fields
+- **Asset Integration**: Links maintenance schedules to assets via asset_id
+- **Task Management**: Full CRUD operations for maintenance tasks
+- **Interval & Trigger Support**: Configurable maintenance intervals and usage-based triggers
+- **Cost Tracking**: Maintenance cost, supplier, and invoice number tracking
+- **Usage Integration**: Links to asset_usage_log for meter reading and usage type
+
+### Features
+- **Maintenance Button**: Added to asset details modal for easy access
+- **Smart Form Population**: Auto-populates current meter reading from asset usage
+- **Flexible Scheduling**: Support for hours, km, days, weeks, months, years intervals
+- **Status Management**: Pending, Scheduled, In Progress, Completed, Overdue statuses
+- **Trigger Types**: Hours, kilometers, or date-based maintenance triggers
+
+### Technical Implementation
+- **MaintenanceScheduleCreate Model**: Complete Pydantic model for form validation
+- **API Endpoint**: POST /api/maintenance-schedule for creating schedules
+- **Database Integration**: Full maintenance_schedules table support
+- **JavaScript Functions**: Modal management and form handling
+- **Error Handling**: Comprehensive error handling and user feedback
+
 ## 1.2.6 - 2025-11-08
 
 ### Fixed

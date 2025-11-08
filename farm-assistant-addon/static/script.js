@@ -920,6 +920,38 @@ document.addEventListener("DOMContentLoaded", async () => {
         assetsFilterBar.appendChild(addButton);
     }
 
+    // Maintenance Schedule Functions
+    async function openMaintenanceScheduleModal(assetId) {
+        try {
+            // Set the asset ID in the form
+            document.getElementById('maintenance-schedule-asset-id').value = assetId;
+            
+            // Clear form data
+            document.getElementById('maintenance-schedule-form').reset();
+            
+            // Set default values
+            document.getElementById('maintenance-schedule-status').value = 'pending';
+            document.getElementById('maintenance-schedule-unscheduled').value = 'false';
+            
+            // Fetch current asset usage to populate meter reading
+            const assetResponse = await fetch(`api/asset/${assetId}`);
+            if (assetResponse.ok) {
+                const asset = await assetResponse.json();
+                if (asset.latest_usage) {
+                    document.getElementById('maintenance-schedule-meter-reading').value = asset.latest_usage.usage_value;
+                    document.getElementById('maintenance-schedule-last-usage').value = asset.latest_usage.usage_value;
+                }
+            }
+            
+            // Show modal
+            document.getElementById('maintenance-schedule-modal').style.display = 'block';
+            
+        } catch (error) {
+            console.error('Error opening maintenance schedule modal:', error);
+            alert('Error opening maintenance schedule. Please try again.');
+        }
+    }
+
     // Function to update gender options based on category
     function updateGenderOptions(category) {
         const genderSelect = document.getElementById('edit-gender');
@@ -1050,6 +1082,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+        // Handle maintenance schedule button
+        if (target.closest('#maintenance-schedule-btn')) {
+            const assetId = document.getElementById('edit-asset-btn').dataset.assetId;
+            openMaintenanceScheduleModal(assetId);
+            return;
+        }
+
         // Handle asset delete button
         if (target.closest('#delete-asset-btn')) {
             const assetId = document.getElementById('delete-asset-btn').dataset.assetId;
@@ -1076,7 +1115,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             target.closest('.close-edit-btn') ||
             target.closest('.close-asset-details-btn') || 
             target.closest('.close-edit-asset-btn') ||
-            target.closest('.close-add-asset-btn')) {
+            target.closest('.close-add-asset-btn') ||
+            target.closest('.close-maintenance-schedule-btn')) {
             target.closest('.modal').style.display = 'none';
             return;
         }
@@ -1249,6 +1289,64 @@ document.addEventListener("DOMContentLoaded", async () => {
             } catch (error) {
                 console.error('Error adding asset:', error);
                 alert('Error adding asset. Please try again.');
+            }
+        });
+    }
+
+    // Maintenance Schedule Form Handler
+    const maintenanceScheduleForm = document.getElementById('maintenance-schedule-form');
+    if (maintenanceScheduleForm) {
+        maintenanceScheduleForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            console.log('Maintenance schedule form submitted. Form data:', Object.fromEntries(formData));
+            
+            const maintenanceData = {
+                asset_id: parseInt(formData.get('asset_id')),
+                task_description: formData.get('task_description'),
+                due_date: formData.get('due_date') || null,
+                completed_date: formData.get('completed_date') || null,
+                status: formData.get('status') || 'pending',
+                is_unscheduled: formData.get('is_unscheduled') === 'true',
+                maintenance_trigger_type: formData.get('maintenance_trigger_type'),
+                maintenance_trigger_value: formData.get('maintenance_trigger_value') ? parseInt(formData.get('maintenance_trigger_value')) : null,
+                last_maintenance_usage: formData.get('last_maintenance_usage') ? parseFloat(formData.get('last_maintenance_usage')) : null,
+                meter_reading: formData.get('meter_reading') ? parseInt(formData.get('meter_reading')) : null,
+                interval_type: formData.get('interval_type'),
+                interval_value: formData.get('interval_value') ? parseInt(formData.get('interval_value')) : null,
+                cost: formData.get('cost') ? parseFloat(formData.get('cost')) : null,
+                supplier: formData.get('supplier'),
+                invoice_number: formData.get('invoice_number'),
+                notes: formData.get('notes')
+            };
+            
+            try {
+                const response = await fetch('api/maintenance-schedule', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(maintenanceData),
+                });
+                
+                if (response.ok) {
+                    alert('Maintenance schedule saved successfully!');
+                    document.getElementById('maintenance-schedule-modal').style.display = 'none';
+                    // TODO: Refresh maintenance calendar when implemented
+                } else {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    try {
+                        const error = JSON.parse(errorText);
+                        alert(`Error saving maintenance schedule: ${error.detail}`);
+                    } catch (e) {
+                        alert(`Error saving maintenance schedule: ${errorText}`);
+                    }
+                }
+            } catch (error) {
+                console.error('Error saving maintenance schedule:', error);
+                alert('Error saving maintenance schedule. Please try again.');
             }
         });
     }

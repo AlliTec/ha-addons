@@ -335,6 +335,24 @@ class AssetCreate(BaseModel):
     usage_value: Optional[float] = None
     usage_notes: Optional[str] = None
 
+class MaintenanceScheduleCreate(BaseModel):
+    asset_id: int
+    task_description: str
+    due_date: Optional[str] = None
+    completed_date: Optional[str] = None
+    status: Optional[str] = "pending"
+    is_unscheduled: Optional[bool] = False
+    maintenance_trigger_type: Optional[str] = None
+    maintenance_trigger_value: Optional[int] = None
+    last_maintenance_usage: Optional[float] = None
+    meter_reading: Optional[int] = None
+    interval_type: Optional[str] = None
+    interval_value: Optional[int] = None
+    cost: Optional[float] = None
+    supplier: Optional[str] = None
+    invoice_number: Optional[str] = None
+    notes: Optional[str] = None
+
 @app.get("/api/assets")
 async def get_assets():
     conn = await asyncpg.connect(DATABASE_URL)
@@ -450,6 +468,46 @@ async def update_asset(asset_id: int, asset: AssetCreate):
                 """, asset_id, asset.usage_type, asset.usage_value, asset.usage_notes)
                 
         return {"message": "Asset updated successfully"}
+    finally:
+        await conn.close()
+
+@app.post("/api/maintenance-schedule")
+async def create_maintenance_schedule(schedule: MaintenanceScheduleCreate):
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Insert maintenance schedule
+        query = """
+            INSERT INTO maintenance_schedules (
+                asset_id, task_description, due_date, completed_date, status, 
+                is_unscheduled, maintenance_trigger_type, maintenance_trigger_value,
+                last_maintenance_usage, meter_reading, interval_type, interval_value,
+                cost, supplier, invoice_number, notes
+            ) VALUES (
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
+            ) RETURNING id
+        """
+        
+        result = await conn.fetchrow(
+            query,
+            schedule.asset_id,
+            schedule.task_description,
+            schedule.due_date,
+            schedule.completed_date,
+            schedule.status,
+            schedule.is_unscheduled,
+            schedule.maintenance_trigger_type,
+            schedule.maintenance_trigger_value,
+            schedule.last_maintenance_usage,
+            schedule.meter_reading,
+            schedule.interval_type,
+            schedule.interval_value,
+            schedule.cost,
+            schedule.supplier,
+            schedule.invoice_number,
+            schedule.notes
+        )
+        
+        return {"message": "Maintenance schedule created successfully", "id": result['id']}
     finally:
         await conn.close()
 

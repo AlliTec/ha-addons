@@ -398,6 +398,9 @@
                     <button id="delete-asset-btn" class="action-btn delete-btn">
                         <i class="fa-solid fa-trash-can"></i> Delete
                     </button>
+                    <button id="maintenance-schedule-btn" class="action-btn maintenance-btn">
+                        <i class="fa-solid fa-wrench"></i> Maintenance
+                    </button>
                     <button class="close-asset-details-btn action-btn">
                         <i class="fa-solid fa-xmark"></i> Close
                     </button>
@@ -591,5 +594,143 @@
             </form>
         </div>
     </div>
+
+    <!-- Maintenance Schedule Modal -->
+    <div id="maintenance-schedule-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-top-left">&times;</span>
+            <div class="modal-header">
+                <h2>Maintenance Schedule</h2>
+                <button class="close-maintenance-schedule-btn action-btn">
+                    <i class="fa-solid fa-xmark"></i> Cancel
+                </button>
+            </div>
+            <form id="maintenance-schedule-form">
+                <input type="hidden" id="maintenance-schedule-asset-id">
+                
+                <!-- Task Information -->
+                <div class="form-section">
+                    <h3>Task Information</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="maintenance-schedule-task">Task Description:</label>
+                            <input type="text" id="maintenance-schedule-task" name="task_description" required>
+                        </div>
+                        <div>
+                            <label for="maintenance-schedule-status">Status:</label>
+                            <select id="maintenance-schedule-status" name="status">
+                                <option value="pending">Pending</option>
+                                <option value="scheduled">Scheduled</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="overdue">Overdue</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="maintenance-schedule-unscheduled">Is Unscheduled:</label>
+                            <select id="maintenance-schedule-unscheduled" name="is_unscheduled">
+                                <option value="false">No</option>
+                                <option value="true">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule Information -->
+                <div class="form-section">
+                    <h3>Schedule Information</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="maintenance-schedule-due-date">Due Date:</label>
+                            <input type="date" id="maintenance-schedule-due-date" name="due_date">
+                        </div>
+                        <div>
+                            <label for="maintenance-schedule-completed-date">Completed Date:</label>
+                            <input type="date" id="maintenance-schedule-completed-date" name="completed_date">
+                        </div>
+                        <div>
+                            <label for="maintenance-schedule-interval-type">Interval Type:</label>
+                            <select id="maintenance-schedule-interval-type" name="interval_type">
+                                <option value="">No Interval</option>
+                                <option value="hours">Hours</option>
+                                <option value="km">Kilometers</option>
+                                <option value="days">Days</option>
+                                <option value="weeks">Weeks</option>
+                                <option value="months">Months</option>
+                                <option value="years">Years</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="maintenance-schedule-interval-value">Interval Value:</label>
+                            <input type="number" id="maintenance-schedule-interval-value" name="interval_value" min="1">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Maintenance Trigger -->
+                <div class="form-section">
+                    <h3>Maintenance Trigger</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="maintenance-schedule-trigger-type">Trigger Type:</label>
+                            <select id="maintenance-schedule-trigger-type" name="maintenance_trigger_type">
+                                <option value="">No Trigger</option>
+                                <option value="hours">Hours</option>
+                                <option value="km">Kilometers</option>
+                                <option value="date">Date</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="maintenance-schedule-trigger-value">Trigger Value:</label>
+                            <input type="number" id="maintenance-schedule-trigger-value" name="maintenance_trigger_value" min="0">
+                        </div>
+                        <div>
+                            <label for="maintenance-schedule-last-usage">Last Maintenance Usage:</label>
+                            <input type="number" id="maintenance-schedule-last-usage" name="last_maintenance_usage" step="0.1" min="0">
+                        </div>
+                        <div>
+                            <label for="maintenance-schedule-meter-reading">Current Meter Reading:</label>
+                            <input type="number" id="maintenance-schedule-meter-reading" name="meter_reading" min="0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cost & Supplier -->
+                <div class="form-section">
+                    <h3>Cost & Supplier</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="maintenance-schedule-cost">Cost:</label>
+                            <input type="number" id="maintenance-schedule-cost" name="cost" step="0.01" min="0">
+                        </div>
+                        <div>
+                            <label for="maintenance-schedule-supplier">Supplier:</label>
+                            <input type="text" id="maintenance-schedule-supplier" name="supplier">
+                        </div>
+                        <div>
+                            <label for="maintenance-schedule-invoice">Invoice Number:</label>
+                            <input type="text" id="maintenance-schedule-invoice" name="invoice_number">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes -->
+                <div class="form-section">
+                    <h3>Notes</h3>
+                    <textarea id="maintenance-schedule-notes" name="notes" rows="3" placeholder="Additional notes about this maintenance task"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="action-btn add-btn">
+                        <i class="fa-solid fa-save"></i> Save Schedule
+                    </button>
+                    <button type="button" class="close-maintenance-schedule-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </body>
 </html>
