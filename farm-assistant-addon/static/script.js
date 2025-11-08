@@ -5,10 +5,26 @@ function formatCell(value) {
 function calculateAge(birthDate) {
     if (!birthDate) return "";
     
-    const birth = new Date(birthDate);
-    const today = new Date();
+    console.log("Calculating age for birthDate:", birthDate, "type:", typeof birthDate);
     
-    if (isNaN(birth.getTime())) return "";
+    let birth;
+    // Handle different date formats
+    if (typeof birthDate === 'string') {
+        birth = new Date(birthDate);
+    } else if (typeof birthDate === 'object' && birthDate.year) {
+        // Handle Python date objects that might be serialized as {year: 2024, month: 1, day: 1}
+        birth = new Date(birthDate.year, birthDate.month - 1, birthDate.day);
+    } else {
+        birth = new Date(birthDate);
+    }
+    
+    const today = new Date();
+    console.log("Parsed birth date:", birth, "today:", today);
+    
+    if (isNaN(birth.getTime())) {
+        console.log("Invalid birth date");
+        return "";
+    }
     
     let age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
@@ -40,29 +56,54 @@ function getStatusIcon(status) {
 }
 
 async function populateAnimalList(filter = "All") {
-    const response = await fetch("get_animals");
-    const animals = await response.json();
-    const filteredAnimals = filter === "All" ? animals : animals.filter(animal => animal.animal_type === filter);
-    const tableBody = document.querySelector("#livestock-list tbody");
-    tableBody.innerHTML = ""; // Clear existing rows
+    try {
+        console.log("populateAnimalList called with filter:", filter);
+        const response = await fetch("get_animals");
+        console.log("Fetch response status:", response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const animals = await response.json();
+        console.log("Animals data received:", animals);
+        console.log("Number of animals:", animals.length);
+        
+        const filteredAnimals = filter === "All" ? animals : animals.filter(animal => animal.animal_type === filter);
+        console.log("Filtered animals count:", filteredAnimals.length);
+        
+        const tableBody = document.querySelector("#livestock-list tbody");
+        if (!tableBody) {
+            console.error("Table body not found!");
+            return;
+        }
+        
+        tableBody.innerHTML = ""; // Clear existing rows
 
-    filteredAnimals.forEach(animal => {
-        const row = document.createElement("tr");
-        row.dataset.animalId = animal.id;
+        filteredAnimals.forEach((animal, index) => {
+            console.log(`Processing animal ${index + 1}:`, animal);
+            
+            const row = document.createElement("tr");
+            row.dataset.animalId = animal.id;
 
-        row.innerHTML = `
-            <td>${formatCell(animal.name)}</td>
-            <td>${formatCell(animal.gender)}</td>
-            <td>${getStatusIcon(animal.status)}</td>
-            <td>${calculateAge(animal.birth_date)}</td>
-            <td>
-                <button class="edit-btn" data-id="${animal.id}"><i class="fa-solid fa-pencil" aria-label="Edit"></i></button>
-                <button class="delete-btn" data-id="${animal.id}"><i class="fa-solid fa-trash-can" aria-label="Delete"></i></button>
-            </td>
-        `;
+            row.innerHTML = `
+                <td>${formatCell(animal.name)}</td>
+                <td>${formatCell(animal.gender)}</td>
+                <td>${getStatusIcon(animal.status)}</td>
+                <td>${calculateAge(animal.birth_date)}</td>
+                <td>
+                    <button class="edit-btn" data-id="${animal.id}"><i class="fa-solid fa-pencil" aria-label="Edit"></i></button>
+                    <button class="delete-btn" data-id="${animal.id}"><i class="fa-solid fa-trash-can" aria-label="Delete"></i></button>
+                </td>
+            `;
 
-        tableBody.appendChild(row);
-    });
+            tableBody.appendChild(row);
+        });
+        
+        console.log("Table population completed");
+    } catch (error) {
+        console.error("Error in populateAnimalList:", error);
+    }
 }
 
 

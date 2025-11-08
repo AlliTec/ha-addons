@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.46 - 2025-11-08
+
+### Fixed
+
+- Added comprehensive debugging to `populateAnimalList` function to identify table population issues.
+- Enhanced `calculateAge` function to handle different date formats from Python backend.
+- Added error handling and console logging for troubleshooting.
+
 ## 0.9.45 - 2025-11-08
 
 ### Fixed
