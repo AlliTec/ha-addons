@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.3 - 2025-11-08
+
+### Fixed
+- **DAM/Sire Dropdown Population**: Fixed fetch URL from 'animals' to '/api/animals' to resolve 404 error
+- **Parent Selection**: DAM and Sire dropdowns now properly populate with gender-filtered animals
+- **API Integration**: Corrected endpoint path for parent dropdown functionality
+
 ## 1.0.1 - 2025-11-08
 
 ### Fixed

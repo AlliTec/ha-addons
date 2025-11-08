@@ -370,26 +370,40 @@ async function populateAnimalList(filter = "All") {
 
 // Function to populate parent dropdowns
 async function populateParentDropdowns() {
+    console.log("populateParentDropdowns called");
     try {
-        const response = await fetch('animals');
+        const response = await fetch('/api/animals');
+        console.log("Animals response status:", response.status);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const allAnimals = await response.json();
+        console.log("All animals received:", allAnimals.length);
         
         const damSelect = document.getElementById('edit-dam-id');
         const sireSelect = document.getElementById('edit-sire-id');
+        
+        console.log("Dam select element:", damSelect);
+        console.log("Sire select element:", sireSelect);
+        
+        if (!damSelect || !sireSelect) {
+            console.error("Dam or Sire select elements not found!");
+            return;
+        }
         
         // Clear existing options except the first one
         damSelect.innerHTML = '<option value="">Select Dam</option>';
         sireSelect.innerHTML = '<option value="">Select Sire</option>';
         
         // Add all female animals as potential dams
-        allAnimals.filter(animal => 
+        const femaleAnimals = allAnimals.filter(animal => 
             animal.status === 'Active' && 
             ['cow', 'heifer', 'ewe', 'doe', 'nanny', 'sow', 'gilt', 'mare', 'filly', 'jenny', 'queen', 'hen', 'pullet', 'goose', 'duck'].includes(animal.gender?.toLowerCase())
-        ).forEach(animal => {
+        );
+        console.log("Female animals found:", femaleAnimals.length);
+        
+        femaleAnimals.forEach(animal => {
             const option = document.createElement('option');
             option.value = animal.id;
             option.textContent = `${animal.name} (${animal.tag_id})`;
@@ -397,15 +411,21 @@ async function populateParentDropdowns() {
         });
         
         // Add all male animals as potential sires
-        allAnimals.filter(animal => 
+        const maleAnimals = allAnimals.filter(animal => 
             animal.status === 'Active' && 
             ['bull', 'steer', 'ram', 'buck', 'billy', 'boar', 'barrow', 'stallion', 'gelding', 'colt', 'jack', 'tom', 'rooster', 'cockerel', 'drake', 'gander'].includes(animal.gender?.toLowerCase())
-        ).forEach(animal => {
+        );
+        console.log("Male animals found:", maleAnimals.length);
+        
+        maleAnimals.forEach(animal => {
             const option = document.createElement('option');
             option.value = animal.id;
             option.textContent = `${animal.name} (${animal.tag_id})`;
             sireSelect.appendChild(option);
         });
+        
+        console.log("Dam select options count:", damSelect.options.length - 1);
+        console.log("Sire select options count:", sireSelect.options.length - 1);
         
     } catch (error) {
         console.error("Error populating parent dropdowns:", error);
