@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.44 - 2025-11-08
+
+### Fixed
+
+- Corrected the `populateAnimalList` function to properly render the simplified table.
+- Fixed the alignment of the "Add" button.
+
+
+
 ## 0.9.43 - 2025-11-08
 
 ### Fixed

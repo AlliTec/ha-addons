@@ -26,33 +26,16 @@ async function populateAnimalList(filter = "All") {
         const row = document.createElement("tr");
         row.dataset.animalId = animal.id;
 
-        // Name
-        const nameCell = document.createElement("td");
-        nameCell.textContent = formatCell(animal.name);
-        row.appendChild(nameCell);
-
-        // Gender
-        const genderCell = document.createElement("td");
-        genderCell.textContent = formatCell(animal.gender);
-        row.appendChild(genderCell);
-
-        // Status
-        const statusCell = document.createElement("td");
-        statusCell.innerHTML = getStatusIcon(animal.status);
-        row.appendChild(statusCell);
-
-        // Age
-        const ageCell = document.createElement("td");
-        ageCell.textContent = calculateAge(animal.birth_date);
-        row.appendChild(ageCell);
-
-        // Actions
-        const actionsCell = document.createElement("td");
-        actionsCell.innerHTML = `
-            <button class="edit-btn" data-id="${animal.id}"><i class="fa-solid fa-pencil" aria-label="Edit"></i></button>
-            <button class="delete-btn" data-id="${animal.id}"><i class="fa-solid fa-trash-can" aria-label="Delete"></i></button>
+        row.innerHTML = `
+            <td>${formatCell(animal.name)}</td>
+            <td>${formatCell(animal.gender)}</td>
+            <td>${getStatusIcon(animal.status)}</td>
+            <td>${calculateAge(animal.birth_date)}</td>
+            <td>
+                <button class="edit-btn" data-id="${animal.id}"><i class="fa-solid fa-pencil" aria-label="Edit"></i></button>
+                <button class="delete-btn" data-id="${animal.id}"><i class="fa-solid fa-trash-can" aria-label="Delete"></i></button>
+            </td>
         `;
-        row.appendChild(actionsCell);
 
         tableBody.appendChild(row);
     });
