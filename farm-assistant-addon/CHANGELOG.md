@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.9 - 2025-11-08
+
+### Fixed
+- **Modal Centering**: Enhanced modal content positioning with explicit centering styles
+- **Add/Edit Layout**: Fixed left offset issue in add/edit modal forms
+- **Visual Alignment**: Modal content now properly centered on screen
+
 ## 1.0.8 - 2025-11-08
 
 ### Fixed
