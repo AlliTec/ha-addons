@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.8 - 2025-11-09
+
+### Fixed
+- **Maintenance Scheduling**: Fixed 422 error when creating maintenance schedules
+- **Missing Form Field**: Added name attribute to maintenance-schedule-asset-id hidden input
+- **Asset ID Validation**: Resolved "Input should be a valid integer" error for asset_id field
+- **Form Processing**: Fixed FormData.get('asset_id') returning null due to missing name attribute
+
 ## 1.4.7 - 2025-11-09
 
 ### Fixed
