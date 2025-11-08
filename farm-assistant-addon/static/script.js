@@ -264,7 +264,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 // Function to show animal details in modal
 async function showAnimalDetails(animalId) {
     try {
-        const response = await fetch(`/get_animal/${animalId}`);
+        const response = await fetch(`get_animal/${animalId}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }

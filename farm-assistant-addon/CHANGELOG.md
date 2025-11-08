@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.50 - 2025-11-08
+
+### Fixed
+
+- Fixed API endpoint URL for fetching individual animal details.
+- Corrected fetch URL from `/get_animal/${id}` to `get_animal/${id}`.
+- Resolved 404 error when clicking on animal records.
+
 ## 0.9.49 - 2025-11-08
 
 ### Added
