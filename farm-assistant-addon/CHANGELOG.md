@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.9.60 - 2025-11-08
+## 0.9.61 - 2025-11-08
 
 ### Added
 - **Permanent Add Tab**: Added "Add" tab with plus icon that's always displayed regardless of dynamic filter tabs
