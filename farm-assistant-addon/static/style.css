@@ -170,6 +170,11 @@ th {
     color: white;
     border: none;
     margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .add-btn:hover {
@@ -214,7 +219,8 @@ th {
 
 .modal-content {
     margin: 20px auto;
-    display: block;
+    display: flex;
+    flex-direction: column;
     width: 80%;
     max-width: 700px;
     background-color: var(--bg-color);
@@ -223,6 +229,10 @@ th {
     box-shadow: 0 8px 16px rgba(0,0,0,0.3);
     padding: 20px;
     min-height: fit-content;
+    position: relative;
+    left: 0;
+    right: 0;
+    align-items: stretch;
 }
 
 #animal-details-content {

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.98 - 2025-11-08
+
+### Fixed
+- **Modal Centering**: Fixed edit modal content being left-aligned instead of centered
+- **Flex Layout**: Changed modal-content to use flexbox for proper centering
+- **Add Button**: Enhanced add button styling to ensure visibility
+- **Modal Structure**: Improved alignment with flex-direction: column and align-items: stretch
+
 ## 0.9.97 - 2025-11-08
 
 ### Fixed
