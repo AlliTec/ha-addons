@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.6 - 2025-11-08
+
+### Fixed
+- **Add Asset Cancel Button**: Fixed non-functional cancel button in add asset modal
+- **Missing Event Handler**: Added close-add-asset-btn to modal close event handlers
+- **Modal Closing**: Cancel button now properly closes add asset modal without submitting
+
 ## 1.2.5 - 2025-11-08
 
 ### Fixed

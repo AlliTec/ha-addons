@@ -1075,7 +1075,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             target.closest('.close-details-btn') || 
             target.closest('.close-edit-btn') ||
             target.closest('.close-asset-details-btn') || 
-            target.closest('.close-edit-asset-btn')) {
+            target.closest('.close-edit-asset-btn') ||
+            target.closest('.close-add-asset-btn')) {
             target.closest('.modal').style.display = 'none';
             return;
         }
