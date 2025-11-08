@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.77 - 2025-11-08
+
+### Fixed
+- **Filter Tabs Missing**: Fixed API endpoint URLs causing 404 errors
+- **URL Path Correction**: Removed leading slashes from fetch calls in populateFilterTabs
+- **API Consistency**: Aligned endpoint URLs with working populateAnimalList function
+
+### Technical Fixes
+- **Endpoint URLs**: Changed `/api/animal-types` to `api/animal-types`
+- **Endpoint URLs**: Changed `/get_animals` to `get_animals` 
+- **Cache Busting**: Updated version to force browser reload of fixed API calls
+
 ## 0.9.76 - 2025-11-08
 
 ### Fixed
