@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.6 - 2025-11-09
+
+### Fixed
+- **Asset Filter Tab Layout**: Fixed asset filter tabs to use section-tab class for consistent styling
+- **Horizontal Alignment**: Asset filter tabs now display horizontally like animal register tabs
+- **CSS Class Consistency**: Changed from filter-btn to section-tab class for asset filter tabs
+- **Tab Styling**: Asset filter tabs now match animal register tab appearance exactly
+
 ## 1.3.5 - 2025-11-09
 
 ### Fixed

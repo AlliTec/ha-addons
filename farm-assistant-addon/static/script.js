@@ -734,20 +734,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             }
             
-            // Create filter tabs HTML
-            let filterTabsHtml = '<div class="filter-btn active" data-category="All"><i class="fa-solid fa-house"></i> All</div>';
+            // Create filter tabs HTML using section-tab class for consistent styling
+            let filterTabsHtml = '<div class="section-tab active" data-category="All"><i class="fa-solid fa-house"></i> All</div>';
             
             // Add category-specific tabs
             categories.forEach(category => {
                 const count = assets.filter(asset => asset.category === category).length;
                 const icon = getAssetCategoryIcon(category);
-                filterTabsHtml += `<div class="filter-btn" data-category="${category}"><i class="${icon}"></i> ${category}<sup style="color: var(--accent-color); font-size: 0.7em; margin-left: 2px;">${count}</sup></div>`;
+                filterTabsHtml += `<div class="section-tab" data-category="${category}"><i class="${icon}"></i> ${category}<sup style="color: var(--accent-color); font-size: 0.7em; margin-left: 2px;">${count}</sup></div>`;
             });
             
             filterBar.innerHTML = filterTabsHtml;
             
             // Add click event listeners to filter tabs
-            document.querySelectorAll("#assets-filter-bar .filter-btn").forEach(btn => {
+            document.querySelectorAll("#assets-filter-bar .section-tab").forEach(btn => {
                 btn.addEventListener("click", () => {
                     // Remove active class from all tabs
                     document.querySelectorAll("#assets-filter-bar .filter-btn").forEach(tab => {
@@ -988,7 +988,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (assetsFilterBar.children.length === 0) {
             // Add "Add Asset" button only if bar is empty
             const addButton = document.createElement("button");
-            addButton.className = "filter-btn";
+            addButton.className = "section-tab";
             addButton.innerHTML = '<i class="fa-solid fa-plus"></i> Add Asset';
             addButton.addEventListener('click', openAddAssetForm);
             
