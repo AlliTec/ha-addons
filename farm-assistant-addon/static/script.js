@@ -246,6 +246,7 @@ async function populateFilterTabs() {
         activeAnimals.forEach(animal => {
             const type = getAnimalTypeFromGender(animal.gender, animal.breed);
             animalCounts[type] = (animalCounts[type] || 0) + 1;
+            console.log(`Animal: ${animal.name}, Gender: ${animal.gender}, Breed: ${animal.breed}, Type: ${type}`);
         });
         
         // Add "All" tab with total count of active animals
@@ -280,7 +281,10 @@ async function populateFilterTabs() {
             
             const count = document.createElement("sup");
             count.style.cssText = "font-size: 0.7em; margin-left: 2px; color: var(--accent-color);";
-            count.textContent = `(${animalCounts[animalType] || 0})`;
+            const countValue = animalCounts[animalType] || 0;
+            count.textContent = `(${countValue})`;
+            
+            console.log(`Creating tab for ${animalType} with count: ${countValue}`);
             
             const text = document.createTextNode(` ${animalType}`);
             
