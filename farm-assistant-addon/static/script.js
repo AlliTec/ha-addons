@@ -93,30 +93,7 @@ async function populateFilterTabs() {
         if (!filterBar) {
             console.error("Filter bar not found!");
             return;
-}
-            button.appendChild(count);
-            filterBar.appendChild(button);
-        });
-        
-        // Always add "Add" tab as the last tab
-        const addButton = document.createElement("button");
-        addButton.className = "filter-btn add-btn";
-        addButton.dataset.filter = "add";
-        
-        const addIcon = document.createElement("i");
-        addIcon.className = "fa-solid fa-plus";
-        
-        const addText = document.createTextNode(" Add");
-        
-        addButton.appendChild(addIcon);
-        addButton.appendChild(addText);
-        filterBar.appendChild(addButton);
-        
-        console.log("Filter tabs populated successfully with counts:", animalCounts);
-    } catch (error) {
-        console.error("Error populating filter tabs:", error);
-    }
-}
+        }
         
         // Clear existing tabs (except Add button which we'll add back)
         filterBar.innerHTML = '';
@@ -185,53 +162,6 @@ async function populateFilterTabs() {
         filterBar.appendChild(addButton);
         
         console.log("Filter tabs populated successfully with counts:", animalCounts);
-    } catch (error) {
-        console.error("Error populating filter tabs:", error);
-    }
-}
-        
-        const animalTypes = await response.json();
-        console.log("Available animal types:", animalTypes);
-        
-        const filterBar = document.getElementById("filter-bar");
-        if (!filterBar) {
-            console.error("Filter bar not found!");
-            return;
-        }
-        
-        filterBar.innerHTML = ""; // Clear existing tabs
-        
-        animalTypes.forEach((animalType, index) => {
-            const button = document.createElement("button");
-            button.className = "filter-btn";
-            if (index === 0) button.classList.add("active"); // First tab (All) is active
-            button.dataset.filter = animalType;
-            
-            const icon = document.createElement("i");
-            icon.className = `fa-solid ${getAnimalIcon(animalType)}`;
-            
-            const text = document.createTextNode(` ${animalType}`);
-            
-            button.appendChild(icon);
-            button.appendChild(text);
-            filterBar.appendChild(button);
-        });
-        
-        // Always add "Add" tab as the last tab
-        const addButton = document.createElement("button");
-        addButton.className = "filter-btn add-btn";
-        addButton.dataset.filter = "add";
-        
-        const addIcon = document.createElement("i");
-        addIcon.className = "fa-solid fa-plus";
-        
-        const addText = document.createTextNode(" Add");
-        
-        addButton.appendChild(addIcon);
-        addButton.appendChild(addText);
-        filterBar.appendChild(addButton);
-        
-        console.log("Filter tabs populated successfully");
     } catch (error) {
         console.error("Error populating filter tabs:", error);
     }
@@ -700,7 +630,6 @@ async function showAnimalDetails(animalId) {
         } catch (error) {
             console.error('Error populating parent dropdowns:', error);
         }
-    }
     }
 
     // Function to open add animal form
