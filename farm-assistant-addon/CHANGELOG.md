@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.2 - 2025-11-09
+
+### Fixed
+- **Asset Update Error**: Fixed JavaScript field mapping to match AssetCreate model
+- **Field Corrections**: Removed non-existent fields (condition, purchase_from, etc.)
+- **Model Alignment**: JavaScript now sends correct fields to backend API
+- **Update Functionality**: Asset editing should now work without errors
+
 ## 1.4.1 - 2025-11-09
 
 ### Added
