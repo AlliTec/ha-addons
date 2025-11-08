@@ -346,9 +346,6 @@ async function populateAnimalList(filter = "All") {
                 <td>${formatCell(animal.gender)}</td>
                 <td>${getStatusIcon(animal.status)}</td>
                 <td>${calculateAge(animal.birth_date)}</td>
-                <td class="details-cell">
-                    <i class="fa-solid fa-circle-info details-icon" data-id="${animal.id}" aria-label="View Details"></i>
-                </td>
             `;
 
             tableBody.appendChild(row);
@@ -590,15 +587,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     animalListTable.addEventListener("click", async (event) => {
         const target = event.target;
 
-        // Handle details icon click
-        if (target.classList.contains('details-icon')) {
-            const animalId = target.dataset.id;
-            await showAnimalDetails(animalId);
-            return;
-        }
-
-        // Handle row click for animal details (anywhere on row except details icon)
-        if (target.closest('tr') && !target.classList.contains('details-icon')) {
+        // Handle row click for animal details
+        if (target.closest('tr')) {
             const row = target.closest('tr');
             const animalId = row.dataset.animalId;
             await showAnimalDetails(animalId);

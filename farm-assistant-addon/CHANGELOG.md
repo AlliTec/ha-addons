@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.87 - 2025-11-08
+
+### Fixed
+- **Actions Column**: Removed actions column from table header and rows
+- **Blank Row**: Removed empty row (tfoot) from bottom of table
+- **Details Icon**: Removed details icon and related event handlers
+- **Table Layout**: Simplified table to show only essential columns (Name, Gender, Status, Age)
+
 ## 0.9.86 - 2025-11-08
 
 ### Fixed
