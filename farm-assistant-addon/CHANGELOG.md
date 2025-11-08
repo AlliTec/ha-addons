@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.80 - 2025-11-08
+
+### Fixed
+- **Filter Tab Clicks**: Fixed ReferenceError preventing tab clicks from working
+- **Variable Scope Issue**: filterBar variable not accessible to event listener
+- **Event Handler**: Fixed undefined variable in filter bar click handler
+
+### Technical Fixes
+- **Scope Resolution**: Replaced filterBar with filterBarElement in event listener
+- **DOM Access**: Get filter bar element directly in correct scope
+- **Error Prevention**: Eliminated "filterBar is not defined" JavaScript error
+
 ## 0.9.79 - 2025-11-08
 
 ### Added

@@ -532,8 +532,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Add event listener for filter bar clicks
-    if (filterBar) {
-        filterBar.addEventListener('click', async (event) => {
+    const filterBarElement = document.getElementById("filter-bar");
+    if (filterBarElement) {
+        filterBarElement.addEventListener('click', async (event) => {
             const target = event.target;
             const filterButton = target.closest('.filter-btn');
             
