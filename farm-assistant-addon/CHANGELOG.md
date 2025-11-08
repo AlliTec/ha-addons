@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.45 - 2025-11-08
+
+### Fixed
+
+- Added missing `calculateAge` function that was preventing table population.
+- Added missing `animal-details-modal` HTML element referenced in JavaScript.
+- Resolved issue where livestock records were not displaying in the table.
+
 ## 0.9.44 - 2025-11-08
 
 ### Fixed

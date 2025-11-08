@@ -2,6 +2,30 @@ function formatCell(value) {
     return value === null || value === undefined ? "" : value;
 }
 
+function calculateAge(birthDate) {
+    if (!birthDate) return "";
+    
+    const birth = new Date(birthDate);
+    const today = new Date();
+    
+    if (isNaN(birth.getTime())) return "";
+    
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+        age--;
+    }
+    
+    if (age < 0) return "";
+    if (age === 0) {
+        const months = today.getMonth() - birth.getMonth() + (12 * (today.getFullYear() - birth.getFullYear()));
+        return months > 0 ? `${months} months` : "< 1 month";
+    }
+    
+    return `${age} years`;
+}
+
 function getStatusIcon(status) {
     switch (status) {
         case 'On Property':
