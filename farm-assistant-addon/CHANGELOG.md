@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.4.0 - 2025-11-09
+
+### Added
+- **Maintenance Import Script**: Created import_maintenance.py for bulk maintenance record import
+- **Excel Integration**: Supports importing from Excel files with maintenance data
+- **Falcon XR6T Data**: Successfully imported 61 maintenance records (2021-2024)
+- **Data Validation**: Handles cost parsing, date formatting, and note consolidation
+- **Import Summary**: Provides detailed statistics after import completion
+
+### Features
+- **Multi-Sheet Support**: Reads from specific Excel sheets (Maintenance sheet)
+- **Cost Processing**: Cleans currency formatting and converts to decimal
+- **Note Consolidation**: Combines notes from multiple Excel columns
+- **Error Handling**: Skips invalid records and reports import statistics
+- **Database Integration**: Direct insertion into maintenance_schedules table
+
 ## 1.3.9 - 2025-11-09
 
 ### Changed
