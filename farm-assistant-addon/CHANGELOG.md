@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.9.73 - 2025-11-08
+
+### Fixed
+- **Missing Filter Tabs**: Added error handling for API failures to prevent filter tabs from disappearing
+- **Fallback Mechanism**: Added fallback animal types when `/api/animal-types` endpoint fails
+- **Cache Update**: Updated script.js version to force browser reload
+- **Ingress Compatibility**: Improved error handling for Home Assistant ingress routing issues
+
+### Technical Improvements
+- **API Error Handling**: Added proper response.ok checks before JSON parsing
+- **Graceful Degradation**: Filter tabs now show basic options even if API fails
+- **Better Debugging**: Enhanced console logging for troubleshooting API connectivity issues
+
 ## 0.9.72 - 2025-11-08
 
 ### Documentation
