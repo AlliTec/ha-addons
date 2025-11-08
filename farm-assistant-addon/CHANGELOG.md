@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.39 - 2025-11-08
+
+### Fixed
+
+- Corrected the column header for the image column to "PIC".
+
 ## 0.9.38 - 2025-11-08
 
 ### Fixed
