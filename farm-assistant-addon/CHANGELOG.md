@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.5 - 2025-11-09
+
+### Fixed
+- **Horizontal Tab Layout**: Fixed CSS to display filter tabs horizontally instead of vertically
+- **Flex Display**: Added inline-flex and align-items for proper horizontal alignment
+- **Tab Spacing**: Removed justify-content space-between, used flex-start with no gap
+- **Prevent Wrapping**: Added flex-wrap: nowrap to keep tabs on same line
+
 ## 1.3.4 - 2025-11-09
 
 ### Fixed

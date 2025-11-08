@@ -136,13 +136,15 @@ th {
 
 #filter-bar, #assets-filter-bar {
     display: flex;
-    justify-content: flex-start;
+    align-items: flex-end;
     margin-left: 0;
     margin-bottom: -1px;
+    flex-wrap: nowrap;
 }
 
 #assets-filter-bar {
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 0;
 }
 
 .filter-btn {
@@ -157,6 +159,8 @@ th {
     clip-path: polygon(0 0, 80% 0, 85% 15%, 100% 100%, 0% 100%);
     border-radius: 10px 0 0 0;
     margin-left: -15px;
+    display: inline-flex;
+    align-items: center;
 }
 
 .filter-btn:first-child {
