@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.94 - 2025-11-08
+
+### Fixed
+- **Modal Scrolling**: Fixed inability to scroll down to access bottom buttons
+- **Overflow Handling**: Changed to overflow-y: auto for proper vertical scrolling
+- **Modal Positioning**: Reduced top padding and adjusted margins for better viewport fit
+- **Button Accessibility**: Added proper spacing to ensure buttons are reachable
+- **Content Height**: Used min-height: fit-content for proper content sizing
+
 ## 0.9.93 - 2025-11-08
 
 ### Fixed
