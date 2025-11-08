@@ -780,6 +780,27 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             const asset = await response.json();
             
+            // Format meter reading
+            let meterReading = 'No reading';
+            if (asset.latest_usage) {
+                const usageType = asset.latest_usage.usage_type.toLowerCase();
+                const usageValue = asset.latest_usage.usage_value;
+                const timestamp = new Date(asset.latest_usage.timestamp).toLocaleDateString();
+                
+                if (usageType === 'hours') {
+                    meterReading = `${usageValue} hrs`;
+                } else if (usageType === 'odo') {
+                    meterReading = `${usageValue} km`;
+                } else if (usageType === 'km') {
+                    meterReading = `${usageValue} km`;
+                } else if (usageType === 'cycles') {
+                    meterReading = `${usageValue} cycles`;
+                } else {
+                    meterReading = `${usageValue} ${usageType}`;
+                }
+                meterReading += ` (as of ${timestamp})`;
+            }
+            
             const detailsContent = document.getElementById('asset-details-content');
             detailsContent.innerHTML = `
                 <table class="details-table">
@@ -791,6 +812,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <tr><td class="property-cell">Location:</td><td>${formatCell(asset.location)}</td></tr>
                     <tr><td class="property-cell">Status:</td><td>${getAssetStatusIcon(asset.status)}</td></tr>
                     <tr><td class="property-cell">Quantity:</td><td>${formatCell(asset.quantity || 1)}</td></tr>
+                    <tr><td class="property-cell"><strong>Meter Reading:</strong></td><td><strong>${meterReading}</strong></td></tr>
                     <tr><td class="property-cell">Purchase Date:</td><td>${formatCell(asset.purchase_date)}</td></tr>
                     <tr><td class="property-cell">Purchase Price:</td><td>${formatCell(asset.purchase_price)}</td></tr>
                     <tr><td class="property-cell">Registration No:</td><td>${formatCell(asset.registration_no)}</td></tr>

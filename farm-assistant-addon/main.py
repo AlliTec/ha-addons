@@ -347,7 +347,25 @@ async def get_asset(asset_id: int):
         record = await conn.fetchrow("SELECT * FROM asset_inventory WHERE id = $1", asset_id)
         if not record:
             raise HTTPException(status_code=404, detail="Asset not found")
-        return dict(record)
+        
+        # Get latest usage reading for this asset
+        usage_record = await conn.fetchrow("""
+            SELECT usage_type, usage_value, timestamp
+            FROM asset_usage_log 
+            WHERE asset_id = $1 
+            ORDER BY timestamp DESC 
+            LIMIT 1
+        """, asset_id)
+        
+        asset_data = dict(record)
+        if usage_record:
+            asset_data['latest_usage'] = {
+                'usage_type': usage_record['usage_type'],
+                'usage_value': usage_record['usage_value'],
+                'timestamp': usage_record['timestamp'].isoformat()
+            }
+        
+        return asset_data
     finally:
         await conn.close()
 

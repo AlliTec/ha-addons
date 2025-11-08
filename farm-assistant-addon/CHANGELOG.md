@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.2.3 - 2025-11-08
+
+### Added
+- **Meter Reading Display**: Added "Meter Reading" property to asset details modal
+- **Usage Type Formatting**: Automatically formats display as "xxx hrs", "xxx km", "xxx cycles", etc.
+- **Latest Usage Query**: Asset API now returns most recent usage reading with timestamp
+- **Smart Display Logic**: Shows "No reading" when no usage data exists
+- **Timestamp Integration**: Displays date of last reading in meter reading display
+
+### Updated
+- **Asset Details API**: Enhanced to include latest_usage data from asset_usage_log
+- **Details Modal**: Added prominent meter reading section with formatted output
+- **Usage Type Handling**: Supports hours, ODO, km, and cycles with proper formatting
+
 ## 1.2.2 - 2025-11-08
 
 ### Added
