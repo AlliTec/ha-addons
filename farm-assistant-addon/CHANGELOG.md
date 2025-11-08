@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.97 - 2025-11-08
+
+### Fixed
+- **Form Styling**: Removed all inline styles from edit/add animal forms
+- **Color Consistency**: Forms now use same CSS variables as main page
+- **CSS Classes**: Added proper form-grid, form-grid-three, form-section classes
+- **Input Styling**: Form inputs now match main page colors and borders
+- **Debugging**: Added status logging to troubleshoot cattle/dog count issues
+
 ## 0.9.96 - 2025-11-08
 
 ### Fixed

@@ -302,6 +302,60 @@ th {
     display: block;
 }
 
+/* Form Styling */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.form-grid-three {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.form-section {
+    margin-bottom: 20px;
+}
+
+.form-grid label,
+.form-grid-three label,
+.form-section label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+.form-grid input,
+.form-grid select,
+.form-grid-three input,
+.form-grid-three select,
+.form-section input,
+.form-section textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    box-sizing: border-box;
+}
+
+.form-grid input:focus,
+.form-grid select:focus,
+.form-grid-three input:focus,
+.form-grid-three select:focus,
+.form-section input:focus,
+.form-section textarea:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(96, 125, 139, 0.2);
+}
+
 .details-section h3 {
     margin: 0 0 15px 0;
     color: var(--text-color);

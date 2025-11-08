@@ -246,7 +246,7 @@ async function populateFilterTabs() {
         activeAnimals.forEach(animal => {
             const type = getAnimalTypeFromGender(animal.gender, animal.breed);
             animalCounts[type] = (animalCounts[type] || 0) + 1;
-            console.log(`Animal: ${animal.name}, Gender: ${animal.gender}, Breed: ${animal.breed}, Type: ${type}`);
+            console.log(`Animal: ${animal.name}, Gender: ${animal.gender}, Breed: ${animal.breed}, Type: ${type}, Status: ${animal.status}`);
         });
         
         // Add "All" tab with total count of active animals
