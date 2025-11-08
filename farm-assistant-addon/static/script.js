@@ -704,7 +704,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                     document.getElementById('assets-section').style.display = 'block';
                     populateAssetFilterTabs(); // Populate asset filter tabs
                     populateAssetList(); // Load assets when switching to assets tab
-                    setupAssetFilterBar(); // Setup assets filter bar with Add button
                 }
             });
         });
@@ -744,11 +743,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                 filterTabsHtml += `<div class="filter-btn" data-category="${category}"><i class="${icon}"></i> ${category}<sup style="color: var(--accent-color); font-size: 0.7em; margin-left: 2px;">${count}</sup></div>`;
             });
             
+            // Add "Add Asset" button
+            filterTabsHtml += '<div class="filter-btn" id="add-asset-btn"><i class="fa-solid fa-plus"></i> Add Asset</div>';
+            
             filterBar.innerHTML = filterTabsHtml;
             
             // Add click event listeners to filter tabs
             document.querySelectorAll("#assets-filter-bar .filter-btn").forEach(btn => {
                 btn.addEventListener("click", () => {
+                    // Check if this is the Add Asset button
+                    if (btn.id === 'add-asset-btn') {
+                        openAddAssetForm();
+                        return;
+                    }
+                    
                     // Remove active class from all tabs
                     document.querySelectorAll("#assets-filter-bar .filter-btn").forEach(tab => {
                         tab.classList.remove("active");
@@ -980,21 +988,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    function setupAssetFilterBar() {
-        const assetsFilterBar = document.getElementById('assets-filter-bar');
-        if (!assetsFilterBar) return;
-        
-        // Check if filter bar already has content (tabs from populateAssetFilterTabs)
-        if (assetsFilterBar.children.length === 0) {
-            // Add "Add Asset" button only if bar is empty
-            const addButton = document.createElement("button");
-            addButton.className = "filter-btn";
-            addButton.innerHTML = '<i class="fa-solid fa-plus"></i> Add Asset';
-            addButton.addEventListener('click', openAddAssetForm);
-            
-            assetsFilterBar.appendChild(addButton);
-        }
-    }
+
 
     // Maintenance Schedule Functions
     async function openMaintenanceScheduleModal(assetId) {

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.8 - 2025-11-09
+
+### Fixed
+- **Missing Add Asset Tab**: Restored Add Asset button to asset filter tabs
+- **Tab Integration**: Add Asset button now appears as last tab in asset filter bar
+- **Click Handler**: Add Asset tab opens add asset form instead of filtering
+- **Code Cleanup**: Removed redundant setupAssetFilterBar function
+
 ## 1.3.7 - 2025-11-09
 
 ### Fixed
