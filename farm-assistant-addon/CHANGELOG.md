@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.9.60 - 2025-11-08
+
+### Added
+- **Permanent Add Tab**: Added "Add" tab with plus icon that's always displayed regardless of dynamic filter tabs
+- **Add Animal Form**: Implemented complete add animal functionality using existing edit modal
+- **Dual-Purpose Form**: Edit modal now handles both adding new animals and updating existing animals
+- **Smart Form Handling**: Form automatically detects add vs update mode and adjusts title and button text accordingly
+
+### Features
+- **Always-Visible Add Button**: Add tab appears as the last tab in filter bar with distinctive plus styling
+- **Empty Form for New Animals**: Clicking Add tab opens empty form with default values (Active status, etc.)
+- **Seamless Integration**: Uses existing form validation and API endpoints for consistency
+- **User Experience**: Clear visual distinction between Add mode and Edit mode with appropriate titles and button text
+
+### Technical Improvements
+- **Event Handler Enhancement**: Filter bar click handler now manages both filter clicks and Add button clicks
+- **Form State Management**: Proper clearing and resetting of form fields for new animal entry
+- **API Integration**: Utilizes existing `/add_animal` endpoint with proper error handling
+- **Code Reuse**: Maximizes reuse of existing edit modal infrastructure for maintainability
+
 ## 0.9.59 - 2025-11-08
 
 ### Bug Fixes

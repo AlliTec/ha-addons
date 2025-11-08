@@ -110,6 +110,20 @@ async function populateFilterTabs() {
             filterBar.appendChild(button);
         });
         
+        // Always add "Add" tab as the last tab
+        const addButton = document.createElement("button");
+        addButton.className = "filter-btn add-btn";
+        addButton.dataset.filter = "add";
+        
+        const addIcon = document.createElement("i");
+        addIcon.className = "fa-solid fa-plus";
+        
+        const addText = document.createTextNode(" Add");
+        
+        addButton.appendChild(addIcon);
+        addButton.appendChild(addText);
+        filterBar.appendChild(addButton);
+        
         console.log("Filter tabs populated successfully");
     } catch (error) {
         console.error("Error populating filter tabs:", error);
@@ -303,6 +317,36 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // Add event listener for filter bar clicks
+    if (filterBar) {
+        filterBar.addEventListener('click', async (event) => {
+            const target = event.target;
+            const filterButton = target.closest('.filter-btn');
+            
+            if (filterButton) {
+                const filter = filterButton.dataset.filter;
+                
+                // Handle Add button click
+                if (filter === 'add') {
+                    await openAddAnimalForm();
+                    return;
+                }
+                
+                // Handle regular filter clicks
+                // Remove active class from all buttons
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                filterButton.classList.add('active');
+                
+                // Populate animal list with selected filter
+                populateAnimalList(filter);
+            }
+        });
+    }
+
     animalListTable.addEventListener("click", async (event) => {
         const target = event.target;
 
@@ -399,25 +443,42 @@ if (editForm) {
     }
     
     try {
-        const response = await fetch(`/update_animal/${animalId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(animalData)
-        });
+        let response;
+        const isUpdate = animalId && animalId !== '';
+        
+        if (isUpdate) {
+            // Update existing animal
+            response = await fetch(`/update_animal/${animalId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(animalData)
+            });
+        } else {
+            // Add new animal
+            response = await fetch('/add_animal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(animalData)
+            });
+        }
         
         if (response.ok) {
-            alert('Animal updated successfully!');
+            const message = isUpdate ? 'Animal updated successfully!' : 'Animal added successfully!';
+            alert(message);
             document.getElementById('edit-animal-modal').style.display = "none";
             populateAnimalList(); // Refresh the animal list
         } else {
             const error = await response.json();
-            alert(`Error updating animal: ${error.detail}`);
+            const action = isUpdate ? 'updating' : 'adding';
+            alert(`Error ${action} animal: ${error.detail}`);
         }
     } catch (error) {
-        console.error('Error updating animal:', error);
-        alert('Error updating animal. Please try again.');
+        console.error('Error saving animal:', error);
+        alert('Error saving animal. Please try again.');
     }
     });
 }
@@ -463,7 +524,41 @@ async function showAnimalDetails(animalId) {
     }
 }
 
-// Function to enable edit mode
+    // Function to open add animal form
+    async function openAddAnimalForm() {
+        // Clear the edit form for new animal
+        document.getElementById('edit-animal-id').value = '';
+        document.getElementById('edit-tag-id').value = '';
+        document.getElementById('edit-name').value = '';
+        document.getElementById('edit-breed').value = '';
+        document.getElementById('edit-date-of-birth').value = '';
+        document.getElementById('edit-color').value = '';
+        document.getElementById('edit-weight').value = '';
+        document.getElementById('edit-price').value = '';
+        document.getElementById('edit-category').value = '';
+        document.getElementById('edit-status').value = 'Active';
+        document.getElementById('edit-notes').value = '';
+        
+        // Reset gender options to default
+        updateGenderOptions('');
+        
+        // Show edit modal with "Add Animal" title
+        const editModal = document.getElementById('edit-animal-modal');
+        const modalTitle = editModal.querySelector('h2');
+        if (modalTitle) {
+            modalTitle.textContent = 'Add New Animal';
+        }
+        
+        // Change save button text
+        const saveButton = document.querySelector('#edit-animal-form button[type="submit"]');
+        if (saveButton) {
+            saveButton.innerHTML = '<i class="fa-solid fa-save"></i> Add Animal';
+        }
+        
+        editModal.style.display = "block";
+    }
+
+    // Function to enable edit mode
 async function enableEditMode(animalId) {
     try {
         // Fetch current animal data
