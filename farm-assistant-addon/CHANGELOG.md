@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1 - 2025-11-08
+
+### Fixed
+- **Dog Classification**: Added special handling for when gender field contains animal type instead of actual gender
+- **Debugging**: Enhanced logging to identify classification issues
+- **Status Issue**: Identified that cattle have "On Property" status instead of "Active"
+- **Count Problem**: Filter tabs only count "Active" animals, excluding most cattle and dogs
+
 ## 1.0.0 - 2025-11-08
 
 ### Fixed

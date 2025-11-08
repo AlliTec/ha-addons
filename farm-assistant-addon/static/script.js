@@ -159,6 +159,12 @@ function getAnimalTypeFromGender(gender, breed) {
     if (['tom', 'queen'].includes(genderLower)) return "Cat";
     // Dogs
     if (['dog', 'bitch'].includes(genderLower)) return "Dog";
+    
+    // Special case: if gender is already the animal type, use it directly
+    if (['cattle', 'cat', 'dog', 'sheep', 'goat', 'pig', 'horse', 'donkey', 'fowl'].includes(genderLower)) {
+        console.log(`Gender "${gender}" appears to be animal type, using directly`);
+        return genderLower.charAt(0).toUpperCase() + genderLower.slice(1);
+    }
     // Sheep
     if (['ram', 'ewe', 'wether'].includes(genderLower)) return "Sheep";
     // Goats
