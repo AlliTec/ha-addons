@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.9.53 - 2025-11-08
+
+### Added
+- **Full Animal Update Functionality**: Implemented complete edit animal feature with form modal
+- **Edit Animal Modal**: Created comprehensive edit form with all animal fields
+- **Form Validation**: Added client-side and server-side validation for animal updates
+- **API Integration**: Connected frontend to existing `/update_animal/{id}` endpoint
+
+### Features
+- **Comprehensive Edit Form**: Includes tag ID, name, gender, breed, date of birth, color, weight, price, category, status, and notes
+- **Dynamic Status Handling**: Automatically sets date of death when status changes to "Deceased"
+- **Multiple Close Options**: Edit modal can be closed via X button, Cancel button, or top-left X
+- **Error Handling**: Proper error messages for failed updates and validation issues
+- **Auto-refresh**: Animal list automatically refreshes after successful updates
+
+### Technical Improvements
+- **Development Path Support**: Updated main.py to use local paths for development vs production
+- **Config Path Flexibility**: Added fallback to local data/options.json for development
+- **Static File Serving**: Fixed static file and template directory paths for local development
+- **Modal Management**: Improved modal close functionality across all modals
+
 ## 0.9.52 - 2025-11-08
 
 ### Added

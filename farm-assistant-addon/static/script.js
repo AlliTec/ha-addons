@@ -204,8 +204,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     closeModals.forEach(closeModal => {
         closeModal.onclick = function() {
-            animalDetailsModal.style.display = "none";
-            modal.style.display = "none";
+            // Find which modal this close button belongs to
+            const modal = closeModal.closest('.modal');
+            if (modal) {
+                modal.style.display = "none";
+            }
         }
     });
 
@@ -264,7 +267,65 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById('animal-details-modal').style.display = "none";
             return;
         }
+
+        // Handle edit modal close buttons
+        if (target.closest('.close-edit-btn')) {
+            document.getElementById('edit-animal-modal').style.display = "none";
+            return;
+        }
     });
+});
+
+// Handle edit animal form submission
+document.getElementById('edit-animal-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    
+    const animalId = document.getElementById('edit-animal-id').value;
+    const formData = new FormData(event.target);
+    
+    const animalData = {
+        tag_id: formData.get('tag_id'),
+        name: formData.get('name'),
+        gender: formData.get('gender'),
+        breed: formData.get('breed'),
+        birth_date: formData.get('date_of_birth') || null,
+        health_status: 'Healthy', // Default value
+        notes: formData.get('notes'),
+        dam_id: null, // Not implemented in form yet
+        sire_id: null, // Not implemented in form yet
+        features: formData.get('color'),
+        photo_path: null, // Not implemented in form yet
+        pic: null, // Not implemented in form yet
+        dod: null, // Will be set based on status
+        status: formData.get('status')
+    };
+    
+    // Set dod if status is Deceased
+    if (animalData.status === 'Deceased') {
+        animalData.dod = new Date().toISOString().split('T')[0];
+    }
+    
+    try {
+        const response = await fetch(`/update_animal/${animalId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(animalData)
+        });
+        
+        if (response.ok) {
+            alert('Animal updated successfully!');
+            document.getElementById('edit-animal-modal').style.display = "none";
+            populateAnimalList(); // Refresh the animal list
+        } else {
+            const error = await response.json();
+            alert(`Error updating animal: ${error.detail}`);
+        }
+    } catch (error) {
+        console.error('Error updating animal:', error);
+        alert('Error updating animal. Please try again.');
+    }
 });
 
 // Function to show animal details in modal
@@ -308,8 +369,37 @@ async function showAnimalDetails(animalId) {
     }
 }
 
-// Function to enable edit mode (placeholder for now)
+// Function to enable edit mode
 async function enableEditMode(animalId) {
-    alert("Edit functionality will be implemented in the next update. For now, you can use the existing inline editing by closing this modal and clicking the edit button in the table.");
-    document.getElementById('animal-details-modal').style.display = "none";
+    try {
+        // Fetch current animal data
+        const response = await fetch(`get_animal/${animalId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const animal = await response.json();
+        
+        // Populate the edit form
+        document.getElementById('edit-animal-id').value = animal.id;
+        document.getElementById('edit-tag-id').value = animal.tag_id || '';
+        document.getElementById('edit-name').value = animal.name || '';
+        document.getElementById('edit-gender').value = animal.gender || '';
+        document.getElementById('edit-breed').value = animal.breed || '';
+        document.getElementById('edit-date-of-birth').value = animal.birth_date ? animal.birth_date.split('T')[0] : '';
+        document.getElementById('edit-color').value = animal.features || '';
+        document.getElementById('edit-weight').value = animal.weight || '';
+        document.getElementById('edit-price').value = animal.price || '';
+        document.getElementById('edit-category').value = animal.category || '';
+        document.getElementById('edit-status').value = animal.status || 'Active';
+        document.getElementById('edit-notes').value = animal.notes || '';
+        
+        // Hide details modal and show edit modal
+        document.getElementById('animal-details-modal').style.display = "none";
+        document.getElementById('edit-animal-modal').style.display = "block";
+        
+    } catch (error) {
+        console.error("Error loading animal data for edit:", error);
+        alert("Error loading animal data. Please try again.");
+    }
 }

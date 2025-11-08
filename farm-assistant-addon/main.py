@@ -18,11 +18,15 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # --- Database Setup ---
 
 def get_config():
-    """Loads addon configuration from /data/options.json."""
-    config_path = "/data/options.json"
+    """Loads addon configuration from /data/options.json or local data/options.json."""
+    # Try local data directory first for development
+    config_path = "data/options.json"
     if not os.path.exists(config_path):
-        logging.error(f"Configuration file not found at {config_path}. Please configure the addon and start it again.")
-        sys.exit(1)
+        # Fall back to production path
+        config_path = "/data/options.json"
+        if not os.path.exists(config_path):
+            logging.error(f"Configuration file not found at {config_path}. Please configure the addon and start it again.")
+            sys.exit(1)
     
     try:
         with open(config_path, "r") as f:
@@ -71,8 +75,12 @@ async def startup_event():
     if not await check_connection():
         logging.error("Database connection failed. The application will not work correctly.")
 
-app.mount("/static", StaticFiles(directory="/app/static"), name="static")
-templates = Jinja2Templates(directory="/app/templates")
+# Use local paths for development, production paths for container
+static_dir = "static" if os.path.exists("static") else "/app/static"
+templates_dir = "templates" if os.path.exists("templates") else "/app/templates"
+
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+templates = Jinja2Templates(directory=templates_dir)
 
 # --- Pydantic Models ---
 

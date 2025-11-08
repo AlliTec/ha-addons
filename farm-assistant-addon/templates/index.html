@@ -68,5 +68,91 @@
             </div>
         </div>
     </div>
+    
+    <!-- Edit Animal Modal -->
+    <div id="edit-animal-modal" class="modal">
+        <div class="modal-content" style="background-color: white; padding: 20px; border-radius: 5px; max-width: 600px; width: 90%;">
+            <span class="close-modal close-top-left">&times;</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+                <h2 style="margin: 0;">Edit Animal</h2>
+                <button class="close-edit-btn" style="background: #6c757d; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                    <i class="fa-solid fa-xmark"></i> Cancel
+                </button>
+            </div>
+            <form id="edit-animal-form">
+                <input type="hidden" id="edit-animal-id">
+                <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                    <div>
+                        <label for="edit-tag-id" style="display: block; margin-bottom: 5px; font-weight: bold;">Tag ID:</label>
+                        <input type="text" id="edit-tag-id" name="tag_id" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label for="edit-name" style="display: block; margin-bottom: 5px; font-weight: bold;">Name:</label>
+                        <input type="text" id="edit-name" name="name" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label for="edit-gender" style="display: block; margin-bottom: 5px; font-weight: bold;">Gender:</label>
+                        <select id="edit-gender" name="gender" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-breed" style="display: block; margin-bottom: 5px; font-weight: bold;">Breed:</label>
+                        <input type="text" id="edit-breed" name="breed" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label for="edit-date-of-birth" style="display: block; margin-bottom: 5px; font-weight: bold;">Date of Birth:</label>
+                        <input type="date" id="edit-date-of-birth" name="date_of_birth" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label for="edit-color" style="display: block; margin-bottom: 5px; font-weight: bold;">Color:</label>
+                        <input type="text" id="edit-color" name="color" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label for="edit-weight" style="display: block; margin-bottom: 5px; font-weight: bold;">Weight (kg):</label>
+                        <input type="number" id="edit-weight" name="weight" step="0.1" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label for="edit-price" style="display: block; margin-bottom: 5px; font-weight: bold;">Price:</label>
+                        <input type="number" id="edit-price" name="price" step="0.01" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div>
+                        <label for="edit-category" style="display: block; margin-bottom: 5px; font-weight: bold;">Category:</label>
+                        <select id="edit-category" name="category" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="">Select Category</option>
+                            <option value="Goat">Goat</option>
+                            <option value="Sheep">Sheep</option>
+                            <option value="Pig">Pig</option>
+                            <option value="Horse">Horse</option>
+                            <option value="Llama">Llama</option>
+                            <option value="Alpaca">Alpaca</option>
+                            <option value="Donkey">Donkey</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-status" style="display: block; margin-bottom: 5px; font-weight: bold;">Status:</label>
+                        <select id="edit-status" name="status" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="Active">Active</option>
+                            <option value="Sold">Sold</option>
+                            <option value="Deceased">Deceased</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <label for="edit-notes" style="display: block; margin-bottom: 5px; font-weight: bold;">Notes:</label>
+                    <textarea id="edit-notes" name="notes" rows="3" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; resize: vertical;"></textarea>
+                </div>
+                <div class="modal-actions" style="margin-top: 20px; text-align: center; border-top: 1px solid #ddd; padding-top: 15px;">
+                    <button type="submit" class="action-btn update-btn" style="background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                        <i class="fa-solid fa-save"></i> Save Changes
+                    </button>
+                    <button type="button" class="close-edit-btn" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
