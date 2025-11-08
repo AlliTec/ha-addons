@@ -169,6 +169,21 @@ th {
     z-index: 3;
 }
 
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 10px;
+}
+
+.details-grid > div {
+    padding: 5px;
+}
+
+.details-grid > div:nth-child(odd) {
+    font-weight: bold;
+    background-color: var(--table-header-bg);
+}
+
 .modal {
     display: none; 
     position: fixed; 

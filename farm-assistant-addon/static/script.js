@@ -73,11 +73,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const modal = document.getElementById("image-modal");
     const modalImg = document.getElementById("modal-image");
-    const closeModal = document.querySelector(".close-modal");
+    const animalDetailsModal = document.getElementById("animal-details-modal");
+    const animalDetailsContent = document.getElementById("animal-details-content");
+    const closeModals = document.querySelectorAll(".close-modal");
 
-    closeModal.onclick = function() {
-        modal.style.display = "none";
-    }
+    closeModals.forEach(closeModal => {
+        closeModal.onclick = function() {
+            animalDetailsModal.style.display = "none";
+            modal.style.display = "none";
+        }
+    });
+
+    animalListTable.addEventListener("click", async (event) => {
+        const target = event.target;
+
+        if (target.closest('tr') && !target.closest('button') && !target.classList.contains('pic-icon')) {
+            const row = target.closest('tr');
+            const animalId = row.dataset.animalId;
+            const response = await fetch(`/get_animal/${animalId}`);
+            const animal = await response.json();
+
+            animalDetailsContent.innerHTML = `
+                <div>Tag ID:</div><div>${formatCell(animal.tag_id)}</div>
+                <div>Breed:</div><div>${formatCell(animal.breed)}</div>
+                <div>Birth Date:</div><div>${formatCell(animal.birth_date)}</div>
+                <div>Health Status:</div><div>${formatCell(animal.health_status)}</div>
+                <div>Notes:</div><div>${formatCell(animal.notes)}</div>
+                <div>Dam:</div><div>${formatCell(animal.dam_name)}</div>
+                <div>Sire:</div><div>${formatCell(animal.sire_name)}</div>
+                <div>Features:</div><div>${formatCell(animal.features)}</div>
+                <div>DOD:</div><div>${formatCell(animal.dod)}</div>
+            `;
+            animalDetailsModal.style.display = "block";
+        }
 
     animalListTable.addEventListener("click", async (event) => {
         const target = event.target;

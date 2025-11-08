@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.42 - 2025-11-08
+
+### Changed
+
+- Simplified the table display to show only "Name", "Gender", "Status", "Age", and "Actions".
+- Implemented a popup modal to display the full details of an animal when a row is clicked.
+
 ## 0.9.41 - 2025-11-08
 
 ### Fixed
