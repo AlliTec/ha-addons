@@ -167,53 +167,8 @@ async function populateAnimalList(filter = "All") {
 }
 
 
-document.addEventListener("DOMContentLoaded", async () => {
-    console.log("script.js: DOMContentLoaded event fired.");
-
-    // First populate filter tabs dynamically
-    await populateFilterTabs();
-    
-    // Then populate the animal list
-    populateAnimalList();
-
-    // Set up filter bar event listener (using event delegation)
-    const filterBar = document.getElementById("filter-bar");
-    filterBar.addEventListener("click", (event) => {
-        const target = event.target.closest(".filter-btn");
-        if (target) {
-            const filter = target.dataset.filter;
-            const activeButtons = document.querySelectorAll(".filter-btn.active");
-            activeButtons.forEach(btn => btn.classList.remove("active"));
-            target.classList.add("active");
-            populateAnimalList(filter);
-        }
-    });
-
-    const animalListTable = document.querySelector("#livestock-list");
-    if (!animalListTable) {
-        console.error("script.js: Could not find table with ID #livestock-list.");
-        return;
-    }
-    console.log("script.js: Found table element:", animalListTable);
-
-    const modal = document.getElementById("image-modal");
-    const modalImg = document.getElementById("modal-image");
-    const animalDetailsModal = document.getElementById("animal-details-modal");
-    const animalDetailsContent = document.getElementById("animal-details-content");
-    const closeModals = document.querySelectorAll(".close-modal");
-
-    closeModals.forEach(closeModal => {
-        closeModal.onclick = function() {
-            // Find which modal this close button belongs to
-            const modal = closeModal.closest('.modal');
-            if (modal) {
-                modal.style.display = "none";
-            }
-        }
-    });
-
-    // Species-specific gender mappings
-    const genderOptions = {
+// Species-specific gender mappings
+const genderOptions = {
         'Cattle': [
             { value: 'Steer', text: 'Steer (castrated male)' },
             { value: 'Bull', text: 'Bull (intact male)' },
@@ -294,6 +249,35 @@ document.addEventListener("DOMContentLoaded", async () => {
             genderSelect.appendChild(optionElement);
         });
     }
+
+document.addEventListener("DOMContentLoaded", async () => {
+    console.log("script.js: DOMContentLoaded event fired.");
+    populateAnimalList();
+    populateFilterTabs();
+    
+    const filterBar = document.getElementById("filter-bar");
+    const animalListTable = document.querySelector("#livestock-list");
+    if (!animalListTable) {
+        console.error("script.js: Could not find table with ID #livestock-list.");
+        return;
+    }
+    console.log("script.js: Found table element:", animalListTable);
+
+    const modal = document.getElementById("image-modal");
+    const modalImg = document.getElementById("modal-image");
+    const animalDetailsModal = document.getElementById("animal-details-modal");
+    const animalDetailsContent = document.getElementById("animal-details-content");
+    const closeModals = document.querySelectorAll(".close-modal");
+
+    closeModals.forEach(closeModal => {
+        closeModal.onclick = function() {
+            // Find which modal this close button belongs to
+            const modal = closeModal.closest('.modal');
+            if (modal) {
+                modal.style.display = "none";
+            }
+        }
+    });
 
     // Add event listener for category change
     const categorySelect = document.getElementById('edit-category');
