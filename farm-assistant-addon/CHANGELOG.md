@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.0.0 - 2025-11-08
+
+### Fixed
+- **Modal Centering**: Fixed modal content being offset to the left, now properly centered
+- **Parent Dropdowns**: Added population of DAM and Sire selection lists with active animals
+- **Gender Filtering**: Dams show female animals, Sires show male animals
+- **Animal Display**: Parent options show "Name (Tag ID)" format for easy selection
+- **Modal Layout**: Reverted to display: block for proper centering
+
+### Added
+- **populateParentDropdowns()**: New function to populate parent selection dropdowns
+- **Parent Logic**: Filters animals by gender and status for appropriate parent options
+
 ## 0.9.99 - 2025-11-08
 
 ### Fixed

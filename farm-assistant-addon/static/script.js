@@ -362,6 +362,50 @@ async function populateAnimalList(filter = "All") {
     }
 }
 
+// Function to populate parent dropdowns
+async function populateParentDropdowns() {
+    try {
+        const response = await fetch('animals');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const allAnimals = await response.json();
+        
+        const damSelect = document.getElementById('edit-dam-id');
+        const sireSelect = document.getElementById('edit-sire-id');
+        
+        // Clear existing options except the first one
+        damSelect.innerHTML = '<option value="">Select Dam</option>';
+        sireSelect.innerHTML = '<option value="">Select Sire</option>';
+        
+        // Add all female animals as potential dams
+        allAnimals.filter(animal => 
+            animal.status === 'Active' && 
+            ['cow', 'heifer', 'ewe', 'doe', 'nanny', 'sow', 'gilt', 'mare', 'filly', 'jenny', 'queen', 'hen', 'pullet', 'goose', 'duck'].includes(animal.gender?.toLowerCase())
+        ).forEach(animal => {
+            const option = document.createElement('option');
+            option.value = animal.id;
+            option.textContent = `${animal.name} (${animal.tag_id})`;
+            damSelect.appendChild(option);
+        });
+        
+        // Add all male animals as potential sires
+        allAnimals.filter(animal => 
+            animal.status === 'Active' && 
+            ['bull', 'steer', 'ram', 'buck', 'billy', 'boar', 'barrow', 'stallion', 'gelding', 'colt', 'jack', 'tom', 'rooster', 'cockerel', 'drake', 'gander'].includes(animal.gender?.toLowerCase())
+        ).forEach(animal => {
+            const option = document.createElement('option');
+            option.value = animal.id;
+            option.textContent = `${animal.name} (${animal.tag_id})`;
+            sireSelect.appendChild(option);
+        });
+        
+    } catch (error) {
+        console.error("Error populating parent dropdowns:", error);
+    }
+}
+
 // Function to open add animal form
 async function openAddAnimalForm() {
     // Clear form data
@@ -381,6 +425,9 @@ async function openAddAnimalForm() {
     
     // Reset gender options to default
     updateGenderOptions('');
+    
+    // Populate parent dropdowns
+    await populateParentDropdowns();
     
     // Update modal title and button text
     const modalTitle = document.querySelector('#edit-animal-modal h2');
@@ -575,6 +622,9 @@ async function enableEditMode(animalId) {
         setTimeout(() => {
             document.getElementById('edit-gender').value = animal.gender || '';
         }, 100);
+        
+        // Populate parent dropdowns
+        await populateParentDropdowns();
         
         // Update modal title and button text
         const modalTitle = document.querySelector('#edit-animal-modal h2');
