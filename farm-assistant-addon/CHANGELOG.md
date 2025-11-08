@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.35 - 2025-11-08
+
+### Changed
+
+- Moved the "Add" button to the "Actions" column.
+
 ## 0.9.34 - 2025-11-08
 
 ### Changed
