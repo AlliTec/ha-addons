@@ -80,12 +80,16 @@ async function populateFilterTabs() {
         console.log("Populating filter tabs...");
         
         // Get animal types first
+        console.log("Fetching animal types...");
         const animalTypesResponse = await fetch("/api/animal-types");
+        console.log("Animal types response status:", animalTypesResponse.status);
         const animalTypes = await animalTypesResponse.json();
         console.log("Available animal types:", animalTypes);
         
         // Get animals for counting
+        console.log("Fetching animals for counting...");
         const animalsResponse = await fetch("/get_animals");
+        console.log("Animals response status:", animalsResponse.status);
         const allAnimals = await animalsResponse.json();
         console.log("All animals:", allAnimals);
         

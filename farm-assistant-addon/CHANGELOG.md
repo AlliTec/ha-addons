@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.71 - 2025-11-08
+
+### Debug
+- **Enhanced Logging**: Added detailed console logging to populateFilterTabs function
+- **API Response Tracking**: Added status logging for both animal-types and get_animals endpoints
+- **Cache Update**: Updated script version to force browser reload
+
 ## 0.9.70 - 2025-11-08
 
 ### Fixed
