@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.55 - 2025-11-08
+
+### Bug Fixes
+- **JavaScript Error Fix**: Fixed TypeError when clicking update button
+- **Event Listener Safety**: Added null check for edit-animal-form element before adding event listener
+- **Form Submission**: Update functionality now works correctly without JavaScript errors
+
+### Technical Improvements
+- **Error Prevention**: Prevents attempting to add event listeners to non-existent DOM elements
+- **Modal Compatibility**: Form submission handler properly attached when edit modal is displayed
+- **User Experience**: Eliminates JavaScript console errors during normal operation
+
 ## 0.9.54 - 2025-11-08
 
 ### Added
