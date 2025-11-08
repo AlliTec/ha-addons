@@ -35,9 +35,9 @@ async function populateAnimalList(filter = "All") {
             <td>${formatCell(animal.dam_name)}</td>
             <td>${formatCell(animal.sire_name)}</td>
             <td>${getStatusIcon(animal.status)}</td>
-            <td>${formatCell(animal.features)}</td>
-            <td><a href="${formatCell(animal.pic)}" target="_blank">${formatCell(animal.pic)}</a></td>
-            <td>${formatCell(animal.dod)}</td>
+             <td>${formatCell(animal.features)}</td>
+            <td><i class="fa-solid fa-image pic-icon" data-pic-path="${formatCell(animal.pic)}" data-animal-id="${animal.id}"></i></td>
+             <td>${formatCell(animal.dod)}</td>
             <td>
                 <button class="edit-btn" data-id="${animal.id}"><i class="fa-solid fa-pencil" aria-label="Edit"></i></button>
                 <button class="delete-btn" data-id="${animal.id}"><i class="fa-solid fa-trash-can" aria-label="Delete"></i></button>
@@ -108,8 +108,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 fileInput.click();
             }
         }
-
-        console.log("script.js: Click detected inside table. Target:", event.target);
 
         const button = event.target.closest('button');
         if (!button) return; // Exit if the click was not on a button

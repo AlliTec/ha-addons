@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.37 - 2025-11-08
+
+### Fixed
+
+- Corrected the implementation of the image upload and display functionality.
+
 ## 0.9.36 - 2025-11-08
 
 ### Added
