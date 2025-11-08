@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.58 - 2025-11-08
+
+### Process Correction
+- **Version Management**: Fixed version sequence after code changes
+- **Changelog Update**: Properly documented comprehensive gender options addition
+- **Rule Compliance**: Corrected failure to follow mandatory three-step process
+
+### Features (from previous incomplete update)
+- **Comprehensive Gender Options**: Added extensive gender terminology for all common farm animals
+- **New Animal Categories**: Added Goose, Duck, Turkey, Chicken, and Rabbit categories
+- **Enhanced Gender Mappings**: Updated with all requested gender terms and more
+
 ## 0.9.57 - 2025-11-08
 
 ### Features
