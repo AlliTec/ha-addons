@@ -102,6 +102,20 @@ def get_animal_type(gender):
         return "Cat"
     elif gender in ["Hen", "Cock"]:
         return "Fowl"
+    elif gender in ["Doe", "Buck", "Kid", "Wether"]:
+        return "Goat"
+    elif gender in ["Ewe", "Ram", "Lamb", "Wether"]:
+        return "Sheep"
+    elif gender in ["Sow", "Boar", "Gilt", "Barrow", "Piglet"]:
+        return "Pig"
+    elif gender in ["Mare", "Stallion", "Gelding", "Foal", "Colt", "Filly"]:
+        return "Horse"
+    elif gender in ["Dam", "Sire", "Cria"]:
+        return "Llama"
+    elif gender in ["Hembra", "Macho", "Cria"]:
+        return "Alpaca"
+    elif gender in ["Jenny", "Jack", "Foal", "Colt", "Filly"]:
+        return "Donkey"
     else:
         return None
 
@@ -190,6 +204,27 @@ async def get_animals_for_dropdown():
     await conn.close()
     animals = [dict(record) for record in records]
     return animals
+
+@app.get("/api/animal-types")
+async def get_available_animal_types():
+    try:
+        conn = await asyncpg.connect(DATABASE_URL)
+        records = await conn.fetch("SELECT gender FROM livestock_records WHERE gender IS NOT NULL ORDER BY gender")
+        await conn.close()
+        
+        # Get all unique animal types from existing records
+        animal_types = set()
+        for record in records:
+            animal_type = get_animal_type(record['gender'])
+            if animal_type:
+                animal_types.add(animal_type)
+        
+        # Always include "All" option
+        available_types = ["All"] + sorted(list(animal_types))
+        return available_types
+    except Exception as e:
+        logging.error(f"Error getting animal types: {e}")
+        return ["All"]
 
 @app.get("/get_animal/{animal_id}")
 async def get_animal(animal_id: int):

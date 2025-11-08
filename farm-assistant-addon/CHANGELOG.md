@@ -1,6 +1,14 @@
 # Changelog
 
-## 0.9.47 - 2025-11-08
+## 0.9.48 - 2025-11-08
+
+### Added
+
+- Implemented dynamic filter tabs that only show for animal types present in database.
+- Added support for goats, sheep, pigs, horses, llamas, alpacas, and donkeys.
+- Added comprehensive gender mappings for all supported animal types.
+- Added new API endpoint `/api/animal-types` to get available filter options.
+- Filter tabs now automatically hide/show based on actual livestock data.
 
 ### Fixed
 

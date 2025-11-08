@@ -55,6 +55,67 @@ function getStatusIcon(status) {
     }
 }
 
+// Function to get icon for animal type
+function getAnimalIcon(animalType) {
+    const icons = {
+        "All": "fa-house-chimney",
+        "Cattle": "fa-cow",
+        "Dog": "fa-dog", 
+        "Cat": "fa-cat",
+        "Fowl": "fa-crow",
+        "Goat": "fa-horse", // Using horse icon for goat
+        "Sheep": "fa-horse", // Using horse icon for sheep
+        "Pig": "fa-horse", // Using horse icon for pig
+        "Horse": "fa-horse",
+        "Llama": "fa-horse", // Using horse icon for llama
+        "Alpaca": "fa-horse", // Using horse icon for alpaca
+        "Donkey": "fa-horse" // Using horse icon for donkey
+    };
+    return icons[animalType] || "fa-paw";
+}
+
+// Function to populate filter tabs dynamically
+async function populateFilterTabs() {
+    try {
+        console.log("Populating filter tabs...");
+        const response = await fetch("api/animal-types");
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const animalTypes = await response.json();
+        console.log("Available animal types:", animalTypes);
+        
+        const filterBar = document.getElementById("filter-bar");
+        if (!filterBar) {
+            console.error("Filter bar not found!");
+            return;
+        }
+        
+        filterBar.innerHTML = ""; // Clear existing tabs
+        
+        animalTypes.forEach((animalType, index) => {
+            const button = document.createElement("button");
+            button.className = "filter-btn";
+            if (index === 0) button.classList.add("active"); // First tab (All) is active
+            button.dataset.filter = animalType;
+            
+            const icon = document.createElement("i");
+            icon.className = `fa-solid ${getAnimalIcon(animalType)}`;
+            
+            const text = document.createTextNode(` ${animalType}`);
+            
+            button.appendChild(icon);
+            button.appendChild(text);
+            filterBar.appendChild(button);
+        });
+        
+        console.log("Filter tabs populated successfully");
+    } catch (error) {
+        console.error("Error populating filter tabs:", error);
+    }
+}
+
 async function populateAnimalList(filter = "All") {
     try {
         console.log("populateAnimalList called with filter:", filter);
@@ -107,11 +168,16 @@ async function populateAnimalList(filter = "All") {
 }
 
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     console.log("script.js: DOMContentLoaded event fired.");
 
+    // First populate filter tabs dynamically
+    await populateFilterTabs();
+    
+    // Then populate the animal list
     populateAnimalList();
 
+    // Set up filter bar event listener (using event delegation)
     const filterBar = document.getElementById("filter-bar");
     filterBar.addEventListener("click", (event) => {
         const target = event.target.closest(".filter-btn");
