@@ -476,6 +476,16 @@ const genderOptions = {
         ]
     };
 
+document.addEventListener("DOMContentLoaded", async () => {
+    console.log("script.js: DOMContentLoaded event fired.");
+    populateAnimalList();
+    populateFilterTabs();
+
+document.addEventListener("DOMContentLoaded", async () => {
+    console.log("script.js: DOMContentLoaded event fired.");
+    populateAnimalList();
+    populateFilterTabs();
+
     // Function to update gender options based on category
     function updateGenderOptions(category) {
         const genderSelect = document.getElementById('edit-gender');
@@ -493,11 +503,6 @@ const genderOptions = {
         });
     }
 
-document.addEventListener("DOMContentLoaded", async () => {
-    console.log("script.js: DOMContentLoaded event fired.");
-    populateAnimalList();
-    populateFilterTabs();
-    
     const filterBar = document.getElementById("filter-bar");
     const animalListTable = document.querySelector("#livestock-list");
     if (!animalListTable) {

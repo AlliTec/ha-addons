@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.9.83 - 2025-11-08
+
+### Fixed
+- **Gender Dropdown Scope**: Moved updateGenderOptions function inside DOMContentLoaded
+- **Species-Specific Genders**: Fixed gender options not updating based on animal category
+- **Form Submission**: All DOM-dependent functions now in correct scope
+- **Add Animal**: Form submission should now work with proper gender options
+
+### Features
+- **Dynamic Gender Options**: Cat category shows Tom/Queen, Cattle shows Bull/Cow/Heifer/Steer
+- **Category-Based Selection**: Gender dropdown updates automatically when category changes
+- **Comprehensive Coverage**: All animal types have proper gender terminology
+
+### Technical Fixes
+- **Function Scope**: updateGenderOptions moved to correct DOM scope
+- **DOM Access**: Gender dropdown now accessible when function runs
+- **Event Handler**: Category change properly triggers gender option updates
+- **Scope Resolution**: All form-related functions in proper scope
+
 ## 0.9.82 - 2025-11-08
 
 ### Fixed
