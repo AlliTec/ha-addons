@@ -134,11 +134,15 @@ th {
     align-items: center;
 }
 
-#filter-bar {
+#filter-bar, #assets-filter-bar {
     display: flex;
     justify-content: flex-start;
     margin-left: 0;
     margin-bottom: -1px;
+}
+
+#assets-filter-bar {
+    justify-content: space-between;
 }
 
 .filter-btn {

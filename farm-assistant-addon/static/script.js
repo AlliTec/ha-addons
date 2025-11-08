@@ -984,16 +984,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         const assetsFilterBar = document.getElementById('assets-filter-bar');
         if (!assetsFilterBar) return;
         
-        // Clear existing content
-        assetsFilterBar.innerHTML = '';
-        
-        // Add "Add Asset" button
-        const addButton = document.createElement("button");
-        addButton.className = "filter-btn";
-        addButton.innerHTML = '<i class="fa-solid fa-plus"></i> Add Asset';
-        addButton.addEventListener('click', openAddAssetForm);
-        
-        assetsFilterBar.appendChild(addButton);
+        // Check if filter bar already has content (tabs from populateAssetFilterTabs)
+        if (assetsFilterBar.children.length === 0) {
+            // Add "Add Asset" button only if bar is empty
+            const addButton = document.createElement("button");
+            addButton.className = "filter-btn";
+            addButton.innerHTML = '<i class="fa-solid fa-plus"></i> Add Asset';
+            addButton.addEventListener('click', openAddAssetForm);
+            
+            assetsFilterBar.appendChild(addButton);
+        }
     }
 
     // Maintenance Schedule Functions

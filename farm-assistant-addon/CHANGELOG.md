@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.4 - 2025-11-09
+
+### Fixed
+- **Asset Filter Layout**: Fixed CSS for horizontal tab layout instead of stacked
+- **Missing Add Button**: Restored Add Asset button that was being cleared by filter tabs
+- **Tab Spacing**: Added proper spacing between filter tabs using justify-content: space-between
+- **Button Logic**: Modified setupAssetFilterBar to preserve filter tabs when they exist
+
 ## 1.3.3 - 2025-11-09
 
 ### Added
