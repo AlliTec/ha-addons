@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.9.82 - 2025-11-08
+
+### Fixed
+- **Form Submission Scope**: Moved edit form handler inside DOMContentLoaded
+- **Add Animal Functionality**: Fixed form submission event listener scope
+- **DOM Access Issues**: Ensured all DOM elements accessed after page load
+- **Event Handler Organization**: Consolidated all event listeners in correct scope
+
+### Technical Fixes
+- **DOMContentLoaded Scope**: Moved form submission handler inside page load event
+- **Form Handler**: editForm now properly accessible to event listener
+- **Scope Resolution**: All DOM-dependent code now in correct scope
+- **Function Organization**: showAnimalDetails function moved to proper scope
+
 ## 0.9.81 - 2025-11-08
 
 ### Fixed

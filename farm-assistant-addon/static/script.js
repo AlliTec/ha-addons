@@ -625,10 +625,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
-// Handle edit animal form submission
-const editForm = document.getElementById('edit-animal-form');
-if (editForm) {
-    editForm.addEventListener('submit', async (event) => {
+    // Handle edit animal form submission
+    const editForm = document.getElementById('edit-animal-form');
+    if (editForm) {
+        editForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     
     const animalId = document.getElementById('edit-animal-id').value;
@@ -698,11 +698,11 @@ if (editForm) {
         console.error('Error saving animal:', error);
         alert('Error saving animal. Please try again.');
     }
-    });
-}
+        });
+    }
 
-// Function to show animal details in modal
-async function showAnimalDetails(animalId) {
+    // Function to show animal details in modal
+    async function showAnimalDetails(animalId) {
     try {
         const response = await fetch(`get_animal/${animalId}`);
         if (!response.ok) {
