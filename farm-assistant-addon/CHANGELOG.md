@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.9.54 - 2025-11-08
+
+### Added
+- **Species-Specific Gender Terms**: Replaced generic Male/Female with proper species-specific gender terminology
+- **Dynamic Gender Options**: Gender dropdown now updates based on selected animal category
+- **Comprehensive Animal Categories**: Added Cattle, Cat, Dog, and Fowl to the available animal types
+
+### Features
+- **Cattle Gender Options**: Steer, Bull, Cow, Heifer with descriptive tooltips
+- **Cat Gender Options**: Tom (male), Queen (female)
+- **Dog Gender Options**: Dog (male), Bitch (female)
+- **Sheep Gender Options**: Ram, Ewe, Wether (castrated male)
+- **Goat Gender Options**: Buck, Doe, Wether (castrated male)
+- **Pig Gender Options**: Boar, Sow, Barrow (castrated male), Gilt (young female)
+- **Horse Gender Options**: Stallion, Gelding, Mare, Filly (young female), Colt (young male)
+- **Donkey Gender Options**: Jack (male), Jenny (female)
+- **Llama & Alpaca Gender Options**: Stud, Gelding, Female
+- **Fowl Gender Options**: Rooster, Cockerel (young male), Hen, Pullet (young female), Capon (castrated male)
+
+### Technical Improvements
+- **Dynamic Form Behavior**: Gender dropdown automatically updates when category changes
+- **Enhanced get_animal_type Function**: Updated to recognize all new gender terms
+- **Improved User Experience**: Descriptive tooltips explain each gender term
+- **Backward Compatibility**: Existing records with old gender terms still work correctly
+
 ## 0.9.53 - 2025-11-08
 
 ### Added

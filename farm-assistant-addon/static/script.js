@@ -212,6 +212,97 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    // Species-specific gender mappings
+    const genderOptions = {
+        'Cattle': [
+            { value: 'Steer', text: 'Steer (castrated male)' },
+            { value: 'Bull', text: 'Bull (intact male)' },
+            { value: 'Cow', text: 'Cow (female that has calved)' },
+            { value: 'Heifer', text: 'Heifer (female that has not calved)' }
+        ],
+        'Cat': [
+            { value: 'Tom', text: 'Tom (male)' },
+            { value: 'Queen', text: 'Queen (female)' }
+        ],
+        'Dog': [
+            { value: 'Dog', text: 'Dog (male)' },
+            { value: 'Bitch', text: 'Bitch (female)' }
+        ],
+        'Sheep': [
+            { value: 'Ram', text: 'Ram (male)' },
+            { value: 'Ewe', text: 'Ewe (female)' },
+            { value: 'Wether', text: 'Wether (castrated male)' }
+        ],
+        'Goat': [
+            { value: 'Buck', text: 'Buck (male)' },
+            { value: 'Doe', text: 'Doe (female)' },
+            { value: 'Wether', text: 'Wether (castrated male)' }
+        ],
+        'Pig': [
+            { value: 'Boar', text: 'Boar (male)' },
+            { value: 'Sow', text: 'Sow (female)' },
+            { value: 'Barrow', text: 'Barrow (castrated male)' },
+            { value: 'Gilt', text: 'Gilt (young female that has not farrowed)' }
+        ],
+        'Horse': [
+            { value: 'Stallion', text: 'Stallion (male)' },
+            { value: 'Gelding', text: 'Gelding (castrated male)' },
+            { value: 'Mare', text: 'Mare (female)' },
+            { value: 'Filly', text: 'Filly (young female)' },
+            { value: 'Colt', text: 'Colt (young male)' }
+        ],
+        'Donkey': [
+            { value: 'Jack', text: 'Jack (male)' },
+            { value: 'Jenny', text: 'Jenny (female)' }
+        ],
+        'Llama': [
+            { value: 'Stud', text: 'Stud (male)' },
+            { value: 'Gelding', text: 'Gelding (castrated male)' },
+            { value: 'Female', text: 'Female' }
+        ],
+        'Alpaca': [
+            { value: 'Stud', text: 'Stud (male)' },
+            { value: 'Gelding', text: 'Gelding (castrated male)' },
+            { value: 'Female', text: 'Female' }
+        ],
+        'Fowl': [
+            { value: 'Rooster', text: 'Rooster (male)' },
+            { value: 'Cockerel', text: 'Cockerel (young male)' },
+            { value: 'Hen', text: 'Hen (female)' },
+            { value: 'Pullet', text: 'Pullet (young female)' },
+            { value: 'Capon', text: 'Capon (castrated male)' }
+        ],
+        'default': [
+            { value: 'Male', text: 'Male' },
+            { value: 'Female', text: 'Female' }
+        ]
+    };
+
+    // Function to update gender options based on category
+    function updateGenderOptions(category) {
+        const genderSelect = document.getElementById('edit-gender');
+        const options = genderOptions[category] || genderOptions['default'];
+        
+        // Clear existing options
+        genderSelect.innerHTML = '';
+        
+        // Add new options
+        options.forEach(option => {
+            const optionElement = document.createElement('option');
+            optionElement.value = option.value;
+            optionElement.textContent = option.text;
+            genderSelect.appendChild(optionElement);
+        });
+    }
+
+    // Add event listener for category change
+    const categorySelect = document.getElementById('edit-category');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            updateGenderOptions(this.value);
+        });
+    }
+
     animalListTable.addEventListener("click", async (event) => {
         const target = event.target;
 
@@ -384,7 +475,6 @@ async function enableEditMode(animalId) {
         document.getElementById('edit-animal-id').value = animal.id;
         document.getElementById('edit-tag-id').value = animal.tag_id || '';
         document.getElementById('edit-name').value = animal.name || '';
-        document.getElementById('edit-gender').value = animal.gender || '';
         document.getElementById('edit-breed').value = animal.breed || '';
         document.getElementById('edit-date-of-birth').value = animal.birth_date ? animal.birth_date.split('T')[0] : '';
         document.getElementById('edit-color').value = animal.features || '';
@@ -393,6 +483,15 @@ async function enableEditMode(animalId) {
         document.getElementById('edit-category').value = animal.category || '';
         document.getElementById('edit-status').value = animal.status || 'Active';
         document.getElementById('edit-notes').value = animal.notes || '';
+        
+        // Set gender options based on category first, then set the current gender value
+        const category = animal.category || '';
+        updateGenderOptions(category);
+        
+        // Set gender after options are populated
+        setTimeout(() => {
+            document.getElementById('edit-gender').value = animal.gender || '';
+        }, 100);
         
         // Hide details modal and show edit modal
         document.getElementById('animal-details-modal').style.display = "none";

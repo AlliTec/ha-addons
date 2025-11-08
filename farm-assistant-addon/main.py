@@ -108,7 +108,7 @@ def get_animal_type(gender):
         return "Dog"
     elif gender in ["Queen", "Tom"]:
         return "Cat"
-    elif gender in ["Hen", "Cock"]:
+    elif gender in ["Hen", "Rooster", "Cockerel", "Pullet", "Capon"]:
         return "Fowl"
     elif gender in ["Doe", "Buck", "Kid", "Wether"]:
         return "Goat"
@@ -118,12 +118,10 @@ def get_animal_type(gender):
         return "Pig"
     elif gender in ["Mare", "Stallion", "Gelding", "Foal", "Colt", "Filly"]:
         return "Horse"
-    elif gender in ["Dam", "Sire", "Cria"]:
-        return "Llama"
-    elif gender in ["Hembra", "Macho", "Cria"]:
-        return "Alpaca"
     elif gender in ["Jenny", "Jack", "Foal", "Colt", "Filly"]:
         return "Donkey"
+    elif gender in ["Female", "Stud", "Gelding"]:  # Llama and Alpaca
+        return "Llama"  # Default to Llama, will be overridden by category field if available
     else:
         return None
 
