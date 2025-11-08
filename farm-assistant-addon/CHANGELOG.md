@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.2.2 - 2025-11-08
+
+### Added
+- **Asset Usage Log Integration**: Added usage tracking functionality linked to asset_inventory
+- **Usage Form Fields**: Added Usage Type (hours/ODO/km/cycles) and Usage Value fields to add/edit forms
+- **Automatic Timestamps**: Usage log entries automatically timestamped when assets are added/updated
+- **Usage Notes**: Optional notes field for usage log entries for additional context
+- **Database Transactions**: Asset updates and usage log entries created in atomic transactions
+
+### Updated
+- **AssetCreate Model**: Extended to include usage_type, usage_value, and usage_notes fields
+- **API Endpoints**: Both add and update asset endpoints now create usage log entries
+- **Form Handling**: JavaScript updated to handle new usage fields in both add and edit operations
+- **Edit Form Population**: Usage fields cleared and ready for new entries during asset editing
+
 ## 1.2.1 - 2025-11-08
 
 ### Fixed

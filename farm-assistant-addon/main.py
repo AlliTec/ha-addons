@@ -318,6 +318,9 @@ class AssetCreate(BaseModel):
     purchase_location: Optional[str] = None
     manual_or_doc_path: Optional[str] = None
     notes: Optional[str] = None
+    usage_type: Optional[str] = None
+    usage_value: Optional[float] = None
+    usage_notes: Optional[str] = None
 
 @app.get("/api/assets")
 async def get_assets():
@@ -352,23 +355,36 @@ async def get_asset(asset_id: int):
 async def add_asset(asset: AssetCreate):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
-        result = await conn.fetchrow("""
-            INSERT INTO asset_inventory 
-            (name, category, make, model, serial_number, purchase_date, status,
-             parent_asset_id, location, quantity, registration_no, registration_due,
-             permit_info, insurance_info, insurance_due, warranty_provider,
-             warranty_expiry_date, purchase_price, purchase_location,
-             manual_or_doc_path, notes, created_at)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
-                    $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW())
-            RETURNING id
-        """, asset.name, asset.category, asset.make, asset.model, asset.serial_number,
-            asset.purchase_date, asset.status, asset.parent_asset_id, asset.location,
-            asset.quantity, asset.registration_no, asset.registration_due, asset.permit_info,
-            asset.insurance_info, asset.insurance_due, asset.warranty_provider,
-            asset.warranty_expiry_date, asset.purchase_price, asset.purchase_location,
-            asset.manual_or_doc_path, asset.notes)
-        return {"message": "Asset added successfully", "id": result["id"]}
+        async with conn.transaction():
+            # Insert asset
+            result = await conn.fetchrow("""
+                INSERT INTO asset_inventory 
+                (name, category, make, model, serial_number, purchase_date, status,
+                 parent_asset_id, location, quantity, registration_no, registration_due,
+                 permit_info, insurance_info, insurance_due, warranty_provider,
+                 warranty_expiry_date, purchase_price, purchase_location,
+                 manual_or_doc_path, notes, created_at)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
+                        $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW())
+                RETURNING id
+            """, asset.name, asset.category, asset.make, asset.model, asset.serial_number,
+                asset.purchase_date, asset.status, asset.parent_asset_id, asset.location,
+                asset.quantity, asset.registration_no, asset.registration_due, asset.permit_info,
+                asset.insurance_info, asset.insurance_due, asset.warranty_provider,
+                asset.warranty_expiry_date, asset.purchase_price, asset.purchase_location,
+                asset.manual_or_doc_path, asset.notes)
+            
+            asset_id = result["id"]
+            
+            # Add usage log entry if usage data provided
+            if asset.usage_type and asset.usage_value is not None:
+                await conn.execute("""
+                    INSERT INTO asset_usage_log 
+                    (asset_id, timestamp, usage_type, usage_value, notes)
+                    VALUES ($1, NOW(), $2, $3, $4)
+                """, asset_id, asset.usage_type, asset.usage_value, asset.usage_notes)
+                
+        return {"message": "Asset added successfully", "id": asset_id}
     finally:
         await conn.close()
 
@@ -376,21 +392,32 @@ async def add_asset(asset: AssetCreate):
 async def update_asset(asset_id: int, asset: AssetCreate):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
-        await conn.execute("""
-            UPDATE asset_inventory 
-            SET name = $1, category = $2, make = $3, model = $4, serial_number = $5,
-                purchase_date = $6, status = $7, parent_asset_id = $8, location = $9,
-                quantity = $10, registration_no = $11, registration_due = $12,
-                permit_info = $13, insurance_info = $14, insurance_due = $15,
-                warranty_provider = $16, warranty_expiry_date = $17, purchase_price = $18,
-                purchase_location = $19, manual_or_doc_path = $20, notes = $21
-            WHERE id = $22
-        """, asset.name, asset.category, asset.make, asset.model, asset.serial_number,
-            asset.purchase_date, asset.status, asset.parent_asset_id, asset.location,
-            asset.quantity, asset.registration_no, asset.registration_due, asset.permit_info,
-            asset.insurance_info, asset.insurance_due, asset.warranty_provider,
-            asset.warranty_expiry_date, asset.purchase_price, asset.purchase_location,
-            asset.manual_or_doc_path, asset.notes, asset_id)
+        async with conn.transaction():
+            # Update asset
+            await conn.execute("""
+                UPDATE asset_inventory 
+                SET name = $1, category = $2, make = $3, model = $4, serial_number = $5,
+                    purchase_date = $6, status = $7, parent_asset_id = $8, location = $9,
+                    quantity = $10, registration_no = $11, registration_due = $12,
+                    permit_info = $13, insurance_info = $14, insurance_due = $15,
+                    warranty_provider = $16, warranty_expiry_date = $17, purchase_price = $18,
+                    purchase_location = $19, manual_or_doc_path = $20, notes = $21
+                WHERE id = $22
+            """, asset.name, asset.category, asset.make, asset.model, asset.serial_number,
+                asset.purchase_date, asset.status, asset.parent_asset_id, asset.location,
+                asset.quantity, asset.registration_no, asset.registration_due, asset.permit_info,
+                asset.insurance_info, asset.insurance_due, asset.warranty_provider,
+                asset.warranty_expiry_date, asset.purchase_price, asset.purchase_location,
+                asset.manual_or_doc_path, asset.notes, asset_id)
+            
+            # Add usage log entry if usage data provided
+            if asset.usage_type and asset.usage_value is not None:
+                await conn.execute("""
+                    INSERT INTO asset_usage_log 
+                    (asset_id, timestamp, usage_type, usage_value, notes)
+                    VALUES ($1, NOW(), $2, $3, $4)
+                """, asset_id, asset.usage_type, asset.usage_value, asset.usage_notes)
+                
         return {"message": "Asset updated successfully"}
     finally:
         await conn.close()

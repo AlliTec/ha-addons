@@ -836,6 +836,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById('edit-asset-status').value = asset.status || 'operational';
             document.getElementById('edit-asset-notes').value = asset.notes || '';
             
+            // Clear usage fields for new entry
+            document.getElementById('edit-asset-usage-type').value = 'hours';
+            document.getElementById('edit-asset-usage-value').value = '';
+            document.getElementById('edit-asset-usage-notes').value = '';
+            
             // Hide details modal and show edit modal
             document.getElementById('asset-details-modal').style.display = 'none';
             document.getElementById('edit-asset-modal').style.display = 'block';
@@ -1127,7 +1132,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 location: formData.get('location'),
                 quantity: formData.get('quantity') ? parseInt(formData.get('quantity')) : 1,
                 status: formData.get('status'),
-                notes: formData.get('notes')
+                notes: formData.get('notes'),
+                usage_type: formData.get('usage_type'),
+                usage_value: formData.get('usage_value') ? parseFloat(formData.get('usage_value')) : null,
+                usage_notes: formData.get('usage_notes')
             };
             
             try {
@@ -1177,7 +1185,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                 location: formData.get('location'),
                 quantity: formData.get('quantity') ? parseInt(formData.get('quantity')) : 1,
                 status: formData.get('status'),
-                notes: formData.get('notes')
+                notes: formData.get('notes'),
+                usage_type: formData.get('usage_type'),
+                usage_value: formData.get('usage_value') ? parseFloat(formData.get('usage_value')) : null,
+                usage_notes: formData.get('usage_notes')
             };
             
             try {

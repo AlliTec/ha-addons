@@ -261,6 +261,25 @@
                     <label for="add-asset-notes">Notes:</label>
                     <textarea id="add-asset-notes" name="notes" rows="3"></textarea>
                 </div>
+                <div class="form-grid">
+                    <div>
+                        <label for="add-asset-usage-type">Usage Type:</label>
+                        <select id="add-asset-usage-type" name="usage_type">
+                            <option value="hours">Hours</option>
+                            <option value="ODO">ODO</option>
+                            <option value="km">Kilometers</option>
+                            <option value="cycles">Cycles</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="add-asset-usage-value">Usage Value:</label>
+                        <input type="number" id="add-asset-usage-value" name="usage_value" step="0.1" placeholder="Current hours/ODO reading">
+                    </div>
+                </div>
+                <div class="form-section">
+                    <label for="add-asset-usage-notes">Usage Notes:</label>
+                    <textarea id="add-asset-usage-notes" name="usage_notes" rows="2" placeholder="Optional notes about this usage entry"></textarea>
+                </div>
                 <div class="modal-actions">
                     <button type="submit" class="action-btn add-btn">
                         <i class="fa-solid fa-plus"></i> Add Asset
@@ -354,6 +373,25 @@
                 <div class="form-section">
                     <label for="edit-asset-notes">Notes:</label>
                     <textarea id="edit-asset-notes" name="notes" rows="3"></textarea>
+                </div>
+                <div class="form-grid">
+                    <div>
+                        <label for="edit-asset-usage-type">Usage Type:</label>
+                        <select id="edit-asset-usage-type" name="usage_type">
+                            <option value="hours">Hours</option>
+                            <option value="ODO">ODO</option>
+                            <option value="km">Kilometers</option>
+                            <option value="cycles">Cycles</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-asset-usage-value">Usage Value:</label>
+                        <input type="number" id="edit-asset-usage-value" name="usage_value" step="0.1" placeholder="Current hours/ODO reading">
+                    </div>
+                </div>
+                <div class="form-section">
+                    <label for="edit-asset-usage-notes">Usage Notes:</label>
+                    <textarea id="edit-asset-usage-notes" name="usage_notes" rows="2" placeholder="Optional notes about this usage entry"></textarea>
                 </div>
                 <div class="modal-actions">
                     <button type="submit" class="action-btn update-btn">
