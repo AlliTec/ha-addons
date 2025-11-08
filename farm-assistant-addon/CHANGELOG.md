@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.86 - 2025-11-08
+
+### Fixed
+- **Filter Tab Counts**: Now only counting active animals in filter tab counts
+- **Status Icon**: Added house icon for "Active" status (same as "On Property")
+
 ## 0.9.85 - 2025-11-08
 
 ### Fixed

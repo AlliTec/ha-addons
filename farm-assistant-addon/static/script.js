@@ -45,6 +45,7 @@ function calculateAge(birthDate) {
 function getStatusIcon(status) {
     switch (status) {
         case 'On Property':
+        case 'Active':
             return '<i class="fa-solid fa-house"></i>';
         case 'Deceased':
             return '<i class="fa-solid fa-skull-crossbones"></i>';
@@ -238,14 +239,16 @@ async function populateFilterTabs() {
         // Clear existing tabs (except Add button which we'll add back)
         filterBar.innerHTML = '';
         
-        // Count animals by type using same function as filter tabs
+        // Count animals by type using same function as filter tabs (only active animals)
         const animalCounts = {};
-        allAnimals.forEach(animal => {
+        const activeAnimals = allAnimals.filter(animal => animal.status === 'Active');
+        
+        activeAnimals.forEach(animal => {
             const type = getAnimalTypeFromGender(animal.gender, animal.breed);
             animalCounts[type] = (animalCounts[type] || 0) + 1;
         });
         
-        // Add "All" tab with total count
+        // Add "All" tab with total count of active animals
         const allButton = document.createElement("button");
         allButton.className = "filter-btn active";
         allButton.dataset.filter = "All";
@@ -255,7 +258,7 @@ async function populateFilterTabs() {
         
         const allCount = document.createElement("sup");
         allCount.style.cssText = "font-size: 0.7em; margin-left: 2px; color: var(--accent-color);";
-        allCount.textContent = `(${allAnimals.length})`;
+        allCount.textContent = `(${activeAnimals.length})`;
         
         const allText = document.createTextNode(" All");
         
