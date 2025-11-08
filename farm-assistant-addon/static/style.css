@@ -219,9 +219,9 @@ th {
     max-width: 700px;
     background-color: var(--bg-color);
     color: var(--text-color);
-    border: 2px solid var(--accent-color);
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    padding: 20px;
 }
 
 .close-modal {
@@ -261,40 +261,31 @@ th {
     padding-bottom: 10px;
 }
 
-.details-two-column {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+.details-table {
+    width: 100%;
+    border-collapse: collapse;
     margin-bottom: 20px;
 }
 
-.properties-column {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.details-table td {
+    padding: 8px 12px;
+    border: 1px solid var(--table-border);
 }
 
-.values-column {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.property-item {
+.property-cell {
+    background-color: var(--table-header-bg);
     font-weight: 600;
     color: var(--text-color);
-    padding: 5px 0;
-    border-bottom: 1px solid var(--table-border);
+    width: 40%;
 }
 
-.value-item {
+.value-cell {
+    background-color: var(--input-bg);
     color: var(--text-color);
-    padding: 5px 0;
-    border-bottom: 1px solid var(--table-border);
+    width: 60%;
 }
 
 .offspring-section {
-    grid-column: 1 / -1;
     margin-top: 20px;
     padding: 15px;
     background-color: var(--bg-color);

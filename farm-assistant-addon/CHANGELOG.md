@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.9.92 - 2025-11-08
+
+### Fixed
+- **Modal Design**: Implemented floating rounded rectangle over livestock list
+- **Table Layout**: Created proper HTML table with Property/Value columns
+- **Color Matching**: Properties use header color, Values use cell color from main page
+- **Background**: Modal uses same beige background as main application
+- **Offspring Section**: Positioned at bottom spanning both columns
+- **Visual Design**: Enhanced shadow and rounded corners for floating effect
+
 ## 0.9.91 - 2025-11-08
 
 ### Fixed
