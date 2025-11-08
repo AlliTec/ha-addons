@@ -842,8 +842,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Set default values
         document.getElementById('add-asset-quantity').value = 1;
         document.getElementById('add-asset-status').value = 'operational';
-        document.getElementById('add-asset-condition').value = 'good';
-        document.getElementById('add-asset-permit-required').value = 'false';
         document.getElementById('add-asset-usage-type').value = 'hours';
         
         document.getElementById('add-asset-modal').style.display = 'block';
@@ -864,34 +862,30 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById('edit-asset-category').value = asset.category || '';
             document.getElementById('edit-asset-make').value = asset.make || '';
             document.getElementById('edit-asset-model').value = asset.model || '';
-            document.getElementById('edit-asset-serial-number').value = asset.serial_number || '';
+            document.getElementById('edit-asset-serial').value = asset.serial_number || '';
             
             // Status & Location
             document.getElementById('edit-asset-location').value = asset.location || '';
             document.getElementById('edit-asset-quantity').value = asset.quantity || 1;
             document.getElementById('edit-asset-status').value = asset.status || 'operational';
-            document.getElementById('edit-asset-condition').value = asset.condition || '';
+
             
             // Purchase Information
             document.getElementById('edit-asset-purchase-date').value = asset.purchase_date || '';
             document.getElementById('edit-asset-purchase-price').value = asset.purchase_price || '';
-            document.getElementById('edit-asset-purchase-from').value = asset.purchase_from || '';
+            document.getElementById('edit-asset-purchase-location').value = asset.purchase_location || '';
             
             // Registration & Insurance
-            document.getElementById('edit-asset-registration-no').value = asset.registration_no || '';
+            document.getElementById('edit-asset-registration').value = asset.registration_no || '';
             document.getElementById('edit-asset-registration-due').value = asset.registration_due || '';
-            document.getElementById('edit-asset-insurance-provider').value = asset.insurance_provider || '';
-            document.getElementById('edit-asset-insurance-policy-no').value = asset.insurance_policy_no || '';
-            document.getElementById('edit-asset-insurance-due').value = asset.insurance_due || '';
+            document.getElementById('edit-asset-insurance').value = asset.insurance_info || '';
             
             // Permits & Documentation
-            document.getElementById('edit-asset-permit-required').value = asset.permit_required ? 'true' : 'false';
-            document.getElementById('edit-asset-permit-type').value = asset.permit_type || '';
-            document.getElementById('edit-asset-permit-expiry').value = asset.permit_expiry || '';
+            document.getElementById('edit-asset-permit').value = asset.permit_info || '';
             
             // Warranty Information
             document.getElementById('edit-asset-warranty-provider').value = asset.warranty_provider || '';
-            document.getElementById('edit-asset-warranty-expiry-date').value = asset.warranty_expiry_date || '';
+            document.getElementById('edit-asset-warranty-expiry').value = asset.warranty_expiry_date || '';
             
             // Usage Information (clear for new entry)
             document.getElementById('edit-asset-usage-type').value = 'hours';
