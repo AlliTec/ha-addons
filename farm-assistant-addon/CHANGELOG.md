@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.9 - 2025-11-09
+
+### Changed
+- **Tab Label**: Changed "Add Asset" tab text to "Add" for consistency
+- **Shorter Display**: Asset filter tab now shows "Add" instead of "Add Asset"
+
 ## 1.3.8 - 2025-11-09
 
 ### Fixed

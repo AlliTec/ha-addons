@@ -744,7 +744,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
             
             // Add "Add Asset" button
-            filterTabsHtml += '<div class="filter-btn" id="add-asset-btn"><i class="fa-solid fa-plus"></i> Add Asset</div>';
+            filterTabsHtml += '<div class="filter-btn" id="add-asset-btn"><i class="fa-solid fa-plus"></i> Add</div>';
             
             filterBar.innerHTML = filterTabsHtml;
             
