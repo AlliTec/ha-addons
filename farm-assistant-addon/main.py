@@ -441,6 +441,12 @@ async def add_asset(asset: AssetCreate):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
         async with conn.transaction():
+            # Convert date strings to date objects
+            purchase_date = datetime.strptime(asset.purchase_date, '%Y-%m-%d').date() if asset.purchase_date else None
+            registration_due = datetime.strptime(asset.registration_due, '%Y-%m-%d').date() if asset.registration_due else None
+            insurance_due = datetime.strptime(asset.insurance_due, '%Y-%m-%d').date() if asset.insurance_due else None
+            warranty_expiry_date = datetime.strptime(asset.warranty_expiry_date, '%Y-%m-%d').date() if asset.warranty_expiry_date else None
+            
             # Insert asset with all fields
             result = await conn.fetchrow("""
                 INSERT INTO asset_inventory 
@@ -453,10 +459,10 @@ async def add_asset(asset: AssetCreate):
                         $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, NOW())
                 RETURNING id
             """, asset.name, asset.category, asset.make, asset.model, asset.serial_number,
-                asset.purchase_date, asset.status, asset.parent_asset_id, asset.location,
-                asset.quantity, asset.registration_no, asset.registration_due, asset.permit_info,
-                asset.insurance_info, asset.insurance_due, asset.warranty_provider,
-                asset.warranty_expiry_date, asset.purchase_price, asset.purchase_location,
+                purchase_date, asset.status, asset.parent_asset_id, asset.location,
+                asset.quantity, asset.registration_no, registration_due, asset.permit_info,
+                asset.insurance_info, insurance_due, asset.warranty_provider,
+                warranty_expiry_date, asset.purchase_price, asset.purchase_location,
                 asset.manual_or_doc_path, asset.notes)
             
             asset_id = result["id"]
@@ -478,6 +484,12 @@ async def update_asset(asset_id: int, asset: AssetCreate):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
         async with conn.transaction():
+            # Convert date strings to date objects
+            purchase_date = datetime.strptime(asset.purchase_date, '%Y-%m-%d').date() if asset.purchase_date else None
+            registration_due = datetime.strptime(asset.registration_due, '%Y-%m-%d').date() if asset.registration_due else None
+            insurance_due = datetime.strptime(asset.insurance_due, '%Y-%m-%d').date() if asset.insurance_due else None
+            warranty_expiry_date = datetime.strptime(asset.warranty_expiry_date, '%Y-%m-%d').date() if asset.warranty_expiry_date else None
+            
             # Update asset with all fields
             await conn.execute("""
                 UPDATE asset_inventory 
@@ -489,10 +501,10 @@ async def update_asset(asset_id: int, asset: AssetCreate):
                     purchase_location = $19, manual_or_doc_path = $20, notes = $21
                 WHERE id = $22
             """, asset.name, asset.category, asset.make, asset.model, asset.serial_number,
-                asset.purchase_date, asset.status, asset.parent_asset_id, asset.location,
-                asset.quantity, asset.registration_no, asset.registration_due, asset.permit_info,
-                asset.insurance_info, asset.insurance_due, asset.warranty_provider,
-                asset.warranty_expiry_date, asset.purchase_price, asset.purchase_location,
+                purchase_date, asset.status, asset.parent_asset_id, asset.location,
+                asset.quantity, asset.registration_no, registration_due, asset.permit_info,
+                asset.insurance_info, insurance_due, asset.warranty_provider,
+                warranty_expiry_date, asset.purchase_price, asset.purchase_location,
                 asset.manual_or_doc_path, asset.notes, asset_id)
             
             # Add usage log entry if usage data provided
