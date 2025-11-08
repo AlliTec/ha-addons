@@ -170,8 +170,8 @@ async function populateAnimalList(filter = "All") {
 // Species-specific gender mappings
 const genderOptions = {
         'Cattle': [
-            { value: 'Steer', text: 'Steer (castrated male)' },
             { value: 'Bull', text: 'Bull (intact male)' },
+            { value: 'Steer', text: 'Steer (castrated male)' },
             { value: 'Cow', text: 'Cow (female that has calved)' },
             { value: 'Heifer', text: 'Heifer (female that has not calved)' }
         ],
@@ -189,14 +189,14 @@ const genderOptions = {
             { value: 'Wether', text: 'Wether (castrated male)' }
         ],
         'Goat': [
-            { value: 'Buck', text: 'Buck (male)' },
-            { value: 'Doe', text: 'Doe (female)' },
+            { value: 'Billy', text: 'Billy (male)' },
+            { value: 'Nanny', text: 'Nanny (female)' },
             { value: 'Wether', text: 'Wether (castrated male)' }
         ],
         'Pig': [
             { value: 'Boar', text: 'Boar (male)' },
-            { value: 'Sow', text: 'Sow (female)' },
             { value: 'Barrow', text: 'Barrow (castrated male)' },
+            { value: 'Sow', text: 'Sow (female)' },
             { value: 'Gilt', text: 'Gilt (young female that has not farrowed)' }
         ],
         'Horse': [
@@ -220,12 +220,28 @@ const genderOptions = {
             { value: 'Gelding', text: 'Gelding (castrated male)' },
             { value: 'Female', text: 'Female' }
         ],
-        'Fowl': [
+        'Goose': [
+            { value: 'Gander', text: 'Gander (male)' },
+            { value: 'Goose', text: 'Goose (female)' }
+        ],
+        'Duck': [
+            { value: 'Drake', text: 'Drake (male)' },
+            { value: 'Hen', text: 'Hen (female)' }
+        ],
+        'Turkey': [
+            { value: 'Tom', text: 'Tom (male)' },
+            { value: 'Hen', text: 'Hen (female)' }
+        ],
+        'Chicken': [
             { value: 'Rooster', text: 'Rooster (male)' },
             { value: 'Cockerel', text: 'Cockerel (young male)' },
             { value: 'Hen', text: 'Hen (female)' },
             { value: 'Pullet', text: 'Pullet (young female)' },
             { value: 'Capon', text: 'Capon (castrated male)' }
+        ],
+        'Rabbit': [
+            { value: 'Buck', text: 'Buck (male)' },
+            { value: 'Doe', text: 'Doe (female)' }
         ],
         'default': [
             { value: 'Male', text: 'Male' },

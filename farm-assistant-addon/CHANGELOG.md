@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.9.57 - 2025-11-08
+
+### Features
+- **Comprehensive Gender Options**: Added extensive gender terminology for all common farm animals
+- **New Animal Categories**: Added Goose, Duck, Turkey, Chicken, and Rabbit categories
+- **Enhanced Gender Mappings**: Updated with all requested gender terms and more
+
+### Added Gender Terms
+- **Cattle**: Bull, Steer, Cow, Heifer
+- **Goat**: Billy, Nanny, Wether (replaced Buck/Doe)
+- **Sheep**: Ram, Ewe, Wether
+- **Pig**: Boar, Barrow, Sow, Gilt
+- **Cat**: Tom, Queen
+- **Dog**: Dog, Bitch
+- **Goose**: Gander, Goose
+- **Duck**: Drake, Hen
+- **Turkey**: Tom, Hen
+- **Chicken**: Rooster, Cockerel, Hen, Pullet, Capon
+- **Rabbit**: Buck, Doe
+- **Horse**: Stallion, Gelding, Mare, Filly, Colt
+- **Donkey**: Jack, Jenny
+- **Llama/Alpaca**: Stud, Gelding, Female
+
+### Technical Improvements
+- **Updated get_animal_type Function**: Recognizes all new gender terms for proper filtering
+- **Enhanced Category Dropdown**: Includes all common farm animal types
+- **Improved User Experience**: Comprehensive gender options for accurate livestock management
+
 ## 0.9.56 - 2025-11-08
 
 ### Bug Fixes
