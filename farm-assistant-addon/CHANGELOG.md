@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.78 - 2025-11-08
+
+### Fixed
+- **Filter Tabs Variable Scope**: Fixed ReferenceError for animalTypes variable
+- **JavaScript Scope Issue**: Moved animalTypes declaration to outer scope
+- **Variable Accessibility**: Ensured animalTypes is accessible throughout populateFilterTabs function
+
+### Technical Fixes
+- **Scope Resolution**: Changed const declarations inside if/else to let in outer scope
+- **Variable Lifecycle**: animalTypes now properly defined before use in forEach loop
+- **Error Prevention**: Eliminated "animalTypes is not defined" error at line 145
+
 ## 0.9.77 - 2025-11-08
 
 ### Fixed

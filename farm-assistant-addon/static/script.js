@@ -84,12 +84,13 @@ async function populateFilterTabs() {
         const animalTypesResponse = await fetch("api/animal-types");
         console.log("Animal types response status:", animalTypesResponse.status);
         
+        let animalTypes;
         if (!animalTypesResponse.ok) {
             console.error("Failed to fetch animal types, using fallback");
             // Fallback to basic types if API fails
-            const animalTypes = ["All", "Cattle", "Dog"];
+            animalTypes = ["All", "Cattle", "Dog"];
         } else {
-            const animalTypes = await animalTypesResponse.json();
+            animalTypes = await animalTypesResponse.json();
             console.log("Available animal types:", animalTypes);
         }
         
