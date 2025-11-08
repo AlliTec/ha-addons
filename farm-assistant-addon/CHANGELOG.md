@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.91 - 2025-11-08
+
+### Fixed
+- **Details Modal Layout**: Implemented exact two-column layout as requested
+- **Background Color**: Modal now uses same background as main farm assistant window
+- **Column Structure**: Left column = Properties, Right column = Values
+- **Offspring Section**: Spans both columns at bottom of modal
+- **Simplified Design**: Removed section boxes, clean property/value pairs
+
 ## 0.9.90 - 2025-11-08
 
 ### Fixed
