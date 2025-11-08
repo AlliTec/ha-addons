@@ -1072,7 +1072,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <h3>Maintenance Summary</h3>
                         <div class="summary-grid">
                             <div class="summary-item">
-                                <strong>Total Maintenance Cost:</strong> 
+                                <strong>Maintenance Cost:</strong> 
                                 <span class="cost-total">$${totalCost.toFixed(2)}</span>
                             </div>
                             <div class="summary-item">

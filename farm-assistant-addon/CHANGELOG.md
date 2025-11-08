@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.4.7 - 2025-11-09
+
+### Fixed
+- **Maintenance Summary Label**: Changed "Total Maintenance Cost" to "Maintenance Cost"
+- **UI Text**: Simplified maintenance cost label for cleaner display
+
 ## 1.4.6 - 2025-11-09
 
 ### Fixed
