@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.4.5 - 2025-11-09
+
+### Fixed
+- **Maintenance Summary Aesthetic**: Updated to match farm-assistant-addon design
+- **Color Scheme**: Applied consistent beige, brown, and blue-grey colors
+- **Typography**: Used existing font weights, letter spacing, and text transforms
+- **Border Style**: Replaced rounded corners with sharp corners to match forms
+- **Layout**: Changed grid to use table-like borders for consistency
+
 ## 1.4.4 - 2025-11-09
 
 ### Fixed

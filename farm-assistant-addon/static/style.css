@@ -589,57 +589,67 @@ th {
 
 /* Maintenance Summary Styles */
 .maintenance-summary {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 0;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .maintenance-summary h3 {
     margin: 0 0 15px 0;
-    color: #495057;
-    font-size: 1.2em;
-    border-bottom: 2px solid #007bff;
+    color: var(--text-color);
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1.1em;
+    border-bottom: 1px solid var(--input-border);
     padding-bottom: 8px;
 }
 
 .summary-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
+    gap: 0;
+    border: 1px solid var(--input-border);
+    border-radius: 0;
 }
 
 .summary-item {
-    background: white;
+    background-color: var(--table-header-bg);
     padding: 12px 15px;
-    border-radius: 6px;
-    border-left: 4px solid #007bff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    border-right: 1px solid var(--input-border);
+    border-bottom: 1px solid var(--input-border);
+}
+
+.summary-item:last-child {
+    border-right: none;
 }
 
 .summary-item strong {
-    color: #495057;
+    color: var(--text-color);
     display: block;
     margin-bottom: 5px;
-    font-size: 0.9em;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8em;
 }
 
 .cost-total {
-    color: #28a745;
-    font-weight: bold;
-    font-size: 1.1em;
+    color: var(--accent-color);
+    font-weight: 500;
+    font-size: 1em;
 }
 
 .latest-reading {
-    color: #007bff;
-    font-weight: bold;
-    font-size: 1.1em;
+    color: var(--accent-color);
+    font-weight: 500;
+    font-size: 1em;
 }
 
 .record-count {
-    color: #6c757d;
-    font-weight: bold;
-    font-size: 1.1em;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 1em;
 }
