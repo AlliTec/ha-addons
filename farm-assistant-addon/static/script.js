@@ -702,9 +702,163 @@ document.addEventListener("DOMContentLoaded", async () => {
                     document.getElementById('livestock-section').style.display = 'block';
                 } else if (section === 'assets') {
                     document.getElementById('assets-section').style.display = 'block';
+                    populateAssetList(); // Load assets when switching to assets tab
+                    setupAssetFilterBar(); // Setup assets filter bar with Add button
                 }
             });
         });
+    }
+
+    // --- Asset Management Functions ---
+
+    async function populateAssetList() {
+        try {
+            console.log("populateAssetList called");
+            const response = await fetch("api/assets");
+            console.log("Assets fetch response status:", response.status);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const assets = await response.json();
+            console.log("Assets data received:", assets);
+            console.log("Number of assets:", assets.length);
+            
+            const tableBody = document.querySelector("#assets-list tbody");
+            if (!tableBody) {
+                console.error("Assets table body not found!");
+                return;
+            }
+            
+            tableBody.innerHTML = ""; // Clear existing rows
+
+            assets.forEach((asset, index) => {
+                console.log(`Processing asset ${index + 1}:`, asset);
+                
+                const row = document.createElement("tr");
+                row.dataset.assetId = asset.id;
+
+                row.innerHTML = `
+                    <td>${formatCell(asset.name)}</td>
+                    <td>${formatCell(asset.make || '')} ${formatCell(asset.model || '')}</td>
+                    <td>${formatCell(asset.location)}</td>
+                    <td>${getAssetStatusIcon(asset.status)}</td>
+                    <td>${formatCell(asset.quantity || 1)}</td>
+                `;
+
+                tableBody.appendChild(row);
+            });
+
+            // Add click event listeners to asset rows
+            document.querySelectorAll("#assets-list tbody tr").forEach(row => {
+                row.addEventListener("click", () => {
+                    const assetId = row.dataset.assetId;
+                    showAssetDetails(assetId);
+                });
+            });
+
+        } catch (error) {
+            console.error("Error in populateAssetList:", error);
+        }
+    }
+
+    function getAssetStatusIcon(status) {
+        const statusIcons = {
+            'operational': '<i class="fa-solid fa-check-circle" style="color: #28a745;"></i> Operational',
+            'maintenance': '<i class="fa-solid fa-wrench" style="color: #ffc107;"></i> Under Maintenance',
+            'repair': '<i class="fa-solid fa-exclamation-triangle" style="color: #dc3545;"></i> Needs Repair',
+            'retired': '<i class="fa-solid fa-times-circle" style="color: #6c757d;"></i> Retired'
+        };
+        return statusIcons[status] || status;
+    }
+
+    async function showAssetDetails(assetId) {
+        try {
+            const response = await fetch(`api/asset/${assetId}`);
+            if (!response.ok) throw new Error('Failed to fetch asset details');
+            
+            const asset = await response.json();
+            
+            const detailsContent = document.getElementById('asset-details-content');
+            detailsContent.innerHTML = `
+                <table class="details-table">
+                    <tr><td class="property-cell">Asset Name:</td><td>${formatCell(asset.name)}</td></tr>
+                    <tr><td class="property-cell">Category:</td><td>${formatCell(asset.category)}</td></tr>
+                    <tr><td class="property-cell">Make:</td><td>${formatCell(asset.make)}</td></tr>
+                    <tr><td class="property-cell">Model:</td><td>${formatCell(asset.model)}</td></tr>
+                    <tr><td class="property-cell">Serial Number:</td><td>${formatCell(asset.serial_number)}</td></tr>
+                    <tr><td class="property-cell">Location:</td><td>${formatCell(asset.location)}</td></tr>
+                    <tr><td class="property-cell">Status:</td><td>${getAssetStatusIcon(asset.status)}</td></tr>
+                    <tr><td class="property-cell">Quantity:</td><td>${formatCell(asset.quantity || 1)}</td></tr>
+                    <tr><td class="property-cell">Purchase Date:</td><td>${formatCell(asset.purchase_date)}</td></tr>
+                    <tr><td class="property-cell">Purchase Price:</td><td>${formatCell(asset.purchase_price)}</td></tr>
+                    <tr><td class="property-cell">Registration No:</td><td>${formatCell(asset.registration_no)}</td></tr>
+                    <tr><td class="property-cell">Registration Due:</td><td>${formatCell(asset.registration_due)}</td></tr>
+                    <tr><td class="property-cell">Warranty Provider:</td><td>${formatCell(asset.warranty_provider)}</td></tr>
+                    <tr><td class="property-cell">Warranty Expiry:</td><td>${formatCell(asset.warranty_expiry_date)}</td></tr>
+                    <tr><td class="property-cell">Notes:</td><td>${formatCell(asset.notes)}</td></tr>
+                </table>
+            `;
+            
+            // Set asset ID for edit/delete buttons
+            document.getElementById('edit-asset-btn').dataset.assetId = assetId;
+            document.getElementById('delete-asset-btn').dataset.assetId = assetId;
+            
+            // Show modal
+            document.getElementById('asset-details-modal').style.display = 'block';
+            
+        } catch (error) {
+            console.error('Error showing asset details:', error);
+        }
+    }
+
+    async function openAddAssetForm() {
+        document.getElementById('add-asset-form').reset();
+        document.getElementById('add-asset-modal').style.display = 'block';
+    }
+
+    async function enableAssetEditMode(assetId) {
+        try {
+            const response = await fetch(`api/asset/${assetId}`);
+            if (!response.ok) throw new Error('Failed to fetch asset details');
+            
+            const asset = await response.json();
+            
+            // Populate form fields
+            document.getElementById('edit-asset-id').value = asset.id;
+            document.getElementById('edit-asset-name').value = asset.name || '';
+            document.getElementById('edit-asset-category').value = asset.category || '';
+            document.getElementById('edit-asset-make').value = asset.make || '';
+            document.getElementById('edit-asset-model').value = asset.model || '';
+            document.getElementById('edit-asset-location').value = asset.location || '';
+            document.getElementById('edit-asset-quantity').value = asset.quantity || 1;
+            document.getElementById('edit-asset-status').value = asset.status || 'operational';
+            document.getElementById('edit-asset-notes').value = asset.notes || '';
+            
+            // Hide details modal and show edit modal
+            document.getElementById('asset-details-modal').style.display = 'none';
+            document.getElementById('edit-asset-modal').style.display = 'block';
+            
+        } catch (error) {
+            console.error('Error enabling asset edit mode:', error);
+        }
+    }
+
+    function setupAssetFilterBar() {
+        const assetsFilterBar = document.getElementById('assets-filter-bar');
+        if (!assetsFilterBar) return;
+        
+        // Clear existing content
+        assetsFilterBar.innerHTML = '';
+        
+        // Add "Add Asset" button
+        const addButton = document.createElement("button");
+        addButton.className = "filter-btn";
+        addButton.innerHTML = '<i class="fa-solid fa-plus"></i> Add Asset';
+        addButton.addEventListener('click', openAddAssetForm);
+        
+        assetsFilterBar.appendChild(addButton);
     }
 
     // Function to update gender options based on category
@@ -830,9 +984,40 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+        // Handle asset edit button
+        if (target.closest('#edit-asset-btn')) {
+            const assetId = document.getElementById('edit-asset-btn').dataset.assetId;
+            await enableAssetEditMode(assetId);
+            return;
+        }
+
+        // Handle asset delete button
+        if (target.closest('#delete-asset-btn')) {
+            const assetId = document.getElementById('delete-asset-btn').dataset.assetId;
+            if (confirm("Are you sure you want to delete this asset?")) {
+                const response = await fetch(`api/asset/${assetId}`, {
+                    method: "DELETE",
+                });
+
+                if (response.ok) {
+                    alert("Asset deleted successfully!");
+                    document.getElementById('asset-details-modal').style.display = "none";
+                    populateAssetList();
+                } else {
+                    const error = await response.json();
+                    alert(`Error: ${error.detail}`);
+                }
+            }
+            return;
+        }
+
         // Handle close buttons
-        if (target.closest('.close-details-btn')) {
-            document.getElementById('animal-details-modal').style.display = "none";
+        if (target.closest('.close-modal') || 
+            target.closest('.close-details-btn') || 
+            target.closest('.close-edit-btn') ||
+            target.closest('.close-asset-details-btn') || 
+            target.closest('.close-edit-asset-btn')) {
+            target.closest('.modal').style.display = 'none';
             return;
         }
 
@@ -921,6 +1106,106 @@ document.addEventListener("DOMContentLoaded", async () => {
             } catch (error) {
                 console.error('Error saving animal:', error);
                 alert('Error saving animal. Please try again.');
+            }
+        });
+    }
+
+    // Asset Form Handlers
+    const addAssetForm = document.getElementById('add-asset-form');
+    if (addAssetForm) {
+        addAssetForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            console.log('Asset form submitted. Form data:', Object.fromEntries(formData));
+            
+            const assetData = {
+                name: formData.get('name'),
+                category: formData.get('category'),
+                make: formData.get('make'),
+                model: formData.get('model'),
+                location: formData.get('location'),
+                quantity: formData.get('quantity') ? parseInt(formData.get('quantity')) : 1,
+                status: formData.get('status'),
+                notes: formData.get('notes')
+            };
+            
+            try {
+                const response = await fetch('api/asset', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(assetData),
+                });
+                
+                if (response.ok) {
+                    alert('Asset added successfully!');
+                    document.getElementById('add-asset-modal').style.display = 'none';
+                    populateAssetList();
+                } else {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    try {
+                        const error = JSON.parse(errorText);
+                        alert(`Error adding asset: ${error.detail}`);
+                    } catch (e) {
+                        alert(`Error adding asset: ${errorText}`);
+                    }
+                }
+            } catch (error) {
+                console.error('Error adding asset:', error);
+                alert('Error adding asset. Please try again.');
+            }
+        });
+    }
+
+    const editAssetForm = document.getElementById('edit-asset-form');
+    if (editAssetForm) {
+        editAssetForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            const assetId = document.getElementById('edit-asset-id').value;
+            const formData = new FormData(event.target);
+            console.log('Edit asset form submitted. Asset ID:', assetId, 'Form data:', Object.fromEntries(formData));
+            
+            const assetData = {
+                name: formData.get('name'),
+                category: formData.get('category'),
+                make: formData.get('make'),
+                model: formData.get('model'),
+                location: formData.get('location'),
+                quantity: formData.get('quantity') ? parseInt(formData.get('quantity')) : 1,
+                status: formData.get('status'),
+                notes: formData.get('notes')
+            };
+            
+            try {
+                const response = await fetch(`api/asset/${assetId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(assetData),
+                });
+                
+                if (response.ok) {
+                    alert('Asset updated successfully!');
+                    document.getElementById('edit-asset-modal').style.display = 'none';
+                    populateAssetList();
+                } else {
+                    const errorText = await response.text();
+                    console.error('Error response:', errorText);
+                    try {
+                        const error = JSON.parse(errorText);
+                        alert(`Error updating asset: ${error.detail}`);
+                    } catch (e) {
+                        alert(`Error updating asset: ${errorText}`);
+                    }
+                }
+            } catch (error) {
+                console.error('Error updating asset:', error);
+                alert('Error updating asset. Please try again.');
             }
         });
     }

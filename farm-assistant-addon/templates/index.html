@@ -58,14 +58,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-color);">
-                        <i class="fa-solid fa-tractor" style="font-size: 3em; margin-bottom: 15px; display: block; color: var(--accent-color);"></i>
-                        <h3>Asset Register</h3>
-                        <p>Farm Asset and Maintenance functionality coming soon...</p>
-                        <small>This section will include equipment, buildings, vehicles, and maintenance records</small>
-                    </td>
-                </tr>
+                <!-- Asset rows will be dynamically populated here -->
             </tbody>
         </table>
     </div>
@@ -207,6 +200,166 @@
                         <i class="fa-solid fa-save"></i> Save Changes
                     </button>
                     <button type="button" class="close-edit-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add Asset Modal -->
+    <div id="add-asset-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-top-left">&times;</span>
+            <div class="modal-header">
+                <h2>Add New Asset</h2>
+            </div>
+            <form id="add-asset-form">
+                <div class="form-grid">
+                    <div>
+                        <label for="add-asset-name">Asset Name:</label>
+                        <input type="text" id="add-asset-name" name="name" required>
+                    </div>
+                    <div>
+                        <label for="add-asset-category">Category:</label>
+                        <select id="add-asset-category" name="category">
+                            <option value="">Select Category</option>
+                            <option value="Equipment">Equipment</option>
+                            <option value="Vehicle">Vehicle</option>
+                            <option value="Building">Building</option>
+                            <option value="Tool">Tool</option>
+                            <option value="Machinery">Machinery</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="add-asset-make">Make:</label>
+                        <input type="text" id="add-asset-make" name="make">
+                    </div>
+                    <div>
+                        <label for="add-asset-model">Model:</label>
+                        <input type="text" id="add-asset-model" name="model">
+                    </div>
+                    <div>
+                        <label for="add-asset-location">Location:</label>
+                        <input type="text" id="add-asset-location" name="location">
+                    </div>
+                    <div>
+                        <label for="add-asset-quantity">Quantity:</label>
+                        <input type="number" id="add-asset-quantity" name="quantity" value="1" min="1">
+                    </div>
+                </div>
+                <div class="form-section">
+                    <label for="add-asset-status">Status:</label>
+                    <select id="add-asset-status" name="status">
+                        <option value="operational">Operational</option>
+                        <option value="maintenance">Under Maintenance</option>
+                        <option value="repair">Needs Repair</option>
+                        <option value="retired">Retired</option>
+                    </select>
+                </div>
+                <div class="form-section">
+                    <label for="add-asset-notes">Notes:</label>
+                    <textarea id="add-asset-notes" name="notes" rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="action-btn add-btn">
+                        <i class="fa-solid fa-plus"></i> Add Asset
+                    </button>
+                    <button type="button" class="close-add-asset-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Asset Details Modal -->
+    <div id="asset-details-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-top-left">&times;</span>
+            <div class="modal-header">
+                <h2>Asset Details</h2>
+                <div>
+                    <button id="edit-asset-btn" class="action-btn update-btn">
+                        <i class="fa-solid fa-edit"></i> Edit
+                    </button>
+                    <button id="delete-asset-btn" class="action-btn delete-btn">
+                        <i class="fa-solid fa-trash-can"></i> Delete
+                    </button>
+                    <button class="close-asset-details-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Close
+                    </button>
+                </div>
+            </div>
+            <div id="asset-details-content">
+                <!-- Asset details will be populated here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Edit Asset Modal -->
+    <div id="edit-asset-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-top-left">&times;</span>
+            <div class="modal-header">
+                <h2>Edit Asset</h2>
+                <button class="close-edit-asset-btn action-btn">
+                    <i class="fa-solid fa-xmark"></i> Cancel
+                </button>
+            </div>
+            <form id="edit-asset-form">
+                <input type="hidden" id="edit-asset-id">
+                <div class="form-grid">
+                    <div>
+                        <label for="edit-asset-name">Asset Name:</label>
+                        <input type="text" id="edit-asset-name" name="name" required>
+                    </div>
+                    <div>
+                        <label for="edit-asset-category">Category:</label>
+                        <select id="edit-asset-category" name="category">
+                            <option value="">Select Category</option>
+                            <option value="Equipment">Equipment</option>
+                            <option value="Vehicle">Vehicle</option>
+                            <option value="Building">Building</option>
+                            <option value="Tool">Tool</option>
+                            <option value="Machinery">Machinery</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-asset-make">Make:</label>
+                        <input type="text" id="edit-asset-make" name="make">
+                    </div>
+                    <div>
+                        <label for="edit-asset-model">Model:</label>
+                        <input type="text" id="edit-asset-model" name="model">
+                    </div>
+                    <div>
+                        <label for="edit-asset-location">Location:</label>
+                        <input type="text" id="edit-asset-location" name="location">
+                    </div>
+                    <div>
+                        <label for="edit-asset-quantity">Quantity:</label>
+                        <input type="number" id="edit-asset-quantity" name="quantity" min="1">
+                    </div>
+                </div>
+                <div class="form-section">
+                    <label for="edit-asset-status">Status:</label>
+                    <select id="edit-asset-status" name="status">
+                        <option value="operational">Operational</option>
+                        <option value="maintenance">Under Maintenance</option>
+                        <option value="repair">Needs Repair</option>
+                        <option value="retired">Retired</option>
+                    </select>
+                </div>
+                <div class="form-section">
+                    <label for="edit-asset-notes">Notes:</label>
+                    <textarea id="edit-asset-notes" name="notes" rows="3"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="action-btn update-btn">
+                        <i class="fa-solid fa-save"></i> Save Changes
+                    </button>
+                    <button type="button" class="close-edit-asset-btn action-btn">
                         <i class="fa-solid fa-xmark"></i> Cancel
                     </button>
                 </div>

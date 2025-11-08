@@ -278,26 +278,128 @@ async def add_animal(animal: Animal):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put("/update_animal/{animal_id}")
-async def update_animal(animal_id: int, animal: Animal):
+async def update_animal(animal_id: int, animal: AnimalCreate):
+    conn = await asyncpg.connect(DATABASE_URL)
     try:
-        birth_date = datetime.fromisoformat(animal.birth_date).date() if animal.birth_date else None
-        dod = datetime.fromisoformat(animal.dod).date() if animal.dod else None
-    except ValueError:
-        birth_date = None
-        dod = None
-
-    # Clear dod if status is not 'Deceased'
-    if animal.status != 'Deceased':
-        dod = None
-
-    try:
-        conn = await asyncpg.connect(DATABASE_URL)
         await conn.execute("""
-            UPDATE livestock_records
-            SET tag_id = $1, name = $2, gender = $3, breed = $4, birth_date = $5, health_status = $6, notes = $7, dam_id = $8, sire_id = $9, features = $10, photo_path = $11, pic = $12, dod = $13, status = $14
-            WHERE id = $15
-        """, animal.tag_id, animal.name, animal.gender, animal.breed, birth_date, animal.health_status, animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, animal.pic, dod, animal.status, animal_id)
-        await conn.close()
+            UPDATE livestock_records 
+            SET tag_id = $1, name = $2, gender = $3, breed = $4, 
+                date_of_birth = $5, health_status = $6, notes = $7,
+                status = $8, dam_id = $9, sire_id = $10
+            WHERE id = $11
+        """, animal.tag_id, animal.name, animal.gender, animal.breed,
+            animal.date_of_birth, animal.health_status, animal.notes,
+            animal.status, animal.dam_id, animal.sire_id, animal_id)
         return {"message": "Animal updated successfully"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
+# --- Asset Management Endpoints ---
+
+class AssetCreate(BaseModel):
+    name: str
+    category: Optional[str] = None
+    make: Optional[str] = None
+    model: Optional[str] = None
+    serial_number: Optional[str] = None
+    purchase_date: Optional[str] = None
+    status: Optional[str] = "operational"
+    parent_asset_id: Optional[int] = None
+    location: Optional[str] = None
+    quantity: Optional[int] = 1
+    registration_no: Optional[str] = None
+    registration_due: Optional[str] = None
+    permit_info: Optional[str] = None
+    insurance_info: Optional[str] = None
+    insurance_due: Optional[str] = None
+    warranty_provider: Optional[str] = None
+    warranty_expiry_date: Optional[str] = None
+    purchase_price: Optional[str] = None
+    purchase_location: Optional[str] = None
+    manual_or_doc_path: Optional[str] = None
+    notes: Optional[str] = None
+
+@app.get("/api/assets")
+async def get_assets():
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        records = await conn.fetch("""
+            SELECT id, name, make, model, location, status, quantity, category,
+                   serial_number, purchase_date, registration_no, registration_due,
+                   permit_info, insurance_info, insurance_due, warranty_provider,
+                   warranty_expiry_date, purchase_price, purchase_location,
+                   manual_or_doc_path, notes, parent_asset_id, created_at
+            FROM asset_inventory 
+            ORDER BY name
+        """)
+        assets = [dict(record) for record in records]
+        return assets
+    finally:
+        await conn.close()
+
+@app.get("/api/asset/{asset_id}")
+async def get_asset(asset_id: int):
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        record = await conn.fetchrow("SELECT * FROM asset_inventory WHERE id = $1", asset_id)
+        if not record:
+            raise HTTPException(status_code=404, detail="Asset not found")
+        return dict(record)
+    finally:
+        await conn.close()
+
+@app.post("/api/asset")
+async def add_asset(asset: AssetCreate):
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        result = await conn.fetchrow("""
+            INSERT INTO asset_inventory 
+            (name, category, make, model, serial_number, purchase_date, status,
+             parent_asset_id, location, quantity, registration_no, registration_due,
+             permit_info, insurance_info, insurance_due, warranty_provider,
+             warranty_expiry_date, purchase_price, purchase_location,
+             manual_or_doc_path, notes, created_at)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12,
+                    $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW())
+            RETURNING id
+        """, asset.name, asset.category, asset.make, asset.model, asset.serial_number,
+            asset.purchase_date, asset.status, asset.parent_asset_id, asset.location,
+            asset.quantity, asset.registration_no, asset.registration_due, asset.permit_info,
+            asset.insurance_info, asset.insurance_due, asset.warranty_provider,
+            asset.warranty_expiry_date, asset.purchase_price, asset.purchase_location,
+            asset.manual_or_doc_path, asset.notes)
+        return {"message": "Asset added successfully", "id": result["id"]}
+    finally:
+        await conn.close()
+
+@app.put("/api/asset/{asset_id}")
+async def update_asset(asset_id: int, asset: AssetCreate):
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        await conn.execute("""
+            UPDATE asset_inventory 
+            SET name = $1, category = $2, make = $3, model = $4, serial_number = $5,
+                purchase_date = $6, status = $7, parent_asset_id = $8, location = $9,
+                quantity = $10, registration_no = $11, registration_due = $12,
+                permit_info = $13, insurance_info = $14, insurance_due = $15,
+                warranty_provider = $16, warranty_expiry_date = $17, purchase_price = $18,
+                purchase_location = $19, manual_or_doc_path = $20, notes = $21
+            WHERE id = $22
+        """, asset.name, asset.category, asset.make, asset.model, asset.serial_number,
+            asset.purchase_date, asset.status, asset.parent_asset_id, asset.location,
+            asset.quantity, asset.registration_no, asset.registration_due, asset.permit_info,
+            asset.insurance_info, asset.insurance_due, asset.warranty_provider,
+            asset.warranty_expiry_date, asset.purchase_price, asset.purchase_location,
+            asset.manual_or_doc_path, asset.notes, asset_id)
+        return {"message": "Asset updated successfully"}
+    finally:
+        await conn.close()
+
+@app.delete("/api/asset/{asset_id}")
+async def delete_asset(asset_id: int):
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        await conn.execute("DELETE FROM asset_inventory WHERE id = $1", asset_id)
+        return {"message": "Asset deleted successfully"}
+    finally:
+        await conn.close()

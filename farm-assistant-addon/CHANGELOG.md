@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.2.0 - 2025-11-08
+
+### Added
+- **Asset Register Implementation**: Complete asset management functionality with full CRUD operations
+- **Asset API Endpoints**: Added /api/assets, /api/asset/{id} with GET, POST, PUT, DELETE operations
+- **Asset Database Integration**: Connected to asset_inventory schema with 24+ fields
+- **Asset Table Display**: Shows Name, Make, Model, Location, Status, Quantity as requested
+- **Asset Modals**: Add, Edit, and Details modals similar to livestock functionality
+- **Asset Status Icons**: Visual indicators for Operational, Maintenance, Repair, Retired statuses
+- **Asset Categories**: Support for Equipment, Vehicle, Building, Tool, Machinery categories
+- **Form Validation**: Complete asset forms with all essential fields and validation
+
+### Fixed
+- **Syntax Error**: Resolved duplicate code in asset delete endpoint
+- **Modal Integration**: Asset modals properly integrated with existing modal system
+
 ## 1.1.2 - 2025-11-08
 
 ### Added
