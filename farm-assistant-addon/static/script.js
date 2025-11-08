@@ -224,6 +224,7 @@ async function populateFilterTabs() {
         allAnimals.forEach(animal => {
             const animalType = getAnimalTypeFromGender(animal.gender, animal.breed);
             animalTypeSet.add(animalType);
+            console.log(`Processing animal: ${animal.name}, Gender: "${animal.gender}", Breed: "${animal.breed}", Type: ${animalType}`);
         });
         
         // Convert to array and add "All" at the beginning
@@ -296,7 +297,7 @@ async function populateFilterTabs() {
         
         // Always add "Add" tab as the last tab (no count)
         const addButton = document.createElement("button");
-        addButton.className = "filter-btn add-btn";
+        addButton.className = "filter-btn";
         addButton.dataset.filter = "add";
         
         const addIcon = document.createElement("i");

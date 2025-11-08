@@ -165,23 +165,7 @@ th {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.add-btn {
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
-    border: none;
-    margin-left: auto;
-    display: inline-flex;
-    align-items: center;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-}
 
-.add-btn:hover {
-    background: linear-gradient(135deg, #218838, #1ea085);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
-}
 
 .filter-btn.active {
     background-color: var(--table-header-bg);

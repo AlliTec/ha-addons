@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.99 - 2025-11-08
+
+### Fixed
+- **Add Tab Styling**: Add tab now uses same style as other filter tabs
+- **Add Tab Positioning**: Add tab positioned as last tab in dynamic list, not separate on right
+- **Removed Special Styling**: Eliminated add-btn specific styles to match filter-btn
+- **Enhanced Debugging**: Added detailed logging for cattle/dog count troubleshooting
+- **Code Cleanup**: Removed duplicate getAnimalTypeFromGender function in filter tabs
+
 ## 0.9.98 - 2025-11-08
 
 ### Fixed
