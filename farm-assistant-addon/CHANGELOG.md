@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.52 - 2025-11-08
+
+### Added
+- Additional Close button with X icon in the details modal header area
+- Enhanced modal header layout with flexbox for better visual hierarchy
+- Multiple close methods for improved user experience
+
+### Improved
+- Better consistency with main page styling for close buttons
+- Enhanced user experience with multiple intuitive close options
+- Responsive modal header design with proper alignment
+
 ## 0.9.51 - 2025-11-08
 
 ### Added

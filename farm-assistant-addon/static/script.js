@@ -258,6 +258,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
             return;
         }
+
+        // Handle close buttons
+        if (target.closest('.close-details-btn')) {
+            document.getElementById('animal-details-modal').style.display = "none";
+            return;
+        }
     });
 });
 
