@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.4.4 - 2025-11-09
+
+### Fixed
+- **Asset Purchase Information Update**: Fixed field mapping errors in JavaScript
+- **Field Corrections**: Removed non-existent fields (condition, purchase_from, etc.)
+- **Insurance Fields**: Corrected insurance field names to match backend model
+- **Permit Fields**: Fixed permit field mapping to use correct model fields
+
+### Features
+- **Maintenance Summary**: Added summary section above maintenance history table
+- **Total Cost Display**: Shows total maintenance cost across all records
+- **Latest Meter Reading**: Displays most recent odometer/usage reading
+- **Record Count**: Shows total number of maintenance records
+- **Enhanced UI**: Styled summary grid with responsive layout
+
 ## 1.4.3 - 2025-11-09
 
 ### Fixed
