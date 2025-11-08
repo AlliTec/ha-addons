@@ -392,9 +392,9 @@ async function populateParentDropdowns() {
             return;
         }
         
-        // Clear existing options except the first one
-        damSelect.innerHTML = '<option value="">Select Dam</option>';
-        sireSelect.innerHTML = '<option value="">Select Sire</option>';
+        // Clear existing options and add default options
+        damSelect.innerHTML = '<option value="">Select Dam</option><option value="unknown">Unknown</option>';
+        sireSelect.innerHTML = '<option value="">Select Sire</option><option value="unknown">Unknown</option>';
         
         // Add all female animals as potential dams
         const femaleAnimals = allAnimals.filter(animal => 

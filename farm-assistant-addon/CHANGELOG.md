@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.6 - 2025-11-08
+
+### Added
+- **Unknown Parent Option**: Added "Unknown" as selectable option for both DAM and Sire dropdowns
+- **Parent Selection Flexibility**: Users can now specify unknown parentage when adding/editing animals
+
 ## 1.0.5 - 2025-11-08
 
 ### Fixed
