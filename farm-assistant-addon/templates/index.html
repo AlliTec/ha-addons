@@ -30,29 +30,29 @@
 
 
 
-    <script src="static/script.js?v=0.9.87&t={{ timestamp }}"></script>
+    <script src="static/script.js?v=0.9.88&t={{ timestamp }}"></script>
     <div id="image-modal" class="modal">
         <span class="close-modal">&times;</span>
         <img class="modal-content" id="modal-image">
     </div>
     <div id="animal-details-modal" class="modal">
-        <div class="modal-content" style="background-color: white; padding: 20px; border-radius: 5px; max-width: 600px; width: 90%;">
+        <div class="modal-content">
             <span class="close-modal close-top-left">&times;</span>
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                <h2 style="margin: 0;">Animal Details</h2>
-                <button class="close-details-btn" style="background: #6c757d; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 14px;">
+            <div class="modal-header">
+                <h2>Animal Details</h2>
+                <button class="close-details-btn action-btn">
                     <i class="fa-solid fa-xmark"></i> Close
                 </button>
             </div>
             <div id="animal-details-content" class="details-grid"></div>
-            <div class="modal-actions" style="margin-top: 20px; text-align: center; border-top: 1px solid #ddd; padding-top: 15px;">
+            <div class="modal-actions">
                 <button id="update-animal-btn" class="action-btn update-btn">
                     <i class="fa-solid fa-pencil"></i> Update
                 </button>
                 <button id="delete-animal-btn" class="action-btn delete-btn">
                     <i class="fa-solid fa-trash-can"></i> Delete
                 </button>
-                <button class="close-details-btn">
+                <button class="close-details-btn action-btn">
                     <i class="fa-solid fa-xmark"></i> Close
                 </button>
             </div>

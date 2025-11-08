@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.9.88 - 2025-11-08
+
+### Fixed
+- **Animal Details Modal**: Fixed missing data-animalId attribute causing update/delete buttons to not work
+- **Modal Layout**: Changed to Property (left) / Value (right) layout for better readability
+- **Color Scheme**: Updated modal styling to match farm assistant theme (beige/brown colors)
+- **Modal Styling**: Added proper CSS classes, removed inline styles, improved visual hierarchy
+- **Button Functionality**: All animals now have working update and delete buttons in details modal
+
 ## 0.9.87 - 2025-11-08
 
 ### Fixed
