@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.76 - 2025-11-08
+
+### Fixed
+- **Critical JavaScript Syntax**: Removed extra closing brace causing syntax error at line 467
+- **Browser Cache Issue**: Updated version to force cache refresh after syntax fix
+- **Event Handler Structure**: Fixed duplicate closing braces in modal event listeners
+
+### Technical Fixes
+- **JavaScript Validation**: Script now passes Node.js syntax checking
+- **Code Structure**: Properly balanced braces for all event listeners
+- **Cache Management**: Version bump ensures browser loads fixed JavaScript
+
 ## 0.9.75 - 2025-11-08
 
 ### Fixed

@@ -464,7 +464,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
     });
-});
 
 // Handle edit animal form submission
 const editForm = document.getElementById('edit-animal-form');
