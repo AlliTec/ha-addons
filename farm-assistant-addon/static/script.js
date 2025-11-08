@@ -85,7 +85,7 @@ async function populateFilterTabs() {
         console.log("Available animal types:", animalTypes);
         
         // Get animals for counting
-        const animalsResponse = await fetch("get_animals");
+        const animalsResponse = await fetch("/get_animals");
         const allAnimals = await animalsResponse.json();
         console.log("All animals:", allAnimals);
         

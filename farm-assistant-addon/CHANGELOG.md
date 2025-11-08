@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.70 - 2025-11-08
+
+### Fixed
+- **Missing Filter Tabs**: Fixed API endpoint URL path for get_animals fetch
+- **URL Path Correction**: Added leading slash to get_animals endpoint call
+- **Cache Update**: Updated script version to force browser reload
+
 ## 0.9.69 - 2025-11-08
 
 ### Fixed
