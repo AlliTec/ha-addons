@@ -40,7 +40,7 @@
 
 
 
-    <script src="static/script.js?v=0.9.63"></script>
+    <script src="static/script.js?v=0.9.64"></script>
     <div id="image-modal" class="modal">
         <span class="close-modal">&times;</span>
         <img class="modal-content" id="modal-image">
@@ -144,12 +144,16 @@
                 </div>
                 <div class="form-grid" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
                     <div>
-                        <label for="edit-dam-id" style="display: block; margin-bottom: 5px; font-weight: bold;">Dam (Mother) ID:</label>
-                        <input type="number" id="edit-dam-id" name="dam_id" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <label for="edit-dam-id" style="display: block; margin-bottom: 5px; font-weight: bold;">Dam (Mother):</label>
+                        <select id="edit-dam-id" name="dam_id" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="">Select Dam</option>
+                        </select>
                     </div>
                     <div>
-                        <label for="edit-sire-id" style="display: block; margin-bottom: 5px; font-weight: bold;">Sire (Father) ID:</label>
-                        <input type="number" id="edit-sire-id" name="sire_id" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        <label for="edit-sire-id" style="display: block; margin-bottom: 5px; font-weight: bold;">Sire (Father):</label>
+                        <select id="edit-sire-id" name="sire_id" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="">Select Sire</option>
+                        </select>
                     </div>
                     <div>
                         <label for="edit-health-status" style="display: block; margin-bottom: 5px; font-weight: bold;">Health Status:</label>

@@ -547,6 +547,36 @@ async function showAnimalDetails(animalId) {
     }
 }
 
+    // Function to populate Dam/Sire dropdowns
+    async function populateParentDropdowns() {
+        try {
+            const response = await fetch('/api/animals');
+            const animals = await response.json();
+            
+            const damSelect = document.getElementById('edit-dam-id');
+            const sireSelect = document.getElementById('edit-sire-id');
+            
+            // Clear existing options except the first one
+            damSelect.innerHTML = '<option value="">Select Dam</option>';
+            sireSelect.innerHTML = '<option value="">Select Sire</option>';
+            
+            // Add animals to dropdowns
+            animals.forEach(animal => {
+                const optionDam = document.createElement('option');
+                optionDam.value = animal.id;
+                optionDam.textContent = `${animal.name} (${animal.gender})`;
+                damSelect.appendChild(optionDam);
+                
+                const optionSire = document.createElement('option');
+                optionSire.value = animal.id;
+                optionSire.textContent = `${animal.name} (${animal.gender})`;
+                sireSelect.appendChild(optionSire);
+            });
+        } catch (error) {
+            console.error('Error populating parent dropdowns:', error);
+        }
+    }
+
     // Function to open add animal form
     async function openAddAnimalForm() {
         // Clear the edit form for new animal
@@ -556,8 +586,6 @@ async function showAnimalDetails(animalId) {
         document.getElementById('edit-breed').value = '';
         document.getElementById('edit-date-of-birth').value = '';
         document.getElementById('edit-features').value = '';
-        document.getElementById('edit-dam-id').value = '';
-        document.getElementById('edit-sire-id').value = '';
         document.getElementById('edit-health-status').value = '';
         document.getElementById('edit-photo-path').value = '';
         document.getElementById('edit-pic').value = '';
@@ -567,6 +595,9 @@ async function showAnimalDetails(animalId) {
         
         // Reset gender options to default
         updateGenderOptions('');
+        
+        // Populate parent dropdowns
+        await populateParentDropdowns();
         
         // Show edit modal with "Add Animal" title
         const editModal = document.getElementById('edit-animal-modal');
@@ -594,6 +625,9 @@ async function enableEditMode(animalId) {
         }
         
         const animal = await response.json();
+        
+        // Populate parent dropdowns first
+        await populateParentDropdowns();
         
         // Populate the edit form
         document.getElementById('edit-animal-id').value = animal.id;

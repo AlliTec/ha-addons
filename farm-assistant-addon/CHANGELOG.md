@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.9.65 - 2025-11-08
+
+### Added
+- **Dam/Sire Dropdown Selection**: Replaced ID input fields with searchable dropdown lists
+- **Parent Selection Interface**: Users can now select parents by name and gender instead of entering IDs
+- **Dynamic Population**: Dropdowns automatically populate with all animals from database
+- **Enhanced User Experience**: Clear display format "Name (Gender)" for easy parent identification
+
+### Features
+- **Intelligent Parent Selection**: Shows all available animals with their names and genders
+- **Form Integration**: Works for both adding new animals and editing existing ones
+- **Proper Value Mapping**: Dropdown values map to correct animal IDs for database storage
+- **Empty State Handling**: Includes "Select Dam/Sire" options for no parent selection
+
+### Technical Improvements
+- **API Integration**: Uses existing `/api/animals` endpoint for parent data
+- **Async Population**: Efficiently loads parent options when form opens
+- **Form State Management**: Properly sets selected values when editing existing animals
+- **Cache Busting**: Updated script version to ensure latest changes load
+
 ## 0.9.64 - 2025-11-08
 
 ### Fixed
