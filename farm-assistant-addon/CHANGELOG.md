@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.2.5 - 2025-11-08
+
+### Fixed
+- **JavaScript ID Mismatches**: Resolved critical errors preventing asset add/edit forms from working
+- **Form Field Mapping**: Fixed JavaScript to match actual HTML form element IDs
+- **Null Reference Errors**: Eliminated "Cannot set properties of null" errors in asset management
+- **Field Consistency**: Aligned JavaScript field access with HTML form structure
+
+### Technical Fixes
+- **Serial Number**: Fixed edit-asset-serial-number to edit-asset-serial
+- **Registration**: Fixed edit-asset-registration-no to edit-asset-registration  
+- **Insurance**: Mapped to single insurance_info field matching HTML structure
+- **Permits**: Mapped to single permit_info field matching HTML structure
+- **Warranty**: Fixed expiry date ID to match edit-asset-warranty-expiry
+- **Form Defaults**: Updated openAddAssetForm to only set existing HTML fields
+
 ## 1.2.4 - 2025-11-08
 
 ### Added
