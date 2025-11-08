@@ -78,10 +78,93 @@ function getAnimalIcon(animalType) {
 async function populateFilterTabs() {
     try {
         console.log("Populating filter tabs...");
-        const response = await fetch("api/animal-types");
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        const [animalTypesResponse, animalsResponse] = await Promise.all([
+            fetch("/api/animal-types"),
+            fetch("get_animals")
+        ]);
+        
+        const animalTypes = await animalTypesResponse.json();
+        const allAnimals = await animalsResponse.json();
+        console.log("Available animal types:", animalTypes);
+        console.log("All animals:", allAnimals);
+        
+        const filterBar = document.getElementById("filter-bar");
+        if (!filterBar) {
+            console.error("Filter bar not found!");
+            return;
         }
+        
+        // Clear existing tabs (except Add button which we'll add back)
+        filterBar.innerHTML = '';
+        
+        // Count animals by type
+        const animalCounts = {};
+        allAnimals.forEach(animal => {
+            const type = animal.animal_type || 'Unknown';
+            animalCounts[type] = (animalCounts[type] || 0) + 1;
+        });
+        
+        // Add "All" tab with total count
+        const allButton = document.createElement("button");
+        allButton.className = "filter-btn active";
+        allButton.dataset.filter = "All";
+        
+        const allIcon = document.createElement("i");
+        allIcon.className = "fa-solid fa-border-all";
+        
+        const allCount = document.createElement("sup");
+        allCount.style.cssText = "font-size: 0.7em; margin-left: 2px; color: var(--accent-color);";
+        allCount.textContent = `(${allAnimals.length})`;
+        
+        const allText = document.createTextNode(" All");
+        
+        allButton.appendChild(allIcon);
+        allButton.appendChild(allText);
+        allButton.appendChild(allCount);
+        filterBar.appendChild(allButton);
+        
+        // Add tabs for each animal type with counts
+        animalTypes.slice(1).forEach(animalType => {
+            if (animalType === "All") return;
+            
+            const button = document.createElement("button");
+            button.className = "filter-btn";
+            button.dataset.filter = animalType;
+            
+            const icon = document.createElement("i");
+            icon.className = `fa-solid ${getAnimalIcon(animalType)}`;
+            
+            const count = document.createElement("sup");
+            count.style.cssText = "font-size: 0.7em; margin-left: 2px; color: var(--accent-color);";
+            count.textContent = `(${animalCounts[animalType] || 0})`;
+            
+            const text = document.createTextNode(` ${animalType}`);
+            
+            button.appendChild(icon);
+            button.appendChild(text);
+            button.appendChild(count);
+            filterBar.appendChild(button);
+        });
+        
+        // Always add "Add" tab as the last tab (no count)
+        const addButton = document.createElement("button");
+        addButton.className = "filter-btn add-btn";
+        addButton.dataset.filter = "add";
+        
+        const addIcon = document.createElement("i");
+        addIcon.className = "fa-solid fa-plus";
+        
+        const addText = document.createTextNode(" Add");
+        
+        addButton.appendChild(addIcon);
+        addButton.appendChild(addText);
+        filterBar.appendChild(addButton);
+        
+        console.log("Filter tabs populated successfully with counts:", animalCounts);
+    } catch (error) {
+        console.error("Error populating filter tabs:", error);
+    }
+}
         
         const animalTypes = await response.json();
         console.log("Available animal types:", animalTypes);
@@ -413,9 +496,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 // Handle edit animal form submission
 const editForm = document.getElementById('edit-animal-form');
+console.log('Edit form element found:', editForm);
 if (editForm) {
     editForm.addEventListener('submit', async (event) => {
     event.preventDefault();
+    console.log('Form submission triggered!');
     
     const animalId = document.getElementById('edit-animal-id').value;
     const formData = new FormData(event.target);
@@ -547,6 +632,20 @@ async function showAnimalDetails(animalId) {
     }
 }
 
+    // Function to determine if gender is female
+    function isFemale(gender) {
+        if (!gender) return false;
+        const femaleTerms = ['Cow', 'Heifer', 'Ewe', 'Nanny', 'Sow', 'Gilt', 'Mare', 'Filly', 'Jenny', 'Goose', 'Hen', 'Pullet', 'Doe', 'Queen', 'Bitch'];
+        return femaleTerms.includes(gender);
+    }
+    
+    // Function to determine if gender is male
+    function isMale(gender) {
+        if (!gender) return false;
+        const maleTerms = ['Bull', 'Steer', 'Ram', 'Billy', 'Wether', 'Boar', 'Barrow', 'Stallion', 'Gelding', 'Colt', 'Jack', 'Gander', 'Drake', 'Tom', 'Rooster', 'Cockerel', 'Capon', 'Buck', 'Dog', 'Stud'];
+        return maleTerms.includes(gender);
+    }
+    
     // Function to populate Dam/Sire dropdowns
     async function populateParentDropdowns() {
         try {
@@ -556,25 +655,30 @@ async function showAnimalDetails(animalId) {
             const damSelect = document.getElementById('edit-dam-id');
             const sireSelect = document.getElementById('edit-sire-id');
             
-            // Clear existing options except the first one
+            // Clear existing options except first one
             damSelect.innerHTML = '<option value="">Select Dam</option>';
             sireSelect.innerHTML = '<option value="">Select Sire</option>';
             
-            // Add animals to dropdowns
+            // Filter and add animals to appropriate dropdowns
             animals.forEach(animal => {
-                const optionDam = document.createElement('option');
-                optionDam.value = animal.id;
-                optionDam.textContent = `${animal.name} (${animal.gender})`;
-                damSelect.appendChild(optionDam);
+                if (isFemale(animal.gender)) {
+                    const optionDam = document.createElement('option');
+                    optionDam.value = animal.id;
+                    optionDam.textContent = `${animal.name} (${animal.gender})`;
+                    damSelect.appendChild(optionDam);
+                }
                 
-                const optionSire = document.createElement('option');
-                optionSire.value = animal.id;
-                optionSire.textContent = `${animal.name} (${animal.gender})`;
-                sireSelect.appendChild(optionSire);
+                if (isMale(animal.gender)) {
+                    const optionSire = document.createElement('option');
+                    optionSire.value = animal.id;
+                    optionSire.textContent = `${animal.name} (${animal.gender})`;
+                    sireSelect.appendChild(optionSire);
+                }
             });
         } catch (error) {
             console.error('Error populating parent dropdowns:', error);
         }
+    }
     }
 
     // Function to open add animal form

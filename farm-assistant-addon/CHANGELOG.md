@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.9.66 - 2025-11-08
+
+### Added
+- **Animal Count Display**: Added superscript counts to all filter tabs showing total animals per category
+- **Real-time Counting**: Filter tabs now display (count) next to each animal type
+- **Total Count**: "All" tab shows total number of animals in database
+- **Gender-Specific Counts**: Each category shows count for that specific animal type
+
+### Features
+- **Visual Enhancement**: Superscript numbers styled with accent color for visibility
+- **Efficient Loading**: Uses parallel API calls to fetch both types and counts simultaneously
+- **Dynamic Updates**: Counts automatically update when animals are added/removed
+- **Clean Integration**: Counts appear as small superscripts next to filter names
+
+### Technical Improvements
+- **Parallel API Calls**: Fetches animal types and counts concurrently for better performance
+- **Count Calculation**: Client-side counting by animal_type for accurate categorization
+- **CSS Styling**: Superscript styling with proper sizing and color theming
+- **Cache Busting**: Updated version with timestamp to force script reload
+
+### Fixed
+- **Gender Filtering**: Enhanced Dam/Sire dropdowns to show only appropriate genders
+- **Comprehensive Gender Lists**: Added all male/female terms for proper filtering
+- **Parent Selection**: Dam dropdown shows females only, Sire dropdown shows males only
+
 ## 0.9.65 - 2025-11-08
 
 ### Added
