@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.40 - 2025-11-08
+
+### Fixed
+
+- Implemented cache-busting for `script.js` to ensure the latest version is always loaded.
+
 ## 0.9.39 - 2025-11-08
 
 ### Fixed
