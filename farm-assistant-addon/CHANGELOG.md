@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.9.68 - 2025-11-08
+
+### Fixed
+- **Critical JavaScript Syntax Error**: Removed duplicate code causing syntax errors
+- **Function Structure**: Cleaned up populateFilterTabs function structure
+- **Code Duplication**: Eliminated redundant and broken code fragments
+- **Script Loading**: Updated cache version to force immediate reload
+
+### Technical Fixes
+- **Syntax Resolution**: Fixed unexpected token '}' error at line 237
+- **Function Cleanup**: Removed duplicate/broken code between functions
+- **Error Prevention**: Ensured proper JavaScript syntax throughout file
+- **Stability**: Restored reliable execution of all JavaScript functions
+
+### Features Restored
+- **Filter Tabs**: Animal type filters with counts now display properly
+- **Animal Table**: Data population should now work correctly
+- **Parent Dropdowns**: Gender-filtered Dam/Sire selection functional
+- **Add Functionality**: Form submission and database operations working
+
 ## 0.9.67 - 2025-11-08
 
 ### Fixed

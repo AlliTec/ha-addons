@@ -93,56 +93,7 @@ async function populateFilterTabs() {
         if (!filterBar) {
             console.error("Filter bar not found!");
             return;
-        }
-        
-        // Clear existing tabs (except Add button which we'll add back)
-        filterBar.innerHTML = '';
-        
-        // Count animals by type
-        const animalCounts = {};
-        allAnimals.forEach(animal => {
-            const type = animal.animal_type || 'Unknown';
-            animalCounts[type] = (animalCounts[type] || 0) + 1;
-        });
-        
-        // Add "All" tab with total count
-        const allButton = document.createElement("button");
-        allButton.className = "filter-btn active";
-        allButton.dataset.filter = "All";
-        
-        const allIcon = document.createElement("i");
-        allIcon.className = "fa-solid fa-border-all";
-        
-        const allCount = document.createElement("sup");
-        allCount.style.cssText = "font-size: 0.7em; margin-left: 2px; color: var(--accent-color);";
-        allCount.textContent = `(${allAnimals.length})`;
-        
-        const allText = document.createTextNode(" All");
-        
-        allButton.appendChild(allIcon);
-        allButton.appendChild(allText);
-        allButton.appendChild(allCount);
-        filterBar.appendChild(allButton);
-        
-        // Add tabs for each animal type with counts
-        animalTypes.slice(1).forEach(animalType => {
-            if (animalType === "All") return;
-            
-            const button = document.createElement("button");
-            button.className = "filter-btn";
-            button.dataset.filter = animalType;
-            
-            const icon = document.createElement("i");
-            icon.className = `fa-solid ${getAnimalIcon(animalType)}`;
-            
-            const count = document.createElement("sup");
-            count.style.cssText = "font-size: 0.7em; margin-left: 2px; color: var(--accent-color);";
-            count.textContent = `(${animalCounts[animalType] || 0})`;
-            
-            const text = document.createTextNode(` ${animalType}`);
-            
-            button.appendChild(icon);
-            button.appendChild(text);
+}
             button.appendChild(count);
             filterBar.appendChild(button);
         });
