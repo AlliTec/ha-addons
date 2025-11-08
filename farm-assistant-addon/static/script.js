@@ -778,7 +778,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 
                 if (isUpdate) {
                     // Update existing animal
-                    response = await fetch(`/update_animal/${animalId}`, {
+                    response = await fetch(`update_animal/${animalId}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json',
@@ -804,10 +804,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                     populateAnimalList(); // Refresh the animal list
                     populateFilterTabs(); // Refresh filter tabs
                 } else {
-                    const error = await response.json();
+                    const errorText = await response.text();
                     const action = isUpdate ? 'updating' : 'adding';
-                    console.error('Error:', error);
-                    alert(`Error ${action} animal: ${error.detail}`);
+                    console.error('Error response:', errorText);
+                    try {
+                        const error = JSON.parse(errorText);
+                        alert(`Error ${action} animal: ${error.detail}`);
+                    } catch (e) {
+                        alert(`Error ${action} animal: ${errorText}`);
+                    }
                 }
             } catch (error) {
                 console.error('Error saving animal:', error);

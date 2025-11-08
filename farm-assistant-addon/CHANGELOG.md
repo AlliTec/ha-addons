@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.96 - 2025-11-08
+
+### Fixed
+- **Update URL**: Fixed relative URL issue for update endpoint
+- **Error Handling**: Improved error handling to show actual response text
+- **Debugging**: Added better logging to identify save issues
+- **JSON Parsing**: Added try/catch for error response parsing
+
 ## 0.9.95 - 2025-11-08
 
 ### Fixed
