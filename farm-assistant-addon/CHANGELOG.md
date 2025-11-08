@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.36 - 2025-11-08
+
+### Added
+
+- Implemented image upload and display functionality.
+- The "Image" column now displays a picture frame icon.
+- Clicking the icon opens a file browser if no image is present, or displays the image in a popup if an image path exists.
+
 ## 0.9.35 - 2025-11-08
 
 ### Changed

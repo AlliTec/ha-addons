@@ -71,7 +71,44 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     console.log("script.js: Found table element:", animalListTable);
 
+    const modal = document.getElementById("image-modal");
+    const modalImg = document.getElementById("modal-image");
+    const closeModal = document.querySelector(".close-modal");
+
+    closeModal.onclick = function() {
+        modal.style.display = "none";
+    }
+
     animalListTable.addEventListener("click", async (event) => {
+        if (event.target.classList.contains('pic-icon')) {
+            const picPath = event.target.dataset.picPath;
+            if (picPath) {
+                modalImg.src = picPath;
+                modal.style.display = "block";
+            } else {
+                const animalId = event.target.dataset.animalId;
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*';
+                fileInput.onchange = async (e) => {
+                    const file = e.target.files[0];
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    const response = await fetch(`/upload_image/${animalId}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    if (response.ok) {
+                        alert('Image uploaded successfully!');
+                        populateAnimalList();
+                    } else {
+                        alert('Error uploading image.');
+                    }
+                };
+                fileInput.click();
+            }
+        }
+
         console.log("script.js: Click detected inside table. Target:", event.target);
 
         const button = event.target.closest('button');
