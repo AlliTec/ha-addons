@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.8 - 2025-11-08
+
+### Fixed
+- **Icon Consistency**: Changed "All" tab to use Font Awesome house-chimney icon to match other tabs
+- **Visual Harmony**: All filter tabs now use consistent Font Awesome icon styling
+
 ## 1.0.7 - 2025-11-08
 
 ### Added
