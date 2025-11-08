@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.74 - 2025-11-08
+
+### Fixed
+- **Missing Filter Tabs**: Added aggressive cache busting to force JavaScript reload
+- **Debug Enhancement**: Added timestamp to script version for immediate cache invalidation
+- **Browser Cache Issue**: Updated script version with unique timestamp to prevent stale cache
+
+### Technical Improvements
+- **Cache Busting**: Script version now includes timestamp for guaranteed refresh
+- **Forced Reload**: Browser cannot serve cached version with new timestamp
+- **Debugging**: Enhanced logging to track DOMContentLoaded event firing
+
 ## 0.9.73 - 2025-11-08
 
 ### Fixed
