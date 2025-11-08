@@ -1,3 +1,248 @@
+app.1d24f37c18c00da1.js:60 The Material theme is deprecated and will be removed in Vaadin 25.
+22698 @ version.js:22
+c @ app.1d24f37c18c00da1.js:60
+29797 @ 34699.77a80428a6e35f25.js:4
+c @ app.1d24f37c18c00da1.js:60
+8808 @ 34699.77a80428a6e35f25.js:7
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ 34699.77a80428a6e35f25.js:31
+c.a @ async_module:58
+10167 @ 34699.77a80428a6e35f25.js:31
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ 34699.77a80428a6e35f25.js:31
+c.a @ async_module:58
+83077 @ 34699.77a80428a6e35f25.js:31
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ 34699.77a80428a6e35f25.js:31
+c.a @ async_module:58
+67056 @ 34699.77a80428a6e35f25.js:31
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ 34699.77a80428a6e35f25.js:28
+c.a @ async_module:58
+99973 @ 34699.77a80428a6e35f25.js:28
+c @ app.1d24f37c18c00da1.js:60
+Promise.then
+firstUpdated @ more-info-mixin.ts:22
+firstUpdated @ translations-mixin.ts:85
+firstUpdated @ themes-mixin.ts:28
+firstUpdated @ auth-mixin.ts:16
+firstUpdated @ quick-bar-mixin.ts:32
+firstUpdated @ home-assistant.ts:104
+_$AE @ reactive-element.ts:1551
+performUpdate @ reactive-element.ts:1518
+t.performUpdate @ storage.ts:172
+scheduleUpdate @ reactive-element.ts:1400
+_$EP @ reactive-element.ts:1372
+await in _$EP
+requestUpdate @ reactive-element.ts:1311
+_$Ev @ reactive-element.ts:1055
+S @ reactive-element.ts:1038
+i @ lit-element.ts:130
+te @ hass-base-mixin.ts:6
+(anonymous) @ context-mixin.ts:27
+(anonymous) @ logging-mixin.ts:24
+(anonymous) @ panel-title-mixin.ts:12
+(anonymous) @ haptic-mixin.ts:38
+(anonymous) @ url-sync-mixin.ts:18
+(anonymous) @ dialog-manager-mixin.ts:28
+(anonymous) @ notification-mixin.ts:5
+(anonymous) @ connection-mixin.ts:41
+(anonymous) @ disconnect-toast-mixin.ts:16
+(anonymous) @ sidebar-mixin.ts:28
+(anonymous) @ action-mixin.ts:16
+(anonymous) @ automation-editor-mixin.ts:21
+(anonymous) @ more-info-mixin.ts:16
+(anonymous) @ state-display-mixin.ts:8
+(anonymous) @ translations-mixin.ts:75
+(anonymous) @ themes-mixin.ts:24
+(anonymous) @ auth-mixin.ts:14
+Te @ hass-element.ts:24
+(anonymous) @ quick-bar-mixin.ts:30
+w @ home-assistant.ts:53
+P @ scoped-custom-element-registry.ts:642
+t @ scoped-custom-element-registry.ts:408
+A.define @ scoped-custom-element-registry.ts:243
+(anonymous) @ custom-element.ts:60
+s @ tslib.es6.mjs:58
+(anonymous) @ app.1d24f37c18c00da1.js:14
+await in (anonymous)
+c.a @ async_module:58
+29627 @ app.1d24f37c18c00da1.js:14
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ app.1d24f37c18c00da1.js:14
+c.a @ async_module:58
+32494 @ app.1d24f37c18c00da1.js:14
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ app.1d24f37c18c00da1.js:60
+script.js?v=1.0.1&t=:675 script.js: DOMContentLoaded event fired.
+script.js?v=1.0.1&t=:326 populateAnimalList called with filter: All
+script.js?v=1.0.1&t=:213 Populating filter tabs...
+script.js?v=1.0.1&t=:216 Fetching animals for dynamic type extraction...
+script.js?v=1.0.1&t=:978 script.js: Found table element: <table id=​"livestock-list">​…​</table>​
+script.js?v=1.0.1&t=:328 Fetch response status: 200
+script.js?v=1.0.1&t=:335 Animals data received: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+script.js?v=1.0.1&t=:336 Number of animals: 28
+script.js?v=1.0.1&t=:339 Filtered animals count: 28
+script.js?v=1.0.1&t=:350 Processing animal 1: {id: 9, tag_id: '12345-8', name: 'Brjost', breed: 'Santa Gertrudis', birth_date: '2019-07-01', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2019-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Mon Jul 01 2019 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 2: {id: 15, tag_id: '12345-14', name: 'Digr', breed: 'Santa Gertrudis', birth_date: '2024-09-24', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-09-24 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Tue Sep 24 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 3: {id: 2, tag_id: '12345-1', name: 'Duke', breed: 'Santa Gertrudis', birth_date: '2008-07-01', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2008-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Tue Jul 01 2008 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 4: {id: 8, tag_id: '12345-7', name: 'George', breed: 'Santa Gertrudis', birth_date: '2018-07-01', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2018-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sun Jul 01 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 5: {id: 17, tag_id: '12345-15', name: 'Grind', breed: 'Santa Gertrudis', birth_date: '2025-08-26', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2025-08-26 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Tue Aug 26 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 6: {id: 59, tag_id: '159263487', name: 'Henny', breed: 'Austral', birth_date: '2024-04-10', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-04-10 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 7: {id: 56, tag_id: '987456123', name: 'Hjartr', breed: 'Persian/Ragdoll', birth_date: '2023-12-21', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2023-12-21 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Thu Dec 21 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 8: {id: 10, tag_id: '12345-9', name: 'Horn', breed: 'Santa Gertrudis', birth_date: '2020-07-01', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2020-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Jul 01 2020 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 9: {id: 22, tag_id: '162534', name: 'Indie', breed: 'Husky-Malamute', birth_date: '2015-08-08', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2015-08-08 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sat Aug 08 2015 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 10: {id: 61, tag_id: '357421869', name: 'Jenny', breed: 'Austral', birth_date: '2024-04-10', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-04-10 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 11: {id: 13, tag_id: '12345-11', name: 'Juliet', breed: 'Santa Gertrudis', birth_date: '2023-07-01', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2023-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sat Jul 01 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 12: {id: 58, tag_id: '159487623', name: 'Kiriko', breed: 'Rhode Island Red', birth_date: '2025-04-04', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2025-04-04 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Fri Apr 04 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 13: {id: 14, tag_id: '12345-12', name: 'Lag', breed: 'Santa Gertrudis', birth_date: '2024-09-18', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-09-18 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Sep 18 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 14: {id: 55, tag_id: '456456456', name: 'Meyla', breed: 'Sheprador', birth_date: '2024-12-08', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-12-08 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sun Dec 08 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 15: {id: 11, tag_id: '12345-0', name: 'Mini', breed: 'Santa Gertrudis', birth_date: '2021-07-01', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2021-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Thu Jul 01 2021 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 16: {id: 7, tag_id: '12345-6', name: 'Mjolka', breed: 'Santa Gertrudis', birth_date: '2018-02-18', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2018-02-18 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sun Feb 18 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 17: {id: 6, tag_id: '12345-5', name: 'Ms July', breed: 'Santa Gertrudis', birth_date: '2018-07-01', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2018-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sun Jul 01 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 18: {id: 5, tag_id: '12345-4', name: 'Mum', breed: 'Santa Gertrudis', birth_date: '2005-07-01', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2005-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Fri Jul 01 2005 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 19: {id: 4, tag_id: '12345-3', name: 'OldGirl', breed: 'Santa Gertrudis', birth_date: '2003-07-01', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2003-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Tue Jul 01 2003 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 20: {id: 60, tag_id: '147852369', name: 'Penny', breed: 'Austral', birth_date: '2024-04-10', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-04-10 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 21: {id: 3, tag_id: '12345 -2', name: 'Prince', breed: 'Santa Gertrudis', birth_date: '2007-07-01', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2007-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sun Jul 01 2007 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 22: {id: 63, tag_id: '789159357', name: 'Renny', breed: 'Austral', birth_date: '2024-04-10', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-04-10 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 23: {id: 57, tag_id: '321987654', name: 'Rinna', breed: 'Tabby', birth_date: '2024-03-18', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-03-18 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Mon Mar 18 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 24: {id: 21, tag_id: '123654', name: 'Rocco', breed: 'German Shepherd', birth_date: '2014-08-15', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2014-08-15 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Fri Aug 15 2014 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 25: {id: 12, tag_id: '12345-10', name: 'Romeo', breed: 'Santa Gertrudis', birth_date: '2023-07-01', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2023-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sat Jul 01 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 26: {id: 16, tag_id: '12345-13', name: 'Tekn', breed: 'Santa Gertrudis', birth_date: '2024-10-05', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-10-05 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sat Oct 05 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 27: {id: 20, tag_id: '12345-54321', name: 'Thor', breed: 'Santa Gertrudis', birth_date: '2025-10-29', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2025-10-29 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Oct 29 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:350 Processing animal 28: {id: 62, tag_id: '689357241', name: 'Zenny', breed: 'Austral', birth_date: '2024-04-10', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-04-10 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:365 Table population completed
+script.js?v=1.0.1&t=:218 Animals response status: 200
+script.js?v=1.0.1&t=:226 All animals: (28) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+script.js?v=1.0.1&t=:233 Processing animal: Brjost, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Digr, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Duke, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: George, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Grind, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Henny, Gender: "Hen", Breed: "Austral", Type: Fowl
+script.js?v=1.0.1&t=:233 Processing animal: Hjartr, Gender: "Queen", Breed: "Persian/Ragdoll", Type: Cat
+script.js?v=1.0.1&t=:233 Processing animal: Horn, Gender: "Heifer", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Indie, Gender: "Bitch", Breed: "Husky-Malamute", Type: Dog
+script.js?v=1.0.1&t=:233 Processing animal: Jenny, Gender: "Hen", Breed: "Austral", Type: Fowl
+script.js?v=1.0.1&t=:233 Processing animal: Juliet, Gender: "Heifer", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Kiriko, Gender: "Rooster", Breed: "Rhode Island Red", Type: Fowl
+script.js?v=1.0.1&t=:233 Processing animal: Lag, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Meyla, Gender: "Bitch", Breed: "Sheprador", Type: Dog
+script.js?v=1.0.1&t=:233 Processing animal: Mini, Gender: "Heifer", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Mjolka, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Ms July, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Mum, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: OldGirl, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Penny, Gender: "Hen", Breed: "Austral", Type: Fowl
+script.js?v=1.0.1&t=:233 Processing animal: Prince, Gender: "Steer", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Renny, Gender: "Hen", Breed: "Austral", Type: Fowl
+script.js?v=1.0.1&t=:233 Processing animal: Rinna, Gender: "Queen", Breed: "Tabby", Type: Cat
+script.js?v=1.0.1&t=:233 Processing animal: Rocco, Gender: "Dog", Breed: "German Shepherd", Type: Dog
+script.js?v=1.0.1&t=:233 Processing animal: Romeo, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Tekn, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Thor, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=1.0.1&t=:233 Processing animal: Zenny, Gender: "Hen", Breed: "Austral", Type: Fowl
+script.js?v=1.0.1&t=:238 Dynamic animal types extracted: (5) ['All', 'Cat', 'Cattle', 'Dog', 'Fowl']
+script.js?v=1.0.1&t=:256 Animal: Brjost, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Digr, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: George, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Grind, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Henny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Hjartr, Gender: Queen, Breed: Persian/Ragdoll, Type: Cat, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Horn, Gender: Heifer, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Indie, Gender: Bitch, Breed: Husky-Malamute, Type: Dog, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Jenny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Juliet, Gender: Heifer, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Kiriko, Gender: Rooster, Breed: Rhode Island Red, Type: Fowl, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Lag, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Meyla, Gender: Bitch, Breed: Sheprador, Type: Dog, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Mini, Gender: Heifer, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Ms July, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Mum, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: OldGirl, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Penny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Prince, Gender: Steer, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Renny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Rinna, Gender: Queen, Breed: Tabby, Type: Cat, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Rocco, Gender: Dog, Breed: German Shepherd, Type: Dog, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Romeo, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Tekn, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Thor, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=1.0.1&t=:256 Animal: Zenny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
+script.js?v=1.0.1&t=:294 Creating tab for Cat with count: 2
+script.js?v=1.0.1&t=:294 Creating tab for Cattle with count: 15
+script.js?v=1.0.1&t=:294 Creating tab for Dog with count: 3
+script.js?v=1.0.1&t=:294 Creating tab for Fowl with count: 6
+script.js?v=1.0.1&t=:318 Filter tabs populated successfully with counts: {Cattle: 15, Fowl: 6, Cat: 2, Dog: 3}
+script.js?v=1.0.1&t=:496 Animal details: {id: 15, tag_id: '12345-14', name: 'Digr', breed: 'Santa Gertrudis', birth_date: '2024-09-24', …}
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-09-24 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Tue Sep 24 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 06:04:36 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:642 Edit mode - Category: Cattle Animal data: {id: 15, tag_id: '12345-14', name: 'Digr', breed: 'Santa Gertrudis', birth_date: '2024-09-24', …}
+script.js?v=1.0.1&t=:373 populateParentDropdowns called
+script.js?v=1.0.1&t=:376 Animals response status: 200
+script.js?v=1.0.1&t=:382 All animals received: 28
+script.js?v=1.0.1&t=:387 Dam select element: <select id=​"edit-dam-id" name=​"dam_id">​…​</select>​
+script.js?v=1.0.1&t=:388 Sire select element: <select id=​"edit-sire-id" name=​"sire_id">​…​</select>​
+script.js?v=1.0.1&t=:403 Female animals found: 17
+script.js?v=1.0.1&t=:416 Male animals found: 11
+script.js?v=1.0.1&t=:425 Dam select options count: 18
+script.js?v=1.0.1&t=:426 Sire select options count: 12
 script.js?v=1.0.1&t=:1139 Form submitted. Animal ID: 15 Is Update: true
 script.js?v=1.0.1&t=:1140 Form data: {tag_id: '12345-14', name: 'Digr', category: 'Cattle', gender: 'Bull', breed: 'Santa Gertrudis', …}
 script.js?v=1.0.1&t=:1170  PUT http://192.168.1.130:8123/api/hassio_ingress/E-cW3ksrmsjgl9U53YJMYeHxTZ5U1YAyZBGWznjqqM4/update_animal/15 500 (Internal Server Error)

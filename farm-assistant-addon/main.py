@@ -281,6 +281,7 @@ async def add_animal(animal: Animal):
 async def update_animal(animal_id: int, animal: Animal):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
+        logging.info(f"Updating animal {animal_id} with data: {animal}")
         await conn.execute("""
             UPDATE livestock_records 
             SET tag_id = $1, name = $2, gender = $3, breed = $4, 
@@ -292,7 +293,11 @@ async def update_animal(animal_id: int, animal: Animal):
             animal.birth_date, animal.health_status, animal.notes,
             animal.status, animal.dam_id, animal.sire_id, animal.features,
             animal.photo_path, animal.pic, animal.dod, animal_id)
+        logging.info(f"Animal {animal_id} updated successfully")
         return {"message": "Animal updated successfully"}
+    except Exception as e:
+        logging.error(f"Error updating animal {animal_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         await conn.close()
 

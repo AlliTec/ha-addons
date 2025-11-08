@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0 - 2025-11-09
+
+### Debug
+- **Enhanced Error Logging**: Added detailed logging to update_animal endpoint to identify 500 error cause
+- **Better Debugging**: Logs animal data and error details for troubleshooting
+
 ## 1.2.9 - 2025-11-09
 
 ### Fixed
