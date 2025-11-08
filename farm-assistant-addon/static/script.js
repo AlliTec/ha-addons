@@ -24,28 +24,40 @@ async function populateAnimalList(filter = "All") {
 
     filteredAnimals.forEach(animal => {
         const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>${formatCell(animal.tag_id)}</td>
-            <td>${formatCell(animal.name)}</td>
-            <td>${formatCell(animal.breed)}</td>
-            <td>${formatCell(animal.birth_date)}</td>
-            <td>${formatCell(animal.gender)}</td>
-            <td>${formatCell(animal.health_status)}</td>
-            <td>${formatCell(animal.notes)}</td>
-            <td>${formatCell(animal.dam_name)}</td>
-            <td>${formatCell(animal.sire_name)}</td>
-            <td>${getStatusIcon(animal.status)}</td>
-             <td>${formatCell(animal.features)}</td>
-            <td><i class="fa-solid fa-image pic-icon" data-pic-path="${formatCell(animal.pic)}" data-animal-id="${animal.id}"></i></td>
-             <td>${formatCell(animal.dod)}</td>
-            <td>
-                <button class="edit-btn" data-id="${animal.id}"><i class="fa-solid fa-pencil" aria-label="Edit"></i></button>
-                <button class="delete-btn" data-id="${animal.id}"><i class="fa-solid fa-trash-can" aria-label="Delete"></i></button>
-            </td>
+        row.dataset.animalId = animal.id;
+
+        // Name
+        const nameCell = document.createElement("td");
+        nameCell.textContent = formatCell(animal.name);
+        row.appendChild(nameCell);
+
+        // Gender
+        const genderCell = document.createElement("td");
+        genderCell.textContent = formatCell(animal.gender);
+        row.appendChild(genderCell);
+
+        // Status
+        const statusCell = document.createElement("td");
+        statusCell.innerHTML = getStatusIcon(animal.status);
+        row.appendChild(statusCell);
+
+        // Age
+        const ageCell = document.createElement("td");
+        ageCell.textContent = calculateAge(animal.birth_date);
+        row.appendChild(ageCell);
+
+        // Actions
+        const actionsCell = document.createElement("td");
+        actionsCell.innerHTML = `
+            <button class="edit-btn" data-id="${animal.id}"><i class="fa-solid fa-pencil" aria-label="Edit"></i></button>
+            <button class="delete-btn" data-id="${animal.id}"><i class="fa-solid fa-trash-can" aria-label="Delete"></i></button>
         `;
+        row.appendChild(actionsCell);
+
         tableBody.appendChild(row);
     });
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("script.js: DOMContentLoaded event fired.");

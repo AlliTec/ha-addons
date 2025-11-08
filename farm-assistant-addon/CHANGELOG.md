@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.9.43 - 2025-11-08
+
+### Fixed
+
+- Rewrote the `populateAnimalList` function to correctly build the table and prevent rendering failures.
+
 ## 0.9.42 - 2025-11-08
 
 ### Changed
