@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.7 - 2025-11-08
+
+### Added
+- **All Tab Icon**: Replaced Font Awesome icon with farm.png image for "All" tab
+- **Visual Enhancement**: Farm picture provides better visual representation for comprehensive animal view
+
 ## 1.0.6 - 2025-11-08
 
 ### Added

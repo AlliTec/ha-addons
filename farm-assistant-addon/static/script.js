@@ -261,8 +261,9 @@ async function populateFilterTabs() {
         allButton.className = "filter-btn active";
         allButton.dataset.filter = "All";
         
-        const allIcon = document.createElement("i");
-        allIcon.className = "fa-solid fa-border-all";
+        const allIcon = document.createElement("img");
+        allIcon.src = "/static/farm.png";
+        allIcon.style.cssText = "width: 16px; height: 16px; margin-right: 5px; vertical-align: middle;";
         
         const allCount = document.createElement("sup");
         allCount.style.cssText = "font-size: 0.7em; margin-left: 2px; color: var(--accent-color);";
