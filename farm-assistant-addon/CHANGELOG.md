@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.9.49 - 2025-11-08
+
+### Added
+
+- Replaced edit/delete buttons with clickable rows for better UX.
+- Added comprehensive animal details modal with all database fields.
+- Added Update and Delete action buttons in details modal.
+- Implemented click-anywhere-on-row functionality for viewing details.
+- Added visual details icon (info circle) in actions column.
+
+### Changed
+
+- Removed inline edit/delete buttons from table for cleaner interface.
+- Enhanced details modal to show complete animal information.
+- Improved user interaction with modal-based actions.
+
 ## 0.9.48 - 2025-11-08
 
 ### Added

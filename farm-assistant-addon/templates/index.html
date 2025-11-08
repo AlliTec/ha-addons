@@ -40,16 +40,24 @@
 
 
 
-    <script src="static/script.js?v=0.9.48"></script>
+    <script src="static/script.js?v=0.9.49"></script>
     <div id="image-modal" class="modal">
         <span class="close-modal">&times;</span>
         <img class="modal-content" id="modal-image">
     </div>
     <div id="animal-details-modal" class="modal">
-        <div class="modal-content" style="background-color: white; padding: 20px; border-radius: 5px;">
+        <div class="modal-content" style="background-color: white; padding: 20px; border-radius: 5px; max-width: 600px; width: 90%;">
             <span class="close-modal">&times;</span>
             <h2>Animal Details</h2>
             <div id="animal-details-content" class="details-grid"></div>
+            <div class="modal-actions" style="margin-top: 20px; text-align: center; border-top: 1px solid #ddd; padding-top: 15px;">
+                <button id="update-animal-btn" class="action-btn update-btn">
+                    <i class="fa-solid fa-pencil"></i> Update
+                </button>
+                <button id="delete-animal-btn" class="action-btn delete-btn">
+                    <i class="fa-solid fa-trash-can"></i> Delete
+                </button>
+            </div>
         </div>
     </div>
 </body>
