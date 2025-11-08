@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.9.75 - 2025-11-08
+
+### Fixed
+- **Critical JavaScript Syntax**: Added missing closing brace for DOMContentLoaded event handler
+- **Filter Tabs Missing**: Root cause was unclosed function preventing execution
+- **Event Handler Fixed**: DOMContentLoaded now properly executes and calls populateFilterTabs()
+- **Cache Update**: Updated script version to force browser reload
+
+### Technical Fixes
+- **JavaScript Structure**: Fixed missing closing brace `});` for DOMContentLoaded function
+- **Function Execution**: populateFilterTabs() now runs on page load
+- **Event Handling**: All page initialization now works correctly
+- **Browser Compatibility**: Ensured proper JavaScript syntax for all browsers
+
 ## 0.9.74 - 2025-11-08
 
 ### Fixed

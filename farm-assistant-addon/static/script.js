@@ -346,6 +346,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
     console.log("script.js: Found table element:", animalListTable);
+});
 
     const modal = document.getElementById("image-modal");
     const modalImg = document.getElementById("modal-image");
