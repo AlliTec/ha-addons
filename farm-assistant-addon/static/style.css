@@ -151,19 +151,22 @@ th {
 .filter-btn {
     background-color: var(--input-bg);
     border: 1px solid var(--table-border);
-    padding: 12px 24px;
+    padding: 10px 20px 10px 30px;
     cursor: pointer;
-    font-size: 1.1rem;
-    font-weight: bold;
+    font-size: 1rem;
     color: var(--text-color);
-    transition: all 0.3s;
-    border-radius: 8px;
-    margin-right: 10px;
-    margin-bottom: 20px;
+    transition: background-color 0.3s;
+    position: relative;
+    clip-path: polygon(0 0, 80% 0, 85% 15%, 100% 100%, 0% 100%);
+    border-radius: 10px 0 0 0;
+    margin-left: -15px;
+    display: inline-flex;
+    align-items: center;
 }
 
 .filter-btn:first-child {
     margin-left: 0;
+    border-radius: 10px 0 0 0;
 }
 
 .filter-btn:hover {
@@ -172,8 +175,8 @@ th {
 }
 
 .filter-btn.active {
-    background-color: var(--accent-color);
-    color: white;
+    background-color: var(--table-header-bg);
+    z-index: 3;
 }
 
 

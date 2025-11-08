@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.7 - 2025-11-09
+
+### Fixed
+- **Reverted Tab Styling**: Restored original folder tab design using filter-btn class with clip-path
+- **Asset Register Tabs**: Asset filter tabs now use same tab styling as animal register
+- **Tab Appearance**: Both registers now display proper folder tabs with angled right edges
+- **CSS Restoration**: Reverted to original filter-btn styling for authentic tab look
+
 ## 1.3.6 - 2025-11-09
 
 ### Fixed
