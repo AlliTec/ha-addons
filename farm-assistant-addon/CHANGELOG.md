@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.9 - 2025-11-09
+
+### Fixed
+- **Database Field Name**: Corrected SQL field name from date_of_birth to birth_date
+- **Animal Update Error**: Fixed 500 Internal Server Error when updating animals
+- **Missing Database Fields**: Added missing fields (features, photo_path, pic, dod) to update_animal endpoint
+- **Complete Field Coverage**: Update now handles all Animal model fields properly
+
 ## 1.2.8 - 2025-11-09
 
 ### Fixed

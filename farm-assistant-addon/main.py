@@ -284,7 +284,7 @@ async def update_animal(animal_id: int, animal: Animal):
         await conn.execute("""
             UPDATE livestock_records 
             SET tag_id = $1, name = $2, gender = $3, breed = $4, 
-                date_of_birth = $5, health_status = $6, notes = $7,
+                birth_date = $5, health_status = $6, notes = $7,
                 status = $8, dam_id = $9, sire_id = $10, features = $11,
                 photo_path = $12, pic = $13, dod = $14
             WHERE id = $15
