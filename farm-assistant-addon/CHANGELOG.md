@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.1.0 - 2025-11-08
+
+### Fixed
+- **Modal Positioning**: Changed to absolute positioning with left: 50% and translateX(-50%) for perfect centering
+- **Add/Edit Forms**: Main section of add/edit pages now properly centered
+- **Layout Precision**: Eliminated left offset with precise horizontal centering
+
 ## 1.0.9 - 2025-11-08
 
 ### Fixed
