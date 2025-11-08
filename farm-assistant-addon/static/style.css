@@ -224,6 +224,11 @@ th {
     padding: 20px;
 }
 
+#animal-details-content {
+    display: flex;
+    flex-direction: column;
+}
+
 .close-modal {
     position: absolute;
     top: 15px;
@@ -291,6 +296,9 @@ th {
     background-color: var(--bg-color);
     border: 1px solid var(--accent-color);
     border-radius: 6px;
+    width: 100%;
+    clear: both;
+    display: block;
 }
 
 .details-section h3 {

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.9.93 - 2025-11-08
+
+### Fixed
+- **Offspring Position**: Fixed offspring section appearing at right instead of bottom
+- **Layout Structure**: Added flexbox column layout to ensure proper stacking
+- **Clear Positioning**: Used clear: both and display: block for proper bottom placement
+- **Full Width**: Ensured offspring section spans full width at bottom of modal
+
 ## 0.9.92 - 2025-11-08
 
 ### Fixed
