@@ -74,6 +74,132 @@ function getAnimalIcon(animalType) {
     return icons[animalType] || "fa-paw";
 }
 
+// Species-specific gender mappings
+const genderOptions = {
+    'Cattle': [
+        { value: 'Bull', text: 'Bull (intact male)' },
+        { value: 'Steer', text: 'Steer (castrated male)' },
+        { value: 'Cow', text: 'Cow (female that has calved)' },
+        { value: 'Heifer', text: 'Heifer (female that has not calved)' }
+    ],
+    'Cat': [
+        { value: 'Tom', text: 'Tom (male)' },
+        { value: 'Queen', text: 'Queen (female)' }
+    ],
+    'Dog': [
+        { value: 'Dog', text: 'Dog (male)' },
+        { value: 'Bitch', text: 'Bitch (female)' }
+    ],
+    'Sheep': [
+        { value: 'Ram', text: 'Ram (male)' },
+        { value: 'Ewe', text: 'Ewe (female)' },
+        { value: 'Wether', text: 'Wether (castrated male)' }
+    ],
+    'Goat': [
+        { value: 'Billy', text: 'Billy (male)' },
+        { value: 'Nanny', text: 'Nanny (female)' },
+        { value: 'Wether', text: 'Wether (castrated male)' }
+    ],
+    'Pig': [
+        { value: 'Boar', text: 'Boar (male)' },
+        { value: 'Barrow', text: 'Barrow (castrated male)' },
+        { value: 'Sow', text: 'Sow (female)' },
+        { value: 'Gilt', text: 'Gilt (young female that has not farrowed)' }
+    ],
+    'Horse': [
+        { value: 'Stallion', text: 'Stallion (male)' },
+        { value: 'Gelding', text: 'Gelding (castrated male)' },
+        { value: 'Mare', text: 'Mare (female)' },
+        { value: 'Filly', text: 'Filly (young female)' },
+        { value: 'Colt', text: 'Colt (young male)' }
+    ],
+    'Donkey': [
+        { value: 'Jack', text: 'Jack (male)' },
+        { value: 'Jenny', text: 'Jenny (female)' }
+    ],
+    'Goose': [
+        { value: 'Gander', text: 'Gander (male)' },
+        { value: 'Goose', text: 'Goose (female)' }
+    ],
+    'Duck': [
+        { value: 'Drake', text: 'Drake (male)' },
+        { value: 'Hen', text: 'Hen (female)' }
+    ],
+    'Turkey': [
+        { value: 'Tom', text: 'Tom (male)' },
+        { value: 'Hen', text: 'Hen (female)' }
+    ],
+    'Chicken': [
+        { value: 'Rooster', text: 'Rooster (male)' },
+        { value: 'Cockerel', text: 'Cockerel (young male)' },
+        { value: 'Hen', text: 'Hen (female)' },
+        { value: 'Pullet', text: 'Pullet (young female)' },
+        { value: 'Capon', text: 'Capon (castrated male)' }
+    ],
+    'Rabbit': [
+        { value: 'Buck', text: 'Buck (male)' },
+        { value: 'Doe', text: 'Doe (female)' }
+    ],
+    'default': [
+        { value: 'Male', text: 'Male' },
+        { value: 'Female', text: 'Female' }
+    ]
+};
+
+// Function to determine animal type from gender and breed
+function getAnimalTypeFromGender(gender, breed) {
+    if (!gender) return "Unknown";
+    
+    const genderLower = gender.toLowerCase();
+    
+    // Cattle
+    if (['bull', 'steer', 'cow', 'heifer'].includes(genderLower)) return "Cattle";
+    // Cats  
+    if (['tom', 'queen'].includes(genderLower)) return "Cat";
+    // Dogs
+    if (['dog', 'bitch'].includes(genderLower)) return "Dog";
+    // Sheep
+    if (['ram', 'ewe', 'wether'].includes(genderLower)) return "Sheep";
+    // Goats
+    if (['billy', 'nanny', 'wether'].includes(genderLower)) return "Goat";
+    // Pigs
+    if (['boar', 'barrow', 'sow', 'gilt'].includes(genderLower)) return "Pig";
+    // Horses
+    if (['stallion', 'gelding', 'mare', 'filly', 'colt'].includes(genderLower)) return "Horse";
+    // Donkeys
+    if (['jack', 'jenny'].includes(genderLower)) return "Donkey";
+    // Fowl (Chickens, Ducks, Turkeys, etc.)
+    if (['rooster', 'cockerel', 'hen', 'pullet', 'capon', 'drake'].includes(genderLower)) return "Fowl";
+    
+    // Special cases that need breed info
+    if (breed) {
+        const breedLower = breed.toLowerCase();
+        
+        // Llamas/Alpacas
+        if (['stud', 'gelding', 'female'].includes(genderLower)) {
+            if (breedLower.includes('llama')) return "Llama";
+            if (breedLower.includes('alpaca')) return "Alpaca";
+        }
+        
+        // Rabbits
+        if (['buck', 'doe'].includes(genderLower) && breedLower.includes('rabbit')) return "Rabbit";
+        
+        // Fish
+        if (['silver perch', 'barramundi', 'tilapia', 'trout', 'salmon', 'catfish'].some(fish => 
+            breedLower.includes(fish))) return "Fish";
+        
+        // Deer
+        if (['buck', 'doe'].includes(genderLower) && breedLower.includes('deer')) return "Deer";
+        
+        // Default fallback - try to guess from breed
+        if (breedLower.includes('cat')) return "Cat";
+        if (breedLower.includes('dog') || breedLower.includes('shepherd') || breedLower.includes('husky') || breedLower.includes('labrador')) return "Dog";
+        if (breedLower.includes('santa') || breedLower.includes('hereford') || breedLower.includes('angus')) return "Cattle";
+    }
+    
+    return "Other";
+}
+
 // Function to populate filter tabs dynamically
 async function populateFilterTabs() {
     try {
@@ -95,60 +221,6 @@ async function populateFilterTabs() {
         // Extract unique animal types from the actual animal records
         const animalTypeSet = new Set();
         allAnimals.forEach(animal => {
-            // Function to determine animal type from gender and breed
-            function getAnimalTypeFromGender(gender, breed) {
-                if (!gender) return "Unknown";
-                
-                const genderLower = gender.toLowerCase();
-                
-                // Cattle
-                if (['bull', 'steer', 'cow', 'heifer'].includes(genderLower)) return "Cattle";
-                // Cats  
-                if (['tom', 'queen'].includes(genderLower)) return "Cat";
-                // Dogs
-                if (['dog', 'bitch'].includes(genderLower)) return "Dog";
-                // Sheep
-                if (['ram', 'ewe', 'wether'].includes(genderLower)) return "Sheep";
-                // Goats
-                if (['billy', 'nanny', 'wether'].includes(genderLower)) return "Goat";
-                // Pigs
-                if (['boar', 'barrow', 'sow', 'gilt'].includes(genderLower)) return "Pig";
-                // Horses
-                if (['stallion', 'gelding', 'mare', 'filly', 'colt'].includes(genderLower)) return "Horse";
-                // Donkeys
-                if (['jack', 'jenny'].includes(genderLower)) return "Donkey";
-                // Fowl (Chickens, Ducks, Turkeys, etc.)
-                if (['rooster', 'cockerel', 'hen', 'pullet', 'capon', 'drake'].includes(genderLower)) return "Fowl";
-                
-                // Special cases that need breed info
-                if (breed) {
-                    const breedLower = breed.toLowerCase();
-                    
-                    // Llamas/Alpacas
-                    if (['stud', 'gelding', 'female'].includes(genderLower)) {
-                        if (breedLower.includes('llama')) return "Llama";
-                        if (breedLower.includes('alpaca')) return "Alpaca";
-                    }
-                    
-                    // Rabbits
-                    if (['buck', 'doe'].includes(genderLower) && breedLower.includes('rabbit')) return "Rabbit";
-                    
-                    // Fish
-                    if (['silver perch', 'barramundi', 'tilapia', 'trout', 'salmon', 'catfish'].some(fish => 
-                        breedLower.includes(fish))) return "Fish";
-                    
-                    // Deer
-                    if (['buck', 'doe'].includes(genderLower) && breedLower.includes('deer')) return "Deer";
-                    
-                    // Default fallback - try to guess from breed
-                    if (breedLower.includes('cat')) return "Cat";
-                    if (breedLower.includes('dog') || breedLower.includes('shepherd') || breedLower.includes('husky') || breedLower.includes('labrador')) return "Dog";
-                    if (breedLower.includes('santa') || breedLower.includes('hereford') || breedLower.includes('angus')) return "Cattle";
-                }
-                
-                return "Other";
-            }
-            
             const animalType = getAnimalTypeFromGender(animal.gender, animal.breed);
             animalTypeSet.add(animalType);
         });
@@ -169,60 +241,6 @@ async function populateFilterTabs() {
         // Count animals by type using same function as filter tabs
         const animalCounts = {};
         allAnimals.forEach(animal => {
-            // Function to determine animal type from gender and breed
-            function getAnimalTypeFromGender(gender, breed) {
-                if (!gender) return "Unknown";
-                
-                const genderLower = gender.toLowerCase();
-                
-                // Cattle
-                if (['bull', 'steer', 'cow', 'heifer'].includes(genderLower)) return "Cattle";
-                // Cats  
-                if (['tom', 'queen'].includes(genderLower)) return "Cat";
-                // Dogs
-                if (['dog', 'bitch'].includes(genderLower)) return "Dog";
-                // Sheep
-                if (['ram', 'ewe', 'wether'].includes(genderLower)) return "Sheep";
-                // Goats
-                if (['billy', 'nanny', 'wether'].includes(genderLower)) return "Goat";
-                // Pigs
-                if (['boar', 'barrow', 'sow', 'gilt'].includes(genderLower)) return "Pig";
-                // Horses
-                if (['stallion', 'gelding', 'mare', 'filly', 'colt'].includes(genderLower)) return "Horse";
-                // Donkeys
-                if (['jack', 'jenny'].includes(genderLower)) return "Donkey";
-                // Fowl (Chickens, Ducks, Turkeys, etc.)
-                if (['rooster', 'cockerel', 'hen', 'pullet', 'capon', 'drake'].includes(genderLower)) return "Fowl";
-                
-                // Special cases that need breed info
-                if (breed) {
-                    const breedLower = breed.toLowerCase();
-                    
-                    // Llamas/Alpacas
-                    if (['stud', 'gelding', 'female'].includes(genderLower)) {
-                        if (breedLower.includes('llama')) return "Llama";
-                        if (breedLower.includes('alpaca')) return "Alpaca";
-                    }
-                    
-                    // Rabbits
-                    if (['buck', 'doe'].includes(genderLower) && breedLower.includes('rabbit')) return "Rabbit";
-                    
-                    // Fish
-                    if (['silver perch', 'barramundi', 'tilapia', 'trout', 'salmon', 'catfish'].some(fish => 
-                        breedLower.includes(fish))) return "Fish";
-                    
-                    // Deer
-                    if (['buck', 'doe'].includes(genderLower) && breedLower.includes('deer')) return "Deer";
-                    
-                    // Default fallback - try to guess from breed
-                    if (breedLower.includes('cat')) return "Cat";
-                    if (breedLower.includes('dog') || breedLower.includes('shepherd') || breedLower.includes('husky') || breedLower.includes('labrador')) return "Dog";
-                    if (breedLower.includes('santa') || breedLower.includes('hereford') || breedLower.includes('angus')) return "Cattle";
-                }
-                
-                return "Other";
-            }
-            
             const type = getAnimalTypeFromGender(animal.gender, animal.breed);
             animalCounts[type] = (animalCounts[type] || 0) + 1;
         });
@@ -303,60 +321,6 @@ async function populateAnimalList(filter = "All") {
         console.log("Animals data received:", animals);
         console.log("Number of animals:", animals.length);
         
-        // Function to determine animal type from gender and breed
-        function getAnimalTypeFromGender(gender, breed) {
-            if (!gender) return "Unknown";
-            
-            const genderLower = gender.toLowerCase();
-            
-            // Cattle
-            if (['bull', 'steer', 'cow', 'heifer'].includes(genderLower)) return "Cattle";
-            // Cats  
-            if (['tom', 'queen'].includes(genderLower)) return "Cat";
-            // Dogs
-            if (['dog', 'bitch'].includes(genderLower)) return "Dog";
-            // Sheep
-            if (['ram', 'ewe', 'wether'].includes(genderLower)) return "Sheep";
-            // Goats
-            if (['billy', 'nanny', 'wether'].includes(genderLower)) return "Goat";
-            // Pigs
-            if (['boar', 'barrow', 'sow', 'gilt'].includes(genderLower)) return "Pig";
-            // Horses
-            if (['stallion', 'gelding', 'mare', 'filly', 'colt'].includes(genderLower)) return "Horse";
-            // Donkeys
-            if (['jack', 'jenny'].includes(genderLower)) return "Donkey";
-            // Fowl (Chickens, Ducks, Turkeys, etc.)
-            if (['rooster', 'cockerel', 'hen', 'pullet', 'capon', 'drake'].includes(genderLower)) return "Fowl";
-            
-            // Special cases that need breed info
-            if (breed) {
-                const breedLower = breed.toLowerCase();
-                
-                // Llamas/Alpacas
-                if (['stud', 'gelding', 'female'].includes(genderLower)) {
-                    if (breedLower.includes('llama')) return "Llama";
-                    if (breedLower.includes('alpaca')) return "Alpaca";
-                }
-                
-                // Rabbits
-                if (['buck', 'doe'].includes(genderLower) && breedLower.includes('rabbit')) return "Rabbit";
-                
-                // Fish
-                if (['silver perch', 'barramundi', 'tilapia', 'trout', 'salmon', 'catfish'].some(fish => 
-                    breedLower.includes(fish))) return "Fish";
-                
-                // Deer
-                if (['buck', 'doe'].includes(genderLower) && breedLower.includes('deer')) return "Deer";
-                
-                // Default fallback - try to guess from breed
-                if (breedLower.includes('cat')) return "Cat";
-                if (breedLower.includes('dog') || breedLower.includes('shepherd') || breedLower.includes('husky') || breedLower.includes('labrador')) return "Dog";
-                if (breedLower.includes('santa') || breedLower.includes('hereford') || breedLower.includes('angus')) return "Cattle";
-            }
-            
-            return "Other";
-        }
-        
         const filteredAnimals = filter === "All" ? animals : animals.filter(animal => getAnimalTypeFromGender(animal.gender, animal.breed) === filter);
         console.log("Filtered animals count:", filteredAnimals.length);
         
@@ -393,96 +357,202 @@ async function populateAnimalList(filter = "All") {
     }
 }
 
+// Function to open add animal form
+async function openAddAnimalForm() {
+    // Clear form data
+    document.getElementById('edit-animal-id').value = '';
+    document.getElementById('edit-tag-id').value = '';
+    document.getElementById('edit-name').value = '';
+    document.getElementById('edit-breed').value = '';
+    document.getElementById('edit-date-of-birth').value = '';
+    document.getElementById('edit-health-status').value = 'Healthy';
+    document.getElementById('edit-notes').value = '';
+    document.getElementById('edit-dam-id').value = '';
+    document.getElementById('edit-sire-id').value = '';
+    document.getElementById('edit-features').value = '';
+    document.getElementById('edit-photo-path').value = '';
+    document.getElementById('edit-pic').value = '';
+    document.getElementById('edit-status').value = 'Active';
+    
+    // Reset gender options to default
+    updateGenderOptions('');
+    
+    // Update modal title and button text
+    document.getElementById('edit-modal-title').textContent = 'Add New Animal';
+    const saveButton = document.querySelector('#edit-animal-form button[type="submit"]');
+    if (saveButton) {
+        saveButton.textContent = 'Add Animal';
+    }
+    
+    // Show modal
+    document.getElementById('edit-animal-modal').style.display = "block";
+}
 
-// Species-specific gender mappings
-const genderOptions = {
-        'Cattle': [
-            { value: 'Bull', text: 'Bull (intact male)' },
-            { value: 'Steer', text: 'Steer (castrated male)' },
-            { value: 'Cow', text: 'Cow (female that has calved)' },
-            { value: 'Heifer', text: 'Heifer (female that has not calved)' }
-        ],
-        'Cat': [
-            { value: 'Tom', text: 'Tom (male)' },
-            { value: 'Queen', text: 'Queen (female)' }
-        ],
-        'Dog': [
-            { value: 'Dog', text: 'Dog (male)' },
-            { value: 'Bitch', text: 'Bitch (female)' }
-        ],
-        'Sheep': [
-            { value: 'Ram', text: 'Ram (male)' },
-            { value: 'Ewe', text: 'Ewe (female)' },
-            { value: 'Wether', text: 'Wether (castrated male)' }
-        ],
-        'Goat': [
-            { value: 'Billy', text: 'Billy (male)' },
-            { value: 'Nanny', text: 'Nanny (female)' },
-            { value: 'Wether', text: 'Wether (castrated male)' }
-        ],
-        'Pig': [
-            { value: 'Boar', text: 'Boar (male)' },
-            { value: 'Barrow', text: 'Barrow (castrated male)' },
-            { value: 'Sow', text: 'Sow (female)' },
-            { value: 'Gilt', text: 'Gilt (young female that has not farrowed)' }
-        ],
-        'Horse': [
-            { value: 'Stallion', text: 'Stallion (male)' },
-            { value: 'Gelding', text: 'Gelding (castrated male)' },
-            { value: 'Mare', text: 'Mare (female)' },
-            { value: 'Filly', text: 'Filly (young female)' },
-            { value: 'Colt', text: 'Colt (young male)' }
-        ],
-        'Donkey': [
-            { value: 'Jack', text: 'Jack (male)' },
-            { value: 'Jenny', text: 'Jenny (female)' }
-        ],
-        'Llama': [
-            { value: 'Stud', text: 'Stud (male)' },
-            { value: 'Gelding', text: 'Gelding (castrated male)' },
-            { value: 'Female', text: 'Female' }
-        ],
-        'Alpaca': [
-            { value: 'Stud', text: 'Stud (male)' },
-            { value: 'Gelding', text: 'Gelding (castrated male)' },
-            { value: 'Female', text: 'Female' }
-        ],
-        'Goose': [
-            { value: 'Gander', text: 'Gander (male)' },
-            { value: 'Goose', text: 'Goose (female)' }
-        ],
-        'Duck': [
-            { value: 'Drake', text: 'Drake (male)' },
-            { value: 'Hen', text: 'Hen (female)' }
-        ],
-        'Turkey': [
-            { value: 'Tom', text: 'Tom (male)' },
-            { value: 'Hen', text: 'Hen (female)' }
-        ],
-        'Chicken': [
-            { value: 'Rooster', text: 'Rooster (male)' },
-            { value: 'Cockerel', text: 'Cockerel (young male)' },
-            { value: 'Hen', text: 'Hen (female)' },
-            { value: 'Pullet', text: 'Pullet (young female)' },
-            { value: 'Capon', text: 'Capon (castrated male)' }
-        ],
-        'Rabbit': [
-            { value: 'Buck', text: 'Buck (male)' },
-            { value: 'Doe', text: 'Doe (female)' }
-        ],
-        'default': [
-            { value: 'Male', text: 'Male' },
-            { value: 'Female', text: 'Female' }
-        ]
-    };
+// Function to update gender options based on category
+function updateGenderOptions(category) {
+    const genderSelect = document.getElementById('edit-gender');
+    const options = genderOptions[category] || genderOptions['default'];
+    
+    // Clear existing options
+    genderSelect.innerHTML = '';
+    
+    // Add new options
+    options.forEach(option => {
+        const optionElement = document.createElement('option');
+        optionElement.value = option.value;
+        optionElement.textContent = option.text;
+        genderSelect.appendChild(optionElement);
+    });
+}
 
+// Function to show animal details in modal
+async function showAnimalDetails(animalId) {
+    try {
+        const response = await fetch(`get_animal/${animalId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const animal = await response.json();
+        console.log("Animal details:", animal);
+
+        const animalDetailsContent = document.getElementById("animal-details-content");
+        
+        // Format offspring list
+        let offspringHtml = '';
+        if (animal.offspring && animal.offspring.length > 0) {
+            offspringHtml = animal.offspring.map(offspring => 
+                `<div style="padding: 5px; border: 1px solid #ddd; margin: 2px 0; border-radius: 3px;">
+                    <strong>${offspring.name}</strong> (${offspring.gender}, ${calculateAge(offspring.birth_date)})
+                </div>`
+            ).join('');
+        } else {
+            offspringHtml = '<div style="color: #666; font-style: italic;">No offspring recorded</div>';
+        }
+        
+        animalDetailsContent.innerHTML = `
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div>
+                    <h3>Basic Information</h3>
+                    <p><strong>Tag ID:</strong> ${formatCell(animal.tag_id)}</p>
+                    <p><strong>Name:</strong> ${formatCell(animal.name)}</p>
+                    <p><strong>Gender:</strong> ${formatCell(animal.gender)}</p>
+                    <p><strong>Breed:</strong> ${formatCell(animal.breed)}</p>
+                    <p><strong>Date of Birth:</strong> ${formatCell(animal.birth_date)}</p>
+                    <p><strong>Age:</strong> ${calculateAge(animal.birth_date)}</p>
+                    <p><strong>Status:</strong> ${getStatusIcon(animal.status)} ${animal.status}</p>
+                </div>
+                <div>
+                    <h3>Additional Information</h3>
+                    <p><strong>Health Status:</strong> ${formatCell(animal.health_status)}</p>
+                    <p><strong>Notes:</strong> ${formatCell(animal.notes)}</p>
+                    <p><strong>Features:</strong> ${formatCell(animal.features)}</p>
+                    <p><strong>Photo Path:</strong> ${formatCell(animal.photo_path)}</p>
+                    <p><strong>PIC:</strong> ${formatCell(animal.pic)}</p>
+                </div>
+            </div>
+            <div>
+                <h3>Parent Information</h3>
+                <p><strong>Dam (Mother):</strong> ${formatCell(animal.dam_name || 'Not recorded')}</p>
+                <p><strong>Sire (Father):</strong> ${formatCell(animal.sire_name || 'Not recorded')}</p>
+            </div>
+            <div>
+                <h3>Offspring</h3>
+                ${offspringHtml}
+            </div>
+        `;
+        
+        // Show modal
+        document.getElementById('animal-details-modal').style.display = "block";
+    } catch (error) {
+        console.error("Error loading animal data for details:", error);
+        alert("Error loading animal data. Please try again.");
+    }
+}
+
+// Function to enable edit mode for an animal
+async function enableEditMode(animalId) {
+    try {
+        // Fetch current animal data
+        const response = await fetch(`get_animal/${animalId}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const animal = await response.json();
+        
+        // Populate form with animal data
+        document.getElementById('edit-animal-id').value = animal.id;
+        document.getElementById('edit-tag-id').value = animal.tag_id || '';
+        document.getElementById('edit-name').value = animal.name || '';
+        document.getElementById('edit-breed').value = animal.breed || '';
+        document.getElementById('edit-date-of-birth').value = animal.birth_date || '';
+        document.getElementById('edit-health-status').value = animal.health_status || 'Healthy';
+        document.getElementById('edit-notes').value = animal.notes || '';
+        document.getElementById('edit-dam-id').value = animal.dam_id || '';
+        document.getElementById('edit-sire-id').value = animal.sire_id || '';
+        document.getElementById('edit-features').value = animal.features || '';
+        document.getElementById('edit-photo-path').value = animal.photo_path || '';
+        document.getElementById('edit-pic').value = animal.pic || '';
+        document.getElementById('edit-status').value = animal.status || 'Active';
+        
+        // Determine category from gender/breed
+        let category = 'Other';
+        const genderLower = animal.gender ? animal.gender.toLowerCase() : '';
+        
+        if (['bull', 'steer', 'cow', 'heifer'].includes(genderLower)) {
+            category = 'Cattle';
+        } else if (['tom', 'queen'].includes(genderLower)) {
+            category = 'Cat';
+        } else if (['dog', 'bitch'].includes(genderLower)) {
+            category = 'Dog';
+        } else if (['ram', 'ewe', 'wether'].includes(genderLower)) {
+            category = 'Sheep';
+        } else if (['billy', 'nanny', 'wether'].includes(genderLower)) {
+            category = 'Goat';
+        } else if (['boar', 'barrow', 'sow', 'gilt'].includes(genderLower)) {
+            category = 'Pig';
+        } else if (['stallion', 'gelding', 'mare', 'filly', 'colt'].includes(genderLower)) {
+            category = 'Horse';
+        } else if (['jack', 'jenny'].includes(genderLower)) {
+            category = 'Donkey';
+        } else if (['rooster', 'cockerel', 'hen', 'pullet', 'capon', 'drake'].includes(genderLower)) {
+            category = 'Fowl';
+        }
+        
+        // Update category dropdown to match detected type
+        document.getElementById('edit-category').value = category;
+        
+        console.log("Edit mode - Category:", category, "Animal data:", animal);
+        updateGenderOptions(category);
+        
+        // Set gender after options are populated
+        setTimeout(() => {
+            document.getElementById('edit-gender').value = animal.gender || '';
+        }, 100);
+        
+        // Update modal title and button text
+        document.getElementById('edit-modal-title').textContent = 'Edit Animal';
+        const saveButton = document.querySelector('#edit-animal-form button[type="submit"]');
+        if (saveButton) {
+            saveButton.textContent = 'Update Animal';
+        }
+        
+        // Hide details modal and show edit modal
+        document.getElementById('animal-details-modal').style.display = "none";
+        document.getElementById('edit-animal-modal').style.display = "block";
+        
+    } catch (error) {
+        console.error("Error loading animal data for edit:", error);
+        alert("Error loading animal data. Please try again.");
+    }
+}
+
+// Main initialization
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("script.js: DOMContentLoaded event fired.");
-    populateAnimalList();
-    populateFilterTabs();
-
-document.addEventListener("DOMContentLoaded", async () => {
-    console.log("script.js: DOMContentLoaded event fired.");
+    
+    // Initialize page
     populateAnimalList();
     populateFilterTabs();
 
@@ -529,7 +599,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
     });
-});
 
     const modal = document.getElementById("image-modal");
     const modalImg = document.getElementById("modal-image");
@@ -634,290 +703,76 @@ document.addEventListener("DOMContentLoaded", async () => {
     const editForm = document.getElementById('edit-animal-form');
     if (editForm) {
         editForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    
-    const animalId = document.getElementById('edit-animal-id').value;
-    const formData = new FormData(event.target);
-    console.log('Form submitted. Animal ID:', animalId, 'Is Update:', animalId && animalId !== '');
-    console.log('Form data:', Object.fromEntries(formData));
-    
-    const animalData = {
-        tag_id: formData.get('tag_id'),
-        name: formData.get('name'),
-        gender: formData.get('gender'),
-        breed: formData.get('breed'),
-        birth_date: formData.get('date_of_birth') || null,
-        health_status: formData.get('health_status') || 'Healthy',
-        notes: formData.get('notes'),
-        dam_id: formData.get('dam_id') ? parseInt(formData.get('dam_id')) : null,
-        sire_id: formData.get('sire_id') ? parseInt(formData.get('sire_id')) : null,
-        features: formData.get('features'),
-        photo_path: formData.get('photo_path'),
-        pic: formData.get('pic'),
-        dod: null, // Will be set based on status
-        status: formData.get('status')
-    };
-    
-    // Set dod if status is Deceased
-    if (animalData.status === 'Deceased') {
-        animalData.dod = new Date().toISOString().split('T')[0];
-    }
-    
-    try {
-        let response;
-        const isUpdate = animalId && animalId !== '';
-        
-        if (isUpdate) {
-            // Update existing animal
-            response = await fetch(`/update_animal/${animalId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(animalData)
-            });
-        } else {
-            // Add new animal
-            response = await fetch('/add_animal', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(animalData)
-            });
-        }
-        
-        if (response.ok) {
-            const message = isUpdate ? 'Animal updated successfully!' : 'Animal added successfully!';
-            console.log('Success:', message, 'Response:', await response.json());
-            alert(message);
-            document.getElementById('edit-animal-modal').style.display = "none";
-            populateAnimalList(); // Refresh the animal list
-        } else {
-            const error = await response.json();
-            const action = isUpdate ? 'updating' : 'adding';
-            console.error('Error:', error);
-            alert(`Error ${action} animal: ${error.detail}`);
-        }
-    } catch (error) {
-        console.error('Error saving animal:', error);
-        alert('Error saving animal. Please try again.');
-    }
-        });
-    }
-
-    // Function to show animal details in modal
-    async function showAnimalDetails(animalId) {
-    try {
-        const response = await fetch(`get_animal/${animalId}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const animal = await response.json();
-        console.log("Animal details:", animal);
-
-        const animalDetailsContent = document.getElementById("animal-details-content");
-        
-        // Format offspring list
-        let offspringHtml = '';
-        if (animal.offspring && animal.offspring.length > 0) {
-            offspringHtml = animal.offspring.map(offspring => 
-                `<div style="padding: 5px; border: 1px solid #ddd; margin: 2px 0; border-radius: 3px;">
-                    <strong>${offspring.name}</strong> (${offspring.gender}, ${calculateAge(offspring.birth_date)})
-                </div>`
-            ).join('');
-        } else {
-            offspringHtml = '<div style="color: #666; font-style: italic;">No offspring recorded</div>';
-        }
-        
-        animalDetailsContent.innerHTML = `
-            <div>Tag ID:</div><div>${formatCell(animal.tag_id)}</div>
-            <div>Name:</div><div>${formatCell(animal.name)}</div>
-            <div>Gender:</div><div>${formatCell(animal.gender)}</div>
-            <div>Breed:</div><div>${formatCell(animal.breed)}</div>
-            <div>Birth Date:</div><div>${formatCell(animal.birth_date)}</div>
-            <div>Age:</div><div>${calculateAge(animal.birth_date)}</div>
-            <div>Health Status:</div><div>${formatCell(animal.health_status)}</div>
-            <div>Status:</div><div>${getStatusIcon(animal.status)} ${formatCell(animal.status)}</div>
-            <div>Notes:</div><div>${formatCell(animal.notes)}</div>
-            <div>Dam:</div><div>${formatCell(animal.dam_name)}</div>
-            <div>Sire:</div><div>${formatCell(animal.sire_name)}</div>
-            <div>Features:</div><div>${formatCell(animal.features)}</div>
-            <div>Date of Death:</div><div>${formatCell(animal.dod)}</div>
-            <div style="grid-column: 1 / -1; margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
-                <strong>Offspring:</strong>
-            </div>
-            <div style="grid-column: 1 / -1;">
-                ${offspringHtml}
-            </div>
-        `;
-
-        // Set animal ID on action buttons
-        document.getElementById('update-animal-btn').dataset.animalId = animalId;
-        document.getElementById('delete-animal-btn').dataset.animalId = animalId;
-
-        // Show modal
-        document.getElementById('animal-details-modal').style.display = "block";
-        
-    } catch (error) {
-        console.error("Error showing animal details:", error);
-        alert("Error loading animal details");
-    }
-}
-
-    // Function to determine if gender is female
-    function isFemale(gender) {
-        if (!gender) return false;
-        const femaleTerms = ['Cow', 'Heifer', 'Ewe', 'Nanny', 'Sow', 'Gilt', 'Mare', 'Filly', 'Jenny', 'Goose', 'Hen', 'Pullet', 'Doe', 'Queen', 'Bitch'];
-        return femaleTerms.includes(gender);
-    }
-    
-    // Function to determine if gender is male
-    function isMale(gender) {
-        if (!gender) return false;
-        const maleTerms = ['Bull', 'Steer', 'Ram', 'Billy', 'Wether', 'Boar', 'Barrow', 'Stallion', 'Gelding', 'Colt', 'Jack', 'Gander', 'Drake', 'Tom', 'Rooster', 'Cockerel', 'Capon', 'Buck', 'Dog', 'Stud'];
-        return maleTerms.includes(gender);
-    }
-    
-    // Function to populate Dam/Sire dropdowns
-    async function populateParentDropdowns() {
-        try {
-            const response = await fetch('/api/animals');
-            const animals = await response.json();
+            event.preventDefault();
             
-            const damSelect = document.getElementById('edit-dam-id');
-            const sireSelect = document.getElementById('edit-sire-id');
+            const animalId = document.getElementById('edit-animal-id').value;
+            const formData = new FormData(event.target);
+            console.log('Form submitted. Animal ID:', animalId, 'Is Update:', animalId && animalId !== '');
+            console.log('Form data:', Object.fromEntries(formData));
             
-            // Clear existing options except first one
-            damSelect.innerHTML = '<option value="">Select Dam</option>';
-            sireSelect.innerHTML = '<option value="">Select Sire</option>';
+            const animalData = {
+                tag_id: formData.get('tag_id'),
+                name: formData.get('name'),
+                gender: formData.get('gender'),
+                breed: formData.get('breed'),
+                birth_date: formData.get('date_of_birth') || null,
+                health_status: formData.get('health_status') || 'Healthy',
+                notes: formData.get('notes'),
+                dam_id: formData.get('dam_id') ? parseInt(formData.get('dam_id')) : null,
+                sire_id: formData.get('sire_id') ? parseInt(formData.get('sire_id')) : null,
+                features: formData.get('features'),
+                photo_path: formData.get('photo_path'),
+                pic: formData.get('pic'),
+                dod: null, // Will be set based on status
+                status: formData.get('status')
+            };
             
-            // Filter and add animals to appropriate dropdowns
-            animals.forEach(animal => {
-                if (isFemale(animal.gender)) {
-                    const optionDam = document.createElement('option');
-                    optionDam.value = animal.id;
-                    optionDam.textContent = `${animal.name} (${animal.gender})`;
-                    damSelect.appendChild(optionDam);
+            // Set dod if status is Deceased
+            if (animalData.status === 'Deceased') {
+                animalData.dod = new Date().toISOString().split('T')[0];
+            }
+            
+            try {
+                let response;
+                const isUpdate = animalId && animalId !== '';
+                
+                if (isUpdate) {
+                    // Update existing animal
+                    response = await fetch(`/update_animal/${animalId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(animalData)
+                    });
+                } else {
+                    // Add new animal
+                    response = await fetch('add_animal', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(animalData)
+                    });
                 }
                 
-                if (isMale(animal.gender)) {
-                    const optionSire = document.createElement('option');
-                    optionSire.value = animal.id;
-                    optionSire.textContent = `${animal.name} (${animal.gender})`;
-                    sireSelect.appendChild(optionSire);
+                if (response.ok) {
+                    const message = isUpdate ? 'Animal updated successfully!' : 'Animal added successfully!';
+                    console.log('Success:', message, 'Response:', await response.json());
+                    alert(message);
+                    document.getElementById('edit-animal-modal').style.display = "none";
+                    populateAnimalList(); // Refresh the animal list
+                    populateFilterTabs(); // Refresh filter tabs
+                } else {
+                    const error = await response.json();
+                    const action = isUpdate ? 'updating' : 'adding';
+                    console.error('Error:', error);
+                    alert(`Error ${action} animal: ${error.detail}`);
                 }
-            });
-        } catch (error) {
-            console.error('Error populating parent dropdowns:', error);
-        }
-    }
-
-    // Function to open add animal form
-    async function openAddAnimalForm() {
-        // Clear the edit form for new animal
-        document.getElementById('edit-animal-id').value = '';
-        document.getElementById('edit-tag-id').value = '';
-        document.getElementById('edit-name').value = '';
-        document.getElementById('edit-breed').value = '';
-        document.getElementById('edit-date-of-birth').value = '';
-        document.getElementById('edit-features').value = '';
-        document.getElementById('edit-health-status').value = '';
-        document.getElementById('edit-photo-path').value = '';
-        document.getElementById('edit-pic').value = '';
-        document.getElementById('edit-category').value = '';
-        document.getElementById('edit-status').value = 'Active';
-        document.getElementById('edit-notes').value = '';
-        
-        // Reset gender options to default
-        updateGenderOptions('');
-        
-        // Populate parent dropdowns
-        await populateParentDropdowns();
-        
-        // Show edit modal with "Add Animal" title
-        const editModal = document.getElementById('edit-animal-modal');
-        const modalTitle = editModal.querySelector('h2');
-        if (modalTitle) {
-            modalTitle.textContent = 'Add New Animal';
-        }
-        
-        // Change save button text
-        const saveButton = document.querySelector('#edit-animal-form button[type="submit"]');
-        if (saveButton) {
-            saveButton.innerHTML = '<i class="fa-solid fa-save"></i> Add Animal';
-        }
-        
-        editModal.style.display = "block";
-    }
-
-    // Function to enable edit mode
-async function enableEditMode(animalId) {
-    try {
-        // Fetch current animal data
-        const response = await fetch(`get_animal/${animalId}`);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const animal = await response.json();
-        
-        // Populate parent dropdowns first
-        await populateParentDropdowns();
-        
-        // Populate the edit form
-        document.getElementById('edit-animal-id').value = animal.id;
-        document.getElementById('edit-tag-id').value = animal.tag_id || '';
-        document.getElementById('edit-name').value = animal.name || '';
-        document.getElementById('edit-breed').value = animal.breed || '';
-        document.getElementById('edit-date-of-birth').value = animal.birth_date ? animal.birth_date.split('T')[0] : '';
-        document.getElementById('edit-features').value = animal.features || '';
-        document.getElementById('edit-dam-id').value = animal.dam_id || '';
-        document.getElementById('edit-sire-id').value = animal.sire_id || '';
-        document.getElementById('edit-health-status').value = animal.health_status || '';
-        document.getElementById('edit-photo-path').value = animal.photo_path || '';
-        document.getElementById('edit-pic').value = animal.pic || '';
-        document.getElementById('edit-category').value = animal.category || '';
-        document.getElementById('edit-status').value = animal.status || 'Active';
-        document.getElementById('edit-notes').value = animal.notes || '';
-        
-        // Set gender options based on category first, then set the current gender value
-        let category = animal.category || '';
-        
-        // If no category, try to detect from gender
-        if (!category && animal.gender) {
-            if (animal.gender === 'Cow' || animal.gender === 'Bull' || animal.gender === 'Steer' || animal.gender === 'Heifer') {
-                category = 'Cattle';
-            } else if (animal.gender === 'Tom' || animal.gender === 'Queen') {
-                category = 'Cat';
-            } else if (animal.gender === 'Dog' || animal.gender === 'Bitch') {
-                category = 'Dog';
-            } else if (animal.gender === 'Ram' || animal.gender === 'Ewe' || animal.gender === 'Wether') {
-                category = 'Sheep';
-            } else if (animal.gender === 'Billy' || animal.gender === 'Nanny' || animal.gender === 'Wether') {
-                category = 'Goat';
-            } else if (animal.gender === 'Boar' || animal.gender === 'Sow' || animal.gender === 'Barrow' || animal.gender === 'Gilt') {
-                category = 'Pig';
+            } catch (error) {
+                console.error('Error saving animal:', error);
+                alert('Error saving animal. Please try again.');
             }
-            // Update the category dropdown to match detected type
-            document.getElementById('edit-category').value = category;
-        }
-        
-        console.log("Edit mode - Category:", category, "Animal data:", animal);
-        updateGenderOptions(category);
-        
-        // Set gender after options are populated
-        setTimeout(() => {
-            document.getElementById('edit-gender').value = animal.gender || '';
-        }, 100);
-        
-        // Hide details modal and show edit modal
-        document.getElementById('animal-details-modal').style.display = "none";
-        document.getElementById('edit-animal-modal').style.display = "block";
-        
-    } catch (error) {
-        console.error("Error loading animal data for edit:", error);
-        alert("Error loading animal data. Please try again.");
+        });
     }
-}
+});
