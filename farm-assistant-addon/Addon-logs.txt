@@ -11,88 +11,88 @@
  Filtered animals count: 28
  Processing animal 1: Object
  Calculating age for birthDate: 2019-07-01 type: string
- Parsed birth date: Mon Jul 01 2019 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Mon Jul 01 2019 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 2: Object
  Calculating age for birthDate: 2024-09-24 type: string
- Parsed birth date: Tue Sep 24 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Tue Sep 24 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 3: Object
  Calculating age for birthDate: 2008-07-01 type: string
- Parsed birth date: Tue Jul 01 2008 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Tue Jul 01 2008 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 4: Object
  Calculating age for birthDate: 2018-07-01 type: string
- Parsed birth date: Sun Jul 01 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Sun Jul 01 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 5: Object
  Calculating age for birthDate: 2025-08-26 type: string
- Parsed birth date: Tue Aug 26 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Tue Aug 26 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 6: Object
  Calculating age for birthDate: 2024-04-10 type: string
- Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 7: Object
  Calculating age for birthDate: 2023-12-21 type: string
- Parsed birth date: Thu Dec 21 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Thu Dec 21 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 8: Object
  Calculating age for birthDate: 2020-07-01 type: string
- Parsed birth date: Wed Jul 01 2020 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Wed Jul 01 2020 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 9: Object
  Calculating age for birthDate: 2015-08-08 type: string
- Parsed birth date: Sat Aug 08 2015 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Sat Aug 08 2015 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 10: Object
  Calculating age for birthDate: 2024-04-10 type: string
- Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 11: Object
  Calculating age for birthDate: 2023-07-01 type: string
- Parsed birth date: Sat Jul 01 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Sat Jul 01 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 12: Object
  Calculating age for birthDate: 2025-04-04 type: string
- Parsed birth date: Fri Apr 04 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Fri Apr 04 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 13: Object
  Calculating age for birthDate: 2024-09-18 type: string
- Parsed birth date: Wed Sep 18 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Parsed birth date: Wed Sep 18 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
  Processing animal 14: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-12-08 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Sun Dec 08 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=1.0.1&t=:350 Processing animal 15: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2021-07-01 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Thu Jul 01 2021 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=1.0.1&t=:350 Processing animal 16: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2018-02-18 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Sun Feb 18 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=1.0.1&t=:350 Processing animal 17: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2018-07-01 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Sun Jul 01 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=1.0.1&t=:350 Processing animal 18: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2005-07-01 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Fri Jul 01 2005 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=1.0.1&t=:350 Processing animal 19: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2003-07-01 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Tue Jul 01 2003 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=1.0.1&t=:350 Processing animal 20: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-04-10 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=1.0.1&t=:350 Processing animal 21: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2007-07-01 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Sun Jul 01 2007 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=1.0.1&t=:350 Processing animal 22: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-04-10 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=1.0.1&t=:350 Processing animal 23: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-03-18 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Mon Mar 18 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=1.0.1&t=:350 Processing animal 24: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2014-08-15 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Fri Aug 15 2014 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=1.0.1&t=:350 Processing animal 25: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2023-07-01 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Sat Jul 01 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=1.0.1&t=:350 Processing animal 26: Object
-script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-10-05 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Sat Oct 05 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+ Calculating age for birthDate: 2024-12-08 type: string
+ Parsed birth date: Sun Dec 08 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
+ Processing animal 15: Object
+ Calculating age for birthDate: 2021-07-01 type: string
+ Parsed birth date: Thu Jul 01 2021 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
+ Processing animal 16: Object
+ Calculating age for birthDate: 2018-02-18 type: string
+ Parsed birth date: Sun Feb 18 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
+ Processing animal 17: Object
+ Calculating age for birthDate: 2018-07-01 type: string
+ Parsed birth date: Sun Jul 01 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
+ Processing animal 18: Object
+ Calculating age for birthDate: 2005-07-01 type: string
+ Parsed birth date: Fri Jul 01 2005 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
+ Processing animal 19: Object
+ Calculating age for birthDate: 2003-07-01 type: string
+ Parsed birth date: Tue Jul 01 2003 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
+ Processing animal 20: Object
+ Calculating age for birthDate: 2024-04-10 type: string
+ Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
+ Processing animal 21: Object
+ Calculating age for birthDate: 2007-07-01 type: string
+ Parsed birth date: Sun Jul 01 2007 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
+ Processing animal 22: Object
+ Calculating age for birthDate: 2024-04-10 type: string
+ Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
+ Processing animal 23: Object
+ Calculating age for birthDate: 2024-03-18 type: string
+ Parsed birth date: Mon Mar 18 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
+ Processing animal 24: Object
+ Calculating age for birthDate: 2014-08-15 type: string
+ Parsed birth date: Fri Aug 15 2014 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
+ Processing animal 25: Object
+ Calculating age for birthDate: 2023-07-01 type: string
+ Parsed birth date: Sat Jul 01 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
+ Processing animal 26: Object
+ Calculating age for birthDate: 2024-10-05 type: string
+ Parsed birth date: Sat Oct 05 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
 script.js?v=1.0.1&t=:350 Processing animal 27: Object
 script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2025-10-29 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Wed Oct 29 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Oct 29 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
 script.js?v=1.0.1&t=:350 Processing animal 28: Object
 script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-04-10 type: string
-script.js?v=1.0.1&t=:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 00:00:04 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:42 GMT+1000 (Australian Eastern Standard Time)
 script.js?v=1.0.1&t=:365 Table population completed
 script.js?v=1.0.1&t=:218 Animals response status: 200
 script.js?v=1.0.1&t=:226 All animals: Array(28)
@@ -156,25 +156,57 @@ script.js?v=1.0.1&t=:294 Creating tab for Cattle with count: 15
 script.js?v=1.0.1&t=:294 Creating tab for Dog with count: 3
 script.js?v=1.0.1&t=:294 Creating tab for Fowl with count: 6
 script.js?v=1.0.1&t=:318 Filter tabs populated successfully with counts: Object
-script.js?v=1.0.1&t=:716 populateAssetList called
-script.js?v=1.0.1&t=:718 Assets fetch response status: 200
-script.js?v=1.0.1&t=:725 Assets data received: Array(6)
-script.js?v=1.0.1&t=:726 Number of assets: 6
-script.js?v=1.0.1&t=:737 Processing asset 1: Object
-script.js?v=1.0.1&t=:737 Processing asset 2: Object
-script.js?v=1.0.1&t=:737 Processing asset 3: Object
-script.js?v=1.0.1&t=:737 Processing asset 4: Object
-script.js?v=1.0.1&t=:737 Processing asset 5: Object
-script.js?v=1.0.1&t=:737 Processing asset 6: Object
-script.js?v=1.0.1&t=:909 Error enabling asset edit mode: TypeError: Cannot set properties of null (setting 'value')
-    at enableAssetEditMode (script.js?v=1.0.1&t=:867:71)
-    at async HTMLDocument.<anonymous> (script.js?v=1.0.1&t=:1055:13)
-enableAssetEditMode @ script.js?v=1.0.1&t=:909
-script.js?v=1.0.1&t=:909 Error enabling asset edit mode: TypeError: Cannot set properties of null (setting 'value')
-    at enableAssetEditMode (script.js?v=1.0.1&t=:867:71)
-    at async HTMLDocument.<anonymous> (script.js?v=1.0.1&t=:1055:13)
-enableAssetEditMode @ script.js?v=1.0.1&t=:909
-script.js?v=1.0.1&t=:845 Uncaught (in promise) TypeError: Cannot set properties of null (setting 'value')
-    at HTMLButtonElement.openAddAssetForm (script.js?v=1.0.1&t=:845:62)
-script.js?v=1.0.1&t=:845 Uncaught (in promise) TypeError: Cannot set properties of null (setting 'value')
-    at HTMLButtonElement.openAddAssetForm (script.js?v=1.0.1&t=:845:62)
+script.js?v=1.0.1&t=:496 Animal details: Object
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-10-05 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sat Oct 05 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:50 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2019-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Mon Jul 01 2019 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:50 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:496 Animal details: Object
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-10-05 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sat Oct 05 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:56 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-09-24 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Tue Sep 24 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:56 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-09-18 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Sep 18 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:56 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2023-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sat Jul 01 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:56 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2023-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sat Jul 01 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:56 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2021-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Thu Jul 01 2021 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:56 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2020-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Jul 01 2020 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:56 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2007-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sun Jul 01 2007 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:56 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2008-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Tue Jul 01 2008 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:55:56 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:496 Animal details: Object
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2025-10-29 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Wed Oct 29 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:56:06 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2025-08-26 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Tue Aug 26 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:56:06 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2018-07-01 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Sun Jul 01 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:56:06 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:496 Animal details: Object
+script.js?v=1.0.1&t=:8 Calculating age for birthDate: 2024-09-24 type: string
+script.js?v=1.0.1&t=:22 Parsed birth date: Tue Sep 24 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Sun Nov 09 2025 05:56:19 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=1.0.1&t=:642 Edit mode - Category: Cattle Animal data: Object
+script.js?v=1.0.1&t=:373 populateParentDropdowns called
+script.js?v=1.0.1&t=:376 Animals response status: 200
+script.js?v=1.0.1&t=:382 All animals received: 28
+script.js?v=1.0.1&t=:387 Dam select element: <select id=​"edit-dam-id" name=​"dam_id">​…​</select>​
+script.js?v=1.0.1&t=:388 Sire select element: <select id=​"edit-sire-id" name=​"sire_id">​…​</select>​
+script.js?v=1.0.1&t=:403 Female animals found: 17
+script.js?v=1.0.1&t=:416 Male animals found: 11
+script.js?v=1.0.1&t=:425 Dam select options count: 18
+script.js?v=1.0.1&t=:426 Sire select options count: 12
+script.js?v=1.0.1&t=:1139 Form submitted. Animal ID: 15 Is Update: true
+script.js?v=1.0.1&t=:1140 Form data: Object
+:8123/api/hassio_ingress/E-cW3ksrmsjgl9U53YJMYeHxTZ5U1YAyZBGWznjqqM4/update_animal/15:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+script.js?v=1.0.1&t=:1198 Error response: Internal Server Error
+(anonymous) @ script.js?v=1.0.1&t=:1198
+script.js?v=1.0.1&t=:1139 Form submitted. Animal ID: 15 Is Update: true
+script.js?v=1.0.1&t=:1140 Form data: Object
+:8123/api/hassio_ingress/E-cW3ksrmsjgl9U53YJMYeHxTZ5U1YAyZBGWznjqqM4/update_animal/15:1  Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+script.js?v=1.0.1&t=:1198 Error response: Internal Server Error
+(anonymous) @ script.js?v=1.0.1&t=:1198

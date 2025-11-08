@@ -285,11 +285,13 @@ async def update_animal(animal_id: int, animal: Animal):
             UPDATE livestock_records 
             SET tag_id = $1, name = $2, gender = $3, breed = $4, 
                 date_of_birth = $5, health_status = $6, notes = $7,
-                status = $8, dam_id = $9, sire_id = $10
-            WHERE id = $11
+                status = $8, dam_id = $9, sire_id = $10, features = $11,
+                photo_path = $12, pic = $13, dod = $14
+            WHERE id = $15
         """, animal.tag_id, animal.name, animal.gender, animal.breed,
-            animal.date_of_birth, animal.health_status, animal.notes,
-            animal.status, animal.dam_id, animal.sire_id, animal_id)
+            animal.birth_date, animal.health_status, animal.notes,
+            animal.status, animal.dam_id, animal.sire_id, animal.features,
+            animal.photo_path, animal.pic, animal.dod, animal_id)
         return {"message": "Animal updated successfully"}
     finally:
         await conn.close()
