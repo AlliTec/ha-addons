@@ -1,83 +1,3 @@
-  File "/usr/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
-    raise exc
-  File "/usr/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
-    await self.app(scope, receive, _send)
-  File "/usr/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
-    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "/usr/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "/usr/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
-    await self.app(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
-    await route.handle(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
-    await self.app(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/fastapi/routing.py", line 125, in app
-    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "/usr/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "/usr/lib/python3.12/site-packages/fastapi/routing.py", line 111, in app
-    response = await f(request)
-               ^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/fastapi/routing.py", line 391, in app
-    raw_response = await run_endpoint_function(
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/fastapi/routing.py", line 290, in run_endpoint_function
-    return await dependant.call(**values)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/app/main.py", line 284, in update_animal
-    await conn.execute("""
-  File "/usr/lib/python3.12/site-packages/asyncpg/connection.py", line 352, in execute
-    _, status, _ = await self._execute(
-                   ^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/asyncpg/connection.py", line 1864, in _execute
-    result, _ = await self.__execute(
-                ^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/asyncpg/connection.py", line 1961, in __execute
-    result, stmt = await self._do_execute(
-                   ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/asyncpg/connection.py", line 2024, in _do_execute
-    result = await executor(stmt, None)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "asyncpg/protocol/protocol.pyx", line 185, in bind_execute
-  File "asyncpg/protocol/prepared_stmt.pyx", line 204, in asyncpg.protocol.protocol.PreparedStatementState._encode_bind_msg
-asyncpg.exceptions.DataError: invalid input for query argument $5: '2024-09-24' ('str' object has no attribute 'toordinal')
-s6-rc: info: service legacy-services: stopping
-s6-rc: info: service legacy-services successfully stopped
-s6-rc: info: service legacy-cont-init: stopping
-s6-rc: info: service legacy-cont-init successfully stopped
-s6-rc: info: service fix-attrs: stopping
-s6-rc: info: service fix-attrs successfully stopped
-s6-rc: info: service s6rc-oneshot-runner: stopping
-s6-rc: info: service s6rc-oneshot-runner successfully stopped
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [94]
-s6-rc: info: service s6rc-oneshot-runner: starting
-s6-rc: info: service s6rc-oneshot-runner successfully started
-s6-rc: info: service fix-attrs: starting
-s6-rc: info: service fix-attrs successfully started
-s6-rc: info: service legacy-cont-init: starting
-s6-rc: info: service legacy-cont-init successfully started
-s6-rc: info: service legacy-services: starting
-s6-rc: info: service legacy-services successfully started
-[06:06:25] INFO: Starting Farm Assistant Addon...
-[06:06:25] INFO: Current directory: /
-[06:06:25] INFO: Listing files in /app...
-total 44
-drwxr-xr-x    1 root     root          4096 Nov  9 06:06 .
-drwxr-xr-x    1 root     root          4096 Nov  9 06:06 ..
--rw-r--r--    1 root     root         21124 Nov  9 06:06 main.py
-drwxr-xr-x    1 root     root          4096 Nov  9 00:30 static
-drwxr-xr-x    1 root     root          4096 Nov  9 00:30 templates
-[06:06:25] INFO: Checking main.py for syntax...
 [06:06:25] INFO: Syntax check finished with status: 0
 [06:06:25] INFO: Attempting to start Uvicorn...
 2025-11-09 06:06:27,159 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
@@ -98,3 +18,83 @@ INFO:     172.30.32.2:46292 - "GET /api/animals HTTP/1.1" 200 OK
 2025-11-09 06:06:51,458 - INFO - Updating animal 15 with data: tag_id='12345-14' name='Digr' gender='Bull' breed='Santa Gertrudis' birth_date='2024-09-24' health_status='On Property' notes='' dam_id=7 sire_id=15 features='Large Calf Chocolate Brown Healthy' photo_path='' pic='' dod=None status='Active'
 2025-11-09 06:06:51,466 - ERROR - Error updating animal 15: invalid input for query argument $5: '2024-09-24' ('str' object has no attribute 'toordinal')
 INFO:     172.30.32.2:55592 - "PUT /update_animal/15 HTTP/1.1" 500 Internal Server Error
+s6-rc: info: service legacy-services: stopping
+s6-rc: info: service legacy-services successfully stopped
+s6-rc: info: service legacy-cont-init: stopping
+s6-rc: info: service legacy-cont-init successfully stopped
+s6-rc: info: service fix-attrs: stopping
+s6-rc: info: service fix-attrs successfully stopped
+s6-rc: info: service s6rc-oneshot-runner: stopping
+s6-rc: info: service s6rc-oneshot-runner successfully stopped
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93]
+s6-rc: info: service s6rc-oneshot-runner: starting
+s6-rc: info: service s6rc-oneshot-runner successfully started
+s6-rc: info: service fix-attrs: starting
+s6-rc: info: service fix-attrs successfully started
+s6-rc: info: service legacy-cont-init: starting
+s6-rc: info: service legacy-cont-init successfully started
+s6-rc: info: service legacy-services: starting
+s6-rc: info: service legacy-services successfully started
+[06:12:12] INFO: Starting Farm Assistant Addon...
+[06:12:12] INFO: Current directory: /
+[06:12:12] INFO: Listing files in /app...
+total 44
+drwxr-xr-x    1 root     root          4096 Nov  9 06:12 .
+drwxr-xr-x    1 root     root          4096 Nov  9 06:12 ..
+-rw-r--r--    1 root     root         21383 Nov  9 06:11 main.py
+drwxr-xr-x    1 root     root          4096 Nov  9 00:30 static
+drwxr-xr-x    1 root     root          4096 Nov  9 00:30 templates
+[06:12:12] INFO: Checking main.py for syntax...
+[06:12:12] INFO: Syntax check finished with status: 0
+[06:12:12] INFO: Attempting to start Uvicorn...
+2025-11-09 06:12:14,202 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [93]
+INFO:     Waiting for application startup.
+2025-11-09 06:12:14,234 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-09 06:12:14,339 - INFO - Database connection successful.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     172.30.32.2:60418 - "GET / HTTP/1.1" 200 OK
+2025-11-09 06:12:15,416 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:60418 - "GET /get_animals HTTP/1.1" 200 OK
+2025-11-09 06:12:15,548 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:60418 - "GET /get_animals HTTP/1.1" 200 OK
+INFO:     172.30.32.2:60418 - "GET /get_animal/15 HTTP/1.1" 200 OK
+INFO:     172.30.32.2:60418 - "GET /get_animal/15 HTTP/1.1" 200 OK
+INFO:     172.30.32.2:60418 - "GET /api/animals HTTP/1.1" 200 OK
+2025-11-09 06:12:31,747 - INFO - Updating animal 15 with data: tag_id='12345-14' name='Digr' gender='Bull' breed='Santa Gertrudis' birth_date='2024-09-24' health_status='On Property' notes='' dam_id=7 sire_id=8 features='Large Calf Chocolate Brown Healthy' photo_path='' pic='' dod=None status='Active'
+2025-11-09 06:12:31,773 - INFO - Animal 15 updated successfully
+INFO:     172.30.32.2:56262 - "PUT /update_animal/15 HTTP/1.1" 200 OK
+2025-11-09 06:12:35,262 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:56262 - "GET /get_animals HTTP/1.1" 200 OK
+2025-11-09 06:12:35,402 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:56262 - "GET /get_animals HTTP/1.1" 200 OK
+INFO:     172.30.32.2:56262 - "GET /get_animal/15 HTTP/1.1" 200 OK
+INFO:     172.30.32.2:42008 - "GET / HTTP/1.1" 200 OK
+2025-11-09 06:12:46,457 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:42008 - "GET /get_animals HTTP/1.1" 200 OK
+2025-11-09 06:12:46,588 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:42008 - "GET /get_animals HTTP/1.1" 200 OK
+INFO:     172.30.32.2:42008 - "GET /get_animal/15 HTTP/1.1" 200 OK
+INFO:     172.30.32.2:42008 - "GET /get_animal/15 HTTP/1.1" 200 OK
+INFO:     172.30.32.2:42008 - "GET /api/animals HTTP/1.1" 200 OK
+2025-11-09 06:13:07,877 - INFO - Updating animal 15 with data: tag_id='12345-14' name='Digr' gender='Bull' breed='Santa Gertrudis' birth_date='2024-09-24' health_status='On Property' notes='' dam_id=7 sire_id=8 features='Large Calf Chocolate Brown Healthy' photo_path='' pic='' dod=None status='Active'
+2025-11-09 06:13:07,899 - INFO - Animal 15 updated successfully
+INFO:     172.30.32.2:47916 - "PUT /update_animal/15 HTTP/1.1" 200 OK
+2025-11-09 06:13:14,486 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:56060 - "GET /get_animals HTTP/1.1" 200 OK
+2025-11-09 06:13:14,644 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:56060 - "GET /get_animals HTTP/1.1" 200 OK
+INFO:     172.30.32.2:36756 - "GET /get_animal/15 HTTP/1.1" 200 OK
+INFO:     172.30.32.2:36756 - "GET /get_animal/15 HTTP/1.1" 200 OK
+INFO:     172.30.32.2:36756 - "GET /api/animals HTTP/1.1" 200 OK
+2025-11-09 06:17:09,435 - INFO - Updating animal 15 with data: tag_id='12345-14' name='Digr' gender='Bull' breed='Santa Gertrudis' birth_date='2024-09-24' health_status='On Property' notes='' dam_id=7 sire_id=8 features='Large Calf Chocolate Brown Healthy' photo_path='' pic='' dod=None status='Active'
+2025-11-09 06:17:09,453 - INFO - Animal 15 updated successfully
+INFO:     172.30.32.2:44296 - "PUT /update_animal/15 HTTP/1.1" 200 OK
+2025-11-09 06:17:11,126 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:44296 - "GET /get_animals HTTP/1.1" 200 OK
+2025-11-09 06:17:11,270 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:44296 - "GET /get_animals HTTP/1.1" 200 OK

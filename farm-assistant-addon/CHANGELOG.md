@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.2 - 2025-11-09
+
+### Fixed
+- **Missing Parent Names**: Added dam_name and sire_name to get_animal endpoint
+- **Parent Display**: Animal details modal now shows parent names instead of just IDs
+- **Database Query**: Modified query to include subqueries for parent name lookup
+- **Complete Details**: Animal details now properly displays dam (mother) and sire (father) information
+
 ## 1.3.1 - 2025-11-09
 
 ### Fixed

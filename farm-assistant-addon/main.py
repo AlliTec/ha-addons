@@ -222,7 +222,14 @@ async def get_available_animal_types():
 async def get_animal(animal_id: int):
     try:
         conn = await asyncpg.connect(DATABASE_URL)
-        record = await conn.fetchrow("SELECT id, tag_id, name, breed, birth_date, gender, health_status, notes, created_at, dam_id, sire_id, status, features, photo_path, pic, dod FROM livestock_records WHERE id = $1", animal_id)
+        record = await conn.fetchrow("""
+            SELECT id, tag_id, name, breed, birth_date, gender, health_status, notes, created_at, 
+                   dam_id, sire_id, status, features, photo_path, pic, dod,
+                   (SELECT name FROM livestock_records WHERE id = lr.dam_id) as dam_name,
+                   (SELECT name FROM livestock_records WHERE id = lr.sire_id) as sire_name
+            FROM livestock_records lr 
+            WHERE lr.id = $1
+        """, animal_id)
         
         # Get offspring (animals where this animal is dam or sire)
         offspring = await conn.fetch("""
