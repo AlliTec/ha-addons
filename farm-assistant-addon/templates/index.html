@@ -10,23 +10,65 @@
 <body>
     <h1>Farm Assistant</h1>
     <div class="heading-container">
-        <h2>Farm Management</h2>
+        <h2>Livestock List</h2>
     </div>
-    <div id="filter-bar">
-        <!-- Filter tabs will be dynamically populated here -->
+    
+    <!-- Main Section Tabs -->
+    <div id="section-tabs">
+        <button class="section-tab active" data-section="livestock">
+            <i class="fa-solid fa-cow"></i> Livestock Register
+        </button>
+        <button class="section-tab" data-section="assets">
+            <i class="fa-solid fa-tractor"></i> Asset Register
+        </button>
     </div>
-    <table id="main-list">
-        <thead id="table-header">
-            <tr>
-                <th>Name</th>
-                <th>Gender</th>
-                <th>Status</th>
-                <th>Age</th>
-            </tr>
-        </thead>
+    
+    <!-- Livestock Section -->
+    <div id="livestock-section" class="section-content">
+        <div id="filter-bar">
+            <!-- Filter tabs will be dynamically populated here -->
+        </div>
+        <table id="livestock-list">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Status</th>
+                    <th>Age</th>
+                </tr>
+            </thead>
          <tbody>
         </tbody>
     </table>
+    </div>
+    
+    <!-- Assets Section -->
+    <div id="assets-section" class="section-content" style="display: none;">
+        <h2>Asset Register</h2>
+        <div id="assets-filter-bar">
+            <!-- Assets filter tabs will be dynamically populated here -->
+        </div>
+        <table id="assets-list">
+            <thead>
+                <tr>
+                    <th>Asset Name</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Last Maintenance</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 40px; color: var(--text-color);">
+                        <i class="fa-solid fa-tractor" style="font-size: 3em; margin-bottom: 15px; display: block; color: var(--accent-color);"></i>
+                        <h3>Asset Register</h3>
+                        <p>Farm Asset and Maintenance functionality coming soon...</p>
+                        <small>This section will include equipment, buildings, vehicles, and maintenance records</small>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
 
 

@@ -256,38 +256,24 @@ async function populateFilterTabs() {
             console.log(`Animal: ${animal.name}, Gender: ${animal.gender}, Breed: ${animal.breed}, Type: ${type}, Status: ${animal.status}`);
         });
         
-        // Add "Livestock" tab with total count of active animals
-        const livestockButton = document.createElement("button");
-        livestockButton.className = "filter-btn active";
-        livestockButton.dataset.filter = "Livestock";
+        // Add "All" tab with total count of active animals
+        const allButton = document.createElement("button");
+        allButton.className = "filter-btn active";
+        allButton.dataset.filter = "All";
         
-        const livestockIcon = document.createElement("i");
-        livestockIcon.className = `fa-solid ${getAnimalIcon("All")}`;
+        const allIcon = document.createElement("i");
+        allIcon.className = `fa-solid ${getAnimalIcon("All")}`;
         
-        const livestockCount = document.createElement("sup");
-        livestockCount.style.cssText = "font-size: 0.7em; margin-left: 2px; color: var(--accent-color);";
-        livestockCount.textContent = `(${activeAnimals.length})`;
+        const allCount = document.createElement("sup");
+        allCount.style.cssText = "font-size: 0.7em; margin-left: 2px; color: var(--accent-color);";
+        allCount.textContent = `(${activeAnimals.length})`;
         
-        const livestockText = document.createTextNode(" Livestock");
+        const allText = document.createTextNode(" All");
         
-        livestockButton.appendChild(livestockIcon);
-        livestockButton.appendChild(livestockText);
-        livestockButton.appendChild(livestockCount);
-        filterBar.appendChild(livestockButton);
-        
-        // Add "Assets" tab
-        const assetsButton = document.createElement("button");
-        assetsButton.className = "filter-btn";
-        assetsButton.dataset.filter = "Assets";
-        
-        const assetsIcon = document.createElement("i");
-        assetsIcon.className = "fa-solid fa-tractor";
-        
-        const assetsText = document.createTextNode(" Assets");
-        
-        assetsButton.appendChild(assetsIcon);
-        assetsButton.appendChild(assetsText);
-        filterBar.appendChild(assetsButton);
+        allButton.appendChild(allIcon);
+        allButton.appendChild(allText);
+        allButton.appendChild(allCount);
+        filterBar.appendChild(allButton);
         
         // Add tabs for each animal type with counts
         animalTypes.slice(1).forEach(animalType => {
@@ -349,56 +335,18 @@ async function populateAnimalList(filter = "All") {
         console.log("Animals data received:", animals);
         console.log("Number of animals:", animals.length);
         
-        let filteredAnimals;
-        if (filter === "Livestock" || filter === "All") {
-            filteredAnimals = animals;
-        } else if (filter === "Assets") {
-            // For now, show empty assets list - will implement assets functionality
-            filteredAnimals = [];
-        } else {
-            filteredAnimals = animals.filter(animal => getAnimalTypeFromGender(animal.gender, animal.breed) === filter);
-        }
+        const filteredAnimals = filter === "All" ? animals : animals.filter(animal => getAnimalTypeFromGender(animal.gender, animal.breed) === filter);
         console.log("Filtered animals count:", filteredAnimals.length);
         
-        const tableBody = document.querySelector("#main-list tbody");
-        const tableHeader = document.querySelector("#table-header tr");
+        const tableBody = document.querySelector("#livestock-list tbody");
         if (!tableBody) {
             console.error("Table body not found!");
             return;
         }
         
-        // Update table header based on filter
-        if (filter === "Assets") {
-            tableHeader.innerHTML = `
-                <th>Asset Name</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Last Maintenance</th>
-            `;
-        } else {
-            tableHeader.innerHTML = `
-                <th>Name</th>
-                <th>Gender</th>
-                <th>Status</th>
-                <th>Age</th>
-            `;
-        }
-        
         tableBody.innerHTML = ""; // Clear existing rows
 
-        if (filter === "Assets") {
-            // Show assets placeholder
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td colspan="4" style="text-align: center; padding: 20px; color: var(--text-color);">
-                    <i class="fa-solid fa-tractor" style="font-size: 2em; margin-bottom: 10px; display: block;"></i>
-                    Farm Assets module coming soon...
-                    <br><small>This will include equipment, buildings, and maintenance records</small>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        } else {
-            filteredAnimals.forEach((animal, index) => {
+        filteredAnimals.forEach((animal, index) => {
             console.log(`Processing animal ${index + 1}:`, animal);
             
             const row = document.createElement("tr");
@@ -412,8 +360,7 @@ async function populateAnimalList(filter = "All") {
             `;
 
             tableBody.appendChild(row);
-            });
-        }
+        });
         
         console.log("Table population completed");
     } catch (error) {
@@ -728,8 +675,37 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("script.js: DOMContentLoaded event fired.");
     
     // Initialize page
-    populateAnimalList("Livestock");
+    populateAnimalList();
     populateFilterTabs();
+    setupSectionTabs();
+
+    // Function to setup section tabs
+    function setupSectionTabs() {
+        const sectionTabs = document.querySelectorAll('.section-tab');
+        
+        sectionTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const section = tab.dataset.section;
+                
+                // Remove active class from all section tabs
+                sectionTabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Hide all sections
+                document.getElementById('livestock-section').style.display = 'none';
+                document.getElementById('assets-section').style.display = 'none';
+                
+                // Show selected section
+                if (section === 'livestock') {
+                    document.getElementById('livestock-section').style.display = 'block';
+                } else if (section === 'assets') {
+                    document.getElementById('assets-section').style.display = 'block';
+                }
+            });
+        });
+    }
 
     // Function to update gender options based on category
     function updateGenderOptions(category) {

@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.1.2 - 2025-11-08
+
+### Added
+- **Section-Level Tabs**: Added high-level tabs to switch between Livestock Register and Asset Register
+- **Dual Register System**: Maintains existing livestock functionality while adding assets section
+- **Assets Placeholder**: Professional placeholder page for future asset and maintenance functionality
+- **Clean Separation**: Each register has its own dedicated section with appropriate headers and styling
+
+### Fixed
+- **Livestock Restoration**: Reverted livestock functionality to original state with all filter tabs intact
+- **Tab Hierarchy**: Proper two-level tab system (section tabs + livestock filter tabs)
+
 ## 1.1.1 - 2025-11-08
 
 ### Added
