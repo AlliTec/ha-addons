@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.1 - 2025-11-08
+
+### Fixed
+- **Server Startup Error**: Fixed NameError where AnimalCreate was not defined in update_animal endpoint
+- **Class Reference**: Corrected AnimalCreate to Animal in update_animal function signature
+- **Asset API Functionality**: Asset register now fully functional after server restart
+
 ## 1.2.0 - 2025-11-08
 
 ### Added

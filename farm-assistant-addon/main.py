@@ -278,7 +278,7 @@ async def add_animal(animal: Animal):
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.put("/update_animal/{animal_id}")
-async def update_animal(animal_id: int, animal: AnimalCreate):
+async def update_animal(animal_id: int, animal: Animal):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
         await conn.execute("""
