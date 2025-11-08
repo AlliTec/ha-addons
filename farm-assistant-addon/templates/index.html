@@ -392,7 +392,7 @@
             <span class="close-modal close-top-left">&times;</span>
             <div class="modal-header">
                 <h2>Asset Details</h2>
-                <div>
+                <div class="modal-actions">
                     <button id="edit-asset-btn" class="action-btn update-btn">
                         <i class="fa-solid fa-edit"></i> Edit
                     </button>
@@ -401,6 +401,9 @@
                     </button>
                     <button id="maintenance-schedule-btn" class="action-btn maintenance-btn">
                         <i class="fa-solid fa-wrench"></i> Maintenance
+                    </button>
+                    <button id="view-maintenance-history-btn" class="action-btn">
+                        <i class="fa-solid fa-history"></i> History
                     </button>
                     <button class="close-asset-details-btn action-btn">
                         <i class="fa-solid fa-xmark"></i> Close
@@ -730,6 +733,22 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+    
+    <!-- Maintenance History Modal -->
+    <div id="maintenance-history-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-top-left">&times;</span>
+            <div class="modal-header">
+                <h2>Maintenance History</h2>
+                <button class="close-maintenance-history-btn action-btn">
+                    <i class="fa-solid fa-xmark"></i> Close
+                </button>
+            </div>
+            <div id="maintenance-history-content">
+                <!-- Maintenance history will be populated here -->
+            </div>
         </div>
     </div>
 

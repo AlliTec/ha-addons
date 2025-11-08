@@ -1022,6 +1022,75 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    // Function to show maintenance history
+    async function showMaintenanceHistory(assetId) {
+        try {
+            console.log("Loading maintenance history for asset:", assetId);
+            
+            const response = await fetch(`api/asset/${assetId}/maintenance`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch maintenance history');
+            }
+            
+            const maintenanceRecords = await response.json();
+            console.log("Maintenance records:", maintenanceRecords);
+            
+            const historyContent = document.getElementById('maintenance-history-content');
+            
+            if (maintenanceRecords.length === 0) {
+                historyContent.innerHTML = '<p>No maintenance records found for this asset.</p>';
+            } else {
+                // Create table for maintenance history
+                let tableHtml = `
+                    <table class="maintenance-history-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Task Description</th>
+                                <th>Supplier</th>
+                                <th>Cost</th>
+                                <th>KM Reading</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                maintenanceRecords.forEach(record => {
+                    const date = record.completed_date ? new Date(record.completed_date).toLocaleDateString() : 'N/A';
+                    const cost = record.cost ? `$${parseFloat(record.cost).toFixed(2)}` : 'N/A';
+                    const km = record.meter_reading ? `${parseFloat(record.meter_reading).toLocaleString()} km` : 'N/A';
+                    const status = record.status || 'N/A';
+                    
+                    tableHtml += `
+                        <tr>
+                            <td>${date}</td>
+                            <td>${record.task_description || 'N/A'}</td>
+                            <td>${record.supplier || 'N/A'}</td>
+                            <td>${cost}</td>
+                            <td>${km}</td>
+                            <td><span class="status-badge status-${status}">${status}</span></td>
+                        </tr>
+                    `;
+                });
+                
+                tableHtml += `
+                        </tbody>
+                    </table>
+                `;
+                
+                historyContent.innerHTML = tableHtml;
+            }
+            
+            // Show modal
+            document.getElementById('maintenance-history-modal').style.display = 'block';
+            
+        } catch (error) {
+            console.error('Error loading maintenance history:', error);
+            alert('Error loading maintenance history. Please try again.');
+        }
+    }
+
     // Function to update gender options based on category
     function updateGenderOptions(category) {
         const genderSelect = document.getElementById('edit-gender');
@@ -1159,6 +1228,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+        // Handle maintenance history button
+        if (target.closest('#view-maintenance-history-btn')) {
+            const assetId = document.getElementById('edit-asset-btn').dataset.assetId;
+            showMaintenanceHistory(assetId);
+            return;
+        }
+
         // Handle asset delete button
         if (target.closest('#delete-asset-btn')) {
             const assetId = document.getElementById('delete-asset-btn').dataset.assetId;
@@ -1186,7 +1262,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             target.closest('.close-asset-details-btn') || 
             target.closest('.close-edit-asset-btn') ||
             target.closest('.close-add-asset-btn') ||
-            target.closest('.close-maintenance-schedule-btn')) {
+            target.closest('.close-maintenance-schedule-btn') ||
+            target.closest('.close-maintenance-history-btn')) {
             target.closest('.modal').style.display = 'none';
             return;
         }

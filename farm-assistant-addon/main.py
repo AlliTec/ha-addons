@@ -419,6 +419,23 @@ async def get_asset(asset_id: int):
     finally:
         await conn.close()
 
+@app.get("/api/asset/{asset_id}/maintenance")
+async def get_asset_maintenance_history(asset_id: int):
+    """Get maintenance history for a specific asset"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        records = await conn.fetch("""
+            SELECT task_description, completed_date, supplier, cost, meter_reading, status,
+                   notes, invoice_number
+            FROM maintenance_schedules 
+            WHERE asset_id = $1 
+            ORDER BY completed_date DESC
+        """, asset_id)
+        
+        return [dict(record) for record in records]
+    finally:
+        await conn.close()
+
 @app.post("/api/asset")
 async def add_asset(asset: AssetCreate):
     conn = await asyncpg.connect(DATABASE_URL)

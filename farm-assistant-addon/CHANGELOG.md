@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.4.1 - 2025-11-09
+
+### Added
+- **Maintenance History Viewer**: Added modal to display complete maintenance history for assets
+- **Horizontal Button Layout**: Asset Details modal buttons now display horizontally instead of vertically
+- **History Button**: Added "History" button to Asset Details modal for viewing maintenance records
+- **Maintenance API**: New endpoint `/api/asset/{asset_id}/maintenance` for fetching maintenance history
+- **Status Badges**: Color-coded status indicators for maintenance records (completed, pending, etc.)
+
+### Features
+- **Responsive Table**: Maintenance history displayed in clean, sortable table format
+- **Cost Display**: Properly formatted currency display for maintenance costs
+- **Odometer Integration**: Shows KM readings for each maintenance entry
+- **Modal Actions**: Horizontal button layout with better space utilization
+- **Data Integration**: Links to existing maintenance_schedules table data
+
 ## 1.4.0 - 2025-11-09
 
 ### Added

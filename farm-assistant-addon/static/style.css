@@ -310,6 +310,70 @@ th {
     padding-bottom: 10px;
 }
 
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.maintenance-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.maintenance-history-table th {
+    background-color: var(--table-header-bg);
+    color: var(--text-color);
+    padding: 12px 8px;
+    text-align: left;
+    border: 1px solid var(--table-border);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.maintenance-history-table td {
+    padding: 10px 8px;
+    border: 1px solid var(--table-border);
+    vertical-align: top;
+}
+
+.maintenance-history-table tr:nth-child(even) {
+    background-color: rgba(96, 125, 139, 0.05);
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-completed {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.status-pending {
+    background-color: #FF9800;
+    color: white;
+}
+
+.status-scheduled {
+    background-color: #2196F3;
+    color: white;
+}
+
+.status-overdue {
+    background-color: #F44336;
+    color: white;
+}
+
 .details-table {
     width: 100%;
     border-collapse: collapse;
