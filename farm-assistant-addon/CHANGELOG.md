@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.1 - 2025-11-08
+
+### Added
+- **Farm Assets Tab**: Added Assets tab alongside Livestock for comprehensive farm management
+- **Tab Structure**: Changed from animal-type tabs to main section tabs (Livestock/Assets)
+- **Assets Placeholder**: Added placeholder for future Farm Asset and Maintenance register functionality
+- **Dynamic Headers**: Table headers now change based on selected tab (Livestock vs Assets)
+
 ## 1.1.0 - 2025-11-08
 
 ### Fixed
