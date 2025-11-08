@@ -495,6 +495,19 @@ async function showAnimalDetails(animalId) {
         console.log("Animal details:", animal);
 
         const animalDetailsContent = document.getElementById("animal-details-content");
+        
+        // Format offspring list
+        let offspringHtml = '';
+        if (animal.offspring && animal.offspring.length > 0) {
+            offspringHtml = animal.offspring.map(offspring => 
+                `<div style="padding: 5px; border: 1px solid #ddd; margin: 2px 0; border-radius: 3px;">
+                    <strong>${offspring.name}</strong> (${offspring.gender}, ${calculateAge(offspring.birth_date)})
+                </div>`
+            ).join('');
+        } else {
+            offspringHtml = '<div style="color: #666; font-style: italic;">No offspring recorded</div>';
+        }
+        
         animalDetailsContent.innerHTML = `
             <div>Tag ID:</div><div>${formatCell(animal.tag_id)}</div>
             <div>Name:</div><div>${formatCell(animal.name)}</div>
@@ -509,6 +522,12 @@ async function showAnimalDetails(animalId) {
             <div>Sire:</div><div>${formatCell(animal.sire_name)}</div>
             <div>Features:</div><div>${formatCell(animal.features)}</div>
             <div>Date of Death:</div><div>${formatCell(animal.dod)}</div>
+            <div style="grid-column: 1 / -1; margin-top: 15px; border-top: 1px solid #ddd; padding-top: 15px;">
+                <strong>Offspring:</strong>
+            </div>
+            <div style="grid-column: 1 / -1;">
+                ${offspringHtml}
+            </div>
         `;
 
         // Set animal ID on action buttons

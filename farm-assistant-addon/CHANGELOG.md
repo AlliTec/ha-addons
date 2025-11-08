@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.9.63 - 2025-11-08
+
+### Fixed
+- **Database Add/Update Issue**: Fixed SQL parameter mismatch in /add_animal endpoint
+- **Missing Parameter**: Added missing $14 parameter to INSERT statement for proper database insertion
+- **Form Data Persistence**: Animals now correctly save to database and appear after page refresh
+
+### Added
+- **Offspring Display**: Added comprehensive offspring tracking to animal details modal
+- **Parent-Child Relationships**: Shows all animals where current animal is listed as dam or sire
+- **Offspring Information**: Displays offspring name, gender, and age in formatted list
+- **SQL Query Optimization**: Efficient single query to retrieve all offspring data
+
+### Features
+- **Complete Family Tree**: Users can now view both parents and offspring for any animal
+- **Dynamic Offspring List**: Automatically updates when new animals are added with parent relationships
+- **Visual Hierarchy**: Clear separation of offspring information with styled containers
+- **Empty State Handling**: Graceful display when no offspring are recorded
+
 ## 0.9.62 - 2025-11-08
 
 ### Fixed

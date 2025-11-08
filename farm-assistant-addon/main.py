@@ -223,8 +223,19 @@ async def get_animal(animal_id: int):
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         record = await conn.fetchrow("SELECT id, tag_id, name, breed, birth_date, gender, health_status, notes, created_at, dam_id, sire_id, status, features, photo_path, pic, dod FROM livestock_records WHERE id = $1", animal_id)
+        
+        # Get offspring (animals where this animal is dam or sire)
+        offspring = await conn.fetch("""
+            SELECT id, name, gender, birth_date 
+            FROM livestock_records 
+            WHERE dam_id = $1 OR sire_id = $1
+            ORDER BY birth_date DESC
+        """, animal_id)
+        
         await conn.close()
-        return dict(record)
+        animal_data = dict(record)
+        animal_data['offspring'] = [dict(off) for off in offspring]
+        return animal_data
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -256,7 +267,7 @@ async def add_animal(animal: Animal):
         result = await conn.fetchval("""
             INSERT INTO livestock_records 
             (tag_id, name, gender, breed, birth_date, health_status, notes, dam_id, sire_id, features, photo_path, pic, dod, status)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
             RETURNING id
         """, animal.tag_id, animal.name, animal.gender, animal.breed, birth_date, animal.health_status, 
               animal.notes, animal.dam_id, animal.sire_id, animal.features, animal.photo_path, 
