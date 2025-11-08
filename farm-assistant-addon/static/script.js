@@ -576,7 +576,10 @@ async function enableEditMode(animalId) {
         }, 100);
         
         // Update modal title and button text
-        document.getElementById('edit-modal-title').textContent = 'Edit Animal';
+        const modalTitle = document.querySelector('#edit-animal-modal h2');
+        if (modalTitle) {
+            modalTitle.textContent = 'Edit Animal';
+        }
         const saveButton = document.querySelector('#edit-animal-form button[type="submit"]');
         if (saveButton) {
             saveButton.textContent = 'Update Animal';

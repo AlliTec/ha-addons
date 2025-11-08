@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9.95 - 2025-11-08
+
+### Fixed
+- **Update Button Error**: Fixed null reference error when clicking update button
+- **Modal Title**: Updated enableEditMode to use existing h2 selector instead of missing edit-modal-title
+- **Edit Functionality**: Update button now works without throwing JavaScript errors
+
 ## 0.9.94 - 2025-11-08
 
 ### Fixed
