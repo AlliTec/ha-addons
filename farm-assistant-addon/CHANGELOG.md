@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.9.64 - 2025-11-08
+
+### Fixed
+- **Form Field Arrangement**: Reordered fields as requested - Category before Gender, Breed before Features, DoB before Status
+- **Cache Busting**: Updated script.js version to ensure latest changes are loaded
+- **Debugging Enhancement**: Added console logging to track form submission and API responses
+
+### UI Improvements
+- **Category Label**: Removed text in brackets from Category label for cleaner appearance
+- **Field Order**: Logical flow: Tag ID → Name → Category → Gender → Breed → Features → DoB → Status
+- **Better Organization**: Related fields grouped together for improved user experience
+
+### Debugging
+- **Form Submission Logging**: Added detailed console output for troubleshooting add/update operations
+- **Response Tracking**: Enhanced logging to identify where add operations might be failing
+- **Cache Management**: Updated version parameter to force script reload
+
 ## 0.9.63 - 2025-11-08
 
 ### Fixed

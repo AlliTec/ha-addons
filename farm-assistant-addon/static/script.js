@@ -419,6 +419,8 @@ if (editForm) {
     
     const animalId = document.getElementById('edit-animal-id').value;
     const formData = new FormData(event.target);
+    console.log('Form submitted. Animal ID:', animalId, 'Is Update:', animalId && animalId !== '');
+    console.log('Form data:', Object.fromEntries(formData));
     
     const animalData = {
         tag_id: formData.get('tag_id'),
@@ -468,12 +470,14 @@ if (editForm) {
         
         if (response.ok) {
             const message = isUpdate ? 'Animal updated successfully!' : 'Animal added successfully!';
+            console.log('Success:', message, 'Response:', await response.json());
             alert(message);
             document.getElementById('edit-animal-modal').style.display = "none";
             populateAnimalList(); // Refresh the animal list
         } else {
             const error = await response.json();
             const action = isUpdate ? 'updating' : 'adding';
+            console.error('Error:', error);
             alert(`Error ${action} animal: ${error.detail}`);
         }
     } catch (error) {
