@@ -261,12 +261,22 @@ th {
     padding-bottom: 10px;
 }
 
-.details-section {
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
     margin-bottom: 20px;
+}
+
+.details-section {
     padding: 15px;
     background-color: var(--input-bg);
     border: 1px solid var(--input-border);
     border-radius: 6px;
+}
+
+.details-section.full-width {
+    grid-column: 1 / -1;
 }
 
 .details-section h3 {

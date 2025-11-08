@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.9.90 - 2025-11-08
+
+### Fixed
+- **Details Modal Layout**: Reorganized into proper two-column grid layout
+- **Property/Value Alignment**: Ensured consistent Property (left) / Value (right) layout
+- **Offspring Section**: Made offspring section span full width below the two columns
+- **Visual Organization**: Better use of space with Basic Info left, Additional Info right
+- **Grid System**: Implemented CSS Grid for responsive two-column layout
+
+## 0.9.89 - 2025-11-08
+
+### Added
+- **Debugging**: Added console logging for filter tab counts to troubleshoot cattle/dog count issues
+
 ## 0.9.88 - 2025-11-08
 
 ### Fixed

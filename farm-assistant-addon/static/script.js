@@ -438,32 +438,31 @@ async function showAnimalDetails(animalId) {
         }
         
         animalDetailsContent.innerHTML = `
-            <div class="details-section">
-                <h3>Basic Information</h3>
-                <div class="detail-row"><span class="detail-label">Tag ID:</span><span class="detail-value">${formatCell(animal.tag_id)}</span></div>
-                <div class="detail-row"><span class="detail-label">Name:</span><span class="detail-value">${formatCell(animal.name)}</span></div>
-                <div class="detail-row"><span class="detail-label">Gender:</span><span class="detail-value">${formatCell(animal.gender)}</span></div>
-                <div class="detail-row"><span class="detail-label">Breed:</span><span class="detail-value">${formatCell(animal.breed)}</span></div>
-                <div class="detail-row"><span class="detail-label">Date of Birth:</span><span class="detail-value">${formatCell(animal.birth_date)}</span></div>
-                <div class="detail-row"><span class="detail-label">Age:</span><span class="detail-value">${calculateAge(animal.birth_date)}</span></div>
-                <div class="detail-row"><span class="detail-label">Status:</span><span class="detail-value">${getStatusIcon(animal.status)} ${animal.status}</span></div>
-            </div>
-            <div class="details-section">
-                <h3>Additional Information</h3>
-                <div class="detail-row"><span class="detail-label">Health Status:</span><span class="detail-value">${formatCell(animal.health_status)}</span></div>
-                <div class="detail-row"><span class="detail-label">Notes:</span><span class="detail-value">${formatCell(animal.notes)}</span></div>
-                <div class="detail-row"><span class="detail-label">Features:</span><span class="detail-value">${formatCell(animal.features)}</span></div>
-                <div class="detail-row"><span class="detail-label">Photo Path:</span><span class="detail-value">${formatCell(animal.photo_path)}</span></div>
-                <div class="detail-row"><span class="detail-label">PIC:</span><span class="detail-value">${formatCell(animal.pic)}</span></div>
-            </div>
-            <div class="details-section">
-                <h3>Parent Information</h3>
-                <div class="detail-row"><span class="detail-label">Dam (Mother):</span><span class="detail-value">${formatCell(animal.dam_name || 'Not recorded')}</span></div>
-                <div class="detail-row"><span class="detail-label">Sire (Father):</span><span class="detail-value">${formatCell(animal.sire_name || 'Not recorded')}</span></div>
-            </div>
-            <div class="details-section">
-                <h3>Offspring</h3>
-                ${offspringHtml}
+            <div class="details-grid">
+                <div class="details-section">
+                    <h3>Basic Information</h3>
+                    <div class="detail-row"><span class="detail-label">Tag ID:</span><span class="detail-value">${formatCell(animal.tag_id)}</span></div>
+                    <div class="detail-row"><span class="detail-label">Name:</span><span class="detail-value">${formatCell(animal.name)}</span></div>
+                    <div class="detail-row"><span class="detail-label">Gender:</span><span class="detail-value">${formatCell(animal.gender)}</span></div>
+                    <div class="detail-row"><span class="detail-label">Breed:</span><span class="detail-value">${formatCell(animal.breed)}</span></div>
+                    <div class="detail-row"><span class="detail-label">Date of Birth:</span><span class="detail-value">${formatCell(animal.birth_date)}</span></div>
+                    <div class="detail-row"><span class="detail-label">Age:</span><span class="detail-value">${calculateAge(animal.birth_date)}</span></div>
+                    <div class="detail-row"><span class="detail-label">Status:</span><span class="detail-value">${getStatusIcon(animal.status)} ${animal.status}</span></div>
+                </div>
+                <div class="details-section">
+                    <h3>Additional Information</h3>
+                    <div class="detail-row"><span class="detail-label">Health Status:</span><span class="detail-value">${formatCell(animal.health_status)}</span></div>
+                    <div class="detail-row"><span class="detail-label">Notes:</span><span class="detail-value">${formatCell(animal.notes)}</span></div>
+                    <div class="detail-row"><span class="detail-label">Features:</span><span class="detail-value">${formatCell(animal.features)}</span></div>
+                    <div class="detail-row"><span class="detail-label">Photo Path:</span><span class="detail-value">${formatCell(animal.photo_path)}</span></div>
+                    <div class="detail-row"><span class="detail-label">PIC:</span><span class="detail-value">${formatCell(animal.pic)}</span></div>
+                    <div class="detail-row"><span class="detail-label">Dam (Mother):</span><span class="detail-value">${formatCell(animal.dam_name || 'Not recorded')}</span></div>
+                    <div class="detail-row"><span class="detail-label">Sire (Father):</span><span class="detail-value">${formatCell(animal.sire_name || 'Not recorded')}</span></div>
+                </div>
+                <div class="details-section full-width">
+                    <h3>Offspring</h3>
+                    ${offspringHtml}
+                </div>
             </div>
         `;
         
