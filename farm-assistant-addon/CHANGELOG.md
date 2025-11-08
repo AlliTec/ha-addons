@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.9.56 - 2025-11-08
+
+### Bug Fixes
+- **Function Scope Issue**: Fixed updateGenderOptions not defined error
+- **Global Function Access**: Moved updateGenderOptions to global scope
+- **Edit Modal Functionality**: Update button now works correctly without JavaScript errors
+
+### Technical Improvements
+- **Code Organization**: Improved function scope management
+- **Error Resolution**: Eliminated ReferenceError when loading animal data for editing
+- **User Experience**: Edit animal feature now fully functional
+
 ## 0.9.55 - 2025-11-08
 
 ### Bug Fixes
