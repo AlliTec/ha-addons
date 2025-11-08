@@ -398,29 +398,27 @@ async function populateParentDropdowns() {
         
         // Add all female animals as potential dams
         const femaleAnimals = allAnimals.filter(animal => 
-            animal.status === 'Active' && 
-            ['cow', 'heifer', 'ewe', 'doe', 'nanny', 'sow', 'gilt', 'mare', 'filly', 'jenny', 'queen', 'hen', 'pullet', 'goose', 'duck'].includes(animal.gender?.toLowerCase())
+            ['cow', 'heifer', 'ewe', 'doe', 'nanny', 'sow', 'gilt', 'mare', 'filly', 'jenny', 'queen', 'hen', 'pullet', 'goose', 'duck', 'bitch'].includes(animal.gender?.toLowerCase())
         );
         console.log("Female animals found:", femaleAnimals.length);
         
         femaleAnimals.forEach(animal => {
             const option = document.createElement('option');
             option.value = animal.id;
-            option.textContent = `${animal.name} (${animal.tag_id})`;
+            option.textContent = `${animal.name} (ID: ${animal.id})`;
             damSelect.appendChild(option);
         });
         
         // Add all male animals as potential sires
         const maleAnimals = allAnimals.filter(animal => 
-            animal.status === 'Active' && 
-            ['bull', 'steer', 'ram', 'buck', 'billy', 'boar', 'barrow', 'stallion', 'gelding', 'colt', 'jack', 'tom', 'rooster', 'cockerel', 'drake', 'gander'].includes(animal.gender?.toLowerCase())
+            ['bull', 'steer', 'ram', 'buck', 'billy', 'boar', 'barrow', 'stallion', 'gelding', 'colt', 'jack', 'tom', 'rooster', 'cockerel', 'drake', 'gander', 'dog'].includes(animal.gender?.toLowerCase())
         );
         console.log("Male animals found:", maleAnimals.length);
         
         maleAnimals.forEach(animal => {
             const option = document.createElement('option');
             option.value = animal.id;
-            option.textContent = `${animal.name} (${animal.tag_id})`;
+            option.textContent = `${animal.name} (ID: ${animal.id})`;
             sireSelect.appendChild(option);
         });
         

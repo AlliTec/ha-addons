@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.5 - 2025-11-08
+
+### Fixed
+- **Gender Filtering Logic**: Removed status check and fixed gender filtering for DAM/Sire dropdowns
+- **API Field Mapping**: Corrected field references (removed non-existent status and tag_id fields)
+- **Animal Classification**: Added 'bitch' and 'dog' to gender filters for proper canine classification
+- **Display Format**: Updated to show "Name (ID: X)" format using available API fields
+
 ## 1.0.4 - 2025-11-08
 
 ### Fixed
