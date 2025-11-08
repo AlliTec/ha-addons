@@ -282,6 +282,11 @@ async def update_animal(animal_id: int, animal: Animal):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
         logging.info(f"Updating animal {animal_id} with data: {animal}")
+        
+        # Convert string dates to date objects for database
+        birth_date = datetime.strptime(animal.birth_date, '%Y-%m-%d').date() if animal.birth_date else None
+        dod = datetime.strptime(animal.dod, '%Y-%m-%d').date() if animal.dod else None
+        
         await conn.execute("""
             UPDATE livestock_records 
             SET tag_id = $1, name = $2, gender = $3, breed = $4, 
@@ -290,9 +295,9 @@ async def update_animal(animal_id: int, animal: Animal):
                 photo_path = $12, pic = $13, dod = $14
             WHERE id = $15
         """, animal.tag_id, animal.name, animal.gender, animal.breed,
-            animal.birth_date, animal.health_status, animal.notes,
+            birth_date, animal.health_status, animal.notes,
             animal.status, animal.dam_id, animal.sire_id, animal.features,
-            animal.photo_path, animal.pic, animal.dod, animal_id)
+            animal.photo_path, animal.pic, dod, animal_id)
         logging.info(f"Animal {animal_id} updated successfully")
         return {"message": "Animal updated successfully"}
     except Exception as e:

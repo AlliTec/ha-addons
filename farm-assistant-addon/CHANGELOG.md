@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.1 - 2025-11-09
+
+### Fixed
+- **Date Conversion Error**: Fixed "str object has no attribute 'toordinal'" error in update_animal
+- **Database Date Format**: Convert string dates to proper date objects before database insertion
+- **Birth Date Handling**: Properly parse birth_date and dod strings to date objects for asyncpg
+
 ## 1.3.0 - 2025-11-09
 
 ### Debug
