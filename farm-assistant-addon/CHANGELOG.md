@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.9.67 - 2025-11-08
+
+### Fixed
+- **Critical Bug Fix**: Resolved issue causing table and tabs to not display
+- **API Call Stability**: Reverted from parallel to sequential API calls to prevent race conditions
+- **Form Submission**: Simplified debugging code to prevent potential blocking issues
+- **Cache Management**: Updated version with timestamp to force immediate reload
+
+### Technical Fixes
+- **Promise.all Issue**: Removed parallel API calls that were causing JavaScript failures
+- **Sequential Loading**: Restored stable sequential fetching of animal types and counts
+- **Error Prevention**: Simplified form event handling to ensure reliable operation
+- **Enhanced Debugging**: Maintained console logging while fixing blocking issues
+
+### Stability Improvements
+- **Reliable Data Loading**: Ensured filter tabs and table population work consistently
+- **Graceful Fallbacks**: Better error handling for API failures
+- **Performance**: Maintained efficient counting while ensuring stability
+- **User Experience**: Restored full functionality of animal management interface
+
 ## 0.9.66 - 2025-11-08
 
 ### Added
