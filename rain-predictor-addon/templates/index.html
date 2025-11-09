@@ -1307,6 +1307,7 @@
             
             try {
                 const response = await fetch(apiDataUrl);
+                console.log('API Response status:', response.status, response.ok);
                 if (response.ok) {
                     const data = await response.json();
                     console.log('API Response Data:', data);
@@ -1343,11 +1344,17 @@
                         direction: (Math.random() * 360).toFixed(1),
                         bearing: (Math.random() * 360).toFixed(1),
                         latitude: currentLocation.latitude + (Math.random() - 0.5) * 0.5,
-                        longitude: currentLocation.longitude + (Math.random() - 0.5) * 0.5
+                        longitude: currentLocation.longitude + (Math.random() - 0.5) * 0.5,
+                        rain_cell_latitude: currentLocation.latitude + (Math.random() - 0.5) * 2,
+                        rain_cell_longitude: currentLocation.longitude + (Math.random() - 0.5) * 2
                     };
+                    
+                    const rainLat = parseFloat(simData.rain_cell_latitude);
+                    const rainLng = parseFloat(simData.rain_cell_longitude);
+                    
                     cellData.auto = {
                         ...simData,
-                        center: { lat: simData.latitude, lng: simData.longitude }
+                        center: { lat: rainLat, lng: rainLng }
                     };
                     createTracker('auto');
                     updatePredictionLine('auto');

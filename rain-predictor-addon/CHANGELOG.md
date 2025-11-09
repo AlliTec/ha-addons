@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.20 (2025-11-10)
+
+### Critical Fixes
+- **Fixed Simulated Data Missing Rain Cell Coordinates**: Resolved issue where fallback data didn't include rain_cell_latitude/rain_cell_longitude
+- **Enhanced API Debugging**: Added response status logging to identify API failures
+- **Corrected Tracker Data Source**: Fixed simulated data to provide proper rain cell coordinates
+- **Maintained Rain Cell Start Position**: Tracker now starts from detected rain cell, not user location
+
+### Technical Improvements
+- **API Response Logging**: Added detailed logging for response status and data
+- **Simulated Data Enhancement**: Demo data now includes realistic rain cell coordinates
+- **Coordinate Consistency**: Both real and simulated data paths now provide rain cell coordinates
+- **Debug Visibility**: Better visibility into API success/failure states
+
+### Configuration Updates
+- **Version Bump**: Incremented to v1.1.20 for simulated data fix
+- **File Alignment**: Synchronized versions across config.yaml, Dockerfile, and rain_predictor.py
+
+### Impact
+- **Tracker Visibility**: Green tracker marker now appears in both real and demo modes
+- **Correct Starting Position**: Tracker starts from rain cell location in all scenarios
+- **Robust Fallback**: Demo mode provides realistic rain cell tracking
+- **Debug Capability**: Enhanced logging for troubleshooting API issues
+
 ## Version 1.1.19 (2025-11-10)
 
 ### Critical Fixes
