@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.21 (2025-11-10)
+
+### Critical Fixes
+- **Backend API Coordinate Field Names**: Fixed web_ui.py sending rain cell coordinates as "latitude/longitude" instead of "rain_cell_latitude/rain_cell_longitude"
+- **Tracker Starting Position**: Tracker now correctly starts from rain cell location instead of user location
+- **API Data Consistency**: Frontend now receives properly named coordinate fields matching expected format
+
 ## Version 1.1.20 (2025-11-10)
 
 ### Critical Fixes

@@ -85,8 +85,8 @@ def get_all_data():
         "speed": ha_api.get_state("input_number.rain_prediction_speed", "--"),
         "direction": ha_api.get_state("input_number.rain_cell_direction", "N/A"),
         "bearing": ha_api.get_state("input_number.bearing_to_rain_cell", "N/A"),
-        "latitude": ha_api.get_state("input_number.rain_cell_latitude", -24.98),
-        "longitude": ha_api.get_state("input_number.rain_cell_longitude", 151.86),
+        "rain_cell_latitude": ha_api.get_state("input_number.rain_cell_latitude", -24.98),
+        "rain_cell_longitude": ha_api.get_state("input_number.rain_cell_longitude", 151.86),
     }
 # ========== Options.json persistence ==========
 def read_options_latlon(default_lat=-24.98, default_lng=151.86) -> Tuple[float, float]:
