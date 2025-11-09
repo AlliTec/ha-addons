@@ -2139,12 +2139,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Initialize page - set table widths after DOM is loaded
     document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
-            setTableMinWidth('livestock');
-            // Force a second update after content is rendered
-            setTimeout(() => {
-                setTableMinWidth('livestock');
-            }, 500);
-        }, 1000);
+            // Simulate livestock button click to trigger proper initialization
+            const livestockTab = document.querySelector('[data-section="livestock"]');
+            if (livestockTab) {
+                livestockTab.click();
+            }
+        }, 100);
     });
 
 });

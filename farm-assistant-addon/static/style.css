@@ -190,11 +190,11 @@ table, th, td {
 }
 
 thead {
-    background-color: var(--bg-color);
+    background-color: var(--table-header-bg);
 }
 
 th {
-    background-color: var(--bg-color);
+    background-color: var(--table-header-bg);
     white-space: nowrap;
 }
 

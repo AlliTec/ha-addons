@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.7.9 - 2025-11-09
+
+### Fixed
+- **Table Header Color**: Fixed table header background to match beige color of selected filter tabs
+- **Initial Page Load**: Enhanced table width initialization to prevent cell compression on page load
+- **Word Wrap Prevention**: Added white-space: nowrap to prevent text wrapping in table cells
+- **Column Header Styling**: Applied beige background to both thead and th elements
+- **Smart Width Calculation**: Enhanced column width calculation based on content minimum requirements
+- **Double Initialization**: Added second width update after content rendering for proper sizing
+- **Version Update**: Updated to version 1.7.9
+
 ## 1.6.5 - 2025-11-09
 
 ### Changed
