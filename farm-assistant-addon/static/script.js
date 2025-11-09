@@ -1119,17 +1119,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
             
             // Create filter tabs HTML using filter-btn class for tab styling
-            let filterTabsHtml = '<div class="filter-btn active" data-category="All"><i class="fa-solid fa-house"></i> All</div>';
+            let filterTabsHtml = `<button class="filter-btn active" data-category="All"><i class="fa-solid fa-house"></i> All<sup style="color: var(--accent-color); font-size: 0.7em; margin-left: 2px;">(${assets.length})</sup></button>`;
             
             // Add category-specific tabs
             categories.forEach(category => {
                 const count = assets.filter(asset => asset.category === category).length;
                 const icon = getAssetCategoryIcon(category);
-                filterTabsHtml += `<div class="filter-btn" data-category="${category}"><i class="${icon}"></i> ${category}<sup style="color: var(--accent-color); font-size: 0.7em; margin-left: 2px;">${count}</sup></div>`;
+                filterTabsHtml += `<button class="filter-btn" data-category="${category}"><i class="${icon}"></i> ${category}<sup style="color: var(--accent-color); font-size: 0.7em; margin-left: 2px;">(${count})</sup></button>`;
             });
             
             // Add "Add Asset" button
-            filterTabsHtml += '<div class="filter-btn" id="add-asset-btn"><i class="fa-solid fa-plus"></i> Add</div>';
+            filterTabsHtml += '<button class="filter-btn" id="add-asset-btn"><i class="fa-solid fa-plus"></i> Add</button>';
             
             filterBar.innerHTML = filterTabsHtml;
             

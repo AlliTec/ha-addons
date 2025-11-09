@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.8.1 - 2025-11-09
+
+### Fixed
+- **Asset Tab Height**: Fixed asset register filter tabs to match livestock register tab height by using button elements instead of divs
+- **Asset Count Format**: Changed asset filter tab counts to use brackets format (count) to match livestock tabs
+- **All Tab Count**: Added total asset count to the "All" tab in asset register filter
+- **Tab Consistency**: Both livestock and asset filter tabs now use identical HTML structure and styling
+
 ## 1.8.0 - 2025-11-09
 
 ### Fixed
