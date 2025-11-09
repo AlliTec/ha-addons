@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.8.9 - 2025-11-09
+
+### Added
+- **Maintenance Record Edit Functionality**: Complete edit capability for maintenance schedule records
+- **Clickable Maintenance History Rows**: Maintenance history table rows now clickable to edit records
+- **Dual-Mode Maintenance Form**: Form handles both create and update modes with dynamic titles and buttons
+- **Form Reset Logic**: Maintenance schedule form automatically resets to create mode when modal closes
+
+### Features
+- **Row Click Editing**: Click any maintenance record in history to open edit form with populated data
+- **Smart Form Handling**: Form automatically switches between "Schedule Maintenance" and "Edit Maintenance Schedule" modes
+- **Complete CRUD Operations**: Full Create, Read, Update, Delete functionality for maintenance schedules
+- **Enhanced User Experience**: Seamless workflow from viewing history to editing records
+
+### Technical Implementation
+- **Event Listener Integration**: Added maintenance row click handler to main document click event listener
+- **Form State Management**: Dynamic button text and modal titles based on edit/create mode
+- **Data Population**: Automatic form population with existing maintenance record data
+- **Backend API Support**: GET, PUT, DELETE endpoints for maintenance schedule management
+
 ## 1.8.8 - 2025-11-09
 
 ### Fixed

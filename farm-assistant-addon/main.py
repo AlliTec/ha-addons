@@ -439,8 +439,9 @@ async def get_asset_maintenance_history(asset_id: int):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
         records = await conn.fetch("""
-            SELECT task_description, completed_date, supplier, cost, meter_reading, status,
-                   notes, invoice_number
+            SELECT id, task_description, completed_date, supplier, cost, meter_reading, status,
+                   notes, invoice_number, due_date, is_unscheduled, maintenance_trigger_type,
+                   maintenance_trigger_value, last_maintenance_usage, interval_type, interval_value
             FROM maintenance_schedules 
             WHERE asset_id = $1 
             ORDER BY completed_date DESC
@@ -595,6 +596,66 @@ async def create_maintenance_schedule(schedule: MaintenanceScheduleCreate):
         )
         
         return {"message": "Maintenance schedule created successfully", "id": result['id']}
+    finally:
+        await conn.close()
+
+@app.get("/api/maintenance-schedule/{schedule_id}")
+async def get_maintenance_schedule(schedule_id: int):
+    """Get a single maintenance schedule for editing"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        record = await conn.fetchrow("SELECT * FROM maintenance_schedules WHERE id = $1", schedule_id)
+        if not record:
+            raise HTTPException(status_code=404, detail="Maintenance schedule not found")
+        return dict(record)
+    finally:
+        await conn.close()
+
+@app.put("/api/maintenance-schedule/{schedule_id}")
+async def update_maintenance_schedule(schedule_id: int, schedule: MaintenanceScheduleCreate):
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Convert date strings to date objects for asyncpg
+        due_date_obj = None
+        completed_date_obj = None
+        
+        if schedule.due_date:
+            due_date_obj = datetime.strptime(schedule.due_date, '%Y-%m-%d').date()
+        
+        if schedule.completed_date:
+            completed_date_obj = datetime.strptime(schedule.completed_date, '%Y-%m-%d').date()
+        
+        # Convert empty strings to None for database constraints
+        maintenance_trigger_type = schedule.maintenance_trigger_type.strip() if schedule.maintenance_trigger_type and schedule.maintenance_trigger_type.strip() else None
+        interval_type = schedule.interval_type.strip() if schedule.interval_type and schedule.interval_type.strip() else None
+        supplier = schedule.supplier.strip() if schedule.supplier and schedule.supplier.strip() else None
+        invoice_number = schedule.invoice_number.strip() if schedule.invoice_number and schedule.invoice_number.strip() else None
+        notes = schedule.notes.strip() if schedule.notes and schedule.notes.strip() else None
+        
+        # Update maintenance schedule
+        await conn.execute("""
+            UPDATE maintenance_schedules 
+            SET asset_id = $1, task_description = $2, due_date = $3, completed_date = $4, status = $5, 
+                is_unscheduled = $6, maintenance_trigger_type = $7, maintenance_trigger_value = $8,
+                last_maintenance_usage = $9, meter_reading = $10, interval_type = $11, interval_value = $12,
+                cost = $13, supplier = $14, invoice_number = $15, notes = $16
+            WHERE id = $17
+        """, schedule.asset_id, schedule.task_description, due_date_obj, completed_date_obj, schedule.status,
+            schedule.is_unscheduled, maintenance_trigger_type, schedule.maintenance_trigger_value,
+            schedule.last_maintenance_usage, schedule.meter_reading, interval_type, schedule.interval_value,
+            schedule.cost, supplier, invoice_number, notes, schedule_id)
+        
+        return {"message": "Maintenance schedule updated successfully"}
+    finally:
+        await conn.close()
+
+@app.delete("/api/maintenance-schedule/{schedule_id}")
+async def delete_maintenance_schedule(schedule_id: int):
+    """Delete a maintenance schedule"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        await conn.execute("DELETE FROM maintenance_schedules WHERE id = $1", schedule_id)
+        return {"message": "Maintenance schedule deleted successfully"}
     finally:
         await conn.close()
 

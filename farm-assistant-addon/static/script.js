@@ -1536,7 +1536,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const status = record.status || 'N/A';
                     
                     tableHtml += `
-                        <tr>
+                        <tr class="maintenance-record-row" data-maintenance-id="${record.id}" style="cursor: pointer;">
                             <td>${date}</td>
                             <td>${record.task_description || 'N/A'}</td>
                             <td>${record.supplier || 'N/A'}</td>
@@ -1562,6 +1562,75 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.error('Error loading maintenance history:', error);
             alert('Error loading maintenance history. Please try again.');
         }
+    }
+
+    // Function to load maintenance record for editing
+    async function loadMaintenanceRecordForEdit(scheduleId) {
+        try {
+            console.log('Loading maintenance record for editing:', scheduleId);
+            const response = await fetch(`api/maintenance-schedule/${scheduleId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch maintenance record');
+            }
+            
+            const record = await response.json();
+            console.log('Maintenance record loaded:', record);
+            
+            // Populate form with record data
+            document.getElementById('maintenance-schedule-asset-id').value = record.asset_id;
+            document.getElementById('maintenance-schedule-task').value = record.task_description || '';
+            document.getElementById('maintenance-schedule-status').value = record.status || 'pending';
+            document.getElementById('maintenance-schedule-unscheduled').value = record.is_unscheduled ? 'true' : 'false';
+            document.getElementById('maintenance-schedule-due-date').value = record.due_date || '';
+            document.getElementById('maintenance-schedule-completed-date').value = record.completed_date || '';
+            document.getElementById('maintenance-schedule-interval-type').value = record.interval_type || '';
+            document.getElementById('maintenance-schedule-interval-value').value = record.interval_value || '';
+            document.getElementById('maintenance-schedule-trigger-type').value = record.maintenance_trigger_type || '';
+            document.getElementById('maintenance-schedule-trigger-value').value = record.maintenance_trigger_value || '';
+            document.getElementById('maintenance-schedule-last-usage').value = record.last_maintenance_usage || '';
+            document.getElementById('maintenance-schedule-meter-reading').value = record.meter_reading || '';
+            document.getElementById('maintenance-schedule-cost').value = record.cost || '';
+            document.getElementById('maintenance-schedule-supplier').value = record.supplier || '';
+            document.getElementById('maintenance-schedule-invoice-number').value = record.invoice_number || '';
+            document.getElementById('maintenance-schedule-notes').value = record.notes || '';
+            
+            // Change modal to edit mode
+            const modal = document.getElementById('maintenance-schedule-modal');
+            const modalTitle = modal.querySelector('h2');
+            modalTitle.textContent = 'Edit Maintenance Schedule';
+            
+            // Change submit button text and add update mode flag
+            const submitBtn = document.querySelector('#maintenance-schedule-form button[type="submit"]');
+            submitBtn.textContent = 'Update Schedule';
+            submitBtn.dataset.mode = 'edit';
+            submitBtn.dataset.scheduleId = scheduleId;
+            
+            // Show modal
+            modal.style.display = 'block';
+            
+        } catch (error) {
+            console.error('Error loading maintenance record for editing:', error);
+            alert('Error loading maintenance record. Please try again.');
+        }
+    }
+
+    // Function to reset maintenance schedule form to create mode
+    function resetMaintenanceScheduleForm() {
+        const form = document.getElementById('maintenance-schedule-form');
+        const modal = document.getElementById('maintenance-schedule-modal');
+        const modalTitle = modal.querySelector('h2');
+        const submitBtn = form.querySelector('button[type="submit"]');
+        
+        // Reset form
+        form.reset();
+        
+        // Reset modal title
+        modalTitle.textContent = 'Schedule Maintenance';
+        
+        // Reset submit button
+        submitBtn.textContent = 'Schedule Maintenance';
+        delete submitBtn.dataset.mode;
+        delete submitBtn.dataset.scheduleId;
     }
 
     // Function to update gender options based on category
@@ -1770,6 +1839,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+        // Handle maintenance record row clicks for editing
+        if (target.closest('.maintenance-record-row')) {
+            const row = target.closest('.maintenance-record-row');
+            const scheduleId = row.dataset.maintenanceId;
+            loadMaintenanceRecordForEdit(scheduleId);
+            return;
+        }
+
         // Handle asset delete button
         if (target.closest('#delete-asset-btn')) {
             const assetId = document.getElementById('delete-asset-btn').dataset.assetId;
@@ -1811,6 +1888,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             target.closest('.close-maintenance-history-btn')) {
             
             const modal = target.closest('.modal');
+            
+            // Reset maintenance schedule form to create mode when closing
+            if (modal.id === 'maintenance-schedule-modal') {
+                resetMaintenanceScheduleForm();
+            }
             
             // Check if we should return to parent view
             if (modal.id === 'asset-details-modal' && modal.dataset.returnToParent) {
@@ -2002,7 +2084,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             event.preventDefault();
             
             const formData = new FormData(event.target);
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const isEditMode = submitBtn.dataset.mode === 'edit';
+            const scheduleId = submitBtn.dataset.scheduleId;
+            
             console.log('Maintenance schedule form submitted. Form data:', Object.fromEntries(formData));
+            console.log('Edit mode:', isEditMode, 'Schedule ID:', scheduleId);
             
             const maintenanceData = {
                 asset_id: parseInt(formData.get('asset_id')),
@@ -2024,8 +2111,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             };
             
             try {
-                const response = await fetch('api/maintenance-schedule', {
-                    method: 'POST',
+                const url = isEditMode ? `api/maintenance-schedule/${scheduleId}` : 'api/maintenance-schedule';
+                const method = isEditMode ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -2033,22 +2123,23 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
                 
                 if (response.ok) {
-                    alert('Maintenance schedule saved successfully!');
+                    const successMessage = isEditMode ? 'Maintenance schedule updated successfully!' : 'Maintenance schedule saved successfully!';
+                    alert(successMessage);
                     document.getElementById('maintenance-schedule-modal').style.display = 'none';
-                    // TODO: Refresh maintenance calendar when implemented
+                    // TODO: Refresh maintenance history when implemented
                 } else {
                     const errorText = await response.text();
                     console.error('Error response:', errorText);
                     try {
                         const error = JSON.parse(errorText);
-                        alert(`Error saving maintenance schedule: ${error.detail}`);
+                        alert(`Error ${isEditMode ? 'updating' : 'saving'} maintenance schedule: ${error.detail}`);
                     } catch (e) {
-                        alert(`Error saving maintenance schedule: ${errorText}`);
+                        alert(`Error ${isEditMode ? 'updating' : 'saving'} maintenance schedule: ${errorText}`);
                     }
                 }
             } catch (error) {
                 console.error('Error saving maintenance schedule:', error);
-                alert('Error saving maintenance schedule. Please try again.');
+                alert(`Error ${isEditMode ? 'updating' : 'saving'} maintenance schedule. Please try again.`);
             }
         });
     }
