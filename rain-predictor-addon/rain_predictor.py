@@ -17,7 +17,7 @@ from scipy.ndimage import label
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.22"
+VERSION = "1.1.23"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -152,6 +152,22 @@ class RainCell:
         x = cos(lat1_rad) * sin(lat2_rad) - sin(lat1_rad) * cos(lat2_rad) * cos(dlon)
         bearing = atan2(y, x)
         return (degrees(bearing) + 360) % 360
+    
+    def _project_position(self, lat, lon, distance_km, bearing_deg):
+        """Project new position given distance and bearing from current position"""
+        lat_rad, lon_rad = radians(lat), radians(lon)
+        bearing_rad = radians(bearing_deg)
+        
+        # Earth radius in km
+        R = 6371.0
+        
+        # Calculate destination point
+        lat2_rad = asin(sin(lat_rad) * cos(distance_km / R) + 
+                        cos(lat_rad) * sin(distance_km / R) * cos(bearing_rad))
+        lon2_rad = lon_rad + atan2(sin(bearing_rad) * sin(distance_km / R) * cos(lat_rad),
+                                   cos(distance_km / R) - sin(lat_rad) * sin(lat2_rad))
+        
+        return degrees(lat2_rad), degrees(lon2_rad)
 
 class RainPredictor:
     """Main rain prediction logic"""
@@ -206,8 +222,8 @@ class RainPredictor:
         self.save_debug_images = config.get('debug.save_images', False)
         
         # Tracking settings
-        self.max_track_dist = config.get('tracking_settings.max_tracking_distance_km', 30)
-        self.min_track_len = config.get('tracking_settings.min_track_length', 2)
+        self.max_track_dist = config.get('tracking_settings.max_tracking_distance_km', 15)  # Reduced from 30km for better accuracy
+        self.min_track_len = config.get('tracking_settings.min_track_length', 3)  # Increased for more reliable tracking
         
 
         
@@ -485,7 +501,7 @@ class RainPredictor:
             return []
     
     def _update_tracked_cells(self, detected_cells, timestamp):
-        """Update tracked cells with new detections"""
+        """Update tracked cells with new detections using improved matching algorithm"""
         unmatched_cells = detected_cells.copy()
         matched_count = 0
         
@@ -495,25 +511,54 @@ class RainPredictor:
             
             last_lat, last_lon, _ = tracked_cell.positions[-1]
             
-            closest_cell = None
-            min_distance = float('inf')
+            # Get predicted position based on previous velocity
+            predicted_lat, predicted_lon = last_lat, last_lon
+            if len(tracked_cell.positions) >= 2:
+                speed_kph, direction_deg = tracked_cell.get_velocity()
+                if speed_kph and direction_deg is not None:
+                    # Predict movement over 5 minute interval (RainViewer frame interval)
+                    time_hours = 5.0 / 60.0  # 5 minutes in hours
+                    predicted_distance = speed_kph * time_hours
+                    predicted_lat, predicted_lon = self._project_position(
+                        last_lat, last_lon, predicted_distance, direction_deg
+                    )
+                    logging.debug(f"Track #{cell_id}: predicted movement {predicted_distance:.1f}km @ {direction_deg:.1f}°")
+            
+            best_cell = None
+            best_score = float('inf')
             
             for cell in unmatched_cells:
                 dist = self.haversine(last_lat, last_lon, cell['lat'], cell['lon'])
-                if dist < min_distance and dist < self.max_track_dist:
-                    min_distance = dist
-                    closest_cell = cell
+                
+                # Skip if too far from last known position
+                if dist > self.max_track_dist:
+                    continue
+                
+                # Calculate directional consistency score
+                if len(tracked_cell.positions) >= 2:
+                    pred_dist = self.haversine(predicted_lat, predicted_lon, cell['lat'], cell['lon'])
+                    # Combined score: distance from last pos + directional penalty
+                    score = dist + (pred_dist * 0.5)  # Weight directional prediction
+                else:
+                    score = dist
+                
+                if score < best_score:
+                    best_score = score
+                    best_cell = cell
             
-            if closest_cell:
+            if best_cell:
                 tracked_cell.add_position(
-                    closest_cell['lat'],
-                    closest_cell['lon'],
+                    best_cell['lat'],
+                    best_cell['lon'],
                     timestamp,
-                    closest_cell.get('intensity', 0)
+                    best_cell.get('intensity', 0)
                 )
-                unmatched_cells.remove(closest_cell)
+                unmatched_cells.remove(best_cell)
                 matched_count += 1
-                logging.debug(f"Matched cell to track #{cell_id} (moved {min_distance:.1f}km)")
+                actual_dist = self.haversine(last_lat, last_lon, best_cell['lat'], best_cell['lon'])
+                logging.info(f"✅ Track #{cell_id}: matched (moved {actual_dist:.1f}km, score={best_score:.1f})")
+            else:
+                logging.debug(f"❌ Track #{cell_id}: no match found")
         
         # Create new tracks
         for cell in unmatched_cells:

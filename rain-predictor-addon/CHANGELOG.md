@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.23 (2025-11-10)
+
+### Critical Tracking Improvements
+- **Enhanced Cell Matching Algorithm**: Added directional prediction for better rain cell tracking between frames
+- **Improved Scoring System**: Combined distance with directional consistency to avoid wrong cell matches
+- **Reduced Tracking Distance**: Changed max tracking distance from 30km to 15km for better accuracy
+- **Position Projection**: Added _project_position method to predict expected cell movement
+- **Better Track Validation**: Increased minimum track length from 2 to 3 for more reliable velocity calculations
+
 ## Version 1.1.22 (2025-11-10)
 
 ### Debugging Enhancements
