@@ -774,12 +774,15 @@
 
             const distance = activeCell.speed * timeDiffHours; // km
 
-            const theta = activeCell.direction * Math.PI / 180; // 0°=N, 90°=E
+            // Rain cell direction is where it's coming FROM, 
+            // but tracker should move where it's going TO (opposite direction)
+            const trackerDirection = (activeCell.direction + 180) % 360;
+            const theta = trackerDirection * Math.PI / 180; // 0°=N, 90°=E
             
             // Enhanced debug logging to track distance calculation
             console.log(`Tracker debug - Frame: ${frameIndex}, FrameTime: ${frameTime}, StartTime: ${startTime}`);
             console.log(`Tracker debug - Speed: ${activeCell.speed}kph, TimeDiff: ${timeDiffHours.toFixed(4)}h`);
-            console.log(`Tracker debug - Direction: ${activeCell.direction}°, Distance: ${distance.toFixed(2)}km`);
+            console.log(`Tracker debug - CellFrom: ${activeCell.direction}°, TrackerTo: ${trackerDirection}°, Distance: ${distance.toFixed(2)}km`);
             console.log(`Theta: ${theta.toFixed(3)}rad, cos: ${Math.cos(theta).toFixed(3)}, sin: ${Math.sin(theta).toFixed(3)}`);
             
             const latOffset = (distance * Math.cos(theta)) / 111;

@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.17 (2025-11-10)
+
+### Critical Fixes
+- **Fixed Tracker Direction Bug**: Resolved critical issue where auto-tracker moved opposite direction to rain cell movement
+- **Direction Calculation Fix**: Added 180° to direction to convert from "coming FROM" to "going TO" bearing
+- **Animation Alignment**: Tracker now moves in same direction as rain cell movement toward user location
+
+### Technical Improvements
+- **Coordinate System Correction**: Backend reports where rain is coming FROM, frontend needs where it's going TO
+- **Vector Mathematics**: Applied proper directional vector addition (bearing + 180°) for correct animation
+- **Movement Synchronization**: Tracker now follows actual rain cell path instead of opposite trajectory
+
+### Configuration Updates
+- **Version Bump**: Incremented to v1.1.17 for critical direction fix
+- **File Alignment**: Synchronized versions across config.yaml, Dockerfile, and rain_predictor.py
+
+### Impact
+- **Correct Tracking**: Auto-tracker now moves ESE when rain cells move ESE (previously moved NNW)
+- **Predictive Accuracy**: Animation shows proper interception trajectory toward user location
+- **User Experience**: Green tracker marker now correctly follows threatening rain cell path
+
 ## Version 1.1.16 (2025-11-09)
 
 ### Debug Enhancements
