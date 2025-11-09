@@ -484,11 +484,11 @@ th {
 
 .offspring-section {
     margin-top: 20px;
-    padding: 15px;
-    background-color: var(--bg-color);
+    padding: 10px;
+    background-color: var(--input-bg);
     border: 1px solid var(--accent-color);
     border-radius: 6px;
-    width: 100%;
+    width: 90%;
     clear: both;
     display: block;
 }

@@ -1159,7 +1159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         return statusIcons[status] || status;
     }
 
-    async function showAssetDetails(assetId) {
+    async function showAssetDetails(assetId, returnToParentId = null) {
         try {
             const response = await fetch(`api/asset/${assetId}`);
             if (!response.ok) throw new Error('Failed to fetch asset details');
@@ -1236,11 +1236,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById('edit-asset-btn').dataset.assetId = assetId;
             document.getElementById('delete-asset-btn').dataset.assetId = assetId;
             
+            // Store return-to-parent ID if provided
+            if (returnToParentId) {
+                document.getElementById('asset-details-modal').dataset.returnToParent = returnToParentId;
+            } else {
+                delete document.getElementById('asset-details-modal').dataset.returnToParent;
+            }
+            
             // Add click event listeners to child component items
             document.querySelectorAll('[data-child-id]').forEach(item => {
                 item.addEventListener('click', () => {
                     const childId = item.dataset.childId;
-                    showAssetDetails(childId);
+                    showAssetDetails(childId, assetId); // Pass parent ID as return target
                 });
             });
             
@@ -1686,8 +1693,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
                 if (response.ok) {
                     alert("Asset deleted successfully!");
-                    document.getElementById('asset-details-modal').style.display = "none";
-                    populateAssetList();
+                    const detailsModal = document.getElementById('asset-details-modal');
+                    
+                    // Check if we should return to parent view
+                    if (detailsModal.dataset.returnToParent) {
+                        const returnToParentId = detailsModal.dataset.returnToParent;
+                        delete detailsModal.dataset.returnToParent;
+                        detailsModal.style.display = "none";
+                        showAssetDetails(returnToParentId);
+                    } else {
+                        detailsModal.style.display = "none";
+                        populateAssetList();
+                    }
                 } else {
                     const error = await response.json();
                     alert(`Error: ${error.detail}`);
@@ -1705,7 +1722,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             target.closest('.close-add-asset-btn') ||
             target.closest('.close-maintenance-schedule-btn') ||
             target.closest('.close-maintenance-history-btn')) {
-            target.closest('.modal').style.display = 'none';
+            
+            const modal = target.closest('.modal');
+            
+            // Check if we should return to parent view
+            if (modal.id === 'asset-details-modal' && modal.dataset.returnToParent) {
+                const returnToParentId = modal.dataset.returnToParent;
+                delete modal.dataset.returnToParent;
+                modal.style.display = 'none';
+                showAssetDetails(returnToParentId);
+                return;
+            }
+            
+            modal.style.display = 'none';
             return;
         }
 
@@ -2000,7 +2029,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (response.ok) {
                     alert('Asset updated successfully!');
                     document.getElementById('edit-asset-modal').style.display = 'none';
-                    populateAssetList();
+                    
+                    // Check if we should return to parent view
+                    const detailsModal = document.getElementById('asset-details-modal');
+                    if (detailsModal.dataset.returnToParent) {
+                        const returnToParentId = detailsModal.dataset.returnToParent;
+                        delete detailsModal.dataset.returnToParent;
+                        showAssetDetails(returnToParentId);
+                    } else {
+                        populateAssetList();
+                    }
                 } else {
                     const errorText = await response.text();
                     console.error('Error response:', errorText);

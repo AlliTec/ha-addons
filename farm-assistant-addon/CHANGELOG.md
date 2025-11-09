@@ -142,7 +142,9 @@
 - **Component Interaction**: Child assets now open in same details modal with full edit/delete functionality
 - **Component Filtering**: Fixed API to show only child assets of selected parent, not all assets
 - **Component Display**: Simplified to show only child names in components list
-- **Version Update**: Updated to version 1.6.9
+- **Component UI**: Fixed component background to match cell value background and made section narrower
+- **Navigation Flow**: Added return to parent view after child asset operations (update, delete, close)
+- **Version Update**: Updated to version 1.7.0
 - **Date Conversion**: Added proper string-to-date object conversion for purchase_date, registration_due, insurance_due, warranty_expiry_date
 - **Database Compatibility**: Fixed asyncpg DataError for date fields in both add and update asset endpoints
 - **Error Resolution**: Resolved "'str' object has no attribute 'toordinal'" error
