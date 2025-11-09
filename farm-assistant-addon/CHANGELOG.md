@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.9.1 - 2025-11-09
+
+### Debug
+- **JavaScript Cache Issue**: Updated script version to force browser cache refresh
+- **Added Debug Logging**: Enhanced debugging for maintenance record click handling
+- **Version Bump**: Updated HTML script tag to match current version
+
 ## 1.9.0 - 2025-11-09
 
 ### Fixed

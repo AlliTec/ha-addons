@@ -1567,7 +1567,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Function to load maintenance record for editing
     async function loadMaintenanceRecordForEdit(scheduleId) {
         try {
-            console.log('Loading maintenance record for editing:', scheduleId);
+            console.log('loadMaintenanceRecordForEdit called with scheduleId:', scheduleId);
             const response = await fetch(`api/maintenance-schedule/${scheduleId}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch maintenance record');
@@ -1841,8 +1841,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // Handle maintenance record row clicks for editing
         if (target.closest('.maintenance-record-row')) {
+            console.log('Maintenance record row clicked!');
             const row = target.closest('.maintenance-record-row');
             const scheduleId = row.dataset.maintenanceId;
+            console.log('Schedule ID:', scheduleId);
             loadMaintenanceRecordForEdit(scheduleId);
             return;
         }
