@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.18 (2025-11-10)
+
+### Critical Fixes
+- **Fixed Tracker Starting Position**: Resolved issue where tracker started from user location instead of rain cell location
+- **Corrected Coordinate Usage**: Changed from user coordinates (latitude/longitude) to rain cell coordinates (rain_cell_latitude/rain_cell_longitude)
+- **Maintained Correct Direction**: Kept direction as travel direction (not opposite), since Direction=travel TO, Bearing=coming FROM
+
+### Technical Improvements
+- **Data Source Correction**: Tracker now properly starts from actual rain cell position
+- **Coordinate System**: Fixed confusion between user location and rain cell location data
+- **Direction Logic**: Corrected understanding - Direction=travel direction, Bearing=source direction
+
+### Configuration Updates
+- **Version Bump**: Incremented to v1.1.18 for tracker position fix
+- **File Alignment**: Synchronized versions across config.yaml, Dockerfile, and rain_predictor.py
+
+### Impact
+- **Correct Tracking Path**: Tracker now starts from rain cell and moves toward user location
+- **Accurate Animation**: Green marker follows proper trajectory from cell to user
+- **Proper Distance**: Shows realistic movement path instead of starting from user location
+
 ## Version 1.1.17 (2025-11-10)
 
 ### Critical Fixes

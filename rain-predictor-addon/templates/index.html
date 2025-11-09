@@ -774,9 +774,8 @@
 
             const distance = activeCell.speed * timeDiffHours; // km
 
-            // Rain cell direction is where it's coming FROM, 
-            // but tracker should move where it's going TO (opposite direction)
-            const trackerDirection = (activeCell.direction + 180) % 360;
+            // Direction is where rain cell is traveling TO
+            const trackerDirection = activeCell.direction;
             const theta = trackerDirection * Math.PI / 180; // 0°=N, 90°=E
             
             // Enhanced debug logging to track distance calculation
@@ -1305,7 +1304,7 @@
                     const data = await response.json();
                     cellData.auto = {
                         ...data,
-                        center: { lat: parseFloat(data.latitude), lng: parseFloat(data.longitude) }
+                        center: { lat: parseFloat(data.rain_cell_latitude), lng: parseFloat(data.rain_cell_longitude) }
                     };
                     
                     // Create/Update auto tracker marker and prediction line
