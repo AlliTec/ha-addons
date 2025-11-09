@@ -145,7 +145,8 @@
 - **Component UI**: Fixed component background to match cell value background and made section narrower
 - **Navigation Flow**: Added return to parent view after child asset operations (update, delete, close)
 - **Table Layout**: Fixed table width in livestock and asset registers to remove extra white space
-- **Version Update**: Updated to version 1.7.1
+- **Section Container**: Fixed section-content width to prevent table stretching when switching registers
+- **Version Update**: Updated to version 1.7.2
 - **Date Conversion**: Added proper string-to-date object conversion for purchase_date, registration_due, insurance_due, warranty_expiry_date
 - **Database Compatibility**: Fixed asyncpg DataError for date fields in both add and update asset endpoints
 - **Error Resolution**: Resolved "'str' object has no attribute 'toordinal'" error

@@ -298,7 +298,8 @@ th {
 }
 
 .section-content {
-    width: 100%;
+    width: auto;
+    display: inline-block;
 }
 
 .filter-btn.active {
