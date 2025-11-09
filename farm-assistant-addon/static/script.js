@@ -1845,6 +1845,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             const row = target.closest('.maintenance-record-row');
             const scheduleId = row.dataset.maintenanceId;
             console.log('Schedule ID:', scheduleId);
+            
+            // Close maintenance history modal first
+            document.getElementById('maintenance-history-modal').style.display = 'none';
+            
+            // Then load the maintenance record for editing
             loadMaintenanceRecordForEdit(scheduleId);
             return;
         }

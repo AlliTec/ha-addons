@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.9.2 - 2025-11-09
+
+### Fixed
+- **Modal Layering Issue**: Fixed maintenance schedule modal opening behind history modal
+- **Modal Sequence**: Close maintenance history modal before opening edit modal
+- **User Experience**: Maintenance edit form now properly appears in front
+
 ## 1.9.1 - 2025-11-09
 
 ### Debug
