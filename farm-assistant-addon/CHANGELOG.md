@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.6.1 - 2025-11-09
+
+### Fixed
+- **Generate Name Button**: Fixed non-functional "Generate Name" button in animal edit form
+- **Event Listener Issue**: Resolved timing issue with DOM event listener attachment
+- **Button Size**: Reduced button size and changed label to "Namer" as requested
+- **Modal Integration**: Added event listener attachment when edit/add modals are opened
+
+### Technical Fixes
+- **Dynamic Event Binding**: Event listeners now attached when modals open instead of on page load
+- **Listener Cleanup**: Prevents duplicate event listeners with proper cleanup
+- **Modal Timing**: Fixed race condition between modal creation and event binding
+
 ## 1.6.0 - 2025-11-09
 
 ### Features

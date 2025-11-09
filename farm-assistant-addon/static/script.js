@@ -465,6 +465,15 @@ async function openAddAnimalForm() {
     
     // Show modal
     document.getElementById('edit-animal-modal').style.display = "block";
+    
+    // Add event listener for generate name button
+    const generateNameBtn = document.getElementById('generate-name-btn');
+    if (generateNameBtn) {
+        // Remove existing listeners to prevent duplicates
+        generateNameBtn.replaceWith(generateNameBtn.cloneNode(true));
+        // Add fresh listener
+        document.getElementById('generate-name-btn').addEventListener('click', openNameWizard);
+    }
 }
 
 // Function to update gender options based on category
@@ -663,6 +672,15 @@ async function enableEditMode(animalId) {
         // Hide details modal and show edit modal
         document.getElementById('animal-details-modal').style.display = "none";
         document.getElementById('edit-animal-modal').style.display = "block";
+        
+        // Add event listener for generate name button
+        const generateNameBtn = document.getElementById('generate-name-btn');
+        if (generateNameBtn) {
+            // Remove existing listeners to prevent duplicates
+            generateNameBtn.replaceWith(generateNameBtn.cloneNode(true));
+            // Add fresh listener
+            document.getElementById('generate-name-btn').addEventListener('click', openNameWizard);
+        }
         
     } catch (error) {
         console.error("Error loading animal data for edit:", error);
@@ -1842,11 +1860,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Event listeners for name generator
     document.addEventListener('DOMContentLoaded', () => {
-        // Generate name button
-        const generateNameBtn = document.getElementById('generate-name-btn');
-        if (generateNameBtn) {
-            generateNameBtn.addEventListener('click', openNameWizard);
-        }
         
         // Translate words button
         const translateWordsBtn = document.getElementById('translate-words-btn');
