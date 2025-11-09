@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.13 (2025-11-09)
+
+### Critical Fixes
+- **Fixed Docker Build Error**: Resolved `externally-managed-environment` error in Docker build
+- **Added --break-system-packages Flag**: Fixed pip install command to work with newer Python environments
+- **Fixed Version Consistency**: Updated all files to use consistent v1.1.13 versioning
+
+### Technical Improvements
+- **Docker Compatibility**: Addon now builds successfully with updated Python package management
+- **Build Process**: Resolved exit code 1 during Docker image creation
+- **Environment Handling**: Properly handles externally managed Python environments
+
+### Configuration Updates
+- **Version Bump**: Incremented to v1.1.13 for critical Docker build fix
+- **File Alignment**: Synchronized versions across config.yaml, Dockerfile, and rain_predictor.py
+
+### Impact
+- **Build Success**: Addon now builds and deploys without Docker errors
+- **Deployment Ready**: Fixed blocking issue preventing addon installation
+- **Stability**: Resolved build pipeline failures
+
 ## Version 1.1.12 (2025-11-09)
 
 ### Critical Fixes

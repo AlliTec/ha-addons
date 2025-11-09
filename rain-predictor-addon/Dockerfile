@@ -15,7 +15,7 @@ RUN apk add --no-cache \
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt /tmp/
-RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+RUN pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements.txt
 
 # Create app directory structure
 RUN mkdir -p /app/templates /app/static
@@ -40,6 +40,6 @@ LABEL \
   io.hass.description="Advanced rain prediction using radar image analysis" \
   io.hass.arch="armhf|aarch64|amd64|armv7|i386" \
   io.hass.type="addon" \
-  io.hass.version="1.1.12"
+  io.hass.version="1.1.13"
 
 CMD [ "/run.sh" ]
