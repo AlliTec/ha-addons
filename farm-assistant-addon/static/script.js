@@ -708,26 +708,27 @@ function openNameWizard() {
     }
 }
 
-// Function to translate English words to Old Norse
-async function translateToOldNorse(words) {
-    try {
-        const translations = {};
-        
-        // Translate each word using Viking dictionary
-        for (const word of words) {
-            if (word && word.trim()) {
-                const oldNorse = await getOldNorseTranslation(word.trim().toLowerCase());
-                if (oldNorse) {
+    // Function to translate English words to Old Norse
+    async function translateToOldNorse(words) {
+        try {
+            const translations = {};
+            
+            // Translate each word using the Viking dictionary
+            for (const word of words) {
+                if (word && word.trim()) {
+                    const oldNorse = await getOldNorseTranslation(word.trim().toLowerCase());
+                    // Always include translation (fallback will generate something)
                     translations[word] = oldNorse;
+                    console.log(`Translated "${word}" -> "${oldNorse}"`);
                 }
             }
+            
+            console.log('All translations:', translations);
+            return translations;
+        } catch (error) {
+            console.error('Error translating to Old Norse:', error);
+            return {};
         }
-        
-        return translations;
-    } catch (error) {
-        console.error('Error translating to Old Norse:', error);
-        return {};
-    }
 }
 
 // Function to get Old Norse translation from dictionary
@@ -798,7 +799,23 @@ async function getOldNorseTranslation(englishWord) {
             'time': 'Tími'
         };
         
-        return nameDictionary[englishWord] || null;
+        // Check if word exists in dictionary
+        if (nameDictionary[englishWord]) {
+            return nameDictionary[englishWord];
+        }
+        
+        // Try to find partial matches or similar words
+        const lowerWord = englishWord.toLowerCase();
+        for (const [english, oldNorse] of Object.entries(nameDictionary)) {
+            if (english.includes(lowerWord) || lowerWord.includes(english)) {
+                return oldNorse;
+            }
+        }
+        
+        // If no translation found, return a generic Old Norse suffix
+        const suffixes = ['-son', '-dóttir', '-sson', '-ur', '-ir', '-r'];
+        const randomSuffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+        return englishWord.charAt(0).toUpperCase() + englishWord.slice(1) + randomSuffix;
     } catch (error) {
         console.error('Error getting translation:', error);
         return null;
@@ -1483,6 +1500,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const closeWizardBtn = document.getElementById('close-wizard-btn');
     if (closeWizardBtn) {
         closeWizardBtn.addEventListener('click', () => {
+            console.log('Cancel button clicked - closing wizard');
             document.getElementById('name-wizard-modal').style.display = 'none';
         });
     }

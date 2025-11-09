@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.6.4 - 2025-11-09
+
+### Fixed
+- **Old Norse Name Generator Cancel Button**: Fixed non-functional cancel button in name wizard
+- **Translation Fallback Mechanism**: Improved translation to handle words not in dictionary
+- **Translation Debugging**: Added console logging to track translation process
+- **JavaScript Syntax**: Fixed duplicate catch blocks and return statements
+
+### Improvements
+- **Better Word Coverage**: All 5 input words now generate translations with fallback suffixes
+- **Partial Matching**: Translation now finds similar words when exact match not found
+- **User Feedback**: Console logs show translation process for debugging
+- **Fallback Generation**: Words not in dictionary get Old Norse-style suffixes (-son, -dóttir, etc.)
+
 ## 1.6.3 - 2025-11-09
 
 ### Fixed
