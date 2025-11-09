@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.8.0 - 2025-11-09
+
+### Fixed
+- **Initial Table Width**: Fixed table width calculation on initial page load by properly awaiting data population
+- **Duplicate Event Listeners**: Removed duplicate DOMContentLoaded listener that was causing initialization conflicts  
+- **Proper Initialization Sequence**: Added table width setting after data is fully loaded with 300ms delay
+- **Async/Await Pattern**: Ensured proper async/await pattern for data loading before width calculation
+
 ## 1.7.9 - 2025-11-09
 
 ### Fixed

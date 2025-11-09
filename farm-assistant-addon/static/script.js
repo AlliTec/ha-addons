@@ -1046,9 +1046,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log("script.js: DOMContentLoaded event fired.");
     
     // Initialize page
-    populateAnimalList();
-    populateFilterTabs();
+    await populateAnimalList();
+    await populateFilterTabs();
     setupSectionTabs();
+    
+    // Set initial table width after data is loaded
+    setTimeout(() => {
+        setTableMinWidth('livestock');
+    }, 300);
 
     // Function to setup section tabs
     function setupSectionTabs() {
@@ -2136,15 +2141,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // Initialize page - set table widths after DOM is loaded
-    document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            // Simulate livestock button click to trigger proper initialization
-            const livestockTab = document.querySelector('[data-section="livestock"]');
-            if (livestockTab) {
-                livestockTab.click();
-            }
-        }, 100);
-    });
+
 
 });
