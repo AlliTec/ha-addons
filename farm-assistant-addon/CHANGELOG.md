@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.8.7 - 2025-11-09
+
+### Fixed
+- **Maintenance History Modal Width**: Widened maintenance history modal to 90% width with 900px max-width
+- **Status Column Spacing**: Improved status column layout to prevent text wrapping in status badges
+- **Modal Responsiveness**: Enhanced modal sizing for better table column accommodation
+
 ## 1.8.6 - 2025-11-09
 
 ### Fixed

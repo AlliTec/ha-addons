@@ -444,6 +444,12 @@ th {
     background-color: rgba(96, 125, 139, 0.05);
 }
 
+/* Wider modal for maintenance history to accommodate status column */
+#maintenance-history-modal .modal-content {
+    max-width: 900px;
+    width: 90%;
+}
+
 .status-badge {
     padding: 4px 8px;
     border-radius: 12px;
