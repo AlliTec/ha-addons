@@ -430,7 +430,9 @@ async function populateAnimalList(filter = "All") {
                 
                 // Apply same width to data cells
                 const dataCells = table.querySelectorAll('td');
-                dataCells.forEach(cell => {
+                dataCells.forEach((cell, index) => {
+                    const cellIndex = index % headerCells.length; // Cycle through column widths
+                    const finalWidth = minWidths[cellIndex] + extraPerColumn;
                     cell.style.width = `${finalWidth}px`;
                     cell.style.minWidth = `${finalWidth}px`;
                 });

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.8.2 - 2025-11-09
+
+### Fixed
+- **Maintenance Schedule Database Error**: Fixed SQL INSERT statement with missing parameter placeholders ($15, $16)
+- **JavaScript Table Width Error**: Fixed ReferenceError for undefined finalWidth variable in setTableMinWidth function
+- **Column Value Mismatch**: Corrected maintenance_schedules INSERT to match 16 columns with 16 parameter values
+- **Variable Scope Issue**: Fixed finalWidth variable scope in table cell width calculation
+
 ## 1.8.1 - 2025-11-09
 
 ### Fixed

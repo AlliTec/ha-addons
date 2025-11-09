@@ -553,7 +553,7 @@ async def create_maintenance_schedule(schedule: MaintenanceScheduleCreate):
                 last_maintenance_usage, meter_reading, interval_type, interval_value,
                 cost, supplier, invoice_number, notes
             ) VALUES (
-                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
             ) RETURNING id
         """
         
