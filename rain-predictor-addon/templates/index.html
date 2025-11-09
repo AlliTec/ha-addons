@@ -775,11 +775,20 @@
             const distance = activeCell.speed * timeDiffHours; // km
 
             const theta = activeCell.direction * Math.PI / 180; // 0°=N, 90°=E
+            
+            // Debug logging to track direction calculation
+            console.log(`Tracker debug - Direction: ${activeCell.direction}°, Distance: ${distance.toFixed(2)}km`);
+            console.log(`Theta: ${theta.toFixed(3)}rad, cos: ${Math.cos(theta).toFixed(3)}, sin: ${Math.sin(theta).toFixed(3)}`);
+            
             const latOffset = (distance * Math.cos(theta)) / 111;
             const lngOffset = (distance * Math.sin(theta)) / (111 * Math.cos(activeCell.center.lat * Math.PI / 180));
+            
+            console.log(`Offsets - Lat: ${latOffset.toFixed(6)}, Lng: ${lngOffset.toFixed(6)}`);
 
             const newLat = activeCell.center.lat + latOffset;
             const newLng = activeCell.center.lng + lngOffset;
+            
+            console.log(`New position - Lat: ${newLat.toFixed(6)}, Lng: ${newLng.toFixed(6)}`);
 
             if (Number.isFinite(newLat) && Number.isFinite(newLng)) {
                 updateTracker(newLat, newLng, activeMode);

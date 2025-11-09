@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.15 (2025-11-09)
+
+### Debug Features
+- **Added Tracker Debug Logging**: Enhanced console logging for auto-tracker position calculations
+- **Direction Calculation Debug**: Added detailed logging for direction, distance, and coordinate offsets
+- **Position Tracking Debug**: Added logging for new tracker positions during animation
+
+### Technical Improvements
+- **Troubleshooting Support**: Enhanced debugging capabilities for tracker movement issues
+- **Console Output**: Detailed logging for direction calculation and coordinate updates
+- **Animation Debug**: Real-time tracking of tracker position calculations
+
+### Configuration Updates
+- **Version Bump**: Incremented to v1.1.15 for debug enhancement
+- **File Alignment**: Synchronized versions across config.yaml, Dockerfile, and rain_predictor.py
+
+### Impact
+- **Debug Visibility**: Enhanced ability to diagnose tracker movement issues
+- **Development Support**: Better tools for troubleshooting auto-tracker functionality
+- **Issue Resolution**: Improved debugging for incorrect tracker direction problems
+
 ## Version 1.1.14 (2025-11-09)
 
 ### Critical Fixes
