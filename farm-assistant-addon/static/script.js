@@ -362,11 +362,43 @@ async function populateAnimalList(filter = "All") {
             tableBody.appendChild(row);
         });
         
+        // Set minimum table width based on filter tabs width
+        setTableMinWidth('livestock');
+        
         console.log("Table population completed");
     } catch (error) {
         console.error("Error in populateAnimalList:", error);
     }
-}
+    }
+
+    // Function to set minimum table width based on filter tabs width
+    function setTableMinWidth(section) {
+        const filterBarId = section === 'livestock' ? '#filter-bar' : '#assets-filter-bar';
+        const tableId = section === 'livestock' ? '#livestock-list' : '#assets-list';
+        
+        const filterBar = document.querySelector(filterBarId);
+        const table = document.querySelector(tableId);
+        
+        if (filterBar && table) {
+            // Calculate total width of filter tabs
+            const filterButtons = filterBar.querySelectorAll('.filter-btn');
+            let totalFilterWidth = 0;
+            
+            filterButtons.forEach(btn => {
+                const style = window.getComputedStyle(btn);
+                const width = btn.offsetWidth;
+                const marginLeft = parseInt(style.marginLeft) || 0;
+                const marginRight = parseInt(style.marginRight) || 0;
+                totalFilterWidth += width + marginLeft + marginRight;
+            });
+            
+            // Set minimum table width
+            if (totalFilterWidth > 0) {
+                table.style.minWidth = `${totalFilterWidth}px`;
+                console.log(`Set ${section} table min-width to ${totalFilterWidth}px`);
+            }
+        }
+    }
 
     // Function to populate parent dropdowns
 async function populateParentDropdowns() {
@@ -1143,6 +1175,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                     showAssetDetails(assetId);
                 });
             });
+            
+            // Set minimum table width based on filter tabs width
+            setTableMinWidth('assets');
 
         } catch (error) {
             console.error("Error in populateAssetList:", error);
