@@ -1,6 +1,11 @@
 # Changelog
 
-## 1.8.9 - 2025-11-09
+## 1.9.0 - 2025-11-09
+
+### Fixed
+- **Maintenance Edit Form Field ID Mismatch**: Fixed JavaScript error when loading maintenance records for editing
+- **Invoice Field Reference**: Corrected `maintenance-schedule-invoice-number` to `maintenance-schedule-invoice` to match HTML
+- **Null Reference Error**: Resolved "Cannot set properties of null" error in maintenance record editing
 
 ### Added
 - **Maintenance Record Edit Functionality**: Complete edit capability for maintenance schedule records

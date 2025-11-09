@@ -1591,7 +1591,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById('maintenance-schedule-meter-reading').value = record.meter_reading || '';
             document.getElementById('maintenance-schedule-cost').value = record.cost || '';
             document.getElementById('maintenance-schedule-supplier').value = record.supplier || '';
-            document.getElementById('maintenance-schedule-invoice-number').value = record.invoice_number || '';
+            document.getElementById('maintenance-schedule-invoice').value = record.invoice_number || '';
             document.getElementById('maintenance-schedule-notes').value = record.notes || '';
             
             // Change modal to edit mode
