@@ -17,7 +17,7 @@ from scipy.ndimage import label
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.25"
+VERSION = "1.1.26"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -212,10 +212,10 @@ class RainPredictor:
         self.image_opts = config.get('image_settings.options', '0_0')
         
         # Analysis settings
-        self.threshold = config.get('analysis_settings.rain_threshold', 75)
+        self.threshold = config.get('analysis_settings.rain_threshold', 50)  # Lowered from 75 to detect lighter rain
         self.lat_range = config.get('analysis_settings.lat_range_deg', 1.80)
         self.lon_range = config.get('analysis_settings.lon_range_deg', 1.99)
-        self.arrival_angle_threshold = config.get('analysis_settings.arrival_angle_threshold_deg', 45)
+        self.arrival_angle_threshold = config.get('analysis_settings.arrival_angle_threshold_deg', 90)  # Increased from 45° to be less restrictive
 
         # Debug settings
         self.debug_dir = config.get('debug.debug_dir', '/share/rain_predictor_debug')
@@ -391,7 +391,10 @@ class RainPredictor:
                 logging.info(f"\n--- Frame {i+1}/{len(sorted_frames)} at {frame_time} ---")
                 
                 cells = self._extract_cells_from_frame(frame, api_data)
-                logging.info(f"Found {len(cells)} cell(s) in frame")
+                logging.info(f"Found {len(cells)} cell(s) in frame at {frame_time}")
+                if cells:
+                    for i, cell in enumerate(cells[:3]):  # Log first 3 cells
+                        logging.info(f"  Cell {i+1}: lat={cell['lat']:.4f}, lon={cell['lon']:.4f}, intensity={cell['intensity']:.1f}, size={cell['size']}")
                 
                 if cells:
                     total_cells_detected += len(cells)
@@ -700,6 +703,7 @@ class RainPredictor:
         min_arrival_time = float('inf')
         
         logging.info(f"\n🔍 Evaluating {len(self.tracked_cells)} tracked cells for threats:")
+        logging.info(f"🔍 Current analysis settings: threshold={self.threshold}, angle_threshold={self.arrival_angle_threshold}°, max_dist={self.max_track_dist}km")
         
         for cell_id, cell in self.tracked_cells.items():
             logging.info(f"\n  Cell #{cell_id}:")
@@ -741,6 +745,8 @@ class RainPredictor:
             if angle_diff > self.arrival_angle_threshold:
                 logging.info(f"    ❌ Not moving toward location (angle diff {angle_diff:.1f}° > threshold {self.arrival_angle_threshold}°)")
                 continue
+            else:
+                logging.info(f"    ✅ Moving toward location (angle diff {angle_diff:.1f}° ≤ threshold {self.arrival_angle_threshold}°)")
             
             time_to_arrival_hours = distance_km / speed_kph
             time_to_arrival_minutes = time_to_arrival_hours * 60

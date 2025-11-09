@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.26 (2025-11-10)
+
+### Rain Detection Sensitivity Improvements
+- **Lowered Rain Threshold**: Reduced from 75 to 50 to detect lighter rain cells
+- **Relaxed Angle Requirements**: Increased arrival angle threshold from 45° to 90° for less restrictive threat assessment
+- **Enhanced Cell Detection Logging**: Added detailed logging of detected cells per frame
+- **Improved Threat Evaluation**: Better debugging of why cells are/aren't considered threats
+- **Analysis Settings Visibility**: Logs now show current threshold and angle settings
+
 ## Version 1.1.25 (2025-11-10)
 
 ### Enhanced API Debugging
