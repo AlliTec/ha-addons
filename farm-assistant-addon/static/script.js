@@ -1197,29 +1197,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Build child components HTML
             let childComponentsHtml = '';
             if (childComponents.length > 0) {
-                childComponentsHtml = `
-                    <div class="child-components-section">
-                        <h4>Components</h4>
-                        <div class="child-components-list">
-                            ${childComponents.map(child => `
-                                <div class="child-component-item" data-child-id="${child.id}">
-                                    <div class="child-component-info">
-                                        <strong>${formatCell(child.name)}</strong>
-                                        <span class="child-component-details">
-                                            ${formatCell(child.make || '')} ${formatCell(child.model || '')} | 
-                                            ${formatCell(child.location)} | 
-                                            ${getAssetStatusIcon(child.status)}
-                                        </span>
-                                    </div>
-                                    <div class="child-component-actions">
-                                        <button class="btn-small btn-primary view-child-btn" data-child-id="${child.id}">View Details</button>
-                                        <button class="btn-small btn-secondary edit-child-btn" data-child-id="${child.id}">Edit</button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
+                childComponentsHtml = childComponents.map(child => 
+                    `<div style="padding: 5px; border: 1px solid #ddd; margin: 2px 0; border-radius: 3px; cursor: pointer;" data-child-id="${child.id}">
+                        <strong>${formatCell(child.name)}</strong> (${formatCell(child.make || '')} ${formatCell(child.model || '')}, ${formatCell(child.location)}, ${getAssetStatusIcon(child.status)})
+                    </div>`
+                ).join('');
+            } else {
+                childComponentsHtml = '<div style="color: #666; font-style: italic;">No components recorded</div>';
             }
             
             const detailsContent = document.getElementById('asset-details-content');
@@ -1242,27 +1226,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <tr><td class="property-cell">Warranty Expiry:</td><td>${formatCell(asset.warranty_expiry_date)}</td></tr>
                     <tr><td class="property-cell">Notes:</td><td>${formatCell(asset.notes)}</td></tr>
                 </table>
-                ${childComponentsHtml}
+                <div class="offspring-section">
+                    <h3>Components</h3>
+                    ${childComponentsHtml}
+                </div>
             `;
             
             // Set asset ID for edit/delete buttons
             document.getElementById('edit-asset-btn').dataset.assetId = assetId;
             document.getElementById('delete-asset-btn').dataset.assetId = assetId;
             
-            // Add event listeners for child component buttons
-            document.querySelectorAll('.view-child-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const childId = btn.dataset.childId;
+            // Add click event listeners to child component items
+            document.querySelectorAll('[data-child-id]').forEach(item => {
+                item.addEventListener('click', () => {
+                    const childId = item.dataset.childId;
                     showAssetDetails(childId);
-                });
-            });
-            
-            document.querySelectorAll('.edit-child-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const childId = btn.dataset.childId;
-                    enableAssetEditMode(childId);
                 });
             });
             
