@@ -776,7 +776,9 @@
 
             const theta = activeCell.direction * Math.PI / 180; // 0°=N, 90°=E
             
-            // Debug logging to track direction calculation
+            // Enhanced debug logging to track distance calculation
+            console.log(`Tracker debug - Frame: ${frameIndex}, FrameTime: ${frameTime}, StartTime: ${startTime}`);
+            console.log(`Tracker debug - Speed: ${activeCell.speed}kph, TimeDiff: ${timeDiffHours.toFixed(4)}h`);
             console.log(`Tracker debug - Direction: ${activeCell.direction}°, Distance: ${distance.toFixed(2)}km`);
             console.log(`Theta: ${theta.toFixed(3)}rad, cos: ${Math.cos(theta).toFixed(3)}, sin: ${Math.sin(theta).toFixed(3)}`);
             

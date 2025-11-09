@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.16 (2025-11-09)
+
+### Debug Enhancements
+- **Enhanced Distance Debug Logging**: Added detailed logging for speed, time, and distance calculations
+- **Frame Timing Debug**: Added logging for frame timestamps and time differences
+- **Zero Distance Diagnosis**: Enhanced debugging to identify why tracker distance is 0.00km
+
+### Technical Improvements
+- **Root Cause Analysis**: Better debugging for tracker movement issues
+- **Time Calculation Debug**: Detailed logging for frame timing and time differences
+- **Speed Analysis**: Enhanced logging for rain cell speed values
+
+### Configuration Updates
+- **Version Bump**: Incremented to v1.1.16 for enhanced debugging
+- **File Alignment**: Synchronized versions across config.yaml, Dockerfile, and rain_predictor.py
+
+### Impact
+- **Issue Diagnosis**: Enhanced ability to identify why tracker shows 0.00km distance
+- **Debug Precision**: More detailed logging for troubleshooting tracker movement
+- **Problem Resolution**: Better tools for identifying distance calculation issues
+
 ## Version 1.1.15 (2025-11-09)
 
 ### Debug Features
