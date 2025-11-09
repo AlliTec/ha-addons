@@ -181,6 +181,7 @@ table {
     background-color: var(--input-bg);
     border: 1px solid var(--table-border);
     margin-top: 0;
+    table-layout: auto;
 }
 
 thead {

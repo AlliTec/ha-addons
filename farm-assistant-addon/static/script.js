@@ -392,10 +392,18 @@ async function populateAnimalList(filter = "All") {
                 totalFilterWidth += width + marginLeft + marginRight;
             });
             
-            // Set minimum table width
+            // Force table layout recalculation
+            table.style.width = 'auto';
+            table.style.tableLayout = 'auto';
+            
+            // Set minimum table width with !important override
             if (totalFilterWidth > 0) {
                 table.style.minWidth = `${totalFilterWidth}px`;
+                table.style.width = 'auto';
                 console.log(`Set ${section} table min-width to ${totalFilterWidth}px`);
+                
+                // Force reflow
+                table.offsetHeight;
             }
         }
     }
@@ -1033,6 +1041,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                     document.getElementById('livestock-section').style.display = 'block';
                     document.getElementById('livestock-list').style.display = 'block';
                     headingElement.textContent = 'Livestock List';
+                    // Reset table width after showing
+                    setTimeout(() => setTableMinWidth('livestock'), 100);
                 } else if (section === 'assets') {
                     document.getElementById('assets-section').style.display = 'block';
                     document.getElementById('assets-list').style.display = 'block';

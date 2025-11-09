@@ -148,7 +148,9 @@
 - **Section Container**: Fixed section-content width to prevent table stretching when switching registers
 - **Dynamic Table Width**: Added dynamic minimum table width based on filter tabs total width
 - **Responsive Layout**: Tables now adapt to filter bar width while maintaining proper alignment
-- **Version Update**: Updated to version 1.7.3
+- **Table Width Fix**: Enhanced table width calculation with forced reflow and proper layout reset
+- **Register Switch**: Fixed white space reappearing when switching between livestock and asset registers
+- **Version Update**: Updated to version 1.7.4
 - **Date Conversion**: Added proper string-to-date object conversion for purchase_date, registration_due, insurance_due, warranty_expiry_date
 - **Database Compatibility**: Fixed asyncpg DataError for date fields in both add and update asset endpoints
 - **Error Resolution**: Resolved "'str' object has no attribute 'toordinal'" error
