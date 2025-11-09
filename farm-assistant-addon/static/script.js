@@ -1522,7 +1522,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                                 <th>TASK</th>
                                 <th>Supplier</th>
                                 <th>Cost</th>
-                                <th>KM Reading</th>
+                                <th>METER</th>
                                 <th>Status</th>
                             </tr>
                         </thead>

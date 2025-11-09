@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.5 - 2025-11-09
+
+### Changed
+- **Maintenance History Header**: Changed "KM Reading" column header to "METER" for broader compatibility
+- **Universal Metering**: Updated header to accommodate various meter types (hours, cycles, etc.)
+
 ## 1.8.4 - 2025-11-09
 
 ### Changed
