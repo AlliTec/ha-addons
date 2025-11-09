@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.4 - 2025-11-09
+
+### Changed
+- **Maintenance History Header**: Changed "Task Description" column header to "TASK" for cleaner display
+- **UI Consistency**: Shortened column header for better table layout and readability
+
 ## 1.8.3 - 2025-11-09
 
 ### Fixed
