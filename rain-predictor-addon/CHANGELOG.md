@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.22 (2025-11-10)
+
+### Debugging Enhancements
+- **Velocity Calculation Debug**: Added detailed logging for rain cell speed and direction calculation
+- **Position Tracking Debug**: Enhanced logging to track rain cell position changes over time
+- **Performance Investigation**: Added debug data to investigate unrealistic 229.2 KPH speed issue
+
 ## Version 1.1.21 (2025-11-10)
 
 ### Critical Fixes

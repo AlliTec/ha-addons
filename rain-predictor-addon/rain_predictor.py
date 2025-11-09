@@ -17,7 +17,7 @@ from scipy.ndimage import label
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.21"
+VERSION = "1.1.22"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -114,7 +114,7 @@ class RainCell:
             self.positions = self.positions[-10:]
     
     def get_velocity(self):
-        """Calculate velocity vector (km/h) from recent positions"""
+        """Calculate velocity from last two positions"""
         if len(self.positions) < 2:
             return None, None
         
@@ -127,6 +127,10 @@ class RainCell:
         distance_km = self._haversine(lat1, lon1, lat2, lon2)
         bearing = self._calculate_bearing(lat1, lon1, lat2, lon2)
         speed_kph = distance_km / time_diff
+        
+        # Debug logging for velocity calculation
+        logging.info(f"VELOCITY DEBUG: pos1=({lat1:.4f},{lon1:.4f})@{t1}, pos2=({lat2:.4f},{lon2:.4f})@{t2}")
+        logging.info(f"VELOCITY DEBUG: time_diff={time_diff:.4f}h, distance={distance_km:.2f}km, speed={speed_kph:.1f}kph, bearing={bearing:.1f}°")
         
         return speed_kph, bearing
     
