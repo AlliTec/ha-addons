@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.19 (2025-11-10)
+
+### Critical Fixes
+- **Fixed NaN Tracker Coordinates**: Resolved issue where rain cell tracker failed to appear due to NaN coordinates
+- **Added Coordinate Validation**: Enhanced debugging for rain_cell_latitude and rain_cell_longitude values
+- **Fixed Longitude Calculation**: Resolved NaN propagation in coordinate offset calculations
+- **Added Fallback Logic**: Tracker now falls back to user location if rain cell coordinates are invalid
+
+### Technical Improvements
+- **Enhanced Debug Logging**: Added detailed logging for API response data and coordinate parsing
+- **Safety Checks**: Added validation for invalid center coordinates before calculations
+- **Error Prevention**: Comprehensive NaN checking throughout tracker creation and animation
+- **Coordinate Robustness**: Better handling of missing or invalid rain cell coordinate data
+
+### Configuration Updates
+- **Version Bump**: Incremented to v1.1.19 for NaN coordinate fix
+- **File Alignment**: Synchronized versions across config.yaml, Dockerfile, and rain_predictor.py
+
+### Impact
+- **Tracker Visibility**: Green tracker marker now appears when rain cell coordinates are available
+- **Graceful Degradation**: Falls back to user location if rain cell data is invalid
+- **Debug Capability**: Enhanced logging for troubleshooting coordinate issues
+- **Stability**: Prevents NaN crashes in tracker animation calculations
+
 ## Version 1.1.18 (2025-11-10)
 
 ### Critical Fixes

@@ -784,8 +784,15 @@
             console.log(`Tracker debug - CellFrom: ${activeCell.direction}°, TrackerTo: ${trackerDirection}°, Distance: ${distance.toFixed(2)}km`);
             console.log(`Theta: ${theta.toFixed(3)}rad, cos: ${Math.cos(theta).toFixed(3)}, sin: ${Math.sin(theta).toFixed(3)}`);
             
+            // Safety check for invalid coordinates
+            if (!activeCell.center || isNaN(activeCell.center.lat) || isNaN(activeCell.center.lng)) {
+                console.error('Invalid center coordinates:', activeCell.center);
+                return;
+            }
+            
             const latOffset = (distance * Math.cos(theta)) / 111;
-            const lngOffset = (distance * Math.sin(theta)) / (111 * Math.cos(activeCell.center.lat * Math.PI / 180));
+            const latRad = activeCell.center.lat * Math.PI / 180;
+            const lngOffset = (distance * Math.sin(theta)) / (111 * Math.cos(latRad));
             
             console.log(`Offsets - Lat: ${latOffset.toFixed(6)}, Lng: ${lngOffset.toFixed(6)}`);
 
@@ -1302,9 +1309,23 @@
                 const response = await fetch(apiDataUrl);
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('API Response Data:', data);
+                    console.log('Rain cell coords:', data.rain_cell_latitude, data.rain_cell_longitude);
+                    
+                    const rainLat = parseFloat(data.rain_cell_latitude);
+                    const rainLng = parseFloat(data.rain_cell_longitude);
+                    
+                    console.log('Parsed coords:', rainLat, rainLng);
+                    
+                    // Fallback to user location if rain cell coordinates are invalid
+                    const centerLat = isNaN(rainLat) ? currentLocation.latitude : rainLat;
+                    const centerLng = isNaN(rainLng) ? currentLocation.longitude : rainLng;
+                    
+                    console.log('Final center coords:', centerLat, centerLng);
+                    
                     cellData.auto = {
                         ...data,
-                        center: { lat: parseFloat(data.rain_cell_latitude), lng: parseFloat(data.rain_cell_longitude) }
+                        center: { lat: centerLat, lng: centerLng }
                     };
                     
                     // Create/Update auto tracker marker and prediction line
