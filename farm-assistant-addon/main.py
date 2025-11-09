@@ -447,6 +447,10 @@ async def add_asset(asset: AssetCreate):
             insurance_due = datetime.strptime(asset.insurance_due, '%Y-%m-%d').date() if asset.insurance_due else None
             warranty_expiry_date = datetime.strptime(asset.warranty_expiry_date, '%Y-%m-%d').date() if asset.warranty_expiry_date else None
             
+            # Convert empty strings to None for unique constraint fields
+            serial_number = asset.serial_number.strip() if asset.serial_number and asset.serial_number.strip() else None
+            registration_no = asset.registration_no.strip() if asset.registration_no and asset.registration_no.strip() else None
+            
             # Insert asset with all fields
             result = await conn.fetchrow("""
                 INSERT INTO asset_inventory 
@@ -458,9 +462,9 @@ async def add_asset(asset: AssetCreate):
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
                         $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW())
                 RETURNING id
-            """, asset.name, asset.category, asset.make, asset.model, asset.serial_number,
+            """, asset.name, asset.category, asset.make, asset.model, serial_number,
                 purchase_date, asset.status, asset.parent_asset_id, asset.location,
-                asset.quantity, asset.registration_no, registration_due, asset.permit_info,
+                asset.quantity, registration_no, registration_due, asset.permit_info,
                 asset.insurance_info, insurance_due, asset.warranty_provider,
                 warranty_expiry_date, asset.purchase_price, asset.purchase_location,
                 asset.manual_or_doc_path, asset.notes)
@@ -490,6 +494,10 @@ async def update_asset(asset_id: int, asset: AssetCreate):
             insurance_due = datetime.strptime(asset.insurance_due, '%Y-%m-%d').date() if asset.insurance_due else None
             warranty_expiry_date = datetime.strptime(asset.warranty_expiry_date, '%Y-%m-%d').date() if asset.warranty_expiry_date else None
             
+            # Convert empty strings to None for unique constraint fields
+            serial_number = asset.serial_number.strip() if asset.serial_number and asset.serial_number.strip() else None
+            registration_no = asset.registration_no.strip() if asset.registration_no and asset.registration_no.strip() else None
+            
             # Update asset with all fields
             await conn.execute("""
                 UPDATE asset_inventory 
@@ -500,9 +508,9 @@ async def update_asset(asset_id: int, asset: AssetCreate):
                     warranty_provider = $16, warranty_expiry_date = $17, purchase_price = $18,
                     purchase_location = $19, manual_or_doc_path = $20, notes = $21
                 WHERE id = $22
-            """, asset.name, asset.category, asset.make, asset.model, asset.serial_number,
+            """, asset.name, asset.category, asset.make, asset.model, serial_number,
                 purchase_date, asset.status, asset.parent_asset_id, asset.location,
-                asset.quantity, asset.registration_no, registration_due, asset.permit_info,
+                asset.quantity, registration_no, registration_due, asset.permit_info,
                 asset.insurance_info, insurance_due, asset.warranty_provider,
                 warranty_expiry_date, asset.purchase_price, asset.purchase_location,
                 asset.manual_or_doc_path, asset.notes, asset_id)

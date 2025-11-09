@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.1 - 2025-11-09
+
+### Fixed
+- **Unique Constraint Violation**: Fixed duplicate key error when updating assets with empty serial numbers
+- **Empty String Handling**: Convert empty strings to NULL for unique constraint fields
+- **Serial Number Validation**: Prevent multiple assets with empty serial numbers causing conflicts
+- **Registration Number**: Added same empty string handling for registration_no field
+- **Database Constraints**: Ensured compliance with unique constraints in asset_inventory table
+
 ## 1.5.0 - 2025-11-09
 
 ### Fixed
