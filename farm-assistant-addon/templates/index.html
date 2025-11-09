@@ -276,8 +276,10 @@
                             <input type="text" id="add-asset-location" name="location">
                         </div>
                         <div>
-                            <label for="add-asset-parent">Parent Asset ID:</label>
-                            <input type="number" id="add-asset-parent" name="parent_asset_id" min="1" placeholder="Optional">
+                            <label for="add-asset-parent">Parent Asset:</label>
+                            <select id="add-asset-parent" name="parent_asset_id">
+                                <option value="">No Parent Asset</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -489,8 +491,10 @@
                             <input type="text" id="edit-asset-location" name="location">
                         </div>
                         <div>
-                            <label for="edit-asset-parent">Parent Asset ID:</label>
-                            <input type="number" id="edit-asset-parent" name="parent_asset_id" min="1" placeholder="Optional">
+                            <label for="edit-asset-parent">Parent Asset:</label>
+                            <select id="edit-asset-parent" name="parent_asset_id">
+                                <option value="">No Parent Asset</option>
+                            </select>
                         </div>
                     </div>
                 </div>

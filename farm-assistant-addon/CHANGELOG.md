@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.6.5 - 2025-11-09
+
+### Changed
+- **Parent Asset Selection**: Changed Parent Asset ID field from text input to dropdown selection
+- **Asset Name Display**: Parent asset dropdown now shows asset names with IDs for user-friendly selection
+- **Form Integration**: Both add and edit asset forms now use selection lists for parent assets
+
+### Improvements
+- **User Experience**: Users can now select parent assets from a populated dropdown instead of entering IDs manually
+- **Data Integrity**: System still uses asset IDs internally while displaying user-friendly names
+- **Dynamic Population**: Parent asset dropdowns are populated from current asset database
+- **Consistent Interface**: Both add and edit forms use the same selection interface
+
 ## 1.6.4 - 2025-11-09
 
 ### Fixed

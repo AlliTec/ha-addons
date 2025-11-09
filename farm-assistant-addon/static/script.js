@@ -368,7 +368,7 @@ async function populateAnimalList(filter = "All") {
     }
 }
 
-// Function to populate parent dropdowns
+    // Function to populate parent dropdowns
 async function populateParentDropdowns() {
     console.log("populateParentDropdowns called");
     try {
@@ -427,6 +427,49 @@ async function populateParentDropdowns() {
         
     } catch (error) {
         console.error("Error populating parent dropdowns:", error);
+    }
+}
+
+// Function to populate parent asset dropdowns
+async function populateParentAssetDropdowns() {
+    console.log("populateParentAssetDropdowns called");
+    try {
+        const response = await fetch("api/assets");
+        console.log("Assets response status:", response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const assets = await response.json();
+        console.log("Assets received:", assets.length);
+        
+        const addParentSelect = document.getElementById('add-asset-parent');
+        const editParentSelect = document.getElementById('edit-asset-parent');
+        
+        if (!addParentSelect || !editParentSelect) {
+            console.error("Parent asset select elements not found!");
+            return;
+        }
+        
+        // Clear existing options and add default option
+        const defaultOption = '<option value="">No Parent Asset</option>';
+        addParentSelect.innerHTML = defaultOption;
+        editParentSelect.innerHTML = defaultOption;
+        
+        // Add all assets as potential parents
+        assets.forEach(asset => {
+            const option = document.createElement('option');
+            option.value = asset.id;
+            option.textContent = `${asset.name} (ID: ${asset.id})`;
+            
+            addParentSelect.appendChild(option);
+            editParentSelect.appendChild(option.cloneNode(true));
+        });
+        
+        console.log("Parent asset dropdowns populated successfully");
+        
+    } catch (error) {
+        console.error("Error populating parent asset dropdowns:", error);
     }
 }
 
@@ -1179,13 +1222,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function openAddAssetForm() {
-        // Reset the form
+        // Reset form
         document.getElementById('add-asset-form').reset();
         
         // Set default values
         document.getElementById('add-asset-quantity').value = 1;
         document.getElementById('add-asset-status').value = 'operational';
         document.getElementById('add-asset-usage-type').value = 'hours';
+        
+        // Populate parent asset dropdown
+        await populateParentAssetDropdowns();
         
         document.getElementById('add-asset-modal').style.display = 'block';
     }
@@ -1196,6 +1242,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (!response.ok) throw new Error('Failed to fetch asset details');
             
             const asset = await response.json();
+            
+            // Populate parent asset dropdown first
+            await populateParentAssetDropdowns();
             
             // Populate form fields
             document.getElementById('edit-asset-id').value = asset.id;
@@ -1211,7 +1260,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById('edit-asset-location').value = asset.location || '';
             document.getElementById('edit-asset-quantity').value = asset.quantity || 1;
             document.getElementById('edit-asset-status').value = asset.status || 'operational';
-
+            document.getElementById('edit-asset-parent').value = asset.parent_asset_id || '';
             
             // Purchase Information
             document.getElementById('edit-asset-purchase-date').value = asset.purchase_date || '';
@@ -1739,6 +1788,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 location: formData.get('location'),
                 quantity: formData.get('quantity') ? parseInt(formData.get('quantity')) : 1,
                 status: formData.get('status'),
+                parent_asset_id: formData.get('parent_asset_id') ? parseInt(formData.get('parent_asset_id')) : null,
                 
                 // Purchase Information
                 purchase_date: formData.get('purchase_date') || null,
@@ -1877,6 +1927,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 location: formData.get('location'),
                 quantity: formData.get('quantity') ? parseInt(formData.get('quantity')) : 1,
                 status: formData.get('status'),
+                parent_asset_id: formData.get('parent_asset_id') ? parseInt(formData.get('parent_asset_id')) : null,
                 
                 // Purchase Information
                 purchase_date: formData.get('purchase_date') || null,
