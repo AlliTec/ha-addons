@@ -2118,4 +2118,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // Initialize page - set table widths after DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            setTableMinWidth('livestock');
+        }, 500);
+    });
+
 });
