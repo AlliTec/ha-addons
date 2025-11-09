@@ -65,6 +65,8 @@ schema:
     speed: str?
     direction: str?
     bearing: str?
+    rain_cell_latitude: str?
+    rain_cell_longitude: str?
   defaults:
     no_rain_value: int
     no_direction_value: int

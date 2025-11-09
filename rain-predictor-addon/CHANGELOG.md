@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.11] - 2025-11-09
+### Fixed
+- Version consistency across all files (config.yaml, Dockerfile, rain_predictor.py)
+- Missing rain_cell_latitude and rain_cell_longitude entities in test_data/options.json
+- Schema validation missing entity definitions in config.yaml
+- Duplicate debug settings assignment in rain_predictor.py
+- Dockerfile using problematic --break-system-packages flag
+- Unused dependencies (flask-cors, paho-mqtt) in requirements.txt
+### Changed
+- Updated version from 1.1.10-debug to 1.1.11 for stable release
+- Cleaned up dependency management for better compatibility
+
 ## [1.1.10-debug] - 2025-11-01
 ### Added
 - Extensive logging to the `createTracker` function in the web UI to help diagnose the missing auto-track marker.

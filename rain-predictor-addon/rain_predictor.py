@@ -17,7 +17,7 @@ from scipy.ndimage import label
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.10-debug"
+VERSION = "1.1.11"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -205,8 +205,7 @@ class RainPredictor:
         self.max_track_dist = config.get('tracking_settings.max_tracking_distance_km', 30)
         self.min_track_len = config.get('tracking_settings.min_track_length', 2)
         
-        # Debug settings
-        self.save_images = config.get('debug.save_images', False)
+
         
         logging.info(f"Rain Predictor {VERSION} initialized")
         self._log_config()
