@@ -555,6 +555,13 @@ async def create_maintenance_schedule(schedule: MaintenanceScheduleCreate):
         if schedule.completed_date:
             completed_date_obj = datetime.strptime(schedule.completed_date, '%Y-%m-%d').date()
         
+        # Convert empty strings to None for database constraints
+        maintenance_trigger_type = schedule.maintenance_trigger_type.strip() if schedule.maintenance_trigger_type and schedule.maintenance_trigger_type.strip() else None
+        interval_type = schedule.interval_type.strip() if schedule.interval_type and schedule.interval_type.strip() else None
+        supplier = schedule.supplier.strip() if schedule.supplier and schedule.supplier.strip() else None
+        invoice_number = schedule.invoice_number.strip() if schedule.invoice_number and schedule.invoice_number.strip() else None
+        notes = schedule.notes.strip() if schedule.notes and schedule.notes.strip() else None
+        
         # Insert maintenance schedule
         query = """
             INSERT INTO maintenance_schedules (
@@ -575,16 +582,16 @@ async def create_maintenance_schedule(schedule: MaintenanceScheduleCreate):
             completed_date_obj,
             schedule.status,
             schedule.is_unscheduled,
-            schedule.maintenance_trigger_type,
+            maintenance_trigger_type,
             schedule.maintenance_trigger_value,
             schedule.last_maintenance_usage,
             schedule.meter_reading,
-            schedule.interval_type,
+            interval_type,
             schedule.interval_value,
             schedule.cost,
-            schedule.supplier,
-            schedule.invoice_number,
-            schedule.notes
+            supplier,
+            invoice_number,
+            notes
         )
         
         return {"message": "Maintenance schedule created successfully", "id": result['id']}

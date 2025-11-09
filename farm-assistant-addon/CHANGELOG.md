@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.8.8 - 2025-11-09
+
+### Fixed
+- **Maintenance Schedule Creation**: Fixed internal server error when saving maintenance records
+- **Database Constraint Violation**: Convert empty strings to None for interval_type, maintenance_trigger_type, supplier, invoice_number, and notes fields
+- **Check Constraint Compliance**: Ensured all string fields comply with database check constraints
+- **Form Data Processing**: Enhanced backend validation to handle empty form fields properly
+
 ## 1.8.7 - 2025-11-09
 
 ### Fixed
