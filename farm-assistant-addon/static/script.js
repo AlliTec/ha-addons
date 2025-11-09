@@ -390,21 +390,38 @@ async function populateAnimalList(filter = "All") {
                 const marginLeft = parseInt(style.marginLeft) || 0;
                 const marginRight = parseInt(style.marginRight) || 0;
                 totalFilterWidth += width + marginLeft + marginRight;
+                console.log(`Filter button width: ${width}px, margins: ${marginLeft + marginRight}px, total so far: ${totalFilterWidth}px`);
             });
             
-            // Force table layout recalculation
-            table.style.width = 'auto';
-            table.style.tableLayout = 'auto';
+            console.log(`Total filter width for ${section}: ${totalFilterWidth}px`);
+            console.log(`Current table width: ${table.offsetWidth}px`);
             
-            // Set minimum table width with !important override
-            if (totalFilterWidth > 0) {
-                table.style.minWidth = `${totalFilterWidth}px`;
-                table.style.width = 'auto';
-                console.log(`Set ${section} table min-width to ${totalFilterWidth}px`);
+            // Force table layout recalculation and set explicit width
+            table.style.width = `${totalFilterWidth}px`;
+            table.style.minWidth = `${totalFilterWidth}px`;
+            table.style.tableLayout = 'fixed';
+            
+            // Distribute width across columns
+            const headerCells = table.querySelectorAll('th');
+            if (headerCells.length > 0) {
+                const columnWidth = Math.floor(totalFilterWidth / headerCells.length);
+                headerCells.forEach(cell => {
+                    cell.style.width = `${columnWidth}px`;
+                    cell.style.minWidth = `${columnWidth}px`;
+                });
                 
-                // Force reflow
-                table.offsetHeight;
+                // Apply same width to data cells
+                const dataCells = table.querySelectorAll('td');
+                dataCells.forEach(cell => {
+                    cell.style.width = `${columnWidth}px`;
+                    cell.style.minWidth = `${columnWidth}px`;
+                });
             }
+            
+            console.log(`Set ${section} table width to ${totalFilterWidth}px with ${headerCells.length} columns`);
+            
+            // Force reflow
+            table.offsetHeight;
         }
     }
 
