@@ -545,6 +545,16 @@ async def update_asset(asset_id: int, asset: AssetCreate):
 async def create_maintenance_schedule(schedule: MaintenanceScheduleCreate):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
+        # Convert date strings to date objects for asyncpg
+        due_date_obj = None
+        completed_date_obj = None
+        
+        if schedule.due_date:
+            due_date_obj = datetime.strptime(schedule.due_date, '%Y-%m-%d').date()
+        
+        if schedule.completed_date:
+            completed_date_obj = datetime.strptime(schedule.completed_date, '%Y-%m-%d').date()
+        
         # Insert maintenance schedule
         query = """
             INSERT INTO maintenance_schedules (
@@ -561,8 +571,8 @@ async def create_maintenance_schedule(schedule: MaintenanceScheduleCreate):
             query,
             schedule.asset_id,
             schedule.task_description,
-            schedule.due_date,
-            schedule.completed_date,
+            due_date_obj,
+            completed_date_obj,
             schedule.status,
             schedule.is_unscheduled,
             schedule.maintenance_trigger_type,

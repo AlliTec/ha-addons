@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.8.3 - 2025-11-09
+
+### Fixed
+- **Maintenance Schedule Date Conversion**: Fixed date string to date object conversion for asyncpg compatibility
+- **Database Date Error**: Resolved "'str' object has no attribute 'toordinal'" error in maintenance schedule creation
+- **Date Field Handling**: Added proper datetime.strptime conversion for due_date and completed_date fields
+- **AsyncPG Compatibility**: Ensured all date fields are converted to Python date objects before database insertion
+
 ## 1.8.2 - 2025-11-09
 
 ### Fixed
