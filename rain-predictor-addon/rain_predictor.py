@@ -17,7 +17,7 @@ from scipy.ndimage import label
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.23"
+VERSION = "1.1.24"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -225,6 +225,10 @@ class RainPredictor:
         self.max_track_dist = config.get('tracking_settings.max_tracking_distance_km', 15)  # Reduced from 30km for better accuracy
         self.min_track_len = config.get('tracking_settings.min_track_length', 3)  # Increased for more reliable tracking
         
+        # View bounds for focused analysis
+        self.view_bounds = None
+        self.view_center = None
+        
 
         
         logging.info(f"Rain Predictor {VERSION} initialized")
@@ -240,6 +244,15 @@ class RainPredictor:
             format='%(asctime)s - %(levelname)s - %(message)s',
             handlers=[logging.StreamHandler(sys.stdout)]
         )
+    
+    def set_view_bounds(self, bounds, center, zoom, view_size_km):
+        """Set current map view bounds for focused analysis"""
+        self.view_bounds = bounds
+        self.view_center = center
+        self.view_zoom = zoom
+        self.view_size_km = view_size_km
+        logging.info(f"View bounds set: center=({center.get('lat', 0):.4f}, {center.get('lng', 0):.4f}), zoom={zoom}")
+        logging.info(f"View bounds set: size={view_size_km.get('width', 0):.1f}km x {view_size_km.get('height', 0):.1f}km")
     
     def _log_config(self):
         """Log current configuration"""
@@ -433,7 +446,14 @@ class RainPredictor:
                 logging.warning("Missing frame path or API host")
                 return []
             
-            image_url = f"{api_host}{frame_path}/{self.image_size}/{self.image_zoom}/{self.latitude}/{self.longitude}/{self.image_color}/{self.image_opts}.png"
+            # Use view center if available, otherwise user location
+            center_lat = self.view_center.get('lat') if self.view_center else self.latitude
+            center_lon = self.view_center.get('lng') if self.view_center else self.longitude
+            
+            # Use higher zoom for focused analysis if user is zoomed in
+            zoom_level = self.view_zoom if hasattr(self, 'view_zoom') else self.image_zoom
+            
+            image_url = f"{api_host}{frame_path}/{self.image_size}/{zoom_level}/{center_lat}/{center_lon}/{self.image_color}/{self.image_opts}.png"
             image_data = self.download_radar_image(image_url)
             
             if not image_data:

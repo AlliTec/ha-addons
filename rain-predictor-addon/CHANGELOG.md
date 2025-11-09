@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.24 (2025-11-10)
+
+### Revolutionary View Synchronization
+- **Map View Synchronization**: Frontend now sends current map bounds to backend for focused analysis
+- **Dynamic View Tracking**: Real-time sync on zoom/pan to track exactly what user sees
+- **Focused Cell Analysis**: Backend uses user's view center and zoom for precise rain cell detection
+- **View Size Calculation**: Calculates viewable area in km using map bounds and scale
+- **Enhanced Accuracy**: Analysis now focuses on user's actual view instead of fixed location
+
 ## Version 1.1.23 (2025-11-10)
 
 ### Critical Tracking Improvements

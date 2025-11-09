@@ -348,6 +348,28 @@ def manual_selection():
         "intensity": None,
     }), 200
 
+@app.route("/api/update_view_bounds", methods=["POST"])
+def update_view_bounds():
+    """Receive current map view bounds for focused analysis"""
+    try:
+        data = request.get_json(force=True) or {}
+        bounds = data.get("bounds", {})
+        center = data.get("center", {})
+        zoom = data.get("zoom", 8)
+        view_size = data.get("view_size_km", {})
+        
+        logging.info(f"View bounds update: center=({center.get('lat', 0):.4f}, {center.get('lng', 0):.4f}), zoom={zoom}")
+        logging.info(f"View bounds update: size={view_size.get('width', 0):.1f}km x {view_size.get('height', 0):.1f}km")
+        
+        # Store for use in rain prediction analysis
+        # TODO: Pass these bounds to rain_predictor.py for focused cell tracking
+        
+        return jsonify({"status": "success", "message": "View bounds updated"}), 200
+        
+    except Exception as e:
+        logging.error(f"Error updating view bounds: {e}")
+        return jsonify({"status": "error", "message": "Failed to update view bounds"}), 500
+
 @app.route("/health")
 def health_check():
     return "OK", 200

@@ -589,6 +589,11 @@
             map.on('zoomend', function() {
                 currentSettings.zoomLevel = map.getZoom();
                 saveSettings();
+                syncMapViewToBackend();
+            });
+            
+            map.on('moveend', function() {
+                syncMapViewToBackend();
             });
 
             const locationIcon = L.divIcon({
@@ -1273,6 +1278,61 @@
             
             const bearing = Math.atan2(x, y) * 180 / Math.PI;
             return (bearing + 360) % 360;
+        }
+
+        function syncMapViewToBackend() {
+            if (!map || manualMode) return;
+            
+            try {
+                const bounds = map.getBounds();
+                const center = map.getCenter();
+                const zoom = map.getZoom();
+                
+                // Calculate viewable area dimensions in kilometers
+                const north = bounds.getNorth();
+                const south = bounds.getSouth();
+                const east = bounds.getEast();
+                const west = bounds.getWest();
+                
+                // Approximate km per degree at this latitude
+                const lat_km = 111; // km per degree latitude
+                const lon_km = 111 * Math.cos(center.lat * Math.PI / 180); // km per degree longitude
+                
+                const view_width_km = (east - west) * lon_km;
+                const view_height_km = (north - south) * lat_km;
+                
+                console.log(`Map View Sync: center=(${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}), zoom=${zoom}`);
+                console.log(`Map View Sync: bounds=(${north.toFixed(4)}, ${west.toFixed(4)}) to (${south.toFixed(4)}, ${east.toFixed(4)})`);
+                console.log(`Map View Sync: size=${view_width_km.toFixed(1)}km x ${view_height_km.toFixed(1)}km`);
+                
+                // Send view bounds to backend for focused analysis
+                fetch('/api/update_view_bounds', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        bounds: {
+                            north: north,
+                            south: south,
+                            east: east,
+                            west: west
+                        },
+                        center: {
+                            lat: center.lat,
+                            lng: center.lng
+                        },
+                        zoom: zoom,
+                        view_size_km: {
+                            width: view_width_km,
+                            height: view_height_km
+                        }
+                    })
+                }).catch(error => {
+                    console.log('View sync failed (non-critical):', error);
+                });
+                
+            } catch (error) {
+                console.error('Error syncing map view:', error);
+            }
         }
 
         function updateDataDisplay(data) {
