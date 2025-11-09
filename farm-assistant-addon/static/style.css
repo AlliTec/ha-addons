@@ -13,6 +13,90 @@
     --cancel-hover: #E0E0E0; /* Lighter Gray */
 }
 
+/* Child Components Styles */
+.child-components-section {
+    margin-top: 30px;
+    border-top: 2px solid var(--table-border);
+    padding-top: 20px;
+}
+
+.child-components-section h4 {
+    color: var(--text-color);
+    font-weight: 400;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.child-components-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.child-component-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: 0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.child-component-item:hover {
+    background-color: var(--table-header-bg);
+}
+
+.child-component-info {
+    flex: 1;
+}
+
+.child-component-info strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
+}
+
+.child-component-details {
+    font-size: 0.9em;
+    color: var(--accent-color);
+}
+
+.child-component-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-small {
+    padding: 5px 10px;
+    font-size: 0.8em;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-small.btn-primary {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.btn-small.btn-primary:hover {
+    background-color: var(--button-hover);
+}
+
+.btn-small.btn-secondary {
+    background-color: var(--cancel-color);
+    color: var(--text-color);
+}
+
+.btn-small.btn-secondary:hover {
+    background-color: var(--cancel-hover);
+}
+
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: var(--bg-color);

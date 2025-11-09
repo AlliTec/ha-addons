@@ -1104,10 +1104,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log("Assets data received:", assets);
             console.log("Number of assets:", assets.length);
             
-            // Filter assets by category
+            // Filter assets by category and exclude child items (assets with parents)
             const filteredAssets = filterCategory === 'All' 
-                ? assets 
-                : assets.filter(asset => asset.category === filterCategory);
+                ? assets.filter(asset => !asset.parent_asset_id) 
+                : assets.filter(asset => asset.category === filterCategory && !asset.parent_asset_id);
             
             console.log("Filtered assets count:", filteredAssets.length);
             
@@ -1187,6 +1187,41 @@ document.addEventListener("DOMContentLoaded", async () => {
                 meterReading += ` (as of ${timestamp})`;
             }
             
+            // Fetch child components
+            const childComponentsResponse = await fetch(`api/assets?parent_id=${assetId}`);
+            let childComponents = [];
+            if (childComponentsResponse.ok) {
+                childComponents = await childComponentsResponse.json();
+            }
+            
+            // Build child components HTML
+            let childComponentsHtml = '';
+            if (childComponents.length > 0) {
+                childComponentsHtml = `
+                    <div class="child-components-section">
+                        <h4>Components</h4>
+                        <div class="child-components-list">
+                            ${childComponents.map(child => `
+                                <div class="child-component-item" data-child-id="${child.id}">
+                                    <div class="child-component-info">
+                                        <strong>${formatCell(child.name)}</strong>
+                                        <span class="child-component-details">
+                                            ${formatCell(child.make || '')} ${formatCell(child.model || '')} | 
+                                            ${formatCell(child.location)} | 
+                                            ${getAssetStatusIcon(child.status)}
+                                        </span>
+                                    </div>
+                                    <div class="child-component-actions">
+                                        <button class="btn-small btn-primary view-child-btn" data-child-id="${child.id}">View Details</button>
+                                        <button class="btn-small btn-secondary edit-child-btn" data-child-id="${child.id}">Edit</button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
             const detailsContent = document.getElementById('asset-details-content');
             detailsContent.innerHTML = `
                 <table class="details-table">
@@ -1207,11 +1242,29 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <tr><td class="property-cell">Warranty Expiry:</td><td>${formatCell(asset.warranty_expiry_date)}</td></tr>
                     <tr><td class="property-cell">Notes:</td><td>${formatCell(asset.notes)}</td></tr>
                 </table>
+                ${childComponentsHtml}
             `;
             
             // Set asset ID for edit/delete buttons
             document.getElementById('edit-asset-btn').dataset.assetId = assetId;
             document.getElementById('delete-asset-btn').dataset.assetId = assetId;
+            
+            // Add event listeners for child component buttons
+            document.querySelectorAll('.view-child-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const childId = btn.dataset.childId;
+                    showAssetDetails(childId);
+                });
+            });
+            
+            document.querySelectorAll('.edit-child-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const childId = btn.dataset.childId;
+                    enableAssetEditMode(childId);
+                });
+            });
             
             // Show modal
             document.getElementById('asset-details-modal').style.display = 'block';
