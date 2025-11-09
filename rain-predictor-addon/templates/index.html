@@ -1371,6 +1371,10 @@
                 if (response.ok) {
                     const data = await response.json();
                     console.log('API Response Data:', data);
+                    console.log('API Response Details:', JSON.stringify(data, null, 2));
+                    console.log('Speed from API:', data.speed, 'Type:', typeof data.speed);
+                    console.log('Direction from API:', data.direction, 'Type:', typeof data.direction);
+                    console.log('Distance from API:', data.distance, 'Type:', typeof data.distance);
                     console.log('Rain cell coords:', data.rain_cell_latitude, data.rain_cell_longitude);
                     
                     const rainLat = parseFloat(data.rain_cell_latitude);

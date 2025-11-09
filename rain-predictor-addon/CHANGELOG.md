@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.25 (2025-11-10)
+
+### Enhanced API Debugging
+- **Detailed API Response Logging**: Added comprehensive logging to inspect API data contents
+- **Data Type Validation**: Enhanced logging to check speed/distance/direction data types and values
+- **Metrics Investigation**: Better visibility into why API returns 0.0 KPH and -1.0° direction
+- **Backend-Frontend Sync**: Improved debugging to trace data flow from backend to frontend
+
 ## Version 1.1.24 (2025-11-10)
 
 ### Revolutionary View Synchronization
