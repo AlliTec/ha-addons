@@ -193,10 +193,16 @@ thead {
     background-color: var(--bg-color);
 }
 
+th {
+    background-color: var(--bg-color);
+    white-space: nowrap;
+}
+
 th, td {
     padding: 6px; /* Reduced padding */
     text-align: left;
     border: 1px solid var(--table-border);
+    white-space: nowrap;
 }
 
 .inline-edit-input {

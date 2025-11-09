@@ -158,7 +158,11 @@
 - **Cell Background**: Applied consistent background color to table, th, and td elements
 - **Header Color**: Fixed table header background to match beige color of selected filter tabs
 - **Load Timing**: Increased initialization delay to prevent cell width compression on page load
-- **Version Update**: Updated to version 1.7.7
+- **Word Wrap Prevention**: Added white-space: nowrap to prevent text wrapping in table cells
+- **Column Header Styling**: Applied beige background to both thead and th elements
+- **Smart Width Calculation**: Enhanced column width calculation based on content minimum requirements
+- **Double Initialization**: Added second width update after content rendering for proper sizing
+- **Version Update**: Updated to version 1.7.8
 - **Date Conversion**: Added proper string-to-date object conversion for purchase_date, registration_due, insurance_due, warranty_expiry_date
 - **Database Compatibility**: Fixed asyncpg DataError for date fields in both add and update asset endpoints
 - **Error Resolution**: Resolved "'str' object has no attribute 'toordinal'" error

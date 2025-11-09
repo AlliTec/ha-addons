@@ -401,20 +401,38 @@ async function populateAnimalList(filter = "All") {
             table.style.minWidth = `${totalFilterWidth}px`;
             table.style.tableLayout = 'fixed';
             
-            // Distribute width across columns
+            // Distribute width across columns with minimum widths
             const headerCells = table.querySelectorAll('th');
             if (headerCells.length > 0) {
-                const columnWidth = Math.floor(totalFilterWidth / headerCells.length);
-                headerCells.forEach(cell => {
-                    cell.style.width = `${columnWidth}px`;
-                    cell.style.minWidth = `${columnWidth}px`;
+                // Calculate minimum widths based on content
+                const minWidths = Array.from(headerCells).map(cell => {
+                    const text = cell.textContent.trim();
+                    const tempSpan = document.createElement('span');
+                    tempSpan.style.visibility = 'hidden';
+                    tempSpan.style.position = 'absolute';
+                    tempSpan.style.whiteSpace = 'nowrap';
+                    tempSpan.textContent = text;
+                    document.body.appendChild(tempSpan);
+                    const textWidth = tempSpan.offsetWidth + 20; // Add padding
+                    document.body.removeChild(tempSpan);
+                    return textWidth;
+                });
+                
+                const totalMinWidth = minWidths.reduce((sum, width) => sum + width, 0);
+                const extraWidth = Math.max(0, totalFilterWidth - totalMinWidth);
+                const extraPerColumn = Math.floor(extraWidth / headerCells.length);
+                
+                headerCells.forEach((cell, index) => {
+                    const finalWidth = minWidths[index] + extraPerColumn;
+                    cell.style.width = `${finalWidth}px`;
+                    cell.style.minWidth = `${finalWidth}px`;
                 });
                 
                 // Apply same width to data cells
                 const dataCells = table.querySelectorAll('td');
                 dataCells.forEach(cell => {
-                    cell.style.width = `${columnWidth}px`;
-                    cell.style.minWidth = `${columnWidth}px`;
+                    cell.style.width = `${finalWidth}px`;
+                    cell.style.minWidth = `${finalWidth}px`;
                 });
             }
             
@@ -2122,6 +2140,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             setTableMinWidth('livestock');
+            // Force a second update after content is rendered
+            setTimeout(() => {
+                setTableMinWidth('livestock');
+            }, 500);
         }, 1000);
     });
 
