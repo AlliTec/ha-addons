@@ -373,18 +373,32 @@ class MaintenanceScheduleCreate(BaseModel):
     notes: Optional[str] = None
 
 @app.get("/api/assets")
-async def get_assets():
+async def get_assets(parent_id: Optional[int] = None):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
-        records = await conn.fetch("""
-            SELECT id, name, make, model, location, status, quantity, category,
-                   serial_number, purchase_date, registration_no, registration_due,
-                   permit_info, insurance_info, insurance_due, warranty_provider,
-                   warranty_expiry_date, purchase_price, purchase_location,
-                   manual_or_doc_path, notes, parent_asset_id, created_at
-            FROM asset_inventory 
-            ORDER BY name
-        """)
+        if parent_id is not None:
+            # Return only child assets of the specified parent
+            records = await conn.fetch("""
+                SELECT id, name, make, model, location, status, quantity, category,
+                       serial_number, purchase_date, registration_no, registration_due,
+                       permit_info, insurance_info, insurance_due, warranty_provider,
+                       warranty_expiry_date, purchase_price, purchase_location,
+                       manual_or_doc_path, notes, parent_asset_id, created_at
+                FROM asset_inventory 
+                WHERE parent_asset_id = $1
+                ORDER BY name
+            """, parent_id)
+        else:
+            # Return all assets
+            records = await conn.fetch("""
+                SELECT id, name, make, model, location, status, quantity, category,
+                       serial_number, purchase_date, registration_no, registration_due,
+                       permit_info, insurance_info, insurance_due, warranty_provider,
+                       warranty_expiry_date, purchase_price, purchase_location,
+                       manual_or_doc_path, notes, parent_asset_id, created_at
+                FROM asset_inventory 
+                ORDER BY name
+            """)
         assets = [dict(record) for record in records]
         return assets
     finally:

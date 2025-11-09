@@ -1199,7 +1199,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (childComponents.length > 0) {
                 childComponentsHtml = childComponents.map(child => 
                     `<div style="padding: 5px; border: 1px solid #ddd; margin: 2px 0; border-radius: 3px; cursor: pointer;" data-child-id="${child.id}">
-                        <strong>${formatCell(child.name)}</strong> (${formatCell(child.make || '')} ${formatCell(child.model || '')}, ${formatCell(child.location)}, ${getAssetStatusIcon(child.status)})
+                        <strong>${formatCell(child.name)}</strong>
                     </div>`
                 ).join('');
             } else {

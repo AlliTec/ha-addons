@@ -140,7 +140,9 @@
 - **Component Management**: Child items clickable for viewing and editing from parent details view
 - **Component Styling**: Updated components section to match offspring styling in livestock register
 - **Component Interaction**: Child assets now open in same details modal with full edit/delete functionality
-- **Version Update**: Updated to version 1.6.8
+- **Component Filtering**: Fixed API to show only child assets of selected parent, not all assets
+- **Component Display**: Simplified to show only child names in components list
+- **Version Update**: Updated to version 1.6.9
 - **Date Conversion**: Added proper string-to-date object conversion for purchase_date, registration_due, insurance_due, warranty_expiry_date
 - **Database Compatibility**: Fixed asyncpg DataError for date fields in both add and update asset endpoints
 - **Error Resolution**: Resolved "'str' object has no attribute 'toordinal'" error
