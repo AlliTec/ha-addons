@@ -17,7 +17,7 @@ from scipy.ndimage import label
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.26"
+VERSION = "1.1.27"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -105,16 +105,28 @@ class RainCell:
         self.last_seen = timestamp
     
     def add_position(self, lat, lon, timestamp, intensity=0):
-        """Add a new position observation"""
+        """Add a new position observation with validation"""
+        # Validate coordinates
+        if not (-90 <= lat <= 90) or not (-180 <= lon <= 180):
+            logging.warning(f"Invalid coordinates: ({lat}, {lon}) - skipping")
+            return
+        
+        # Check for duplicate timestamps
+        if self.positions and (timestamp - self.positions[-1][2]).total_seconds() < 60:
+            logging.warning(f"Timestamp too close: {timestamp} vs {self.positions[-1][2]} - skipping")
+            return
+        
         self.positions.append((lat, lon, timestamp))
         self.last_seen = timestamp
         self.intensity = max(self.intensity, intensity)
         
         if len(self.positions) > 10:
             self.positions = self.positions[-10:]
+        
+        logging.debug(f"Added position to cell {self.id}: ({lat:.4f},{lon:.4f})@{timestamp}, track_len={len(self.positions)}")
     
     def get_velocity(self):
-        """Calculate velocity from last two positions"""
+        """Calculate velocity from last two positions with enhanced accuracy"""
         if len(self.positions) < 2:
             return None, None
         
@@ -122,11 +134,22 @@ class RainCell:
         
         time_diff = (t2 - t1).total_seconds() / 3600.0
         if time_diff <= 0:
+            logging.warning(f"Invalid time difference: {time_diff:.4f}h for cell track")
             return None, None
         
         distance_km = self._haversine(lat1, lon1, lat2, lon2)
         bearing = self._calculate_bearing(lat1, lon1, lat2, lon2)
         speed_kph = distance_km / time_diff
+        
+        # Enhanced validation and debugging
+        if distance_km < 0.1:  # Less than 100m movement
+            logging.info(f"VELOCITY: Minimal movement ({distance_km:.3f}km), treating as stationary")
+            return 0.0, bearing
+        
+        # Cap unrealistic speeds
+        if speed_kph > 200:  # Cap at 200 KPH (hurricane speed)
+            logging.warning(f"VELOCITY: Unrealistic speed {speed_kph:.1f}kph capped to 200kph")
+            speed_kph = 200.0
         
         # Debug logging for velocity calculation
         logging.info(f"VELOCITY DEBUG: pos1=({lat1:.4f},{lon1:.4f})@{t1}, pos2=({lat2:.4f},{lon2:.4f})@{t2}")
@@ -392,15 +415,16 @@ class RainPredictor:
                 
                 cells = self._extract_cells_from_frame(frame, api_data)
                 logging.info(f"Found {len(cells)} cell(s) in frame at {frame_time}")
-                if cells:
-                    for i, cell in enumerate(cells[:3]):  # Log first 3 cells
-                        logging.info(f"  Cell {i+1}: lat={cell['lat']:.4f}, lon={cell['lon']:.4f}, intensity={cell['intensity']:.1f}, size={cell['size']}")
                 
                 if cells:
                     total_cells_detected += len(cells)
+                    # Use view center if available, otherwise user location
+                    center_lat = self.view_center.get('lat') if self.view_center else self.latitude
+                    center_lon = self.view_center.get('lng') if self.view_center else self.longitude
+                    
                     for j, cell in enumerate(cells):
-                        dist = self.haversine(self.latitude, self.longitude, cell['lat'], cell['lon'])
-                        bearing = self.calculate_bearing(self.latitude, self.longitude, cell['lat'], cell['lon'])
+                        dist = self.haversine(center_lat, center_lon, cell['lat'], cell['lon'])
+                        bearing = self.calculate_bearing(center_lat, center_lon, cell['lat'], cell['lon'])
                         logging.info(f"  Cell {j+1}: lat={cell['lat']:.4f}, lon={cell['lon']:.4f}, "
                                    f"intensity={cell['intensity']:.1f}, size={cell['size']}, "
                                    f"dist={dist:.1f}km, bearing={bearing:.1f}°")

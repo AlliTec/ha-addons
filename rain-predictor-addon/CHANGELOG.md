@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.27 (2025-11-10)
+
+### Enhanced Velocity Calculation and Tracking
+- **Robust Velocity Calculation**: Added validation for unrealistic speeds and minimal movement
+- **Position Validation**: Enhanced coordinate and timestamp validation in position tracking
+- **Speed Capping**: Limited maximum speed to 200 KPH to prevent calculation errors
+- **Improved Position Tracking**: Added duplicate timestamp detection and coordinate validation
+- **View-Centered Analysis**: Uses user's view center for distance/bearing calculations
+- **Enhanced Debugging**: Better logging of position additions and velocity calculations
+
 ## Version 1.1.26 (2025-11-10)
 
 ### Rain Detection Sensitivity Improvements
