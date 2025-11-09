@@ -135,6 +135,7 @@
 
 ### Fixed
 - **Asset Date Handling**: Fixed internal server error when updating/adding assets
+- **Version Update**: Updated to version 1.6.6
 - **Date Conversion**: Added proper string-to-date object conversion for purchase_date, registration_due, insurance_due, warranty_expiry_date
 - **Database Compatibility**: Fixed asyncpg DataError for date fields in both add and update asset endpoints
 - **Error Resolution**: Resolved "'str' object has no attribute 'toordinal'" error

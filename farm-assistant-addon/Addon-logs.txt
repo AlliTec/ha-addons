@@ -1,23 +1,96 @@
-[06:06:25] INFO: Syntax check finished with status: 0
-[06:06:25] INFO: Attempting to start Uvicorn...
-2025-11-09 06:06:27,159 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
-INFO:     Started server process [93]
-INFO:     Waiting for application startup.
-2025-11-09 06:06:27,197 - INFO - Attempting to connect to the database at 192.168.1.130...
-2025-11-09 06:06:27,297 - INFO - Database connection successful.
-INFO:     Application startup complete.
+app.1d24f37c18c00da1.js:60 The Material theme is deprecated and will be removed in Vaadin 25.
+22698 @ version.js:22
+c @ app.1d24f37c18c00da1.js:60
+29797 @ 34699.77a80428a6e35f25.js:4
+c @ app.1d24f37c18c00da1.js:60
+8808 @ 34699.77a80428a6e35f25.js:7
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ 34699.77a80428a6e35f25.js:31
+c.a @ async_module:58
+10167 @ 34699.77a80428a6e35f25.js:31
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ 34699.77a80428a6e35f25.js:31
+c.a @ async_module:58
+83077 @ 34699.77a80428a6e35f25.js:31
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ 34699.77a80428a6e35f25.js:31
+c.a @ async_module:58
+67056 @ 34699.77a80428a6e35f25.js:31
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ 34699.77a80428a6e35f25.js:28
+c.a @ async_module:58
+99973 @ 34699.77a80428a6e35f25.js:28
+c @ app.1d24f37c18c00da1.js:60
+Promise.then
+firstUpdated @ more-info-mixin.ts:22
+firstUpdated @ translations-mixin.ts:85
+firstUpdated @ themes-mixin.ts:28
+firstUpdated @ auth-mixin.ts:16
+firstUpdated @ quick-bar-mixin.ts:32
+firstUpdated @ home-assistant.ts:104
+_$AE @ reactive-element.ts:1551
+performUpdate @ reactive-element.ts:1518
+t.performUpdate @ storage.ts:172
+scheduleUpdate @ reactive-element.ts:1400
+_$EP @ reactive-element.ts:1372
+await in _$EP
+requestUpdate @ reactive-element.ts:1311
+_$Ev @ reactive-element.ts:1055
+S @ reactive-element.ts:1038
+i @ lit-element.ts:130
+te @ hass-base-mixin.ts:6
+(anonymous) @ context-mixin.ts:27
+(anonymous) @ logging-mixin.ts:24
+(anonymous) @ panel-title-mixin.ts:12
+(anonymous) @ haptic-mixin.ts:38
+(anonymous) @ url-sync-mixin.ts:18
+(anonymous) @ dialog-manager-mixin.ts:28
+(anonymous) @ notification-mixin.ts:5
+(anonymous) @ connection-mixin.ts:41
+(anonymous) @ disconnect-toast-mixin.ts:16
+(anonymous) @ sidebar-mixin.ts:28
+(anonymous) @ action-mixin.ts:16
+(anonymous) @ automation-editor-mixin.ts:21
+(anonymous) @ more-info-mixin.ts:16
+(anonymous) @ state-display-mixin.ts:8
+(anonymous) @ translations-mixin.ts:75
+(anonymous) @ themes-mixin.ts:24
+(anonymous) @ auth-mixin.ts:14
+Te @ hass-element.ts:24
+(anonymous) @ quick-bar-mixin.ts:30
+w @ home-assistant.ts:53
+P @ scoped-custom-element-registry.ts:642
+t @ scoped-custom-element-registry.ts:408
+A.define @ scoped-custom-element-registry.ts:243
+(anonymous) @ custom-element.ts:60
+s @ tslib.es6.mjs:58
+(anonymous) @ app.1d24f37c18c00da1.js:14
+await in (anonymous)
+c.a @ async_module:58
+29627 @ app.1d24f37c18c00da1.js:14
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ app.1d24f37c18c00da1.js:14
+c.a @ async_module:58
+32494 @ app.1d24f37c18c00da1.js:14
+c @ app.1d24f37c18c00da1.js:60
+(anonymous) @ app.1d24f37c18c00da1.js:60
+script.js?v=1.0.1&t=:1921 Uncaught SyntaxError: missing ) after argument list (at script.js?v=1.0.1&t=:1921:5)
+
+
+
+
+
+
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     172.30.32.2:46292 - "GET / HTTP/1.1" 200 OK
-2025-11-09 06:06:35,441 - INFO - Fetched 28 animals from database.
-INFO:     172.30.32.2:46292 - "GET /get_animals HTTP/1.1" 200 OK
-2025-11-09 06:06:35,574 - INFO - Fetched 28 animals from database.
-INFO:     172.30.32.2:46292 - "GET /get_animals HTTP/1.1" 200 OK
-INFO:     172.30.32.2:46292 - "GET /get_animal/15 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:46292 - "GET /get_animal/15 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:46292 - "GET /api/animals HTTP/1.1" 200 OK
-2025-11-09 06:06:51,458 - INFO - Updating animal 15 with data: tag_id='12345-14' name='Digr' gender='Bull' breed='Santa Gertrudis' birth_date='2024-09-24' health_status='On Property' notes='' dam_id=7 sire_id=15 features='Large Calf Chocolate Brown Healthy' photo_path='' pic='' dod=None status='Active'
-2025-11-09 06:06:51,466 - ERROR - Error updating animal 15: invalid input for query argument $5: '2024-09-24' ('str' object has no attribute 'toordinal')
-INFO:     172.30.32.2:55592 - "PUT /update_animal/15 HTTP/1.1" 500 Internal Server Error
+INFO:     172.30.32.2:39390 - "GET / HTTP/1.1" 200 OK
+INFO:     172.30.32.2:39390 - "GET /static/style.css HTTP/1.1" 200 OK
+INFO:     172.30.32.2:39404 - "GET /static/script.js?v=1.0.1&t= HTTP/1.1" 200 OK
+2025-11-09 10:30:06,685 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:39390 - "GET /get_animals HTTP/1.1" 200 OK
+2025-11-09 10:30:06,818 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:39404 - "GET /get_animals HTTP/1.1" 200 OK
+INFO:     172.30.32.2:39390 - "GET /api/animals HTTP/1.1" 200 OK
+INFO:     172.30.32.2:39106 - "GET /static/style.css HTTP/1.1" 304 Not Modified
 s6-rc: info: service legacy-services: stopping
 s6-rc: info: service legacy-services successfully stopped
 s6-rc: info: service legacy-cont-init: stopping
@@ -38,63 +111,73 @@ s6-rc: info: service legacy-cont-init: starting
 s6-rc: info: service legacy-cont-init successfully started
 s6-rc: info: service legacy-services: starting
 s6-rc: info: service legacy-services successfully started
-[06:12:12] INFO: Starting Farm Assistant Addon...
-[06:12:12] INFO: Current directory: /
-[06:12:12] INFO: Listing files in /app...
+[10:37:07] INFO: Starting Farm Assistant Addon...
+[10:37:07] INFO: Current directory: /
+[10:37:07] INFO: Listing files in /app...
 total 44
-drwxr-xr-x    1 root     root          4096 Nov  9 06:12 .
-drwxr-xr-x    1 root     root          4096 Nov  9 06:12 ..
--rw-r--r--    1 root     root         21383 Nov  9 06:11 main.py
-drwxr-xr-x    1 root     root          4096 Nov  9 00:30 static
-drwxr-xr-x    1 root     root          4096 Nov  9 00:30 templates
-[06:12:12] INFO: Checking main.py for syntax...
-[06:12:12] INFO: Syntax check finished with status: 0
-[06:12:12] INFO: Attempting to start Uvicorn...
-2025-11-09 06:12:14,202 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+drwxr-xr-x    1 root     root          4096 Nov  9 10:05 .
+drwxr-xr-x    1 root     root          4096 Nov  9 10:37 ..
+-rw-r--r--    1 root     root         24001 Nov  9 10:05 main.py
+drwxr-xr-x    1 root     root          4096 Nov  9 10:35 static
+drwxr-xr-x    1 root     root          4096 Nov  9 10:35 templates
+[10:37:07] INFO: Checking main.py for syntax...
+[10:37:07] INFO: Syntax check finished with status: 0
+[10:37:07] INFO: Attempting to start Uvicorn...
+2025-11-09 10:37:09,193 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
 INFO:     Started server process [93]
 INFO:     Waiting for application startup.
-2025-11-09 06:12:14,234 - INFO - Attempting to connect to the database at 192.168.1.130...
-2025-11-09 06:12:14,339 - INFO - Database connection successful.
+2025-11-09 10:37:09,232 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-09 10:37:09,337 - INFO - Database connection successful.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     172.30.32.2:60418 - "GET / HTTP/1.1" 200 OK
-2025-11-09 06:12:15,416 - INFO - Fetched 28 animals from database.
-INFO:     172.30.32.2:60418 - "GET /get_animals HTTP/1.1" 200 OK
-2025-11-09 06:12:15,548 - INFO - Fetched 28 animals from database.
-INFO:     172.30.32.2:60418 - "GET /get_animals HTTP/1.1" 200 OK
-INFO:     172.30.32.2:60418 - "GET /get_animal/15 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:60418 - "GET /get_animal/15 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:60418 - "GET /api/animals HTTP/1.1" 200 OK
-2025-11-09 06:12:31,747 - INFO - Updating animal 15 with data: tag_id='12345-14' name='Digr' gender='Bull' breed='Santa Gertrudis' birth_date='2024-09-24' health_status='On Property' notes='' dam_id=7 sire_id=8 features='Large Calf Chocolate Brown Healthy' photo_path='' pic='' dod=None status='Active'
-2025-11-09 06:12:31,773 - INFO - Animal 15 updated successfully
-INFO:     172.30.32.2:56262 - "PUT /update_animal/15 HTTP/1.1" 200 OK
-2025-11-09 06:12:35,262 - INFO - Fetched 28 animals from database.
-INFO:     172.30.32.2:56262 - "GET /get_animals HTTP/1.1" 200 OK
-2025-11-09 06:12:35,402 - INFO - Fetched 28 animals from database.
-INFO:     172.30.32.2:56262 - "GET /get_animals HTTP/1.1" 200 OK
-INFO:     172.30.32.2:56262 - "GET /get_animal/15 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:42008 - "GET / HTTP/1.1" 200 OK
-2025-11-09 06:12:46,457 - INFO - Fetched 28 animals from database.
-INFO:     172.30.32.2:42008 - "GET /get_animals HTTP/1.1" 200 OK
-2025-11-09 06:12:46,588 - INFO - Fetched 28 animals from database.
-INFO:     172.30.32.2:42008 - "GET /get_animals HTTP/1.1" 200 OK
-INFO:     172.30.32.2:42008 - "GET /get_animal/15 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:42008 - "GET /get_animal/15 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:42008 - "GET /api/animals HTTP/1.1" 200 OK
-2025-11-09 06:13:07,877 - INFO - Updating animal 15 with data: tag_id='12345-14' name='Digr' gender='Bull' breed='Santa Gertrudis' birth_date='2024-09-24' health_status='On Property' notes='' dam_id=7 sire_id=8 features='Large Calf Chocolate Brown Healthy' photo_path='' pic='' dod=None status='Active'
-2025-11-09 06:13:07,899 - INFO - Animal 15 updated successfully
-INFO:     172.30.32.2:47916 - "PUT /update_animal/15 HTTP/1.1" 200 OK
-2025-11-09 06:13:14,486 - INFO - Fetched 28 animals from database.
-INFO:     172.30.32.2:56060 - "GET /get_animals HTTP/1.1" 200 OK
-2025-11-09 06:13:14,644 - INFO - Fetched 28 animals from database.
-INFO:     172.30.32.2:56060 - "GET /get_animals HTTP/1.1" 200 OK
-INFO:     172.30.32.2:36756 - "GET /get_animal/15 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:36756 - "GET /get_animal/15 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:36756 - "GET /api/animals HTTP/1.1" 200 OK
-2025-11-09 06:17:09,435 - INFO - Updating animal 15 with data: tag_id='12345-14' name='Digr' gender='Bull' breed='Santa Gertrudis' birth_date='2024-09-24' health_status='On Property' notes='' dam_id=7 sire_id=8 features='Large Calf Chocolate Brown Healthy' photo_path='' pic='' dod=None status='Active'
-2025-11-09 06:17:09,453 - INFO - Animal 15 updated successfully
-INFO:     172.30.32.2:44296 - "PUT /update_animal/15 HTTP/1.1" 200 OK
-2025-11-09 06:17:11,126 - INFO - Fetched 28 animals from database.
-INFO:     172.30.32.2:44296 - "GET /get_animals HTTP/1.1" 200 OK
-2025-11-09 06:17:11,270 - INFO - Fetched 28 animals from database.
-INFO:     172.30.32.2:44296 - "GET /get_animals HTTP/1.1" 200 OK
+INFO:     172.30.32.2:40800 - "GET / HTTP/1.1" 200 OK
+INFO:     172.30.32.2:40800 - "GET /static/style.css HTTP/1.1" 304 Not Modified
+INFO:     172.30.32.2:40810 - "GET /static/script.js?v=1.0.1&t= HTTP/1.1" 200 OK
+2025-11-09 10:37:10,498 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:40800 - "GET /get_animals HTTP/1.1" 200 OK
+2025-11-09 10:37:10,633 - INFO - Fetched 28 animals from database.
+INFO:     172.30.32.2:40810 - "GET /get_animals HTTP/1.1" 200 OK
+INFO:     172.30.32.2:40800 - "GET /api/animals HTTP/1.1" 200 OK
+INFO:     172.30.32.2:55930 - "GET /api/animals HTTP/1.1" 200 OK
+s6-rc: info: service legacy-services: stopping
+s6-rc: info: service legacy-services successfully stopped
+s6-rc: info: service legacy-cont-init: stopping
+s6-rc: info: service legacy-cont-init successfully stopped
+s6-rc: info: service fix-attrs: stopping
+s6-rc: info: service fix-attrs successfully stopped
+s6-rc: info: service s6rc-oneshot-runner: stopping
+s6-rc: info: service s6rc-oneshot-runner successfully stopped
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [93]
+s6-rc: info: service s6rc-oneshot-runner: starting
+s6-rc: info: service s6rc-oneshot-runner successfully started
+s6-rc: info: service fix-attrs: starting
+s6-rc: info: service fix-attrs successfully started
+s6-rc: info: service legacy-cont-init: starting
+s6-rc: info: service legacy-cont-init successfully started
+s6-rc: info: service legacy-services: starting
+s6-rc: info: service legacy-services successfully started
+[10:44:18] INFO: Starting Farm Assistant Addon...
+[10:44:18] INFO: Current directory: /
+[10:44:18] INFO: Listing files in /app...
+total 44
+drwxr-xr-x    1 root     root          4096 Nov  9 10:05 .
+drwxr-xr-x    1 root     root          4096 Nov  9 10:44 ..
+-rw-r--r--    1 root     root         24001 Nov  9 10:05 main.py
+drwxr-xr-x    1 root     root          4096 Nov  9 10:44 static
+drwxr-xr-x    1 root     root          4096 Nov  9 10:35 templates
+[10:44:18] INFO: Checking main.py for syntax...
+[10:44:18] INFO: Syntax check finished with status: 0
+[10:44:18] INFO: Attempting to start Uvicorn...
+2025-11-09 10:44:20,180 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [93]
+INFO:     Waiting for application startup.
+2025-11-09 10:44:20,214 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-09 10:44:20,315 - INFO - Database connection successful.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     172.30.32.2:38246 - "GET / HTTP/1.1" 200 OK
+INFO:     172.30.32.2:38250 - "GET /static/script.js?v=1.0.1&t= HTTP/1.1" 200 OK
+INFO:     172.30.32.2:38246 - "GET /static/style.css HTTP/1.1" 304 Not Modified
