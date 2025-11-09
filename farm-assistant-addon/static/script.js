@@ -688,6 +688,224 @@ async function enableEditMode(animalId) {
     }
 }
 
+// --- Name Generator Functions ---
+
+let selectedNorseName = '';
+
+// Function to open name wizard
+function openNameWizard() {
+    document.getElementById('name-wizard-modal').style.display = 'block';
+    // Reset wizard
+    document.getElementById('wizard-step-1').style.display = 'block';
+    document.getElementById('wizard-step-2').style.display = 'none';
+    document.getElementById('name-options').innerHTML = '';
+    document.getElementById('select-name-btn').disabled = true;
+    selectedNorseName = '';
+    
+    // Clear input fields
+    for (let i = 1; i <= 5; i++) {
+        document.getElementById(`birth-word-${i}`).value = '';
+    }
+}
+
+// Function to translate English words to Old Norse
+async function translateToOldNorse(words) {
+    try {
+        const translations = {};
+        
+        // Translate each word using Viking dictionary
+        for (const word of words) {
+            if (word && word.trim()) {
+                const oldNorse = await getOldNorseTranslation(word.trim().toLowerCase());
+                if (oldNorse) {
+                    translations[word] = oldNorse;
+                }
+            }
+        }
+        
+        return translations;
+    } catch (error) {
+        console.error('Error translating to Old Norse:', error);
+        return {};
+    }
+}
+
+// Function to get Old Norse translation from dictionary
+async function getOldNorseTranslation(englishWord) {
+    try {
+        // Common Old Norse name translations based on meaning
+        const nameDictionary = {
+            // Strength/Battle related
+            'strong': 'Styrkr',
+            'brave': 'Drengr', 
+            'warrior': 'Hersir',
+            'battle': 'Orusta',
+            'fighter': 'Kappi',
+            
+            // Nature/Weather related
+            'storm': 'Stormr',
+            'winter': 'Vetr',
+            'snow': 'Snjór',
+            'ice': 'Íss',
+            'frost': 'Frosti',
+            'cold': 'Kaldr',
+            
+            // Light/Brightness related
+            'bright': 'Bjart',
+            'light': 'Ljós',
+            'shining': 'Skinandi',
+            'morning': 'Morgunn',
+            'dawn': 'Dagr',
+            'sun': 'Sól',
+            
+            // Birth/New life related
+            'new': 'Nýr',
+            'first': 'Fyrstr',
+            'calf': 'Kalfr',
+            'young': 'Ungur',
+            'birth': 'Fæðing',
+            'joy': 'Gleði',
+            
+            // Animals related
+            'bull': 'Naut',
+            'ox': 'Uxi',
+            'cow': 'Kýr',
+            'cattle': 'Fé',
+            'herd': 'Hjörð',
+            
+            // Qualities
+            'swift': 'Snarr',
+            'fast': 'Hrastr',
+            'gentle': 'Mildr',
+            'kind': 'Vinsæll',
+            'lucky': 'Heppinn',
+            'special': 'Sérstakur',
+            'noble': 'Ættbær',
+            'proud': 'Stoltur',
+            
+            // Colors
+            'white': 'Hvítur',
+            'black': 'Svartur',
+            'brown': 'Brúnn',
+            'red': 'Rauður',
+            'golden': 'Gullinn',
+            
+            // Time/Season related
+            'summer': 'Sumar',
+            'spring': 'Vor',
+            'autumn': 'Haust',
+            'year': 'Ár',
+            'time': 'Tími'
+        };
+        
+        return nameDictionary[englishWord] || null;
+    } catch (error) {
+        console.error('Error getting translation:', error);
+        return null;
+    }
+}
+
+// Function to generate Norse names from translations
+function generateNorseNames(translations) {
+    const names = [];
+    const translationValues = Object.values(translations);
+    
+    // Generate combinations and variations
+    translationValues.forEach(word => {
+        if (word) {
+            // Add the word as a name
+            names.push({
+                name: word,
+                meaning: `Direct translation: ${Object.keys(translations).find(k => translations[k] === word) || 'Unknown'}`
+            });
+            
+            // Generate variations
+            if (word.length > 3) {
+                // Add common Old Norse name endings
+                names.push({
+                    name: word + 'r',
+                    meaning: `Masculine form of ${word}`
+                });
+                names.push({
+                    name: word + 'a',
+                    meaning: `Feminine form of ${word}`
+                });
+            }
+        }
+    });
+    
+    // Add some traditional Old Norse names that might match meanings
+    const traditionalNames = [
+        { name: 'Björn', meaning: 'Bear' },
+        { name: 'Ulf', meaning: 'Wolf' },
+        { name: 'Erik', meaning: 'Eternal ruler' },
+        { name: 'Leif', meaning: 'Heir' },
+        { name: 'Thor', meaning: 'Thunder' },
+        { name: 'Odin', meaning: 'Poetry/fury' },
+        { name: 'Freyr', meaning: 'Lord' },
+        { name: 'Tyr', meaning: 'God' },
+        { name: 'Skadi', meaning: 'Damage' },
+        { name: 'Freyja', meaning: 'Lady' },
+        { name: 'Sif', meaning: 'Wife' },
+        { name: 'Idunn', meaning: 'Rejuvenator' }
+    ];
+    
+    // Filter traditional names based on input meanings
+    const inputMeanings = Object.keys(translations).join(' ').toLowerCase();
+    traditionalNames.forEach(tradName => {
+        if (inputMeanings.includes('strong') || inputMeanings.includes('brave') || inputMeanings.includes('warrior')) {
+            names.push(tradName);
+        }
+        if (inputMeanings.includes('light') || inputMeanings.includes('bright') || inputMeanings.includes('morning')) {
+            names.push(tradName);
+        }
+        if (inputMeanings.includes('new') || inputMeanings.includes('first') || inputMeanings.includes('young')) {
+            names.push(tradName);
+        }
+    });
+    
+    // Remove duplicates and limit to reasonable number
+    const uniqueNames = names.filter((name, index, self) => 
+        index === self.findIndex(n => n.name === name.name)
+    ).slice(0, 12);
+    
+    return uniqueNames;
+}
+
+// Function to display name options
+function displayNameOptions(names) {
+    const optionsContainer = document.getElementById('name-options');
+    optionsContainer.innerHTML = '';
+    
+    names.forEach((nameObj, index) => {
+        const nameCard = document.createElement('div');
+        nameCard.className = 'name-option-card';
+        nameCard.innerHTML = `
+            <div class="name-option">
+                <input type="radio" name="norse-name" value="${nameObj.name}" id="name-${index}">
+                <label for="name-${index}">
+                    <strong>${nameObj.name}</strong>
+                    <br><small>${nameObj.meaning}</small>
+                </label>
+            </div>
+        `;
+        
+        nameCard.addEventListener('click', () => {
+            document.getElementById(`name-${index}`).checked = true;
+            selectedNorseName = nameObj.name;
+            document.getElementById('select-name-btn').disabled = false;
+            
+            // Update visual selection
+            document.querySelectorAll('.name-option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            nameCard.classList.add('selected');
+        });
+        
+        optionsContainer.appendChild(nameCard);
+    });
+}
+
 // Main initialization
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("script.js: DOMContentLoaded event fired.");
@@ -1209,6 +1427,67 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    // Name Generator Wizard Event Listeners
+    const translateWordsBtn = document.getElementById('translate-words-btn');
+    if (translateWordsBtn) {
+        translateWordsBtn.addEventListener('click', async () => {
+            const words = [];
+            for (let i = 1; i <= 5; i++) {
+                const word = document.getElementById(`birth-word-${i}`).value.trim();
+                if (word) {
+                    words.push(word);
+                }
+            }
+            
+            if (words.length < 2) {
+                alert('Please enter at least 2 words to translate.');
+                return;
+            }
+            
+            translateWordsBtn.disabled = true;
+            translateWordsBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Translating...';
+            
+            try {
+                const translations = await translateToOldNorse(words);
+                const norseNames = generateNorseNames(translations);
+                
+                // Show step 2
+                document.getElementById('wizard-step-1').style.display = 'none';
+                document.getElementById('wizard-step-2').style.display = 'block';
+                displayNameOptions(norseNames);
+            } catch (error) {
+                console.error('Error in translation:', error);
+                alert('Error translating words. Please try again.');
+            } finally {
+                translateWordsBtn.disabled = false;
+                translateWordsBtn.innerHTML = '<i class="fa-solid fa-language"></i> Translate to Old Norse';
+            }
+        });
+    }
+    
+    // Select name button
+    const selectNameBtn = document.getElementById('select-name-btn');
+    if (selectNameBtn) {
+        selectNameBtn.addEventListener('click', () => {
+            if (selectedNorseName) {
+                // Populate the name field in the edit form
+                document.getElementById('edit-name').value = selectedNorseName;
+                // Close wizard
+                document.getElementById('name-wizard-modal').style.display = 'none';
+            } else {
+                alert('Please select a name first.');
+            }
+        });
+    }
+    
+    // Close wizard button
+    const closeWizardBtn = document.getElementById('close-wizard-btn');
+    if (closeWizardBtn) {
+        closeWizardBtn.addEventListener('click', () => {
+            document.getElementById('name-wizard-modal').style.display = 'none';
+        });
+    }
+
     // Add event listener for category change
     const categorySelect = document.getElementById('edit-category');
     if (categorySelect) {
@@ -1639,25 +1918,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         });
     }
-
-    // --- Name Generator Functions ---
-    
-    let selectedNorseName = '';
-
-    // Function to open name wizard
-    function openNameWizard() {
-        document.getElementById('name-wizard-modal').style.display = 'block';
-        // Reset wizard
-        document.getElementById('wizard-step-1').style.display = 'block';
-        document.getElementById('wizard-step-2').style.display = 'none';
-        document.getElementById('name-options').innerHTML = '';
-        document.getElementById('select-name-btn').disabled = true;
-        selectedNorseName = '';
-        
-        // Clear input fields
-        for (let i = 1; i <= 5; i++) {
-            document.getElementById(`birth-word-${i}`).value = '';
-        }
     }
 
     // Function to translate English words to Old Norse
@@ -1858,45 +2118,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // Event listeners for name generator
-    document.addEventListener('DOMContentLoaded', () => {
-        
-        // Translate words button
-        const translateWordsBtn = document.getElementById('translate-words-btn');
-        if (translateWordsBtn) {
-            translateWordsBtn.addEventListener('click', async () => {
-                const words = [];
-                for (let i = 1; i <= 5; i++) {
-                    const word = document.getElementById(`birth-word-${i}`).value.trim();
-                    if (word) {
-                        words.push(word);
-                    }
-                }
-                
-                if (words.length < 2) {
-                    alert('Please enter at least 2 words to translate.');
-                    return;
-                }
-                
-                translateWordsBtn.disabled = true;
-                translateWordsBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Translating...';
-                
-                try {
-                    const translations = await translateToOldNorse(words);
-                    const norseNames = generateNorseNames(translations);
-                    
-                    // Show step 2
-                    document.getElementById('wizard-step-1').style.display = 'none';
-                    document.getElementById('wizard-step-2').style.display = 'block';
-                    displayNameOptions(norseNames);
-                } catch (error) {
-                    console.error('Error in translation:', error);
-                    alert('Error translating words. Please try again.');
-                } finally {
-                    translateWordsBtn.disabled = false;
-                    translateWordsBtn.innerHTML = '<i class="fa-solid fa-language"></i> Translate to Old Norse';
-                }
-            });
+
         }
         
         // Select name button

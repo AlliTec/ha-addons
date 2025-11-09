@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.6.2 - 2025-11-09
+
+### Fixed
+- **Name Generator Scope Issue**: Fixed "openNameWizard is not defined" JavaScript error
+- **Function Placement**: Moved name generator functions before main DOMContentLoaded event listener
+- **Event Listener Integration**: Added wizard event listeners to main initialization block
+- **Button Functionality**: Generate Name button now properly opens Old Norse Name Wizard
+
+### Technical Fixes
+- **JavaScript Scope**: Resolved function accessibility issue by proper placement
+- **Event Handler Consolidation**: Integrated all wizard event handlers into main DOMContentLoaded
+- **Duplicate Code Removal**: Eliminated duplicate event listener blocks
+- **Function Hoisting**: Ensured all functions are available when called
+
 ## 1.6.1 - 2025-11-09
 
 ### Fixed
