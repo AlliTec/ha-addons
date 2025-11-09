@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.14 (2025-11-09)
+
+### Critical Fixes
+- **Fixed AttributeError**: Resolved `'RainPredictor' object has no attribute 'save_images'` error
+- **Fixed Variable Name**: Corrected `self.save_images` to `self.save_debug_images` in rain_predictor.py
+- **Fixed Version Consistency**: Updated all files to use consistent v1.1.14 versioning
+
+### Technical Improvements
+- **Runtime Stability**: Addon now starts without Python attribute errors
+- **Variable Consistency**: Aligned variable usage with actual attribute definitions
+- **Error Prevention**: Fixed startup crashes due to missing attributes
+
+### Configuration Updates
+- **Version Bump**: Incremented to v1.1.14 for critical runtime fix
+- **File Alignment**: Synchronized versions across config.yaml, Dockerfile, and rain_predictor.py
+
+### Impact
+- **Startup Success**: Addon now initializes and runs without crashing
+- **Service Stability**: Rain prediction service starts correctly
+- **User Experience**: Eliminates addon startup failures
+
 ## Version 1.1.13 (2025-11-09)
 
 ### Critical Fixes

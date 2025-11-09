@@ -17,7 +17,7 @@ from scipy.ndimage import label
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.13"
+VERSION = "1.1.14"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -233,7 +233,7 @@ class RainPredictor:
         logging.info(f"Angle threshold: {self.arrival_angle_threshold}°")
         logging.info(f"Max track distance: {self.max_track_dist}km")
         logging.info(f"Min track length: {self.min_track_len}")
-        logging.info(f"Save images: {self.save_images}")
+        logging.info(f"Save images: {self.save_debug_images}")
         logging.info("=" * 60)
     
     def haversine(self, lat1, lon1, lat2, lon2):
@@ -271,7 +271,7 @@ class RainPredictor:
             response.raise_for_status()
             data = response.content
             
-            if self.save_images:
+            if self.save_debug_images:
                 self._save_debug_image(data, image_url)
             
             return data
