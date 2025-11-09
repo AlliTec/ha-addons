@@ -436,6 +436,8 @@ th {
     padding: 10px 8px;
     border: 1px solid var(--table-border);
     vertical-align: top;
+    white-space: normal;
+    word-wrap: break-word;
 }
 
 .maintenance-history-table tr:nth-child(even) {

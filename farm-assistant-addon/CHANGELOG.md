@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.8.6 - 2025-11-09
+
+### Fixed
+- **Maintenance History Word Wrap**: Added word wrapping to maintenance history table cells for better content display
+- **Text Overflow**: Fixed text overflow issues in maintenance history modal with proper word wrapping
+- **Cell Formatting**: Applied white-space: normal and word-wrap: break-word to maintenance table cells
+
 ## 1.8.5 - 2025-11-09
 
 ### Changed
