@@ -113,7 +113,12 @@
                     </div>
                     <div>
                         <label for="edit-name">Name:</label>
-                        <input type="text" id="edit-name" name="name">
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="text" id="edit-name" name="name" style="flex: 1;">
+                            <button type="button" id="generate-name-btn" class="action-btn" style="margin-top: 5px;">
+                                <i class="fa-solid fa-hat-wizard"></i> Generate Name
+                            </button>
+                        </div>
                     </div>
                     <div>
                         <label for="edit-category">Category:</label>
@@ -747,6 +752,65 @@
             </div>
             <div id="maintenance-history-content">
                 <!-- Maintenance history will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Name Generation Wizard Modal -->
+    <div id="name-wizard-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-top-left">&times;</span>
+            <div class="modal-header">
+                <h2>Old Norse Name Generator</h2>
+                <button class="close-wizard-btn action-btn">
+                    <i class="fa-solid fa-xmark"></i> Cancel
+                </button>
+            </div>
+            <div id="wizard-content">
+                <div class="wizard-step" id="wizard-step-1">
+                    <h3>Step 1: Describe Birth Event</h3>
+                    <p>Enter 3-5 English words describing something significant that happened around the time of birth:</p>
+                    <div class="form-grid">
+                        <div>
+                            <label for="birth-word-1">Word 1:</label>
+                            <input type="text" id="birth-word-1" placeholder="e.g., storm, morning, first">
+                        </div>
+                        <div>
+                            <label for="birth-word-2">Word 2:</label>
+                            <input type="text" id="birth-word-2" placeholder="e.g., strong, bright, winter">
+                        </div>
+                        <div>
+                            <label for="birth-word-3">Word 3:</label>
+                            <input type="text" id="birth-word-3" placeholder="e.g., calf, joy, new">
+                        </div>
+                        <div>
+                            <label for="birth-word-4">Word 4 (optional):</label>
+                            <input type="text" id="birth-word-4" placeholder="e.g., brave, lucky, special">
+                        </div>
+                        <div>
+                            <label for="birth-word-5">Word 5 (optional):</label>
+                            <input type="text" id="birth-word-5" placeholder="e.g., warrior, gentle, swift">
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" id="translate-words-btn" class="action-btn">
+                            <i class="fa-solid fa-language"></i> Translate to Old Norse
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="wizard-step" id="wizard-step-2" style="display: none;">
+                    <h3>Step 2: Choose a Name</h3>
+                    <p>Select an Old Norse name for the animal:</p>
+                    <div id="name-options" class="name-options-grid">
+                        <!-- Name options will be populated here -->
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button type="button" id="select-name-btn" class="action-btn" disabled>
+                            <i class="fa-solid fa-check"></i> Use Selected Name
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

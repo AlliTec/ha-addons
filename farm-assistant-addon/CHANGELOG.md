@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.6.0 - 2025-11-09
+
+### Features
+- **Old Norse Name Generator**: Added wizard to generate authentic Old Norse names for livestock
+- **Birth Event Translation**: Translate English words describing birth events to Old Norse
+- **Name Selection**: Interactive selection from translated names with meanings
+- **Auto-Population**: Selected names automatically populate the animal name field
+- **Traditional Names**: Includes traditional Old Norse names based on birth meanings
+
+### New Components
+- **Generate Name Button**: Added next to animal name field in add/edit form
+- **Multi-Step Wizard**: Step 1 - Enter birth words, Step 2 - Select name
+- **Translation Dictionary**: Built-in Old Norse dictionary for common concepts
+- **Name Cards**: Visual selection cards with names and their meanings
+- **Responsive Grid**: Name options displayed in responsive grid layout
+
+### User Experience
+- **Cultural Naming**: Supports traditional Norse naming conventions for cattle
+- **Meaningful Names**: Each name includes its etymological meaning
+- **Flexible Input**: Accepts 3-5 descriptive words about birth events
+- **Smart Matching**: Suggests traditional names based on input meanings
+
 ## 1.5.1 - 2025-11-09
 
 ### Fixed
