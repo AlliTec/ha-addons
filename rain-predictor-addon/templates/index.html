@@ -904,6 +904,34 @@
             return arrow;
         }
 
+        function updateTracker(lat, lng, mode) {
+            if (!cellData[mode]) return;
+            
+            const color = mode === 'manual' ? '#e53e3e' : '#00FF00';
+            const trackerKey = mode + 'Tracker';
+
+            // Update main tracker circle
+            if (trackerMarkers[trackerKey]) {
+                trackerMarkers[trackerKey].setLatLng([lat, lng]);
+            }
+
+            // Update pulse circle
+            if (trackerMarkers[trackerKey + 'Pulse']) {
+                trackerMarkers[trackerKey + 'Pulse'].setLatLng([lat, lng]);
+            }
+
+            // Update direction arrow
+            if (trackerMarkers[trackerKey + 'Arrow']) {
+                updateTrackerArrow(trackerMarkers[trackerKey + 'Arrow'], lat, lng, cellData[mode]);
+            }
+
+            // Update prediction line
+            if (trackerMarkers[trackerKey + 'PredictionLine']) {
+                const predictionPath = calculatePredictionPath(lat, lng, cellData[mode]);
+                trackerMarkers[trackerKey + 'PredictionLine'].setLatLngs(predictionPath);
+            }
+        }
+
         function updateTrackerArrow(arrow, lat, lng, cellInfo) {
             if (!arrow || !cellInfo || !cellInfo.direction) return;
             

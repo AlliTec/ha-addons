@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+
+## Version 1.1.12 (2025-11-09)
+
+### Critical Fixes
+- **Fixed JavaScript Error**: Resolved `Uncaught ReferenceError: updateTracker is not defined` error in index.html:785
+- **Added Missing updateTracker Function**: Implemented complete tracker position updating functionality for auto-tracking animation
+- **Fixed Version Consistency**: Updated all files to use consistent v1.1.12 versioning
+
+### Technical Improvements
+- **Enhanced Auto-Tracker**: Rain cell tracking animation now works properly with position updates
+- **Tracker Functionality**: updateTracker() now properly updates circle, pulse, arrow, and prediction line positions
+- **Code Quality**: Improved JavaScript function organization and error handling
+
+### Configuration Updates
+- **Version Bump**: Incremented to v1.1.12 for critical JavaScript bug fix
+- **File Alignment**: Synchronized versions across config.yaml, Dockerfile, and rain_predictor.py
+
+### Impact
+- **Core Functionality Restored**: Auto-tracker feature now functions without JavaScript errors
+- **Stability**: Eliminated console spam and improved user experience
+- **Animation Support**: Rain cell tracking animation now works correctly during movement
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [1.1.11] - 2025-11-09
