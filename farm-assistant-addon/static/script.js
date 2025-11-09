@@ -1059,7 +1059,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     document.getElementById('livestock-list').style.display = 'block';
                     headingElement.textContent = 'Livestock List';
                     // Reset table width after showing
-                    setTimeout(() => setTableMinWidth('livestock'), 100);
+                    setTimeout(() => setTableMinWidth('livestock'), 200);
                 } else if (section === 'assets') {
                     document.getElementById('assets-section').style.display = 'block';
                     document.getElementById('assets-list').style.display = 'block';
@@ -2122,7 +2122,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             setTableMinWidth('livestock');
-        }, 500);
+        }, 1000);
     });
 
 });
