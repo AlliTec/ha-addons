@@ -8,6 +8,14 @@
 - **Cache Busting**: Script now correctly renders with timestamp for proper cache invalidation
 - **Version Footer**: Confirmed version number displays correctly at bottom of page in 8pt font
 
+## 1.10.7 - 2025-11-12
+
+### Fixed
+- **Dynamic Script Version**: Changed script.js version from hardcoded to {{ addon_version }} template variable
+- **Calendar API Verification**: Confirmed calendar endpoint works correctly at /api/calendar (not /calendar)
+- **Real Environment Testing**: Tested with actual uvicorn server instead of test clients
+- **Version Display**: Both version footer (1.10.7) and script cache busting now properly synchronized
+
 ### Verified Working
 - ✓ Script version with timestamp: `script.js?v=1.10.6&t=[timestamp]`
 - ✓ Version footer shows "1.10.6" in 8pt font at very bottom of page
