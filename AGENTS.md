@@ -37,21 +37,33 @@ This repository contains multiple Home Assistant addons. Each addon has its own 
 - **Connections**: Always close connections in try/finally blocks
 - **Models**: Use Pydantic for request/response validation
 
-## The Four Rules of Programming (MANDATORY)
+## The Five Rules of Programming (MANDATORY)
 
-**ALL CODE CHANGES MUST FOLLOW THESE FOUR RULES:**
+**ALL CODE CHANGES MUST FOLLOW THE FIVE CODING COMMANDMENTS AT ALL TIMES:**
 
-1. **Check Python Syntax**: Always run `python3 -m py_compile main.py` to check for syntax errors before proceeding.
+**The Coding Commandments shall be followed without exception. These are located in `/home/sog/ai-projects/ha-addons/TheCodingCommandments.txt` and must be adhered to strictly.**
 
-2. **Validate JSON Configuration**: Run `python3 -c "import json; json.load(open('data/options.json'))"` to ensure JSON files are valid.
+### Summary of The Five Coding Commandments:
 
-3. **Follow Mandatory Process**: Always complete these three steps when making changes:
-   - Update version in config.yaml
-   - Update changelog with changes made
-   - Commit and push using `./run_gitpush.sh`
+1. **Code Purity**: Ensure thy code is syntactically pure - `python3 -m py_compile main.py` shall complete with no errors.
 
-4. **Path Correction**: 
-   - If you get "No such file or directory" error, add `/farm-assistant-addon/` to the path and try again.
-   - **Exception 4a**: `run_gitpush.sh` is located at `/home/sog/ai-projects/ha-addons/run_gitpush.sh`
+2. **Configuration Validation**: Validate thy configuration - `python3 -c "import json; json.load(open('data/options.json'))"` shall complete successfully.
 
-**REMEMBER: Filter everything you do against these four rules!**
+3. **Diligent Testing**: Test thy work with diligence:
+   - Thine addon shall load and not crash
+   - Thine existing features shall remain functional, with no regressions
+   - Thine new or modified features shall address the user's needs
+   - Thine feature in progress shall have no console or API errors
+   - All of the above shall be tested and remedied before proceeding
+
+4. **Sacred Process**: Follow the sacred process:
+   - The version in config.yaml shall be updated
+   - The changelog shall be updated with the changes made
+   - Thy changes shall be committed with git add and git commit
+   - Thy changes shall be pushed using ./run_gitpush.sh
+
+5. **Correct Paths**: Use the correct paths:
+   - Correct paths, such as /farm-assistant-addon/, shall be used when needed
+   - There shall be no "No such file or directory" errors
+
+**REMEMBER: Filter everything you do against The Five Coding Commandments!**

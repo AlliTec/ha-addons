@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.9.9 - 2025-11-12
+
+### Updated
+- **Documentation**: Updated AGENTS.md to follow The Five Coding Commandments from TheCodingCommandments.txt
+- **Process Enhancement**: Replaced Four Rules with Five Coding Commandments for stricter adherence
+- **Mandatory Compliance**: All code changes must now follow TheCodingCommandments.txt at all times
+
 ## 1.9.8 - 2025-11-12
 
 ### Fixed
