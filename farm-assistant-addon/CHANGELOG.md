@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.9.5 - 2025-11-12
+
+### Fixed
+- **Calendar Click Debug**: Added debug logging to track calendar tab clicks
+- **Duplicate Function Removal**: Removed duplicate calendar function definitions
+- **Event Listener Debug**: Enhanced logging to identify listener setup issues
+- **Container Validation**: Added checks for calendar container existence
+
 ## 1.9.4 - 2025-11-12
 
 ### Fixed

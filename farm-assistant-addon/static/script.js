@@ -1061,10 +1061,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Function to setup section tabs
     function setupSectionTabs() {
         const sectionTabs = document.querySelectorAll('.section-tab');
+        console.log("setupSectionTabs: Found", sectionTabs.length, "section tabs");
         
         sectionTabs.forEach(tab => {
+            console.log("setupSectionTabs: Setting up listener for tab:", tab.dataset.section);
             tab.addEventListener('click', () => {
                 const section = tab.dataset.section;
+                console.log("Tab clicked:", section);
                 
                 // Remove active class from all section tabs
                 sectionTabs.forEach(t => t.classList.remove('active'));
@@ -1094,6 +1097,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     populateAssetFilterTabs(); // Populate asset filter tabs
                     populateAssetList(); // Load assets when switching to assets tab
                 } else if (section === 'calendar') {
+                    console.log("Showing calendar section");
                     document.getElementById('calendar-section').style.display = 'block';
                     headingElement.textContent = 'Farm Calendar';
                     loadCalendarEvents(); // Load calendar events when switching to calendar tab
@@ -2247,189 +2251,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-    // --- Calendar Functions ---
-    
-    function loadCalendarEvents() {
-        const filterType = document.getElementById('calendar-filter-type').value;
-        const entryType = document.getElementById('calendar-entry-type').value;
-        const category = document.getElementById('calendar-category').value;
-        
-        const eventsContainer = document.getElementById('calendar-events');
-        eventsContainer.innerHTML = '<div class="calendar-loading"><i class="fa-solid fa-spinner"></i> Loading calendar events...</div>';
-        
-        // Build query parameters
-        const params = new URLSearchParams({
-            filter_type: filterType
-        });
-        
-        if (entryType) params.append('entry_type', entryType);
-        if (category) params.append('category', category);
-        
-        fetch(`/api/calendar?${params}`)
-            .then(response => response.json())
-            .then(events => {
-                displayCalendarEvents(events);
-                updateDateDisplay(filterType);
-            })
-            .catch(error => {
-                console.error('Error loading calendar events:', error);
-                eventsContainer.innerHTML = '<div class="no-events">Error loading calendar events. Please try again.</div>';
-            });
-    }
-    
-    function displayCalendarEvents(events) {
-        const eventsContainer = document.getElementById('calendar-events');
-        
-        if (events.length === 0) {
-            eventsContainer.innerHTML = '<div class="no-events">No events found for the selected period.</div>';
-            return;
-        }
-        
-        // Group events by date
-        const eventsByDate = {};
-        events.forEach(event => {
-            if (!eventsByDate[event.date]) {
-                eventsByDate[event.date] = [];
-            }
-            eventsByDate[event.date].push(event);
-        });
-        
-        // Sort dates
-        const sortedDates = Object.keys(eventsByDate).sort();
-        
-        let html = '';
-        sortedDates.forEach(date => {
-            const dateObj = new Date(date + 'T00:00:00');
-            const formattedDate = dateObj.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
-            
-            html += `<div class="calendar-date-group">
-                <h3 class="calendar-date-header">${formattedDate}</h3>`;
-            
-            eventsByDate[date].forEach(event => {
-                html += createEventHTML(event);
-            });
-            
-            html += '</div>';
-        });
-        
-        eventsContainer.innerHTML = html;
-        
-        // Add click handlers for events
-        document.querySelectorAll('.calendar-event').forEach(eventElement => {
-            eventElement.addEventListener('click', function() {
-                const eventData = JSON.parse(this.dataset.event);
-                handleCalendarEventClick(eventData);
-            });
-        });
-    }
-    
-    function createEventHTML(event) {
-        const dateObj = new Date(event.date + 'T00:00:00');
-        const formattedDate = dateObj.toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric' 
-        });
-        
-        return `
-            <div class="calendar-event ${event.entry_type} ${event.category}" 
-                 data-event='${JSON.stringify(event).replace(/'/g, "&apos;")}'>
-                <div class="event-date">${formattedDate}</div>
-                <div class="event-content">
-                    <div class="event-title">${event.title}</div>
-                    <div class="event-description">${event.description}</div>
-                    <div class="event-meta">
-                        <span class="event-type ${event.entry_type}">${event.entry_type}</span>
-                        <span class="event-category ${event.category}">${event.category}</span>
-                        ${event.related_name ? `<span class="event-related">${event.related_name}</span>` : ''}
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-    
-    function handleCalendarEventClick(event) {
-        if (event.category === 'livestock' && event.related_id) {
-            // Show livestock details
-            fetch(`/get_animal/${event.related_id}`)
-                .then(response => response.json())
-                .then(animal => {
-                    showAnimalDetails(animal);
-                })
-                .catch(error => {
-                    console.error('Error loading animal details:', error);
-                    alert('Error loading animal details');
-                });
-        } else if (event.category === 'asset' && event.related_id) {
-            // Show asset details
-            fetch(`/api/asset/${event.related_id}`)
-                .then(response => response.json())
-                .then(asset => {
-                    showAssetDetails(asset);
-                })
-                .catch(error => {
-                    console.error('Error loading asset details:', error);
-                    alert('Error loading asset details');
-                });
-        }
-    }
-    
-    function updateDateDisplay(filterType) {
-        const dateDisplay = document.getElementById('calendar-date-display');
-        const today = new Date();
-        let displayText = '';
-        
-        switch (filterType) {
-            case 'day':
-                displayText = today.toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                });
-                break;
-            case 'week':
-                const weekStart = new Date(today);
-                weekStart.setDate(today.getDate() - today.getDay());
-                const weekEnd = new Date(weekStart);
-                weekEnd.setDate(weekStart.getDate() + 6);
-                displayText = `${weekStart.toLocaleDateString()} - ${weekEnd.toLocaleDateString()}`;
-                break;
-            case 'fortnight':
-                const weekNum = Math.ceil((today.getDate() - today.getDay() + 1) / 7);
-                const fortnightNum = Math.ceil(weekNum / 2);
-                displayText = `${today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - Fortnight ${fortnightNum}`;
-                break;
-            case 'month':
-                displayText = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-                break;
-            case 'quarter':
-                const quarter = Math.floor(today.getMonth() / 3) + 1;
-                displayText = `${today.toLocaleDateString('en-US', { year: 'numeric' })} - Q${quarter}`;
-                break;
-            case 'year':
-                displayText = today.getFullYear().toString();
-                break;
-        }
-        
-        dateDisplay.textContent = displayText;
-    }
-    
-    // Setup calendar event listeners
-    function setupCalendarListeners() {
-        // Filter change listeners
-        document.getElementById('calendar-filter-type').addEventListener('change', loadCalendarEvents);
-        document.getElementById('calendar-entry-type').addEventListener('change', loadCalendarEvents);
-        document.getElementById('calendar-category').addEventListener('change', loadCalendarEvents);
-        
-        // Refresh button
-        document.getElementById('refresh-calendar').addEventListener('click', loadCalendarEvents);
-    }
-
 });
         
         if (entryType) params.append('entry_type', entryType);
@@ -2603,11 +2424,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     // --- Calendar Functions ---
     
     function loadCalendarEvents() {
+        console.log("loadCalendarEvents: Starting to load calendar events");
         const filterType = document.getElementById('calendar-filter-type').value;
         const entryType = document.getElementById('calendar-entry-type').value;
         const category = document.getElementById('calendar-category').value;
         
+        console.log("loadCalendarEvents: Filters:", { filterType, entryType, category });
+        
         const eventsContainer = document.getElementById('calendar-events');
+        if (!eventsContainer) {
+            console.error("loadCalendarEvents: calendar-events container not found!");
+            return;
+        }
         eventsContainer.innerHTML = '<div class="calendar-loading"><i class="fa-solid fa-spinner"></i> Loading calendar events...</div>';
         
         // Build query parameters
