@@ -142,7 +142,8 @@ def get_animal_type(gender):
 async def read_item(request: Request):
     # Read version from config.yaml
     try:
-        with open('/home/sog/ai-projects/ha-addons/farm-assistant-addon/config.yaml', 'r') as f:
+        # Try relative path first (for when running in HA)
+        with open('config.yaml', 'r') as f:
             for line in f:
                 if line.startswith('version:'):
                     addon_version = line.split(':')[1].strip().strip('"')
@@ -150,7 +151,17 @@ async def read_item(request: Request):
             else:
                 addon_version = "unknown"
     except:
-        addon_version = "unknown"
+        try:
+            # Fallback to absolute path (for local testing)
+            with open('/home/sog/ai-projects/ha-addons/farm-assistant-addon/config.yaml', 'r') as f:
+                for line in f:
+                    if line.startswith('version:'):
+                        addon_version = line.split(':')[1].strip().strip('"')
+                        break
+                else:
+                    addon_version = "unknown"
+        except:
+            addon_version = "unknown"
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         records = await conn.fetch("""
