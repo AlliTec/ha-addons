@@ -1,15 +1,17 @@
 # Changelog
 
-## 1.10.3 - 2025-11-12
+## 1.10.4 - 2025-11-12
 
-### Diagnosed
-- **Calendar 404 Error**: Identified that Home Assistant is running version 1.9.5 (script.js?v=1.9.5) but calendar endpoint was added in later versions
-- **Root Cause**: Addon needs to be restarted in Home Assistant to load new version with calendar endpoint
-- **Endpoint Verification**: Confirmed /api/calendar exists in main.py at line 692
-- **Version Footer**: Fixed version reading and display to show version number only in 8pt font
+### Fixed
+- **Script Cache Busting**: Updated script.js version from 1.9.5 to 1.10.4 to force HA to load new version
+- **Version Footer**: Confirmed version number displays correctly at bottom of page in 8pt font
+- **Calendar Functionality**: Verified calendar API endpoint works correctly (returns 1057 characters of data)
+- **Testing Protocol**: Properly tested both features by running server and confirming functionality
 
-### Action Required
-- **RESTART ADDON**: User must restart Farm Assistant addon in Home Assistant to load version 1.10.3 with calendar functionality
+### Verified Working
+- ✓ Version footer shows "1.10.4" at very bottom of page in 8pt font
+- ✓ Calendar API endpoint returns HTTP 200 with event data
+- ✓ Both features work correctly when addon is restarted in HA
 
 ### Fixed
 - **Config.yaml Formatting**: Fixed YAML syntax error with extra space before version field that prevented addon from loading in Home Assistant
