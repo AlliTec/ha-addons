@@ -604,14 +604,21 @@
 
             locationMarker = L.marker([currentLocation.latitude, currentLocation.longitude], { 
                 icon: locationIcon,
-                draggable: true
+                draggable: true,
+                title: 'Your Location (Drag to move)'
             })
             .addTo(map)
-            .bindPopup('Your Location (Drag to move)')
-            .openPopup();
+            .bindTooltip('Your Location (Drag to move)', {
+                permanent: false,
+                direction: 'top',
+                offset: [0, -10],
+                delay: 500
+            });
 
             locationMarker.on('dragstart', function() {
                 document.getElementById('save-location-btn').style.display = 'block';
+                // Hide tooltip during drag
+                locationMarker.closeTooltip();
             });
 
             locationMarker.on('dragend', function() {
@@ -619,6 +626,19 @@
                 currentLocation.latitude = newPos.lat;
                 currentLocation.longitude = newPos.lng;
                 console.log('Marker moved to:', newPos.lat, newPos.lng);
+                // Keep tooltip hidden after drag
+            });
+
+            // Hide tooltip when clicking on marker
+            locationMarker.on('click', function() {
+                locationMarker.closeTooltip();
+            });
+
+            // Show tooltip on hover with 500ms delay
+            locationMarker.on('mouseover', function() {
+                setTimeout(() => {
+                    locationMarker.openTooltip();
+                }, 500);
             });
 
             console.log('Map initialized successfully');

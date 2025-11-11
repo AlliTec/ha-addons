@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.28 (2025-11-10)
+
+### Location Marker Tooltip Improvements
+- **Hover-Only Tooltip**: Replaced permanent popup with tooltip that shows only on hover
+- **500ms Delay**: Tooltip appears after 500ms of hovering for better UX
+- **Auto-Hide Logic**: Tooltip hides when mouse moves away, clicks, or drags marker
+- **Drag Integration**: Tooltip automatically hides during drag operations
+- **Click to Hide**: Clicking marker immediately hides tooltip
+- **Better UX**: Less intrusive than permanent popup, more informative when needed
+
 ## Version 1.1.27 (2025-11-10)
 
 ### Enhanced Velocity Calculation and Tracking
