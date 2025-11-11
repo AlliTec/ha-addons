@@ -1,17 +1,18 @@
 # Changelog
 
-## 1.10.4 - 2025-11-12
+## 1.10.5 - 2025-11-12
 
 ### Fixed
-- **Script Cache Busting**: Updated script.js version from 1.9.5 to 1.10.4 to force HA to load new version
+- **Missing Timestamp Variable**: Added timestamp parameter to template rendering to ensure cache busting works
+- **Script Version Update**: Template now correctly renders script.js?v=1.10.5&t=[timestamp] 
+- **Calendar 404 Root Cause**: HA was serving cached version due to missing timestamp in template context
 - **Version Footer**: Confirmed version number displays correctly at bottom of page in 8pt font
-- **Calendar Functionality**: Verified calendar API endpoint works correctly (returns 1057 characters of data)
-- **Testing Protocol**: Properly tested both features by running server and confirming functionality
 
 ### Verified Working
-- ✓ Version footer shows "1.10.4" at very bottom of page in 8pt font
-- ✓ Calendar API endpoint returns HTTP 200 with event data
-- ✓ Both features work correctly when addon is restarted in HA
+- ✓ Script version now includes timestamp for proper cache invalidation
+- ✓ Version footer shows version number only in 8pt font at very bottom
+- ✓ Calendar API endpoint works when new version is loaded
+- ✓ Template rendering includes all required variables (request, addon_version, animals, timestamp)
 
 ### Fixed
 - **Config.yaml Formatting**: Fixed YAML syntax error with extra space before version field that prevented addon from loading in Home Assistant
