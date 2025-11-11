@@ -667,3 +667,234 @@ async def delete_asset(asset_id: int):
         return {"message": "Asset deleted successfully"}
     finally:
         await conn.close()
+
+# --- Calendar Endpoints ---
+
+class CalendarEvent(BaseModel):
+    title: str
+    date: str
+    entry_type: str  # "informational" or "action"
+    category: str  # "livestock" or "asset"
+    description: str
+    related_id: Optional[int] = None
+    related_name: Optional[str] = None
+
+@app.get("/api/calendar")
+async def get_calendar_events(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    filter_type: Optional[str] = "month",  # year, quarter, month, fortnight, week, day
+    entry_type: Optional[str] = None,  # informational, action, or None for all
+    category: Optional[str] = None  # livestock, asset, or None for all
+):
+    """Get calendar events from both livestock and asset registers"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        events = []
+        
+        # Calculate date range based on filter type
+        from datetime import datetime, timedelta
+        today = datetime.now().date()
+        
+        if not start_date or not end_date:
+            if filter_type == "day":
+                start_date = today.isoformat()
+                end_date = today.isoformat()
+            elif filter_type == "week":
+                start_date = (today - timedelta(days=today.weekday())).isoformat()
+                end_date = (today + timedelta(days=6-today.weekday())).isoformat()
+            elif filter_type == "fortnight":
+                week_num = today.isocalendar()[1]
+                if week_num % 2 == 0:
+                    start_date = (today - timedelta(days=today.weekday() + 7)).isoformat()
+                    end_date = (today + timedelta(days=6-today.weekday())).isoformat()
+                else:
+                    start_date = (today - timedelta(days=today.weekday())).isoformat()
+                    end_date = (today + timedelta(days=13-today.weekday())).isoformat()
+            elif filter_type == "month":
+                start_date = today.replace(day=1).isoformat()
+                next_month = today.replace(day=28) + timedelta(days=4)
+                end_date = next_month.replace(day=1) - timedelta(days=1)
+                end_date = end_date.isoformat()
+            elif filter_type == "quarter":
+                quarter = (today.month - 1) // 3 + 1
+                start_month = (quarter - 1) * 3 + 1
+                start_date = today.replace(month=start_month, day=1).isoformat()
+                if quarter == 4:
+                    end_date = today.replace(year=today.year + 1, month=1, day=1) - timedelta(days=1)
+                else:
+                    end_date = today.replace(month=start_month + 3, day=1) - timedelta(days=1)
+                end_date = end_date.isoformat()
+            elif filter_type == "year":
+                start_date = today.replace(month=1, day=1).isoformat()
+                end_date = today.replace(month=12, day=31).isoformat()
+        
+        # Livestock events
+        livestock_query = """
+            SELECT 
+                id, name, birth_date, dod, health_status, gender,
+                'livestock' as category,
+                CASE 
+                    WHEN dod IS NOT NULL THEN 'informational'
+                    WHEN birth_date IS NOT NULL THEN 'informational'
+                    ELSE 'informational'
+                END as entry_type
+            FROM livestock_records 
+            WHERE (birth_date BETWEEN $1 AND $2 
+                   OR dod BETWEEN $1 AND $2)
+        """
+        
+        livestock_records = await conn.fetch(livestock_query, start_date, end_date)
+        
+        for record in livestock_records:
+            # Birth date event
+            if record['birth_date'] and start_date <= record['birth_date'].isoformat() <= end_date:
+                events.append({
+                    "title": f"Birth: {record['name']}",
+                    "date": record['birth_date'].isoformat(),
+                    "entry_type": "informational",
+                    "category": "livestock",
+                    "description": f"{record['gender']} - {record.get('health_status', 'Unknown status')}",
+                    "related_id": record['id'],
+                    "related_name": record['name']
+                })
+            
+            # Death date event
+            if record['dod'] and start_date <= record['dod'].isoformat() <= end_date:
+                events.append({
+                    "title": f"Deceased: {record['name']}",
+                    "date": record['dod'].isoformat(),
+                    "entry_type": "informational",
+                    "category": "livestock",
+                    "description": f"{record['gender']} - {record.get('health_status', 'Unknown status')}",
+                    "related_id": record['id'],
+                    "related_name": record['name']
+                })
+        
+        # Asset events
+        asset_query = """
+            SELECT 
+                id, name, purchase_date, registration_due, insurance_due, 
+                warranty_expiry_date, status, category,
+                'asset' as category,
+                CASE 
+                    WHEN registration_due IS NOT NULL THEN 'action'
+                    WHEN insurance_due IS NOT NULL THEN 'action'
+                    WHEN warranty_expiry_date IS NOT NULL THEN 'action'
+                    ELSE 'informational'
+                END as entry_type
+            FROM asset_inventory 
+            WHERE (purchase_date BETWEEN $1 AND $2 
+                   OR registration_due BETWEEN $1 AND $2
+                   OR insurance_due BETWEEN $1 AND $2
+                   OR warranty_expiry_date BETWEEN $1 AND $2)
+        """
+        
+        asset_records = await conn.fetch(asset_query, start_date, end_date)
+        
+        for record in asset_records:
+            # Purchase date event
+            if record['purchase_date'] and start_date <= record['purchase_date'].isoformat() <= end_date:
+                events.append({
+                    "title": f"Purchased: {record['name']}",
+                    "date": record['purchase_date'].isoformat(),
+                    "entry_type": "informational",
+                    "category": "asset",
+                    "description": f"{record.get('category', 'Unknown category')} - {record.get('status', 'Unknown status')}",
+                    "related_id": record['id'],
+                    "related_name": record['name']
+                })
+            
+            # Registration due event
+            if record['registration_due'] and start_date <= record['registration_due'].isoformat() <= end_date:
+                events.append({
+                    "title": f"Registration Due: {record['name']}",
+                    "date": record['registration_due'].isoformat(),
+                    "entry_type": "action",
+                    "category": "asset",
+                    "description": f"Registration renewal required for {record.get('category', 'asset')}",
+                    "related_id": record['id'],
+                    "related_name": record['name']
+                })
+            
+            # Insurance due event
+            if record['insurance_due'] and start_date <= record['insurance_due'].isoformat() <= end_date:
+                events.append({
+                    "title": f"Insurance Due: {record['name']}",
+                    "date": record['insurance_due'].isoformat(),
+                    "entry_type": "action",
+                    "category": "asset",
+                    "description": f"Insurance renewal required for {record.get('category', 'asset')}",
+                    "related_id": record['id'],
+                    "related_name": record['name']
+                })
+            
+            # Warranty expiry event
+            if record['warranty_expiry_date'] and start_date <= record['warranty_expiry_date'].isoformat() <= end_date:
+                events.append({
+                    "title": f"Warranty Expiry: {record['name']}",
+                    "date": record['warranty_expiry_date'].isoformat(),
+                    "entry_type": "action",
+                    "category": "asset",
+                    "description": f"Warranty expiring for {record.get('category', 'asset')}",
+                    "related_id": record['id'],
+                    "related_name": record['name']
+                })
+        
+        # Maintenance events
+        maintenance_query = """
+            SELECT 
+                ms.id, ms.asset_id, ms.task_description, ms.due_date, 
+                ms.completed_date, ms.status, ai.name as asset_name,
+                'asset' as category,
+                CASE 
+                    WHEN ms.status = 'pending' THEN 'action'
+                    WHEN ms.status = 'overdue' THEN 'action'
+                    ELSE 'informational'
+                END as entry_type
+            FROM maintenance_schedules ms
+            JOIN asset_inventory ai ON ms.asset_id = ai.id
+            WHERE (ms.due_date BETWEEN $1 AND $2 
+                   OR ms.completed_date BETWEEN $1 AND $2)
+        """
+        
+        maintenance_records = await conn.fetch(maintenance_query, start_date, end_date)
+        
+        for record in maintenance_records:
+            # Due date event
+            if record['due_date'] and start_date <= record['due_date'].isoformat() <= end_date:
+                events.append({
+                    "title": f"Maintenance Due: {record['asset_name']}",
+                    "date": record['due_date'].isoformat(),
+                    "entry_type": "action",
+                    "category": "asset",
+                    "description": record['task_description'],
+                    "related_id": record['asset_id'],
+                    "related_name": record['asset_name']
+                })
+            
+            # Completed date event
+            if record['completed_date'] and start_date <= record['completed_date'].isoformat() <= end_date:
+                events.append({
+                    "title": f"Maintenance Completed: {record['asset_name']}",
+                    "date": record['completed_date'].isoformat(),
+                    "entry_type": "informational",
+                    "category": "asset",
+                    "description": record['task_description'],
+                    "related_id": record['asset_id'],
+                    "related_name": record['asset_name']
+                })
+        
+        # Apply filters
+        if entry_type:
+            events = [e for e in events if e['entry_type'] == entry_type]
+        
+        if category:
+            events = [e for e in events if e['category'] == category]
+        
+        # Sort by date
+        events.sort(key=lambda x: x['date'])
+        
+        return events
+    finally:
+        await conn.close()

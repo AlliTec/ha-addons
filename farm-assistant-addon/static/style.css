@@ -843,3 +843,165 @@ th {
     cursor: not-allowed;
     opacity: 0.6;
 }
+
+/* Calendar Styles */
+.calendar-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+}
+
+.calendar-filters {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.calendar-filters label {
+    color: var(--text-color);
+    font-weight: 500;
+    margin-right: 5px;
+}
+
+.calendar-filters select {
+    padding: 8px 12px;
+    border: 1px solid var(--input-border);
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-radius: 0;
+    min-width: 120px;
+}
+
+.calendar-date-range {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.calendar-container {
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    padding: 20px;
+}
+
+.calendar-event {
+    display: flex;
+    align-items: flex-start;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-left: 4px solid;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.calendar-event:hover {
+    background-color: var(--table-header-bg);
+    transform: translateX(2px);
+}
+
+.calendar-event.informational {
+    border-left-color: #2196F3; /* Blue */
+}
+
+.calendar-event.action {
+    border-left-color: #FF9800; /* Orange */
+}
+
+.calendar-event.livestock {
+    background-color: rgba(76, 175, 80, 0.1); /* Light green tint */
+}
+
+.calendar-event.asset {
+    background-color: rgba(33, 150, 243, 0.1); /* Light blue tint */
+}
+
+.event-date {
+    flex: 0 0 100px;
+    font-weight: 600;
+    color: var(--text-color);
+    text-align: center;
+    padding: 8px;
+    background-color: var(--table-header-bg);
+    border: 1px solid var(--input-border);
+    margin-right: 15px;
+}
+
+.event-content {
+    flex: 1;
+}
+
+.event-title {
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 5px;
+    font-size: 1.1em;
+}
+
+.event-description {
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 8px;
+}
+
+.event-meta {
+    display: flex;
+    gap: 15px;
+    font-size: 0.9em;
+}
+
+.event-type, .event-category {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.event-type.informational {
+    background-color: #E3F2FD;
+    color: #1976D2;
+}
+
+.event-type.action {
+    background-color: #FFF3E0;
+    color: #F57C00;
+}
+
+.event-category.livestock {
+    background-color: #E8F5E8;
+    color: #2E7D32;
+}
+
+.event-category.asset {
+    background-color: #E3F2FD;
+    color: #1565C0;
+}
+
+.no-events {
+    text-align: center;
+    color: var(--text-color);
+    opacity: 0.6;
+    padding: 40px;
+    font-style: italic;
+}
+
+.calendar-loading {
+    text-align: center;
+    color: var(--text-color);
+    padding: 40px;
+}
+
+.calendar-loading i {
+    animation: spin 1s linear infinite;
+    margin-right: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

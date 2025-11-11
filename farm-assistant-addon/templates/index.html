@@ -21,6 +21,9 @@
         <button class="section-tab" data-section="assets">
             <i class="fa-solid fa-tractor"></i> Asset Register
         </button>
+        <button class="section-tab" data-section="calendar">
+            <i class="fa-solid fa-calendar"></i> Calendar
+        </button>
     </div>
     
     <!-- Livestock Section -->
@@ -62,8 +65,51 @@
             </tbody>
         </table>
     </div>
-
-
+    
+    <!-- Calendar Section -->
+    <div id="calendar-section" class="section-content" style="display: none;">
+        <div class="calendar-controls">
+            <div class="calendar-filters">
+                <label for="calendar-filter-type">View:</label>
+                <select id="calendar-filter-type">
+                    <option value="day">Day</option>
+                    <option value="week">Week</option>
+                    <option value="fortnight">Fortnight</option>
+                    <option value="month" selected>Month</option>
+                    <option value="quarter">Quarter</option>
+                    <option value="year">Year</option>
+                </select>
+                
+                <label for="calendar-entry-type">Type:</label>
+                <select id="calendar-entry-type">
+                    <option value="">All Types</option>
+                    <option value="informational">Informational</option>
+                    <option value="action">Action Items</option>
+                </select>
+                
+                <label for="calendar-category">Category:</label>
+                <select id="calendar-category">
+                    <option value="">All Categories</option>
+                    <option value="livestock">Livestock</option>
+                    <option value="asset">Assets</option>
+                </select>
+                
+                <button id="refresh-calendar" class="action-btn">
+                    <i class="fa-solid fa-refresh"></i> Refresh
+                </button>
+            </div>
+            
+            <div class="calendar-date-range">
+                <span id="calendar-date-display"></span>
+            </div>
+        </div>
+        
+        <div class="calendar-container">
+            <div id="calendar-events">
+                <!-- Calendar events will be dynamically populated here -->
+            </div>
+        </div>
+    </div>
 
     <script src="static/script.js?v=1.9.2&t={{ timestamp }}"></script>
     <div id="image-modal" class="modal">

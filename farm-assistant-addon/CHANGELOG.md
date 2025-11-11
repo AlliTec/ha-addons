@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.9.3 - 2025-11-12
+
+### Added
+- **Calendar Feature**: Comprehensive calendar aggregating dates from livestock and asset registers
+- **Date Filtering**: Options to view by year, quarter, month, fortnight, week, and day
+- **Entry Classification**: Events categorized as informational or action items
+- **Event Sources**: Birth dates, death dates, purchase dates, registration/insurance due dates, warranty expiry, maintenance schedules
+- **Interactive Events**: Click events to view related livestock or asset details
+- **Visual Design**: Color-coded events by type and category with hover effects
+
+### Enhanced
+- **Navigation**: Added calendar tab to main section navigation
+- **User Interface**: Clean calendar controls with filter dropdowns and date range display
+- **Data Integration**: Seamless integration with existing livestock and asset data
+
 ## 1.9.2 - 2025-11-09
 
 ### Fixed
