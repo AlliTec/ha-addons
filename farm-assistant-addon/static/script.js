@@ -2274,15 +2274,31 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (entryType) params.append('entry_type', entryType);
         if (category) params.append('category', category);
         
-        fetch(`/api/calendar?${params}`)
-            .then(response => response.json())
+        const url = `/api/calendar?${params}`;
+        console.log("loadCalendarEvents: Fetching URL:", url);
+        console.log("loadCalendarEvents: Full URL would be:", window.location.origin + url);
+        
+        fetch(url)
+            .then(response => {
+                console.log("loadCalendarEvents: Response status:", response.status);
+                console.log("loadCalendarEvents: Response headers:", [...response.headers.entries()]);
+                console.log("loadCalendarEvents: Response URL:", response.url);
+                
+                if (!response.ok) {
+                    console.error("loadCalendarEvents: HTTP error:", response.status, response.statusText);
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                return response.json();
+            })
             .then(events => {
+                console.log("loadCalendarEvents: Successfully loaded events:", events);
                 displayCalendarEvents(events);
                 updateDateDisplay(filterType);
             })
             .catch(error => {
                 console.error('Error loading calendar events:', error);
-                eventsContainer.innerHTML = '<div class="no-events">Error loading calendar events. Please try again.</div>';
+                eventsContainer.innerHTML = `<div class="no-events">Error loading calendar events: ${error.message}</div>`;
             });
     }
     

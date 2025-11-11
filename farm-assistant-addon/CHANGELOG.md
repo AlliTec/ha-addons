@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.9.8 - 2025-11-12
+
+### Fixed
+- **Calendar Debug Logging**: Added comprehensive debug logging to loadCalendarEvents function to identify 404 error cause
+- **Enhanced Error Reporting**: Added response status, headers, and URL logging for calendar API calls
+- **Better Error Messages**: Display specific HTTP error details in calendar UI when API calls fail
+- **Local Testing**: Verified calendar API works correctly on localhost:8000 with 6 events returned
+
+### Debug Features
+- **URL Logging**: Logs exact URL being fetched by calendar function
+- **Response Details**: Captures and logs response status, headers, and final URL
+- **Error Context**: Enhanced error messages show HTTP status and response text
+- **Full URL Tracking**: Shows both relative and full URLs for debugging Home Assistant proxy issues
+
 ## 1.9.7 - 2025-11-12
 
 ### Fixed
