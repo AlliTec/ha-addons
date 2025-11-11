@@ -140,7 +140,17 @@ def get_animal_type(gender):
 
 @app.get("/", response_class=HTMLResponse)
 async def read_item(request: Request):
-    addon_version = config.get("version", "unknown")
+    # Read version from config.yaml
+    try:
+        with open('config.yaml', 'r') as f:
+            for line in f:
+                if line.startswith('version:'):
+                    addon_version = line.split(':')[1].strip().strip('"')
+                    break
+            else:
+                addon_version = "unknown"
+    except:
+        addon_version = "unknown"
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         records = await conn.fetch("""

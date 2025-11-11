@@ -50,6 +50,26 @@
     background-color: var(--table-header-bg);
 }
 
+/* Version Footer */
+.version-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--table-header-bg);
+    border-top: 1px solid var(--table-border);
+    padding: 8px 16px;
+    text-align: center;
+    z-index: 1000;
+}
+
+.version-text {
+    font-size: 11px;
+    color: var(--text-color);
+    opacity: 0.7;
+    font-family: monospace;
+}
+
 .child-component-info {
     flex: 1;
 }
