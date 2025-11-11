@@ -1,12 +1,15 @@
 # Changelog
 
-## 1.10.2 - 2025-11-12
+## 1.10.3 - 2025-11-12
 
-### Fixed
-- **Version Reading**: Fixed version reading to use correct path to config.yaml file
-- **Footer Display**: Removed "Farm Assistant v" prefix, now shows version number only
-- **Font Size**: Reduced font size to 8pt as requested for very small display
-- **Footer Position**: Ensured footer appears at very bottom of each page
+### Diagnosed
+- **Calendar 404 Error**: Identified that Home Assistant is running version 1.9.5 (script.js?v=1.9.5) but calendar endpoint was added in later versions
+- **Root Cause**: Addon needs to be restarted in Home Assistant to load new version with calendar endpoint
+- **Endpoint Verification**: Confirmed /api/calendar exists in main.py at line 692
+- **Version Footer**: Fixed version reading and display to show version number only in 8pt font
+
+### Action Required
+- **RESTART ADDON**: User must restart Farm Assistant addon in Home Assistant to load version 1.10.3 with calendar functionality
 
 ### Fixed
 - **Config.yaml Formatting**: Fixed YAML syntax error with extra space before version field that prevented addon from loading in Home Assistant
