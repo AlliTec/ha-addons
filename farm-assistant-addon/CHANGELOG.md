@@ -1,6 +1,10 @@
 # Changelog
 
-## 1.9.9 - 2025-11-12
+## 1.10.0 - 2025-11-12
+
+### Fixed
+- **Config.yaml Formatting**: Fixed YAML syntax error with extra space before version field that prevented addon from loading in Home Assistant
+- **Critical Bug**: Resolved addon visibility issue in HA caused by malformed configuration
 
 ### Updated
 - **Documentation**: Updated AGENTS.md to follow The Five Coding Commandments from TheCodingCommandments.txt

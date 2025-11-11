@@ -16,3 +16,4 @@ Thy changes shall be pushed using ./run_gitpush.sh.
 V. Thou shalt use the correct paths.
 Correct paths, such as /farm-assistant-addon/, shall be used when needed.
 There shall be no "No such file or directory" errors.
+If you cannot find a file try the /farm-assistant-addon/ directory.
