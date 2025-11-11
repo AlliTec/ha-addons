@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.8 - 2025-11-12
+
+### Fixed
+- **API Routing Issues**: Fixed calendar and asset detail API calls failing in Home Assistant ingress
+- **Relative URL Paths**: Changed from absolute paths (`/api/...`) to relative paths (`api/...`) for proper HA routing
+- **Calendar Event Clicks**: Fixed asset detail loading when clicking calendar events
+- **Asset Detail Integration**: Calendar events now correctly open asset details modal
+
+### Technical Fixes
+- **JavaScript API Calls**: Updated fetch URLs to work with Home Assistant proxy routing
+- **Ingress Compatibility**: Ensured all API endpoints work correctly behind HA ingress
+- **Event Handler Routing**: Fixed calendar event click handlers to use proper relative paths
+
 ## 1.10.6 - 2025-11-12
 
 ### Fixed

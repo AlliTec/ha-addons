@@ -2391,7 +2391,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
         } else if (event.category === 'asset' && event.related_id) {
             // Show asset details
-            fetch(`/api/asset/${event.related_id}`)
+            fetch(`api/asset/${event.related_id}`)
                 .then(response => response.json())
                 .then(asset => {
                     showAssetDetails(asset);
@@ -2480,7 +2480,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (entryType) params.append('entry_type', entryType);
         if (category) params.append('category', category);
         
-        fetch(`/api/calendar?${params}`)
+        fetch(`api/calendar?${params}`)
             .then(response => response.json())
             .then(events => {
                 displayCalendarEvents(events);
@@ -2581,7 +2581,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
         } else if (event.category === 'asset' && event.related_id) {
             // Show asset details
-            fetch(`/api/asset/${event.related_id}`)
+            fetch(`api/asset/${event.related_id}`)
                 .then(response => response.json())
                 .then(asset => {
                     showAssetDetails(asset);
