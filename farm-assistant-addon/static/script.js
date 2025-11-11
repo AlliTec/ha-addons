@@ -2251,7 +2251,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
-});
+    function loadCalendarEvents() {
+        console.log("loadCalendarEvents: Starting to load calendar events");
+        const filterType = document.getElementById('calendar-filter-type').value;
+        const entryType = document.getElementById('calendar-entry-type').value;
+        const category = document.getElementById('calendar-category').value;
+        
+        console.log("loadCalendarEvents: Filters:", { filterType, entryType, category });
+        
+        const eventsContainer = document.getElementById('calendar-events');
+        if (!eventsContainer) {
+            console.error("loadCalendarEvents: calendar-events container not found!");
+            return;
+        }
+        eventsContainer.innerHTML = '<div class="calendar-loading"><i class="fa-solid fa-spinner"></i> Loading calendar events...</div>';
+        
+        // Build query parameters
+        const params = new URLSearchParams({
+            filter_type: filterType
+        });
         
         if (entryType) params.append('entry_type', entryType);
         if (category) params.append('category', category);

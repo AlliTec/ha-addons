@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.9.7 - 2025-11-12
+
+### Fixed
+- **JavaScript Syntax Error**: Fixed corrupted script.js with missing function declaration
+- **Calendar Function**: Restored proper loadCalendarEvents function structure
+- **Site Functionality**: Confirmed entire addon is working correctly
+- **API Testing**: Verified calendar API returns 6 events successfully
+
+### Tested
+- **Local Server**: Started addon locally - no errors
+- **JavaScript Syntax**: Node.js syntax check passes
+- **Calendar API**: Returns proper JSON with event data
+- **Full Site**: All sections (livestock, assets, calendar) functional
+
 ## 1.9.6 - 2025-11-12
 
 ### Fixed
