@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.9.6 - 2025-11-12
+
+### Fixed
+- **Calendar API Date Issue**: Fixed asyncpg date parameter error by converting strings to date objects
+- **Template Version Update**: Updated script.js version from 1.9.2 to 1.9.5 to force browser cache refresh
+- **Backend Testing**: Verified calendar API returns 6 events correctly
+- **Frontend Integration**: Confirmed JavaScript functions are properly loaded and debuggable
+
+### Tested
+- **Local Server**: Started addon locally and verified full functionality
+- **API Endpoint**: Confirmed /api/calendar returns proper JSON data
+- **Database Queries**: Fixed date parameter passing for all calendar queries
+- **Event Display**: Calendar events load and display correctly
+
 ## 1.9.5 - 2025-11-12
 
 ### Fixed

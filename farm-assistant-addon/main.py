@@ -744,7 +744,7 @@ async def get_calendar_events(
                    OR dod BETWEEN $1 AND $2)
         """
         
-        livestock_records = await conn.fetch(livestock_query, start_date, end_date)
+        livestock_records = await conn.fetch(livestock_query, datetime.strptime(start_date, '%Y-%m-%d').date(), datetime.strptime(end_date, '%Y-%m-%d').date())
         
         for record in livestock_records:
             # Birth date event
@@ -790,7 +790,7 @@ async def get_calendar_events(
                    OR warranty_expiry_date BETWEEN $1 AND $2)
         """
         
-        asset_records = await conn.fetch(asset_query, start_date, end_date)
+        asset_records = await conn.fetch(asset_query, datetime.strptime(start_date, '%Y-%m-%d').date(), datetime.strptime(end_date, '%Y-%m-%d').date())
         
         for record in asset_records:
             # Purchase date event
@@ -858,7 +858,7 @@ async def get_calendar_events(
                    OR ms.completed_date BETWEEN $1 AND $2)
         """
         
-        maintenance_records = await conn.fetch(maintenance_query, start_date, end_date)
+        maintenance_records = await conn.fetch(maintenance_query, datetime.strptime(start_date, '%Y-%m-%d').date(), datetime.strptime(end_date, '%Y-%m-%d').date())
         
         for record in maintenance_records:
             # Due date event
