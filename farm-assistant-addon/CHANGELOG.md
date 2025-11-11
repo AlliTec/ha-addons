@@ -1,11 +1,12 @@
 # Changelog
 
-## 1.10.1 - 2025-11-12
+## 1.10.2 - 2025-11-12
 
-### Added
-- **Version Footer**: Added small version number display in footer at bottom of each page
-- **CSS Styling**: Added version-footer and version-text styles for small, unobtrusive version display
-- **Template Integration**: Updated index.html template to show version from config.yaml
+### Fixed
+- **Version Reading**: Fixed version reading to use correct path to config.yaml file
+- **Footer Display**: Removed "Farm Assistant v" prefix, now shows version number only
+- **Font Size**: Reduced font size to 8pt as requested for very small display
+- **Footer Position**: Ensured footer appears at very bottom of each page
 
 ### Fixed
 - **Config.yaml Formatting**: Fixed YAML syntax error with extra space before version field that prevented addon from loading in Home Assistant

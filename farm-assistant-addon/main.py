@@ -142,7 +142,7 @@ def get_animal_type(gender):
 async def read_item(request: Request):
     # Read version from config.yaml
     try:
-        with open('config.yaml', 'r') as f:
+        with open('/home/sog/ai-projects/ha-addons/farm-assistant-addon/config.yaml', 'r') as f:
             for line in f:
                 if line.startswith('version:'):
                     addon_version = line.split(':')[1].strip().strip('"')
