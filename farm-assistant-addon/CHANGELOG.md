@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.9.4 - 2025-11-12
+
+### Fixed
+- **Calendar Display Issue**: Fixed calendar not showing when tab clicked
+- **JavaScript Event Listeners**: Moved calendar setup into main DOMContentLoaded block
+- **Duplicate Function Removal**: Removed duplicate calendar function definitions
+- **Event Handler Initialization**: Properly initialized calendar listeners on page load
+
 ## 1.9.3 - 2025-11-12
 
 ### Added
