@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.10.27 - 2025-11-12
+
+### Enhanced
+- **Calendar Filter Icons**: Replaced text labels with intuitive icons in calendar filter bar
+- **Visual Clarity**: Calendar controls now use icons instead of text for cleaner interface
+- **Icon Selection**: Chose appropriate Font Awesome icons for each filter function
+
+### Updated
+- **View Filter**: Changed "View:" text to calendar-days icon (📅)
+- **Type Filter**: Changed "Type:" text to tag icon (🏷️)  
+- **Category Filter**: Changed "Category:" text to layer-group icon (📚)
+- **User Experience**: More intuitive and space-efficient filter controls
+
+### Technical
+- **HTML Template Update**: Modified index.html to use Font Awesome icons in label elements
+- **Consistent Design**: Icons match existing design language used throughout application
+- **Accessibility**: Icons maintain semantic meaning while improving visual design
+
 ## 1.10.26 - 2025-11-12
 
 ### Fixed
