@@ -1924,7 +1924,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 date: document.getElementById('event-date').value,
                 time: document.getElementById('event-time').value,
                 category: formData.get('category'),
-                item_id: formData.get('item_name'),
+                item_id: parseInt(formData.get('item_name')),
                 title: formData.get('title'),
                 duration: parseFloat(formData.get('duration')) || 1,
                 notes: formData.get('notes'),
@@ -1938,6 +1938,20 @@ document.addEventListener("DOMContentLoaded", async () => {
                 console.error('Failed to save event:', error);
             }
         });
+        
+        // Add category change listener to populate item dropdown
+        const categoryDropdown = document.getElementById('event-category');
+        if (categoryDropdown) {
+            categoryDropdown.addEventListener('change', async (e) => {
+                const category = e.target.value;
+                if (category) {
+                    await populateEventItemDropdown(category);
+                } else {
+                    // Clear item dropdown if no category selected
+                    document.getElementById('event-item-name').innerHTML = '<option value="">Select Category First</option>';
+                }
+            });
+        }
     }
 
     // Close buttons for add event modal

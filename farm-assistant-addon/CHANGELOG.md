@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.39 - 2025-11-13
+
+### Fixed
+- **Asset Event Creation**: Fixed missing category change listener in event form
+- **Item Dropdown Population**: Asset/livestock dropdown now populates when category is selected
+- **Form Validation**: Ensured item_id is properly converted to integer before API submission
+- **Frontend Workflow**: Complete event creation workflow now functional for both livestock and assets
+
+### Enhanced
+- **User Experience**: Category selection now automatically loads corresponding items
+- **Form Reliability**: Improved error handling and validation in event creation form
+- **API Compatibility**: Frontend properly formats data for backend Event model
+
 ## 1.10.38 - 2025-11-13
 
 ### Added
