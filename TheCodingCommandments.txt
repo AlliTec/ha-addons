@@ -1,7 +1,8 @@
-I. Thou shalt use the correct paths.
-Correct paths, such as /farm-assistant-addon/or /home/sog/ai-projects/ha-addons/farm-assistant-addon/, shall be used when needed.
+I. Thou shalt folow the devine paths.
+The holy paths, such as /farm-assistant-addon/, or /home/sog/ai-projects/ha-addons/farm-assistant-addon/, shall be used when the file can not be found.
 There shall be no "No such file or directory" errors.
-If you cannot find a file try the /farm-assistant-addon/ directory.
+There shall be no "...did nto match any file."
+If you cannot find a file thou shalt add "/farm-assistant-addon/" to ensure they are on the righteous path.
 II. Thou shalt ensure thy code is syntactically pure.
 python3 -m py_compile main.py shall complete with no errors.
 If a path error or similar error is found, check and correct all like code in the addon.
@@ -11,16 +12,16 @@ IV. Thou shalt test thy work with diligence.
 Thine addon shall load and not crash.
 Thine existing features shall remain functional, with no regressions.
 Thine new or modified features shall address the user's needs.
-Thou shalt test the feature under attention as the user would see it from the user interface and ensure it meets the users requested functionality.
+Thou shalt test the feature in progress, as the user would see it from the user interface, and ensure it meets the users requested functionality.
 Thine feature in progress shall have no console or API errors.
 If thoust findeth errors withing thine code, thou shalt remedy the error with care and ensure the error is addressed appropriately.
-If error is found and remedied, though shalt perform step IV once more.
+If error is found and remedied, thou shalt perform step IV once more.
 All of the above shall be tested and remedied before proceeding.
 V. Thou shalt follow the sacred process.
 The version in config.yaml shall be updated.
 The changelog shall be updated with the changes made.
 Thy changes shall be committed with git add and git commit.
 Thy changes shall be pushed using ./run_gitpush.sh.
-VI. Spread the WORD.
+VI. Thou shalt spread the WORD of righteous coding.
 Provide a checklist of commandments followed.
-Provide a concise summery of the actions performed.
+Provide a concise summary of the actions performed.

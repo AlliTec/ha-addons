@@ -358,11 +358,13 @@ async def add_event(event: Event):
         
         if event.category == 'livestock':
             # Add to animal_history table
+            event_date = datetime.strptime(event.date, '%Y-%m-%d').date()
+            event_time = datetime.strptime(event.time, '%H:%M').time()
             await conn.execute("""
                 INSERT INTO animal_history 
                 (animal_id, event_date, event_time, title, duration_hours, notes, status, priority, created_at)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
-            """, event.item_id, event.date, event.time, event.title, event.duration, 
+            """, event.item_id, event_date, event_time, event.title, event.duration, 
                   event.notes, event.status, event.priority)
             
             # Also add to calendar for display
@@ -371,16 +373,17 @@ async def add_event(event: Event):
                 (entry_date, entry_type, category, title, description, related_id, related_name, created_at)
                 VALUES ($1, 'event', $2, $3, $4, $5, 
                         (SELECT name || ' (' || tag_id || ')' FROM livestock_records WHERE id = $5), NOW())
-            """, event.date, 'livestock', event.title, event.notes, event.item_id)
+            """, event_date, 'livestock', event.title, event.notes, event.item_id)
             
         elif event.category == 'asset':
             # Add to maintenance_history table
+            event_date = datetime.strptime(event.date, '%Y-%m-%d').date()
             await conn.execute("""
                 INSERT INTO maintenance_history 
                 (asset_id, maintenance_type, start_date, completion_date, duration_hours, notes, status, priority, created_at)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
-            """, event.item_id, event.title, event.date, 
-                  event.date if event.status == 'completed' else None, 
+            """, event.item_id, event.title, event_date, 
+                  event_date if event.status == 'completed' else None, 
                   event.duration, event.notes, event.status, event.priority)
             
             # Also add to calendar for display
@@ -388,8 +391,8 @@ async def add_event(event: Event):
                 INSERT INTO calendar_entries 
                 (entry_date, entry_type, category, title, description, related_id, related_name, created_at)
                 VALUES ($1, 'event', $2, $3, $4, $5, 
-                        (SELECT name || ' (' || make || ' ' || COALESCE(model, '') || ')' FROM assets WHERE id = $5), NOW())
-            """, event.date, 'asset', event.title, event.notes, event.item_id)
+                        (SELECT name || ' (' || make || ' ' || COALESCE(model, '') || ')' FROM asset_inventory WHERE id = $5), NOW())
+            """, event_date, 'asset', event.title, event.notes, event.item_id)
         
         logging.info(f"Event added successfully for {event.category} item {event.item_id}")
         return {"message": "Event added successfully", "id": "success"}

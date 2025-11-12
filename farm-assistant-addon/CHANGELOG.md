@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.10.37 - 2025-11-13
+
+### Fixed
+- **Calendar API 500 Error**: Fixed missing database tables causing calendar API crash
+- **Database Tables**: Created calendar_entries and animal_history tables
+- **Event Creation**: Fixed date/time parsing in event creation API
+- **Asset Table Reference**: Fixed query to use correct asset_inventory table name
+- **Maintenance History**: Created maintenance_history table for asset events
+
+### Added
+- **Event Creation API**: Full functionality for creating calendar events
+- **Database Integration**: Events stored in appropriate history tables
+- **Calendar Display**: User-created events now appear in calendar views
+- **Time Slot Clicking**: Clickable time slots open event creation modal
+
+### Technical
+- **Table Creation**: Added migration scripts for missing database tables
+- **Date Parsing**: Fixed string to date/time conversion in API endpoints
+- **Error Handling**: Improved error handling for event creation workflow
+
 ## 1.10.36 - 2025-11-13
 
 ### Fixed
