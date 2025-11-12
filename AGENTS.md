@@ -37,33 +37,53 @@ This repository contains multiple Home Assistant addons. Each addon has its own 
 - **Connections**: Always close connections in try/finally blocks
 - **Models**: Use Pydantic for request/response validation
 
-## The Five Rules of Programming (MANDATORY)
+## The Six Coding Commandments (MANDATORY)
 
-**ALL CODE CHANGES MUST FOLLOW THE FIVE CODING COMMANDMENTS AT ALL TIMES:**
+**ALL CODE CHANGES MUST FOLLOW THE SIX CODING COMMANDMENTS AT ALL TIMES WITHOUT EXCEPTION:**
 
 **The Coding Commandments shall be followed without exception. These are located in `/home/sog/ai-projects/ha-addons/TheCodingCommandments.txt` and must be adhered to strictly.**
 
-### Summary of The Five Coding Commandments:
+### The Six Coding Commandments (Complete Version):
 
-1. **Code Purity**: Ensure thy code is syntactically pure - `python3 -m py_compile main.py` shall complete with no errors.
+**I. Thou shalt use the correct paths.**
+- Correct paths, such as /farm-assistant-addon/ or /home/sog/ai-projects/ha-addons/farm-assistant-addon/, shall be used when needed
+- There shall be no "No such file or directory" errors
+- If you cannot find a file try the /farm-assistant-addon/ directory
 
-2. **Configuration Validation**: Validate thy configuration - `python3 -c "import json; json.load(open('data/options.json'))"` shall complete successfully.
+**II. Thou shalt ensure thy code is syntactically pure.**
+- `python3 -m py_compile main.py` shall complete with no errors
+- ALL Python files must pass syntax validation
+- JavaScript files must pass node -c validation
 
-3. **Diligent Testing**: Test thy work with diligence:
-   - Thine addon shall load and not crash
-   - Thine existing features shall remain functional, with no regressions
-   - Thine new or modified features shall address the user's needs
-   - Thine feature in progress shall have no console or API errors
-   - All of the above shall be tested and remedied before proceeding
+**III. Thou shalt validate thy configuration.**
+- `python3 -c "import json; json.load(open('data/options.json'))"` shall complete successfully
+- config.yaml must be valid and readable
+- All configuration files must be validated
 
-4. **Sacred Process**: Follow the sacred process:
-   - The version in config.yaml shall be updated
-   - The changelog shall be updated with the changes made
-   - Thy changes shall be committed with git add and git commit
-   - Thy changes shall be pushed using ./run_gitpush.sh
+**IV. Thou shalt test thy work with diligence.**
+- Thine addon shall load and not crash
+- Thine existing features shall remain functional, with no regressions
+- Thine new or modified features shall address the user's needs
+- Thine feature in progress shall have no console or API errors
+- **If thoust findeth errors withing thine code, thou shalt remedy the error with care and ensure the error is addressed appropriately**
+- **If error is found and remedied, though shalt perform step IV once more**
+- All of the above shall be tested and remedied before proceeding
 
-5. **Correct Paths**: Use the correct paths:
-   - Correct paths, such as /farm-assistant-addon/, shall be used when needed
-   - There shall be no "No such file or directory" errors
+**V. Thou shalt follow the sacred process.**
+- The version in config.yaml shall be updated
+- The changelog shall be updated with the changes made
+- Thy changes shall be committed with git add and git commit
+- Thy changes shall be pushed using ./run_gitpush.sh
 
-**REMEMBER: Filter everything you do against The Five Coding Commandments!**
+**VI. Spread the WORD.**
+- Provide a checklist of commandments followed
+- Provide a concise summary of the actions performed
+
+**CRITICAL REQUIREMENTS:**
+- NEVER interpret or deviate from these commandments
+- Follow each commandment TO THE LETTER - no exceptions
+- Complete ALL SIX commandments for EVERY code change
+- If any commandment fails, STOP and remedy before proceeding
+- Always provide the Commandment VI checklist and summary
+
+**REMEMBER: Filter everything you do against The Six Coding Commandments!**
