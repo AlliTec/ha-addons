@@ -1,22 +1,22 @@
-I. Thou shalt ensure thy code is syntactically pure.
+I. Thou shalt use the correct paths.
+Correct paths, such as /farm-assistant-addon/or /home/sog/ai-projects/ha-addons/farm-assistant-addon/, shall be used when needed.
+There shall be no "No such file or directory" errors.
+If you cannot find a file try the /farm-assistant-addon/ directory.
+II. Thou shalt ensure thy code is syntactically pure.
 python3 -m py_compile main.py shall complete with no errors.
-II. Thou shalt validate thy configuration.
+III. Thou shalt validate thy configuration.
 python3 -c "import json; json.load(open('data/options.json'))" shall complete successfully.
-III. Thou shalt test thy work with diligence.
+IV. Thou shalt test thy work with diligence.
 Thine addon shall load and not crash.
 Thine existing features shall remain functional, with no regressions.
 Thine new or modified features shall address the user's needs.
 Thine feature in progress shall have no console or API errors.
 All of the above shall be tested and remedied before proceeding.
-IV. Thou shalt follow the sacred process.
+V. Thou shalt follow the sacred process.
 The version in config.yaml shall be updated.
 The changelog shall be updated with the changes made.
 Thy changes shall be committed with git add and git commit.
 Thy changes shall be pushed using ./run_gitpush.sh.
-V. Thou shalt use the correct paths.
-Correct paths, such as /farm-assistant-addon/, shall be used when needed.
-There shall be no "No such file or directory" errors.
-If you cannot find a file try the /farm-assistant-addon/ directory.
 VI. Spread the WORD.
 Provide a checklist of commandments followed.
 Provide a concise summery of the actions performed.
