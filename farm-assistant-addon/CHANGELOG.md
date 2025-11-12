@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.10.15 - 2025-11-12
+
+### Fixed
+- **Calendar Navigation Positioning**: Moved navigation tabs to top of calendar container for proper connection
+- **Tab Layout Alignment**: Positioned navigation tabs directly above calendar like register filter tabs above tables
+- **Visual Connection**: Calendar container now connects seamlessly with navigation tabs
+- **Container Border Adjustment**: Removed top border from calendar container to blend with navigation tabs
+
+### Enhanced
+- **Navigation Tab Placement**: Calendar navigation now positioned at calendar top instead of controls section
+- **Consistent Tab Design**: Navigation tabs maintain filter-btn styling with proper positioning
+- **Visual Hierarchy**: Clear separation between controls and calendar navigation areas
+- **User Experience**: More intuitive navigation placement at calendar content level
+
+### Technical
+- **HTML Structure Update**: Moved calendar-nav-tabs outside controls section to calendar level
+- **CSS Positioning**: Added margin-top and border adjustments for proper tab-container connection
+- **Container Styling**: Updated calendar-container to connect with navigation tabs visually
+- **Layout Consistency**: Calendar navigation now follows same pattern as register filter tabs
+
 ## 1.10.14 - 2025-11-12
 
 ### Fixed

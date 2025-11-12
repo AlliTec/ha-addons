@@ -329,13 +329,14 @@ th {
     margin-right: 8px;
 }
 
-/* Calendar Navigation Tabs - Use same styling as filter tabs */
+/* Calendar Navigation Tabs - Position at top of calendar like filter tabs */
 .calendar-nav-tabs {
     display: flex;
     align-items: center;
     margin-bottom: 0;
     position: relative;
     z-index: 2;
+    margin-top: 20px;
 }
 
 .calendar-nav-tabs .filter-btn {
@@ -936,7 +937,9 @@ th {
 .calendar-container {
     background-color: var(--input-bg);
     border: 1px solid var(--input-border);
+    border-top: none;
     padding: 20px;
+    margin-top: -1px;
 }
 
 .calendar-event {
