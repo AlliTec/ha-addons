@@ -2412,12 +2412,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     function updateDateDisplay(filterType) {
         const dateDisplay = document.getElementById('calendar-date-display');
+        const periodDisplay = document.getElementById('calendar-period-display');
         const today = new Date();
         let displayText = '';
         
+// Use currentDate instead of today for display
         switch (filterType) {
             case 'day':
-                displayText = today.toLocaleDateString('en-US', { 
+                displayText = currentDate.toLocaleDateString('en-US', { 
                     weekday: 'long', 
                     year: 'numeric', 
                     month: 'long', 
@@ -2425,30 +2427,22 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
                 break;
             case 'week':
-                const weekStart = new Date(today);
-                weekStart.setDate(today.getDate() - today.getDay());
+                const weekStart = new Date(currentDate);
+                weekStart.setDate(currentDate.getDate() - currentDate.getDay());
                 const weekEnd = new Date(weekStart);
                 weekEnd.setDate(weekStart.getDate() + 6);
                 displayText = `${weekStart.toLocaleDateString()} - ${weekEnd.toLocaleDateString()}`;
                 break;
-            case 'fortnight':
-                const weekNum = Math.ceil((today.getDate() - today.getDay() + 1) / 7);
-                const fortnightNum = Math.ceil(weekNum / 2);
-                displayText = `${today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - Fortnight ${fortnightNum}`;
-                break;
             case 'month':
-                displayText = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-                break;
-            case 'quarter':
-                const quarter = Math.floor(today.getMonth() / 3) + 1;
-                displayText = `${today.toLocaleDateString('en-US', { year: 'numeric' })} - Q${quarter}`;
+                displayText = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
                 break;
             case 'year':
-                displayText = today.getFullYear().toString();
+                displayText = currentDate.getFullYear().toString();
                 break;
         }
         
-        dateDisplay.textContent = displayText;
+        if (dateDisplay) dateDisplay.textContent = displayText;
+        if (periodDisplay) periodDisplay.textContent = filterType.charAt(0).toUpperCase() + filterType.slice(1);
     }
     
     // Setup calendar event listeners
@@ -2521,6 +2515,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Add navigation handlers
         document.getElementById('calendar-nav-prev').onclick = navigatePrevious;
         document.getElementById('calendar-nav-next').onclick = navigateNext;
+        
+        // Make functions globally accessible
+        window.navigateToDay = navigateToDay;
+        window.handleCalendarEventClick = handleCalendarEventClick;
+        window.navigatePrevious = navigatePrevious;
+        window.navigateNext = navigateNext;
     }
     
     function displayDayView(eventsByDate) {

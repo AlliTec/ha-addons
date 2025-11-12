@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.10.13 - 2025-11-12
+
+### Enhanced
+- **Calendar Navigation Tabs**: Replaced basic forward/back buttons with styled three-tab navigation system
+- **Navigation Tab Styling**: Calendar navigation now matches filter tab design with consistent visual appearance
+- **Global Function Accessibility**: Made all calendar navigation functions globally accessible for proper click handling
+- **Period Display Enhancement**: Center tab now shows current viewing period (Day/Week/Month/Year) with date range
+
+### Features
+- **Three-Tab Navigation**: Back button | Current period display | Forward button layout
+- **Consistent Tab Design**: Navigation tabs use same styling as livestock/asset filter tabs
+- **Interactive Period Display**: Center tab shows active viewing period and updates dynamically
+- **Enhanced User Experience**: Professional navigation interface with hover effects and visual feedback
+
+### Technical
+- **CSS Integration**: Added .calendar-nav-tabs and .nav-tab styling to match existing design
+- **Function Scope**: Fixed global accessibility for navigateToDay() and handleCalendarEventClick()
+- **Event Handler Setup**: Proper navigation button event listeners with onclick handlers
+- **Visual Consistency**: Navigation tabs inherit farm-assistant theme colors and styling
+
 ## 1.10.12 - 2025-11-12
 
 ### Enhanced

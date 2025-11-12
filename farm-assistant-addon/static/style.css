@@ -329,6 +329,61 @@ th {
     margin-right: 8px;
 }
 
+/* Calendar Navigation Tabs */
+.calendar-nav-tabs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.nav-tab {
+    background-color: var(--input-bg);
+    border: 1px solid var(--table-border);
+    padding: 12px 24px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--text-color);
+    transition: all 0.3s;
+    border-radius: 8px;
+    min-width: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-tab:hover {
+    background-color: var(--accent-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-tab.active {
+    background-color: var(--accent-color);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.nav-tab i {
+    margin-right: 8px;
+}
+
+#calendar-period-display {
+    background-color: var(--accent-color);
+    color: white;
+    cursor: default;
+}
+
+#calendar-period-display:hover {
+    background-color: var(--accent-color);
+    color: white;
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 .section-content {
     width: auto;
     display: inline-block;
