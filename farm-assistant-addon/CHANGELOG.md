@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.36 - 2025-11-13
+
+### Fixed
+- **Calendar API 500 Error**: Fixed missing timedelta import causing calendar API crash
+- **Import Statement**: Added timedelta to datetime import in main.py
+- **Calendar Functionality**: Calendar API now works without Internal Server Error
+- **Event Display**: All calendar events now display correctly
+
+### Technical
+- **Python Import Fix**: Added missing timedelta import for date calculations
+- **API Restoration**: Calendar endpoints now function properly
+- **Error Resolution**: 500 Internal Server Error resolved
+
 ## 1.10.35 - 2025-11-13
 
 ### Fixed
