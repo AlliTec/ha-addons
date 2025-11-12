@@ -1025,3 +1025,261 @@ th {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* Navigation Buttons */
+.nav-btn {
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: 1px solid var(--button-border);
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+}
+
+.nav-btn:hover {
+    background: var(--button-hover);
+}
+
+/* Day View Styles */
+.day-view {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.day-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: var(--header-bg);
+    border-radius: 8px;
+}
+
+.day-header h2 {
+    margin: 0;
+    color: var(--text-color);
+}
+
+.day-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.hour-segment {
+    display: flex;
+    min-height: 40px;
+    border: 1px solid var(--table-border);
+}
+
+.hour-segment.daylight {
+    background: var(--cell-bg);
+}
+
+.hour-segment.nighttime {
+    background: #2a2a2a;
+}
+
+.hour-label {
+    width: 60px;
+    padding: 8px;
+    background: var(--header-bg);
+    border-right: 1px solid var(--table-border);
+    font-weight: bold;
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+.hour-events {
+    flex: 1;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Week View Styles */
+.week-view {
+    overflow-x: auto;
+}
+
+.week-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    min-width: 800px;
+}
+
+.day-column {
+    border: 1px solid var(--table-border);
+    background: var(--cell-bg);
+    min-height: 200px;
+}
+
+.day-header-small {
+    background: var(--header-bg);
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--table-border);
+}
+
+.day-name {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.day-number {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+.day-events-small {
+    padding: 8px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+/* Month View Styles */
+.month-view {
+    overflow-x: auto;
+}
+
+.month-grid {
+    min-width: 800px;
+}
+
+.weekday-headers {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: var(--header-bg);
+    border: 1px solid var(--table-border);
+}
+
+.weekday-headers div {
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    border-right: 1px solid var(--table-border);
+}
+
+.weekday-headers div:last-child {
+    border-right: none;
+}
+
+.month-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    border: 1px solid var(--table-border);
+    border-top: none;
+}
+
+.empty-day {
+    background: #2a2a2a;
+    min-height: 80px;
+}
+
+.month-day {
+    background: var(--cell-bg);
+    min-height: 80px;
+    padding: 4px;
+    border-right: 1px solid var(--table-border);
+    position: relative;
+}
+
+.month-day.today {
+    background: var(--accent-color);
+}
+
+.day-number {
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.day-events-mini {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+}
+
+.event-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.event-dot.informational {
+    background: #17a2b8;
+}
+
+.event-dot.action {
+    background: #dc3545;
+}
+
+.event-more {
+    font-size: 0.7rem;
+    color: var(--text-color);
+    background: var(--header-bg);
+    padding: 1px 3px;
+    border-radius: 3px;
+}
+
+/* Year View Styles */
+.year-view {
+    overflow-x: auto;
+}
+
+.year-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    padding: 20px;
+    min-width: 1000px;
+}
+
+.month-card {
+    background: var(--cell-bg);
+    border: 1px solid var(--table-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.month-card-header {
+    background: var(--header-bg);
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1px solid var(--table-border);
+}
+
+.month-card-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
+    padding: 5px;
+}
+
+.mini-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    background: var(--cell-bg);
+    border: 1px solid var(--table-border);
+    cursor: pointer;
+}
+
+.mini-day.today {
+    background: var(--accent-color);
+    color: white;
+}
+
+.mini-day.has-events {
+    background: #17a2b8;
+    color: white;
+}

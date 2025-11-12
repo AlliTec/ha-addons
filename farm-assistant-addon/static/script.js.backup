@@ -2463,14 +2463,81 @@ document.addEventListener("DOMContentLoaded", async () => {
     let sunriseTime = 6; // Default 6 AM
     let sunsetTime = 18; // Default 6 PM
     
+    function loadCalendarEvents() {
+        console.log("loadCalendarEvents: Starting to load calendar events");
+        const filterType = document.getElementById('calendar-filter-type').value;
+        const entryType = document.getElementById('calendar-entry-type').value;
+        const category = document.getElementById('calendar-category').value;
+        
+        console.log("loadCalendarEvents: Filters:", { filterType, entryType, category });
+        
+        const eventsContainer = document.getElementById('calendar-events');
+        if (!eventsContainer) {
+            console.error("loadCalendarEvents: calendar-events container not found!");
+            return;
+        }
+        eventsContainer.innerHTML = '<div class="calendar-loading"><i class="fa-solid fa-spinner"></i> Loading calendar events...</div>';
+        
+        // Build query parameters
+        const params = new URLSearchParams();
+        params.append('filter_type', filterType);
+        if (entryType) params.append('entry_type', entryType);
+        if (category) params.append('category', category);
+        
+        const url = `api/calendar?${params}`;
+        console.log("loadCalendarEvents: Fetching URL:", url);
+        console.log("loadCalendarEvents: Full URL would be:", window.location.origin + url);
+        
+        fetch(url)
+            .then(response => {
+                console.log("loadCalendarEvents: Response status:", response.status);
+                console.log("loadCalendarEvents: Response headers:", [...response.headers.entries()]);
+                console.log("loadCalendarEvents: Response URL:", response.url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(events => {
+                console.log("loadCalendarEvents: Successfully loaded events:", events);
+                displayCalendarEvents(events);
+            })
+            .catch(error => {
+                console.error("loadCalendarEvents: Error loading calendar events:", error);
+                const eventsContainer = document.getElementById('calendar-events');
+                if (eventsContainer) {
+                    eventsContainer.innerHTML = '<div class="no-events">Error loading calendar events. Please try again.</div>';
+                }
+            });
+    }
+        eventsContainer.innerHTML = '<div class="calendar-loading"><i class="fa-solid fa-spinner"></i> Loading calendar events...</div>';
+        
+        // Build query parameters
+        const params = new URLSearchParams({
+            filter_type: filterType
+        });
+        
+        if (entryType) params.append('entry_type', entryType);
+        if (category) params.append('category', category);
+        
+        fetch(`api/calendar?${params}`)
+            .then(response => response.json())
+            .then(events => {
+                displayCalendarEvents(events);
+                updateDateDisplay(filterType);
+            })
+            .catch(error => {
+                console.error('Error loading calendar events:', error);
+                eventsContainer.innerHTML = '<div class="no-events">Error loading calendar events. Please try again.</div>';
+            });
+    }
     
     function displayCalendarEvents(events) {
-        const filterType = document.getElementById('calendar-filter-type').value;
         const eventsContainer = document.getElementById('calendar-events');
         
         if (events.length === 0) {
             eventsContainer.innerHTML = '<div class="no-events">No events found for the selected period.</div>';
-            updateDateDisplay();
             return;
         }
         
@@ -2483,25 +2550,30 @@ document.addEventListener("DOMContentLoaded", async () => {
             eventsByDate[event.date].push(event);
         });
         
-        let html = '';
+        // Sort dates
+        const sortedDates = Object.keys(eventsByDate).sort();
         
-        switch (filterType) {
-            case 'day':
-                html = displayDayView(eventsByDate);
-                break;
-            case 'week':
-                html = displayWeekView(eventsByDate);
-                break;
-            case 'month':
-                html = displayMonthView(eventsByDate);
-                break;
-            case 'year':
-                html = displayYearView(eventsByDate);
-                break;
-        }
+        let html = '';
+        sortedDates.forEach(date => {
+            const dateObj = new Date(date + 'T00:00:00');
+            const formattedDate = dateObj.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            html += `<div class="calendar-date-group">
+                <h3 class="calendar-date-header">${formattedDate}</h3>`;
+            
+            eventsByDate[date].forEach(event => {
+                html += createEventHTML(event);
+            });
+            
+            html += '</div>';
+        });
         
         eventsContainer.innerHTML = html;
-        updateDateDisplay();
         
         // Add click handlers for events
         document.querySelectorAll('.calendar-event').forEach(eventElement => {
@@ -2510,170 +2582,66 @@ document.addEventListener("DOMContentLoaded", async () => {
                 handleCalendarEventClick(eventData);
             });
         });
-        
-        // Add navigation handlers
-        document.getElementById('calendar-nav-prev').onclick = navigatePrevious;
-        document.getElementById('calendar-nav-next').onclick = navigateNext;
     }
     
-    function displayDayView(eventsByDate) {
-        const dateStr = currentDate.toISOString().split('T')[0];
-        const dayEvents = eventsByDate[dateStr] || [];
-        const dateObj = new Date(dateStr + 'T00:00:00');
+    function createEventHTML(event) {
+        const dateObj = new Date(event.date + 'T00:00:00');
+        const formattedDate = dateObj.toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric' 
+        });
         
-        let html = `<div class="day-view">
-            <div class="day-header">
-                <h2>${dateObj.toLocaleDateString('en-US', { 
-                    weekday: 'long', 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
-                })}</h2>
+        return `
+            <div class="calendar-event ${event.entry_type} ${event.category}" 
+                 data-event='${JSON.stringify(event).replace(/'/g, "&apos;")}'>
+                <div class="event-date">${formattedDate}</div>
+                <div class="event-content">
+                    <div class="event-title">${event.title}</div>
+                    <div class="event-description">${event.description}</div>
+                    <div class="event-meta">
+                        <span class="event-type ${event.entry_type}">${event.entry_type}</span>
+                        <span class="event-category ${event.category}">${event.category}</span>
+                        ${event.related_name ? `<span class="event-related">${event.related_name}</span>` : ''}
+                    </div>
+                </div>
             </div>
-            <div class="day-timeline">`;
-        
-        // Create 24-hour segments
-        for (let hour = 0; hour < 24; hour++) {
-            const isDaylight = hour >= sunriseTime && hour <= sunsetTime;
-            const hourStr = hour.toString().padStart(2, '0') + ':00';
-            
-            html += `<div class="hour-segment ${isDaylight ? 'daylight' : 'nighttime'}">
-                <div class="hour-label">${hourStr}</div>
-                <div class="hour-events">`;
-            
-            if (dayEvents.length > 0 && hour === 9) { // Show events at 9 AM for simplicity
-                dayEvents.forEach(event => {
-                    html += createEventHTML(event);
+        `;
+    }
+    
+    function handleCalendarEventClick(event) {
+        if (event.category === 'livestock' && event.related_id) {
+            // Show livestock details
+            fetch(`/get_animal/${event.related_id}`)
+                .then(response => response.json())
+                .then(animal => {
+                    showAnimalDetails(animal);
+                })
+                .catch(error => {
+                    console.error('Error loading animal details:', error);
+                    alert('Error loading animal details');
                 });
-            }
-            
-            html += `</div></div>`;
+        } else if (event.category === 'asset' && event.related_id) {
+            // Show asset details
+            fetch(`api/asset/${event.related_id}`)
+                .then(response => response.json())
+                .then(asset => {
+                    showAssetDetails(asset);
+                })
+                .catch(error => {
+                    console.error('Error loading asset details:', error);
+                    alert('Error loading asset details');
+                });
         }
-        
-        html += `</div></div>`;
-        return html;
     }
     
-    function displayWeekView(eventsByDate) {
-        const startOfWeek = new Date(currentDate);
-        const day = startOfWeek.getDay();
-        const diff = startOfWeek.getDate() - day;
-        startOfWeek.setDate(diff);
-        
-        let html = `<div class="week-view">
-            <div class="week-grid">`;
-        
-        for (let i = 0; i < 7; i++) {
-            const date = new Date(startOfWeek);
-            date.setDate(startOfWeek.getDate() + i);
-            const dateStr = date.toISOString().split('T')[0];
-            const dayEvents = eventsByDate[dateStr] || [];
-            
-            html += `<div class="day-column">
-                <div class="day-header-small">
-                    <div class="day-name">${date.toLocaleDateString('en-US', { weekday: 'short' })}</div>
-                    <div class="day-number">${date.getDate()}</div>
-                </div>
-                <div class="day-events-small">`;
-            
-            dayEvents.forEach(event => {
-                html += createEventHTML(event);
-            });
-            
-            html += `</div></div>`;
-        }
-        
-        html += `</div></div>`;
-        return html;
-    }
-    
-    function displayMonthView(eventsByDate) {
-        const year = currentDate.getFullYear();
-        const month = currentDate.getMonth();
-        const firstDay = new Date(year, month, 1);
-        const lastDay = new Date(year, month + 1, 0);
-        const daysInMonth = lastDay.getDate();
-        const startingDayOfWeek = firstDay.getDay();
-        
-        let html = `<div class="month-view">
-            <div class="month-grid">
-                <div class="weekday-headers">
-                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-                </div>
-                <div class="month-days">`;
-        
-        // Empty cells for days before month starts
-        for (let i = 0; i < startingDayOfWeek; i++) {
-            html += '<div class="empty-day"></div>';
-        }
-        
-        // Days of month
-        for (let day = 1; day <= daysInMonth; day++) {
-            const date = new Date(year, month, day);
-            const dateStr = date.toISOString().split('T')[0];
-            const dayEvents = eventsByDate[dateStr] || [];
-            const isToday = date.toDateString() === new Date().toDateString();
-            
-            html += `<div class="month-day ${isToday ? 'today' : ''}">
-                <div class="day-number">${day}</div>
-                <div class="day-events-mini">`;
-            
-            dayEvents.slice(0, 3).forEach(event => {
-                html += `<div class="event-dot ${event.entry_type}" title="${event.title}"></div>`;
-            });
-            
-            if (dayEvents.length > 3) {
-                html += `<div class="event-more">+${dayEvents.length - 3}</div>`;
-            }
-            
-            html += `</div></div>`;
-        }
-        
-        html += `</div></div></div>`;
-        return html;
-    }
-    
-    function displayYearView(eventsByDate) {
-        const year = currentDate.getFullYear();
-        
-        let html = `<div class="year-view">
-            <div class="year-grid">`;
-        
-        for (let month = 0; month < 12; month++) {
-            const firstDay = new Date(year, month, 1);
-            const monthName = firstDay.toLocaleDateString('en-US', { month: 'long' });
-            
-            html += `<div class="month-card" data-month="${month}">
-                <div class="month-card-header">${monthName}</div>
-                <div class="month-card-days">`;
-            
-            // Simple month preview with first day of week
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const firstDayOfWeek = new Date(year, month, 1).getDay();
-            
-            for (let day = 1; day <= Math.min(daysInMonth, 35); day++) {
-                const date = new Date(year, month, day);
-                const dateStr = date.toISOString().split('T')[0];
-                const hasEvents = eventsByDate[dateStr] && eventsByDate[dateStr].length > 0;
-                const isToday = date.toDateString() === new Date().toDateString();
-                
-                html += `<div class="mini-day ${isToday ? 'today' : ''} ${hasEvents ? 'has-events' : ''}">${day}</div>`;
-            }
-            
-            html += `</div></div>`;
-        }
-        
-        html += `</div></div>`;
-        return html;
-    }
-    
-    function updateDateDisplay() {
-        const display = document.getElementById('calendar-date-display');
-        const filterType = document.getElementById('calendar-filter-type').value;
+    function updateDateDisplay(filterType) {
+        const dateDisplay = document.getElementById('calendar-date-display');
+        const today = new Date();
+        let displayText = '';
         
         switch (filterType) {
             case 'day':
-                display.textContent = currentDate.toLocaleDateString('en-US', { 
+                displayText = today.toLocaleDateString('en-US', { 
                     weekday: 'long', 
                     year: 'numeric', 
                     month: 'long', 
@@ -2681,69 +2649,32 @@ document.addEventListener("DOMContentLoaded", async () => {
                 });
                 break;
             case 'week':
-                const startOfWeek = new Date(currentDate);
-                const day = startOfWeek.getDay();
-                const diff = startOfWeek.getDate() - day;
-                startOfWeek.setDate(diff);
-                const endOfWeek = new Date(startOfWeek);
-                endOfWeek.setDate(startOfWeek.getDate() + 6);
-                
-                display.textContent = `${startOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${endOfWeek.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+                const weekStart = new Date(today);
+                weekStart.setDate(today.getDate() - today.getDay());
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekStart.getDate() + 6);
+                displayText = `${weekStart.toLocaleDateString()} - ${weekEnd.toLocaleDateString()}`;
+                break;
+            case 'fortnight':
+                const weekNum = Math.ceil((today.getDate() - today.getDay() + 1) / 7);
+                const fortnightNum = Math.ceil(weekNum / 2);
+                displayText = `${today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - Fortnight ${fortnightNum}`;
                 break;
             case 'month':
-                display.textContent = currentDate.toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'long' 
-                });
+                displayText = today.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                break;
+            case 'quarter':
+                const quarter = Math.floor(today.getMonth() / 3) + 1;
+                displayText = `${today.toLocaleDateString('en-US', { year: 'numeric' })} - Q${quarter}`;
                 break;
             case 'year':
-                display.textContent = currentDate.getFullYear().toString();
+                displayText = today.getFullYear().toString();
                 break;
         }
+        
+        dateDisplay.textContent = displayText;
     }
     
-    function navigatePrevious() {
-        const filterType = document.getElementById('calendar-filter-type').value;
-        
-        switch (filterType) {
-            case 'day':
-                currentDate.setDate(currentDate.getDate() - 1);
-                break;
-            case 'week':
-                currentDate.setDate(currentDate.getDate() - 7);
-                break;
-            case 'month':
-                currentDate.setMonth(currentDate.getMonth() - 1);
-                break;
-            case 'year':
-                currentDate.setFullYear(currentDate.getFullYear() - 1);
-                break;
-        }
-        
-        loadCalendarEvents();
-    }
-    
-    function navigateNext() {
-        const filterType = document.getElementById('calendar-filter-type').value;
-        
-        switch (filterType) {
-            case 'day':
-                currentDate.setDate(currentDate.getDate() + 1);
-                break;
-            case 'week':
-                currentDate.setDate(currentDate.getDate() + 7);
-                break;
-            case 'month':
-                currentDate.setMonth(currentDate.getMonth() + 1);
-                break;
-            case 'year':
-                currentDate.setFullYear(currentDate.getFullYear() + 1);
-                break;
-        }
-        
-        loadCalendarEvents();
-    }
-
     // Setup calendar event listeners
     function setupCalendarListeners() {
         // Filter change listeners
@@ -2754,4 +2685,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Refresh button
         document.getElementById('refresh-calendar').addEventListener('click', loadCalendarEvents);
     }
+
 });

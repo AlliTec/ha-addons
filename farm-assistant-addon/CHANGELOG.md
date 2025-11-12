@@ -3,10 +3,17 @@
 ## 1.10.8 - 2025-11-12
 
 ### Fixed
-- **API Routing Issues**: Fixed calendar and asset detail API calls failing in Home Assistant ingress
+- **API Routing Issues**: Fixed calendar and asset API calls failing in Home Assistant ingress
 - **Relative URL Paths**: Changed from absolute paths (`/api/...`) to relative paths (`api/...`) for proper HA routing
 - **Calendar Event Clicks**: Fixed asset detail loading when clicking calendar events
 - **Asset Detail Integration**: Calendar events now correctly open asset details modal
+- **JavaScript Syntax Errors**: Removed duplicate loadCalendarEvents functions and fixed missing closing braces
+- **Version Footer**: Ensured version 1.10.8 displays correctly in footer
+
+### Enhanced
+- **Calendar UI**: Removed Fortnight and Quarter options, added Day/Week/Month/Year views
+- **Navigation Controls**: Added forward/back navigation buttons to calendar interface
+- **Calendar Functions**: Complete rewrite with displayDayView(), displayWeekView(), displayMonthView(), displayYearView()
 
 ### Technical Fixes
 - **JavaScript API Calls**: Updated fetch URLs to work with Home Assistant proxy routing
