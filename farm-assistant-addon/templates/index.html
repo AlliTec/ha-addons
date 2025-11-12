@@ -874,6 +874,94 @@
             </div>
         </div>
     </div>
+    
+    <!-- Add Event Modal -->
+    <div id="add-event-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-top-left">&times;</span>
+            <div class="modal-header">
+                <h2>Add Event</h2>
+                <button class="close-add-event-btn action-btn">
+                    <i class="fa-solid fa-xmark"></i> Cancel
+                </button>
+            </div>
+            <form id="add-event-form">
+                <input type="hidden" id="event-date">
+                <input type="hidden" id="event-time">
+                
+                <div class="form-section">
+                    <h3>Event Type</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="event-category">Category:</label>
+                            <select id="event-category" name="category" required>
+                                <option value="">Select Category</option>
+                                <option value="livestock">Livestock</option>
+                                <option value="asset">Asset</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="event-item-name">Item Name:</label>
+                            <select id="event-item-name" name="item_name" required>
+                                <option value="">Select Category First</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Event Details</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="event-title">Event Title:</label>
+                            <input type="text" id="event-title" name="title" required placeholder="e.g., Health Check, Maintenance, Treatment">
+                        </div>
+                        <div>
+                            <label for="event-duration">Expected Duration (hours):</label>
+                            <input type="number" id="event-duration" name="duration" min="0.5" step="0.5" placeholder="e.g., 1, 2.5">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="event-notes">Notes:</label>
+                        <textarea id="event-notes" name="notes" rows="4" placeholder="Detailed notes about the event..."></textarea>
+                    </div>
+                </div>
+                
+                <div class="form-section">
+                    <h3>Event Status</h3>
+                    <div class="form-grid">
+                        <div>
+                            <label for="event-status">Status:</label>
+                            <select id="event-status" name="status">
+                                <option value="scheduled">Scheduled</option>
+                                <option value="in_progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="event-priority">Priority:</label>
+                            <select id="event-priority" name="priority">
+                                <option value="low">Low</option>
+                                <option value="medium" selected>Medium</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="submit" class="action-btn add-btn">
+                        <i class="fa-solid fa-save"></i> Save Event
+                    </button>
+                    <button type="button" class="close-add-event-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
 </body>
 </html>

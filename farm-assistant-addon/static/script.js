@@ -1037,6 +1037,97 @@ function displayNameOptions(names) {
     });
 }
 
+// Function to open add event modal
+async function openAddEventModal(date, time) {
+    try {
+        console.log(`Opening add event modal for ${date} at ${time}`);
+        
+        // Set the date and time in hidden fields
+        document.getElementById('event-date').value = date;
+        document.getElementById('event-time').value = time;
+        
+        // Clear previous form data
+        document.getElementById('event-category').value = '';
+        document.getElementById('event-item-name').innerHTML = '<option value="">Select Category First</option>';
+        document.getElementById('event-title').value = '';
+        document.getElementById('event-duration').value = '';
+        document.getElementById('event-notes').value = '';
+        document.getElementById('event-status').value = 'scheduled';
+        document.getElementById('event-priority').value = 'medium';
+        
+        // Show modal
+        document.getElementById('add-event-modal').style.display = 'block';
+        
+    } catch (error) {
+        console.error('Error opening add event modal:', error);
+        alert('Error opening event modal. Please try again.');
+    }
+}
+
+// Function to populate item dropdown based on category
+async function populateEventItemDropdown(category) {
+    try {
+        const itemDropdown = document.getElementById('event-item-name');
+        itemDropdown.innerHTML = '<option value="">Loading...</option>';
+        
+        let response;
+        if (category === 'livestock') {
+            response = await fetch('api/animals');
+        } else if (category === 'asset') {
+            response = await fetch('api/assets');
+        }
+        
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${category} items`);
+        }
+        
+        const items = await response.json();
+        
+        itemDropdown.innerHTML = '<option value="">Select Item</option>';
+        items.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.id;
+            option.textContent = item.name || item.tag_id || `${item.make} ${item.model}`;
+            itemDropdown.appendChild(option);
+        });
+        
+    } catch (error) {
+        console.error('Error populating item dropdown:', error);
+        document.getElementById('event-item-name').innerHTML = '<option value="">Error loading items</option>';
+    }
+}
+
+// Function to save event
+async function saveEvent(eventData) {
+    try {
+        const response = await fetch('api/events', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(eventData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to save event');
+        }
+        
+        const result = await response.json();
+        console.log('Event saved successfully:', result);
+        
+        // Close modal and refresh calendar
+        document.getElementById('add-event-modal').style.display = 'none';
+        await loadCalendarEvents();
+        
+        return result;
+        
+    } catch (error) {
+        console.error('Error saving event:', error);
+        alert('Error saving event. Please try again.');
+        throw error;
+    }
+}
+
 // Main initialization
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("script.js: DOMContentLoaded event fired.");
@@ -1688,6 +1779,53 @@ document.addEventListener("DOMContentLoaded", async () => {
                 modal.style.display = "none";
             }
         }
+    });
+
+    // Add Event Modal Event Listeners
+    const eventCategorySelect = document.getElementById('event-category');
+    if (eventCategorySelect) {
+        eventCategorySelect.addEventListener('change', async (e) => {
+            const category = e.target.value;
+            if (category) {
+                await populateEventItemDropdown(category);
+            } else {
+                document.getElementById('event-item-name').innerHTML = '<option value="">Select Category First</option>';
+            }
+        });
+    }
+
+    const addEventForm = document.getElementById('add-event-form');
+    if (addEventForm) {
+        addEventForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const eventData = {
+                date: document.getElementById('event-date').value,
+                time: document.getElementById('event-time').value,
+                category: formData.get('category'),
+                item_id: formData.get('item_name'),
+                title: formData.get('title'),
+                duration: parseFloat(formData.get('duration')) || 1,
+                notes: formData.get('notes'),
+                status: formData.get('status'),
+                priority: formData.get('priority')
+            };
+            
+            try {
+                await saveEvent(eventData);
+            } catch (error) {
+                console.error('Failed to save event:', error);
+            }
+        });
+    }
+
+    // Close buttons for add event modal
+    const closeAddEventBtns = document.querySelectorAll('.close-add-event-btn');
+    closeAddEventBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('add-event-modal').style.display = 'none';
+        });
     });
 
     // Name Generator Wizard Event Listeners
@@ -2506,7 +2644,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const isDaylight = hour >= sunriseTime && hour <= sunsetTime;
             const hourStr = hour.toString().padStart(2, '0') + ':00';
             
-            html += `<div class="hour-segment ${isDaylight ? 'daylight' : 'nighttime'}">
+            html += `<div class="hour-segment ${isDaylight ? 'daylight' : 'nighttime'}" onclick="openAddEventModal('${dateStr}', '${hourStr}')" style="cursor: pointer;">
                 <div class="hour-label">${hourStr}</div>
                 <div class="hour-events">`;
             

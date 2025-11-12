@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.10.33 - 2025-11-13
+
+### Added
+- **Calendar Event Creation**: Added functionality to create events by clicking time slots in calendar day view
+- **Event Modal**: New modal with livestock/asset selection, name dropdown, notes, and duration fields
+- **Animal History Table**: Created animal_history database table for tracking livestock events and procedures
+- **Event Categories**: Support for both livestock and asset events with different data storage
+- **Time Slot Clicking**: Clickable time slots in day view that open event creation modal
+- **Event Priority & Status**: Full event management with priority levels and status tracking
+
+### Enhanced
+- **Asset Integration**: Events for assets automatically added to maintenance history
+- **Livestock Tracking**: Events for livestock stored in dedicated animal_history table
+- **Calendar Display**: New events automatically appear in calendar views
+- **Database Migration**: Added migration endpoint for creating animal_history table
+
+### Technical
+- **Backend Endpoints**: New `/api/events` POST endpoint for event creation
+- **Migration System**: `/api/migrate/animal_history` endpoint for database setup
+- **Event Model**: New Event Pydantic model with validation
+- **Form Handling**: Complete JavaScript form validation and submission
+- **Modal Management**: Full modal lifecycle management with proper event listeners
+
 ## 1.10.32 - 2025-11-13
 
 ### Added

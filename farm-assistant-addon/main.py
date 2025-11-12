@@ -100,6 +100,17 @@ class Animal(BaseModel):
     dod: Optional[str] = None
     status: Optional[str] = None
 
+class Event(BaseModel):
+    date: str
+    time: str
+    category: str  # 'livestock' or 'asset'
+    item_id: int
+    title: str
+    duration: float
+    notes: Optional[str] = None
+    status: str = 'scheduled'  # scheduled, in_progress, completed, cancelled
+    priority: str = 'medium'  # low, medium, high, urgent
+
 def get_animal_type(gender):
     if gender in ["Cow", "Bull", "Steer", "Heifer"]:
         return "Cattle"
@@ -330,6 +341,80 @@ async def update_animal(animal_id: int, animal: Animal):
         return {"message": "Animal updated successfully"}
     except Exception as e:
         logging.error(f"Error updating animal {animal_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
+# --- Event Management Endpoints ---
+
+@app.post("/api/events")
+async def add_event(event: Event):
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        logging.info(f"Adding event: {event}")
+        
+        # Combine date and time into full timestamp
+        event_datetime = f"{event.date} {event.time}:00"
+        
+        if event.category == 'livestock':
+            # Add to animal_history table
+            await conn.execute("""
+                INSERT INTO animal_history 
+                (animal_id, event_date, event_time, title, duration, notes, status, priority, created_at)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+            """, event.item_id, event.date, event.time, event.title, event.duration, 
+                  event.notes, event.status, event.priority)
+            
+            # Also add to calendar for display
+            await conn.execute("""
+                INSERT INTO calendar_entries 
+                (entry_date, entry_type, category, title, description, related_id, related_name, created_at)
+                VALUES ($1, 'event', $2, $3, $4, $5, 
+                        (SELECT name || ' (' || tag_id || ')' FROM livestock_records WHERE id = $5), NOW())
+            """, event.date, 'livestock', event.title, event.notes, event.item_id)
+            
+        elif event.category == 'asset':
+            # Add to maintenance_history table
+            await conn.execute("""
+                INSERT INTO maintenance_history 
+                (asset_id, maintenance_type, start_date, completion_date, duration_hours, notes, status, priority, created_at)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
+            """, event.item_id, event.title, event.date, 
+                  event.date if event.status == 'completed' else None, 
+                  event.duration, event.notes, event.status, event.priority)
+            
+            # Also add to calendar for display
+            await conn.execute("""
+                INSERT INTO calendar_entries 
+                (entry_date, entry_type, category, title, description, related_id, related_name, created_at)
+                VALUES ($1, 'event', $2, $3, $4, $5, 
+                        (SELECT name || ' (' || make || ' ' || COALESCE(model, '') || ')' FROM assets WHERE id = $5), NOW())
+            """, event.date, 'asset', event.title, event.notes, event.item_id)
+        
+        logging.info(f"Event added successfully for {event.category} item {event.item_id}")
+        return {"message": "Event added successfully", "id": "success"}
+        
+    except Exception as e:
+        logging.error(f"Error adding event: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
+@app.post("/api/migrate/animal_history")
+async def migrate_animal_history():
+    """Create animal_history table if it doesn't exist"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Read and execute migration script
+        with open('create_animal_history_table.sql', 'r') as f:
+            migration_sql = f.read()
+        
+        await conn.execute(migration_sql)
+        logging.info("Animal history table migration completed successfully")
+        return {"message": "Animal history table created successfully"}
+        
+    except Exception as e:
+        logging.error(f"Error running animal history migration: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         await conn.close()
