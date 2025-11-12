@@ -2377,10 +2377,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
     }
     
-    function handleCalendarEventClick(event) {
-        if (event.category === 'livestock' && event.related_id) {
+    function handleCalendarEventClick(element) {
+        // Get event data from data attribute or use element directly if it's already the event object
+        const eventData = element.dataset ? JSON.parse(element.dataset.event) : element;
+        
+        if (eventData.category === 'livestock' && eventData.related_id) {
             // Show livestock details
-            fetch(`get_animal/${event.related_id}`)
+            fetch(`get_animal/${eventData.related_id}`)
                 .then(response => response.json())
                 .then(animal => {
                     showAnimalDetails(animal);
@@ -2389,12 +2392,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                     console.error('Error loading animal details:', error);
                     alert('Error loading animal details');
                 });
-        } else if (event.category === 'asset' && event.related_id) {
+        } else if (eventData.category === 'asset' && eventData.related_id) {
             // Show asset details
-            fetch(`api/asset/${event.related_id}`)
+            fetch(`api/asset/${eventData.related_id}`)
                 .then(response => response.json())
                 .then(asset => {
-                    showAssetDetails(event.related_id);
+                    showAssetDetails(eventData.related_id);
                 })
                 .catch(error => {
                     console.error('Error loading asset details:', error);
@@ -2627,7 +2630,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             dayEvents.slice(0, 3).forEach(event => {
                 const displayName = event.related_name || event.title;
-                html += `<div class="event-dot ${event.entry_type}" title="${event.title}" onclick="handleCalendarEventClick(${JSON.stringify(event).replace(/"/g, '&quot;')})">${event.entry_type === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>`;
+                html += `<div class="event-dot ${event.entry_type}" title="${event.title}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="handleCalendarEventClick(this)">${event.entry_type === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>`;
             });
             
             if (dayEvents.length > 3) {

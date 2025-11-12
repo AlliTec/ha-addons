@@ -329,52 +329,29 @@ th {
     margin-right: 8px;
 }
 
-/* Calendar Navigation Tabs */
+/* Calendar Navigation Tabs - Use same styling as filter tabs */
 .calendar-nav-tabs {
     display: flex;
-    justify-content: center;
     align-items: center;
-    gap: 5px;
-    margin-bottom: 20px;
+    margin-bottom: 0;
+    position: relative;
+    z-index: 2;
 }
 
-.nav-tab {
-    background-color: var(--input-bg);
-    border: 1px solid var(--table-border);
-    padding: 12px 24px;
-    cursor: pointer;
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: var(--text-color);
-    transition: all 0.3s;
-    border-radius: 8px;
-    min-width: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.calendar-nav-tabs .filter-btn {
+    position: relative;
+    z-index: 1;
 }
 
-.nav-tab:hover {
-    background-color: var(--accent-color);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.nav-tab.active {
-    background-color: var(--accent-color);
-    color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.nav-tab i {
-    margin-right: 8px;
+.calendar-nav-tabs .filter-btn.active {
+    z-index: 3;
 }
 
 #calendar-period-display {
-    background-color: var(--accent-color);
-    color: white;
+    background-color: var(--table-header-bg);
+    color: var(--text-color);
     cursor: default;
+    z-index: 2;
 }
 
 #calendar-period-display:hover {

@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.10.14 - 2025-11-12
+
+### Fixed
+- **Calendar Navigation Styling**: Updated calendar navigation to use filter-btn class for exact match with register filter tabs
+- **Livestock Event Click Error**: Fixed `[object Object]` error when clicking livestock calendar events
+- **Event Data Handling**: Changed from inline JSON to data attributes for proper event data passing
+- **Footer Removal**: Removed version footer from addon as requested
+
+### Enhanced
+- **Calendar Navigation Consistency**: Calendar tabs now use identical styling to livestock/asset filter tabs
+- **Tab Visual Design**: Applied clip-path polygon styling and proper tab overlapping design
+- **Event Click Reliability**: Improved calendar event click handling for both livestock and assets
+
+### Technical
+- **CSS Class Alignment**: Calendar navigation now uses .filter-btn instead of custom .nav-tab styling
+- **Data Attribute Approach**: Updated event handling to use dataset instead of inline JSON stringification
+- **HTML Cleanup**: Removed footer element and version display from template
+- **Function Compatibility**: Enhanced handleCalendarEventClick() to support both old and new calling patterns
+
 ## 1.10.13 - 2025-11-12
 
 ### Enhanced
