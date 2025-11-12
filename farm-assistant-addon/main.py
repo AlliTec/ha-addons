@@ -843,7 +843,6 @@ async def get_calendar_events(
         events = []
         
         # Calculate date range based on filter type
-        from datetime import datetime, timedelta
         today = datetime.now().date()
         
         if not start_date or not end_date:

@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.10.35 - 2025-11-13
+
+### Fixed
+- **Calendar View Broken**: Fixed critical datetime import conflict in calendar API
+- **Import Error**: Removed duplicate datetime import that was breaking calendar functionality
+- **API Functionality**: Calendar API now works correctly and displays events properly
+
+### Technical
+- **Python Import Fix**: Corrected datetime import conflict between global and function-level imports
+- **Calendar Restoration**: Full calendar functionality restored including event display
+
 ## 1.10.34 - 2025-11-13
 
 ### Fixed
