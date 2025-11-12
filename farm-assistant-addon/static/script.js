@@ -517,31 +517,21 @@ async function populateParentAssetDropdowns() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const assets = await response.json();
-        console.log("Assets received:", assets.length);
+        const events = await response.json();
+        console.log("Calendar events received:", events.length, "events");
         
-        const addParentSelect = document.getElementById('add-asset-parent');
-        const editParentSelect = document.getElementById('edit-asset-parent');
-        
-        if (!addParentSelect || !editParentSelect) {
-            console.error("Parent asset select elements not found!");
-            return;
-        }
-        
-        // Clear existing options and add default option
-        const defaultOption = '<option value="">No Parent Asset</option>';
-        addParentSelect.innerHTML = defaultOption;
-        editParentSelect.innerHTML = defaultOption;
-        
-        // Add all assets as potential parents
-        assets.forEach(asset => {
-            const option = document.createElement('option');
-            option.value = asset.id;
-            option.textContent = `${asset.name} (ID: ${asset.id})`;
-            
-            addParentSelect.appendChild(option);
-            editParentSelect.appendChild(option.cloneNode(true));
+        // Group events by date
+        const eventsByDate = {};
+        events.forEach(event => {
+            const eventDate = event.date; // Use the date directly from the backend
+            console.log(`Processing event: ${event.title} on ${eventDate}`);
+            if (!eventsByDate[eventDate]) {
+                eventsByDate[eventDate] = [];
+            }
+            eventsByDate[eventDate].push(event);
         });
+        
+        console.log("Events grouped by date:", eventsByDate);
         
         console.log("Parent asset dropdowns populated successfully");
         
@@ -2545,7 +2535,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const dateStr = date.toISOString().split('T')[0];
             const dayEvents = eventsByDate[dateStr] || [];
             
-            html += `<div class="day-column">
+            html += `<div class="day-column" onclick="navigateToDay(${date.getFullYear()}, ${date.getMonth()}, ${date.getDate()})">
                 <div class="day-header-small">
                     <div class="day-name">${date.toLocaleDateString('en-US', { weekday: 'short' })}</div>
                     <div class="day-number">${date.getDate()}</div>
@@ -2597,8 +2587,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             const dayEvents = eventsByDate[dateStr] || [];
             const isToday = date.toDateString() === new Date().toDateString();
             
-            html += `<div class="month-day ${isToday ? 'today' : ''}">
-                <div class="day-number" onclick="navigateToDay(${year}, ${month}, ${day})">${day}</div>
+            html += `<div class="month-day ${isToday ? 'today' : ''}" onclick="navigateToDay(${year}, ${month}, ${day})">
+                <div class="day-number">${day}</div>
                 <div class="day-events-mini">`;
             
             dayEvents.slice(0, 3).forEach(event => {

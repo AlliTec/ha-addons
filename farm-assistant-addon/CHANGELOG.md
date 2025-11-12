@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.10.20 - 2025-11-12
+
+### Fixed
+- **Daylight Hours Styling**: Improved contrast for nighttime hours in day view calendar
+- **24-Hour Layout**: Ensured all day views show complete 24-hour timeline regardless of events
+- **Date Alignment Debugging**: Added comprehensive logging to track event date processing
+- **Click Navigation**: Added click functionality to open day view when clicking on any day white space
+
+### Enhanced
+- **Calendar Navigation**: Month, week, and year views now support clicking on days to open day view
+- **Visual Improvements**: Better styling distinction between daylight and nighttime hours
+- **Debug Support**: Enhanced logging for troubleshooting date alignment issues
+- **User Experience**: More intuitive calendar navigation with click-to-drill-down functionality
+
+### Technical
+- **Event Processing**: Added detailed console logging for event date tracking
+- **Date Handling**: Improved frontend-backend date parameter communication
+- **Navigation Functions**: Enhanced navigateToDay function integration across all views
+- **Styling Updates**: Improved CSS for better visual hierarchy in day view
+
 ## 1.10.19 - 2025-11-12
 
 ### Fixed

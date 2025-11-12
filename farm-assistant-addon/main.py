@@ -709,6 +709,7 @@ async def get_calendar_events(
     category: Optional[str] = None  # livestock, asset, or None for all
 ):
     """Get calendar events from both livestock and asset registers"""
+    print(f"Calendar API called with: start_date={start_date}, end_date={end_date}, filter_type={filter_type}")
     conn = await asyncpg.connect(DATABASE_URL)
     try:
         events = []

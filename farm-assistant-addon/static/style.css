@@ -1113,7 +1113,8 @@ th {
 }
 
 .hour-segment.nighttime {
-    background: #2a2a2a;
+    background: #1a1a1a;
+    color: #888;
 }
 
 .hour-label {
@@ -1124,6 +1125,12 @@ th {
     font-weight: bold;
     font-size: 0.8rem;
     text-align: center;
+    color: var(--text-color);
+}
+
+.hour-segment.nighttime .hour-label {
+    background: #2a2a2a;
+    color: #aaa;
 }
 
 .hour-events {
