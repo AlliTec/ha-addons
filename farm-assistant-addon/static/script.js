@@ -2337,21 +2337,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     
     function handleCalendarEventClick(element) {
-        // Get event data from data attribute or use element directly if it's already the event object
+        // Get event data from data attribute or use element directly if it's already an event object
         const eventData = element.dataset ? JSON.parse(element.dataset.event) : element;
-        
-        console.log('handleCalendarEventClick called with:', element);
-        console.log('Parsed eventData:', eventData);
-        console.log('eventData.related_id:', eventData.related_id);
-        console.log('eventData.category:', eventData.category);
         
         if (eventData.category === 'livestock' && eventData.related_id) {
             // Show livestock details
-            fetch(`get_animal/${eventData.related_id}`)
-                .then(response => response.json())
-                .then(animal => {
-                    showAnimalDetails(animal);
-                })
+            showAnimalDetails(eventData.related_id)
                 .catch(error => {
                     console.error('Error loading animal details:', error);
                     alert('Error loading animal details');

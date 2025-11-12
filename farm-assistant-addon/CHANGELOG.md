@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.10.30 - 2025-11-12
+
+### Fixed
+- **Calendar Event Click Error**: Fixed HTTP 422 error when clicking livestock events in month view
+- **Function Call Issue**: Corrected `showAnimalDetails` function call to pass animal ID instead of animal object
+- **Event Handler Logic**: Removed redundant fetch operation in `handleCalendarEventClick` function
+- **Livestock Details**: Calendar events now correctly open animal details modal
+
+### Technical
+- **API Call Fix**: `showAnimalDetails` function expects animal ID and handles its own fetch operation
+- **Error Resolution**: Eliminated `[object Object]` in API URL that caused 422 errors
+- **Code Cleanup**: Removed debug console.log statements after fixing the issue
+- **Function Consistency**: Event handlers now use consistent parameter passing
+
 ## 1.10.28 - 2025-11-12
 
 ### Fixed
