@@ -2612,7 +2612,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             dayEvents.slice(0, 3).forEach(event => {
                 const displayName = event.related_name || event.title;
-                html += `<div class="event-dot ${event.entry_type}" title="${event.title}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)">${event.category === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>`;
+                html += `<div class="event-item ${event.entry_type} ${event.category}" title="${event.title}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)">${event.category === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>`;
             });
             
             if (dayEvents.length > 3) {

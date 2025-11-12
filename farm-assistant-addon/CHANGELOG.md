@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.10.28 - 2025-11-12
+
+### Fixed
+- **Monthly Calendar Event Overlap**: Fixed overlapping events in month view for better readability
+- **Event Display Layout**: Created new `event-item` CSS class for text-based calendar events
+- **Visual Separation**: Events now have proper spacing, borders, and background colors
+- **Text Overflow**: Added ellipsis for long event names and proper text wrapping
+
+### Enhanced
+- **Event Styling**: Monthly calendar events now display with colored borders and backgrounds
+- **Category Distinction**: Different colors for livestock (green), assets (blue), informational (cyan), and action (red) events
+- **Readability**: Improved font size, padding, and spacing for better event visibility
+- **Hover Effects**: Events maintain interactive hover behavior for better user experience
+
+### Technical
+- **CSS Architecture**: Added new `.event-item` styles to complement existing `.event-dot` styles
+- **JavaScript Update**: Modified month view to use `event-item` class instead of `event-dot` for text events
+- **Responsive Design**: Events adapt to available space with proper overflow handling
+- **Color Coding**: Consistent color scheme across all event types and categories
+
 ## 1.10.27 - 2025-11-12
 
 ### Enhanced
