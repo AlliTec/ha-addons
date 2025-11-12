@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.26 - 2025-11-12
+
+### Fixed
+- **Calendar Event Icons**: Fixed livestock events showing spanner/wrench icons instead of cow icons
+- **Icon Logic Bug**: Changed icon selection from `event.entry_type` to `event.category` for proper livestock/asset distinction
+- **Visual Representation**: Livestock events now correctly display cow emoji (🐄) and asset events display wrench emoji (🔧)
+- **All Calendar Views**: Fixed icon display in day, week, and month views for consistent visual representation
+
+### Technical
+- **Frontend Icon Fix**: Updated icon selection logic in `displayDayView`, `displayWeekView`, and `displayMonthView` functions
+- **Data Field Correction**: Backend correctly sets `category: "livestock"` and `category: "asset"` but frontend was checking wrong field
+- **Event Classification**: Calendar events now properly categorized by livestock vs asset for accurate icon display
+
 ## 1.10.25 - 2025-11-12
 
 ### Fixed

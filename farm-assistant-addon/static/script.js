@@ -2519,7 +2519,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <div class="event-time">9:00 AM</div>
                         <div class="event-content-small">
                             <div class="event-title-small">${event.title}</div>
-                            <div class="event-meta-small">${event.entry_type === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>
+                            <div class="event-meta-small">${event.category === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>
                         </div>
                     </div>`;
                 });
@@ -2561,7 +2561,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <div class="event-time">All Day</div>
                     <div class="event-content-small">
                         <div class="event-title-small">${event.title}</div>
-                        <div class="event-meta-small">${event.entry_type === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>
+                        <div class="event-meta-small">${event.category === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>
                     </div>
                 </div>`;
             });
@@ -2612,7 +2612,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             dayEvents.slice(0, 3).forEach(event => {
                 const displayName = event.related_name || event.title;
-                html += `<div class="event-dot ${event.entry_type}" title="${event.title}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)">${event.entry_type === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>`;
+                html += `<div class="event-dot ${event.entry_type}" title="${event.title}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)">${event.category === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>`;
             });
             
             if (dayEvents.length > 3) {
