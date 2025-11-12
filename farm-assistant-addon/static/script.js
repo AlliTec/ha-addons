@@ -2286,13 +2286,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             case 'month':
                 startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString().split('T')[0];
                 const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-                endDate = new Date(nextMonth - 1).toISOString().split('T')[0];
+                endDate = new Date(nextMonth.getTime() - 86400000).toISOString().split('T')[0]; // Subtract 1 day
                 break;
             case 'year':
                 startDate = new Date(currentDate.getFullYear(), 0, 1).toISOString().split('T')[0];
                 endDate = new Date(currentDate.getFullYear(), 11, 31).toISOString().split('T')[0];
                 break;
         }
+        
+        console.log("loadCalendarEvents: Date range:", { filterType, startDate, endDate, currentDate: currentDate.toISOString().split('T')[0] });
         
         // Build query parameters
         const params = new URLSearchParams({
@@ -2510,7 +2512,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             if (dayEvents.length > 0 && hour === 9) { // Show events at 9 AM for simplicity
                 dayEvents.forEach(event => {
-                    html += createEventHTML(event);
+                    const displayName = event.related_name || event.title;
+                    html += `<div class="event-item ${event.entry_type}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="handleCalendarEventClick(this)">
+                        <div class="event-time">9:00 AM</div>
+                        <div class="event-content-small">
+                            <div class="event-title-small">${event.title}</div>
+                            <div class="event-meta-small">${event.entry_type === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>
+                        </div>
+                    </div>`;
                 });
             }
             
@@ -2544,7 +2553,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div class="day-events-small">`;
             
             dayEvents.forEach(event => {
-                html += createEventHTML(event);
+                const displayName = event.related_name || event.title;
+                html += `<div class="event-item ${event.entry_type}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="handleCalendarEventClick(this)">
+                    <div class="event-time">All Day</div>
+                    <div class="event-content-small">
+                        <div class="event-title-small">${event.title}</div>
+                        <div class="event-meta-small">${event.entry_type === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>
+                    </div>
+                </div>`;
             });
             
             html += `</div></div>`;

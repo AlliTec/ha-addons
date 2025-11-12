@@ -1,18 +1,36 @@
 # Changelog
 
-## 1.10.17 - 2025-11-12
+## 1.10.18 - 2025-11-12
 
 ### Fixed
+- **Week/Day View Event Display**: Fixed missing createEventHTML function in week and day calendar views
+- **Inline Event HTML**: Created inline event HTML for week and day views to avoid function dependency
+- **Date Calculation**: Fixed month end date calculation using proper millisecond subtraction
+- **Event Display**: All calendar views now show events correctly with proper styling
+
+### Enhanced
+- **Debug Logging**: Added console logging for date range calculation and debugging
+- **Event Styling**: Week and day views now display events with proper icons and metadata
+- **Click Functionality**: Events in all views are clickable and open correct details
+- **Visual Consistency**: Event display styling consistent across all calendar view types
+
+### Fixed (Continued)
 - **Week/Day View Events**: Fixed missing events in week and day views by removing duplicate displayCalendarEvents function
 - **Date Alignment**: Corrected calendar date alignment with actual livestock/asset register dates
 - **Date Range Calculation**: Frontend now sends proper start_date and end_date parameters based on currentDate
 - **Calendar Navigation**: Events now display correctly for all view types (day, week, month, year)
 
-### Enhanced
+### Enhanced (Continued)
 - **Proper Date Context**: Calendar events now use currentDate for navigation instead of always using today
-- **Accurate Event Display**: Events align with actual recorded dates in livestock and asset registers
+- **Accurate Event Display**: Events align with actual recorded dates in livestock/asset registers
 - **Complete View Functionality**: All calendar views (day/week/month/year) now show events correctly
 - **Navigation Integration**: Previous/Next navigation works properly with correct date ranges
+
+### Technical
+- **Function Independence**: Removed dependency on missing createEventHTML function
+- **Inline HTML Generation**: Week and day views now generate event HTML inline
+- **Date Math Fix**: Corrected month end date calculation using millisecond precision
+- **Event Data Handling**: Consistent event data structure across all view types
 
 ### Technical
 - **Function Cleanup**: Removed duplicate displayCalendarEvents function that was causing view issues
