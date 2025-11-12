@@ -267,22 +267,23 @@ th {
 .filter-btn {
     background-color: var(--input-bg);
     border: 1px solid var(--table-border);
-    padding: 10px 20px 10px 30px;
+    padding: 10px 20px;
     cursor: pointer;
     font-size: 1rem;
     color: var(--text-color);
     transition: background-color 0.3s;
     position: relative;
-    clip-path: polygon(0 0, 80% 0, 85% 15%, 100% 100%, 0% 100%);
-    border-radius: 10px 0 0 0;
-    margin-left: -15px;
+    border-radius: 8px 8px 0 0;
+    margin-left: -2px;
     display: inline-flex;
     align-items: center;
+    z-index: 1;
 }
 
 .filter-btn:first-child {
     margin-left: 0;
-    border-radius: 10px 0 0 0;
+    border-radius: 8px 8px 0 0;
+    z-index: 2;
 }
 
 .filter-btn:hover {
@@ -292,7 +293,8 @@ th {
 
 .filter-btn.active {
     background-color: var(--table-header-bg);
-    z-index: 3;
+    z-index: 4;
+    border-bottom: 2px solid var(--accent-color);
 }
 
 
@@ -345,7 +347,8 @@ th {
 }
 
 .calendar-nav-tabs .filter-btn.active {
-    z-index: 3;
+    z-index: 4;
+    border-bottom: 2px solid var(--accent-color);
 }
 
 #calendar-period-display {
@@ -367,11 +370,6 @@ th {
 .section-content {
     width: auto;
     display: inline-block;
-}
-
-.filter-btn.active {
-    background-color: var(--table-header-bg);
-    z-index: 3;
 }
 
 .details-grid {

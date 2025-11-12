@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.10.19 - 2025-11-12
+
+### Fixed
+- **Calendar Tab Styling**: Changed calendar tabs from sloped right side to normal rectangular appearance
+- **Tab Overlap Effect**: Maintained overlapping tab design while removing clip-path styling
+- **Visual Consistency**: Calendar navigation tabs now have clean rectangular borders like standard tabs
+- **Active Tab Enhancement**: Added bottom border accent to active calendar tabs
+
 ## 1.10.18 - 2025-11-12
 
 ### Fixed
