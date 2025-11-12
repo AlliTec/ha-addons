@@ -2262,27 +2262,35 @@ document.addEventListener("DOMContentLoaded", async () => {
         const today = new Date();
         let startDate, endDate;
         
+        // Helper function to format date as YYYY-MM-DD without timezone conversion
+        const formatDate = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
         switch (filterType) {
             case 'day':
-                startDate = currentDate.toISOString().split('T')[0];
-                endDate = currentDate.toISOString().split('T')[0];
+                startDate = formatDate(currentDate);
+                endDate = formatDate(currentDate);
                 break;
             case 'week':
                 const weekStart = new Date(currentDate);
                 weekStart.setDate(currentDate.getDate() - currentDate.getDay());
                 const weekEnd = new Date(weekStart);
                 weekEnd.setDate(weekStart.getDate() + 6);
-                startDate = weekStart.toISOString().split('T')[0];
-                endDate = weekEnd.toISOString().split('T')[0];
+                startDate = formatDate(weekStart);
+                endDate = formatDate(weekEnd);
                 break;
             case 'month':
-                startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString().split('T')[0];
+                startDate = formatDate(new Date(currentDate.getFullYear(), currentDate.getMonth(), 1));
                 const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
-                endDate = new Date(nextMonth.getTime() - 86400000).toISOString().split('T')[0]; // Subtract 1 day
+                endDate = formatDate(new Date(nextMonth.getTime() - 86400000)); // Subtract 1 day
                 break;
             case 'year':
-                startDate = new Date(currentDate.getFullYear(), 0, 1).toISOString().split('T')[0];
-                endDate = new Date(currentDate.getFullYear(), 11, 31).toISOString().split('T')[0];
+                startDate = formatDate(new Date(currentDate.getFullYear(), 0, 1));
+                endDate = formatDate(new Date(currentDate.getFullYear(), 11, 31));
                 break;
         }
         

@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.25 - 2025-11-12
+
+### Fixed
+- **Day View Event Loading**: Fixed critical bug where clicking white space in calendar didn't show events for that day
+- **Timezone Bug in loadCalendarEvents**: Replaced `toISOString().split('T')[0]` with manual date formatting to prevent UTC conversion issues
+- **Date Range Calculation**: Fixed date parameter calculation for all calendar views (day, week, month, year)
+- **Calendar Navigation**: Day view now correctly displays events when navigating from month, week, or year views
+
+### Technical
+- **Frontend Date Fix**: Added `formatDate` helper function to create YYYY-MM-DD strings without timezone conversion
+- **API Parameter Fix**: All calendar API calls now use correct local dates instead of UTC-converted dates
+- **Event Display Accuracy**: Events now appear correctly when clicking on any day in any calendar view
+
 ## 1.10.24 - 2025-11-12
 
 ### Fixed
