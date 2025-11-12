@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.10.24 - 2025-11-12
+
+### Fixed
+- **Month View Empty Day Styling**: Changed days outside current month from black (#2a2a2a) to light grey (#e0e0e0)
+- **Visual Consistency**: Empty calendar days now match non-daylight hours styling for better visual hierarchy
+- **Calendar Appearance**: Improved month view readability with consistent light grey styling for inactive days
+
 ## 1.10.23 - 2025-11-12
 
 ### Fixed
