@@ -1,5 +1,44 @@
 # Changelog
 
+## 1.10.17 - 2025-11-12
+
+### Fixed
+- **Week/Day View Events**: Fixed missing events in week and day views by removing duplicate displayCalendarEvents function
+- **Date Alignment**: Corrected calendar date alignment with actual livestock/asset register dates
+- **Date Range Calculation**: Frontend now sends proper start_date and end_date parameters based on currentDate
+- **Calendar Navigation**: Events now display correctly for all view types (day, week, month, year)
+
+### Enhanced
+- **Proper Date Context**: Calendar events now use currentDate for navigation instead of always using today
+- **Accurate Event Display**: Events align with actual recorded dates in livestock and asset registers
+- **Complete View Functionality**: All calendar views (day/week/month/year) now show events correctly
+- **Navigation Integration**: Previous/Next navigation works properly with correct date ranges
+
+### Technical
+- **Function Cleanup**: Removed duplicate displayCalendarEvents function that was causing view issues
+- **Date Parameter Support**: Added start_date and end_date to API calls for proper date filtering
+- **View Function Integration**: Correct displayCalendarEvents now calls appropriate view functions
+- **Date Range Logic**: Frontend calculates proper date ranges for each filter type
+
+### Fixed (Continued)
+- **Calendar Navigation Positioning**: Moved navigation tabs to top of calendar container for proper connection
+- **Tab Layout Alignment**: Positioned navigation tabs directly above calendar like register filter tabs above tables
+- **Visual Connection**: Calendar container now connects seamlessly with navigation tabs
+- **Container Border Adjustment**: Removed top border from calendar container to blend with navigation tabs
+
+### Enhanced (Continued)
+- **Navigation Tab Placement**: Calendar navigation now positioned at calendar top instead of controls section
+- **Consistent Tab Design**: Navigation tabs maintain filter-btn styling with proper positioning
+- **Visual Hierarchy**: Clear separation between controls and navigation areas
+- **User Experience**: More intuitive navigation placement at calendar content level
+
+### Technical (Continued)
+- **HTML Structure Update**: Moved calendar-nav-tabs outside controls section to calendar level
+- **CSS Positioning**: Added margin-top and border adjustments for proper tab-container connection
+- **Container Styling**: Updated calendar-container to connect with navigation tabs visually
+- **Layout Consistency**: Calendar navigation now follows same pattern as register filter tabs
+- **Tab Sizing**: Added min-width: 200px and enhanced padding for period display tab
+
 ## 1.10.16 - 2025-11-12
 
 ### Enhanced

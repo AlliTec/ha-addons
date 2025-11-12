@@ -2266,9 +2266,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
         eventsContainer.innerHTML = '<div class="calendar-loading"><i class="fa-solid fa-spinner"></i> Loading calendar events...</div>';
         
+        // Calculate date range based on current date and filter type
+        const today = new Date();
+        let startDate, endDate;
+        
+        switch (filterType) {
+            case 'day':
+                startDate = currentDate.toISOString().split('T')[0];
+                endDate = currentDate.toISOString().split('T')[0];
+                break;
+            case 'week':
+                const weekStart = new Date(currentDate);
+                weekStart.setDate(currentDate.getDate() - currentDate.getDay());
+                const weekEnd = new Date(weekStart);
+                weekEnd.setDate(weekStart.getDate() + 6);
+                startDate = weekStart.toISOString().split('T')[0];
+                endDate = weekEnd.toISOString().split('T')[0];
+                break;
+            case 'month':
+                startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).toISOString().split('T')[0];
+                const nextMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1);
+                endDate = new Date(nextMonth - 1).toISOString().split('T')[0];
+                break;
+            case 'year':
+                startDate = new Date(currentDate.getFullYear(), 0, 1).toISOString().split('T')[0];
+                endDate = new Date(currentDate.getFullYear(), 11, 31).toISOString().split('T')[0];
+                break;
+        }
+        
         // Build query parameters
         const params = new URLSearchParams({
-            filter_type: filterType
+            filter_type: filterType,
+            start_date: startDate,
+            end_date: endDate
         });
         
         if (entryType) params.append('entry_type', entryType);
@@ -2302,80 +2332,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
     }
     
-    function displayCalendarEvents(events) {
-        const eventsContainer = document.getElementById('calendar-events');
-        
-        if (events.length === 0) {
-            eventsContainer.innerHTML = '<div class="no-events">No events found for the selected period.</div>';
-            return;
-        }
-        
-        // Group events by date
-        const eventsByDate = {};
-        events.forEach(event => {
-            if (!eventsByDate[event.date]) {
-                eventsByDate[event.date] = [];
-            }
-            eventsByDate[event.date].push(event);
-        });
-        
-        // Sort dates
-        const sortedDates = Object.keys(eventsByDate).sort();
-        
-        let html = '';
-        sortedDates.forEach(date => {
-            const dateObj = new Date(date + 'T00:00:00');
-            const formattedDate = dateObj.toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            });
-            
-            html += `<div class="calendar-date-group">
-                <h3 class="calendar-date-header">${formattedDate}</h3>`;
-            
-            eventsByDate[date].forEach(event => {
-                html += createEventHTML(event);
-            });
-            
-            html += '</div>';
-        });
-        
-        eventsContainer.innerHTML = html;
-        
-        // Add click handlers for events
-        document.querySelectorAll('.calendar-event').forEach(eventElement => {
-            eventElement.addEventListener('click', function() {
-                const eventData = JSON.parse(this.dataset.event);
-                handleCalendarEventClick(eventData);
-            });
-        });
-    }
-    
-    function createEventHTML(event) {
-        const dateObj = new Date(event.date + 'T00:00:00');
-        const formattedDate = dateObj.toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric' 
-        });
-        
-        return `
-            <div class="calendar-event ${event.entry_type} ${event.category}" 
-                 data-event='${JSON.stringify(event).replace(/'/g, "&apos;")}'>
-                <div class="event-date">${formattedDate}</div>
-                <div class="event-content">
-                    <div class="event-title">${event.title}</div>
-                    <div class="event-description">${event.description}</div>
-                    <div class="event-meta">
-                        <span class="event-type ${event.entry_type}">${event.entry_type}</span>
-                        <span class="event-category ${event.category}">${event.category}</span>
-                        ${event.related_name ? `<span class="event-related">${event.related_name}</span>` : ''}
-                    </div>
-                </div>
-            </div>
-        `;
-    }
+
     
     function handleCalendarEventClick(element) {
         // Get event data from data attribute or use element directly if it's already the event object
