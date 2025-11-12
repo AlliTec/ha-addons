@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.10.23 - 2025-11-12
+
+### Fixed
+- **Livestock Event Selection**: Fixed HTTP 422 error when clicking livestock calendar events
+- **API Endpoint Consistency**: Corrected livestock API URLs to match backend endpoints
+- **Event Click Functionality**: Livestock events now properly open detailed information modal
+- **URL Path Resolution**: Fixed inconsistent API path prefixes between livestock and asset endpoints
+
+### Enhanced
+- **Error Investigation**: Thoroughly analyzed browser logs and addon logs to identify root cause
+- **API Debugging**: Identified endpoint mismatch between frontend calls and backend routes
+- **Event Handling**: Both livestock and asset calendar events now work correctly
+- **User Experience**: Calendar events are now fully interactive and functional
+
+### Technical
+- **Frontend URL Fix**: Changed `api/get_animal/` to `get_animal/` to match backend route
+- **Backend Route Analysis**: Confirmed livestock endpoints use `/get_animal/{id}` not `/api/get_animal/{id}`
+- **Error Resolution**: Eliminated "HTTP error! status: 422" from calendar event clicks
+- **Cross-Platform Testing**: Verified event selection works across all calendar views
+
 ## 1.10.22 - 2025-11-12
 
 ### Fixed
