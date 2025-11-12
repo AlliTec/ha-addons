@@ -2274,7 +2274,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (entryType) params.append('entry_type', entryType);
         if (category) params.append('category', category);
         
-        const url = `/api/calendar?${params}`;
+        const url = `api/calendar?${params}`;
         console.log("loadCalendarEvents: Fetching URL:", url);
         console.log("loadCalendarEvents: Full URL would be:", window.location.origin + url);
         

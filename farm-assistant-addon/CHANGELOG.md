@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.10.10 - 2025-11-12
+
+### Fixed
+- **Calendar API 404 Errors**: Fixed absolute path `/api/calendar` to relative path `api/calendar` for Home Assistant ingress compatibility
+- **API Routing**: Calendar events now load correctly in Home Assistant environment
+- **Log Errors**: Resolved repeated 404 errors shown in addon logs
+
 ## 1.10.9 - 2025-11-12
 
 ### Fixed
