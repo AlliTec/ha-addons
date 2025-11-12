@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.34 - 2025-11-13
+
+### Fixed
+- **Event Creation Error**: Fixed database field name mismatch (duration vs duration_hours) in animal_history table
+- **Calendar Display**: Added calendar_entries table query to calendar API for proper event display
+- **Missing Tables**: Created calendar_entries table with proper migration scripts
+- **Migration System**: Added comprehensive migration endpoints for all required tables
+
+### Enhanced
+- **Database Migrations**: Added `/api/migrate/all` endpoint to run all pending migrations
+- **Table Structure**: Complete calendar_entries table with proper indexes and triggers
+- **Event Integration**: Events now properly appear in calendar views after creation
+
 ## 1.10.33 - 2025-11-13
 
 ### Added

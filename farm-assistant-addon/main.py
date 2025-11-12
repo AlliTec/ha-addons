@@ -360,7 +360,7 @@ async def add_event(event: Event):
             # Add to animal_history table
             await conn.execute("""
                 INSERT INTO animal_history 
-                (animal_id, event_date, event_time, title, duration, notes, status, priority, created_at)
+                (animal_id, event_date, event_time, title, duration_hours, notes, status, priority, created_at)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
             """, event.item_id, event.date, event.time, event.title, event.duration, 
                   event.notes, event.status, event.priority)
@@ -415,6 +415,49 @@ async def migrate_animal_history():
         
     except Exception as e:
         logging.error(f"Error running animal history migration: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
+@app.post("/api/migrate/calendar_entries")
+async def migrate_calendar_entries():
+    """Create calendar_entries table if it doesn't exist"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Read and execute migration script
+        with open('create_calendar_entries_table.sql', 'r') as f:
+            migration_sql = f.read()
+        
+        await conn.execute(migration_sql)
+        logging.info("Calendar entries table migration completed successfully")
+        return {"message": "Calendar entries table created successfully"}
+        
+    except Exception as e:
+        logging.error(f"Error running calendar entries migration: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
+@app.post("/api/migrate/all")
+async def migrate_all():
+    """Run all pending migrations"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Run animal history migration
+        with open('create_animal_history_table.sql', 'r') as f:
+            migration_sql = f.read()
+        await conn.execute(migration_sql)
+        
+        # Run calendar entries migration
+        with open('create_calendar_entries_table.sql', 'r') as f:
+            migration_sql = f.read()
+        await conn.execute(migration_sql)
+        
+        logging.info("All migrations completed successfully")
+        return {"message": "All migrations completed successfully"}
+        
+    except Exception as e:
+        logging.error(f"Error running migrations: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         await conn.close()
@@ -1022,7 +1065,29 @@ async def get_calendar_events(
                     "related_name": record['asset_name'],
                     "maintenance_id": record['id'],
                     "status": record['status']
-                })
+                    })
+        
+        # Calendar events (user-created events)
+        calendar_events_query = """
+            SELECT 
+                id, entry_date, title, description, entry_type, 
+                category, related_id, related_name
+            FROM calendar_entries 
+            WHERE entry_date BETWEEN $1 AND $2
+        """
+        
+        calendar_records = await conn.fetch(calendar_events_query, datetime.strptime(start_date, '%Y-%m-%d').date(), datetime.strptime(end_date, '%Y-%m-%d').date())
+        
+        for record in calendar_records:
+            events.append({
+                "title": record['title'],
+                "date": record['entry_date'].isoformat(),
+                "entry_type": record['entry_type'],
+                "category": record['category'],
+                "description": record['description'] or '',
+                "related_id": record['related_id'],
+                "related_name": record['related_name'] or 'Unknown'
+            })
         
         # Apply filters
         if entry_type:
