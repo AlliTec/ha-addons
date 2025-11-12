@@ -2394,13 +2394,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             fetch(`api/asset/${event.related_id}`)
                 .then(response => response.json())
                 .then(asset => {
-                    showAssetDetails(asset);
+                    showAssetDetails(event.related_id);
                 })
                 .catch(error => {
                     console.error('Error loading asset details:', error);
                     alert('Error loading asset details');
                 });
         }
+    }
+    
+    function navigateToDay(year, month, day) {
+        currentDate = new Date(year, month, day);
+        currentView = 'day';
+        document.getElementById('calendar-filter-type').value = 'day';
+        loadCalendarEvents();
     }
     
     function updateDateDisplay(filterType) {
@@ -2615,11 +2622,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             const isToday = date.toDateString() === new Date().toDateString();
             
             html += `<div class="month-day ${isToday ? 'today' : ''}">
-                <div class="day-number">${day}</div>
+                <div class="day-number" onclick="navigateToDay(${year}, ${month}, ${day})">${day}</div>
                 <div class="day-events-mini">`;
             
             dayEvents.slice(0, 3).forEach(event => {
-                html += `<div class="event-dot ${event.entry_type}" title="${event.title}"></div>`;
+                const displayName = event.related_name || event.title;
+                html += `<div class="event-dot ${event.entry_type}" title="${event.title}" onclick="handleCalendarEventClick(${JSON.stringify(event).replace(/"/g, '&quot;')})">${event.entry_type === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>`;
             });
             
             if (dayEvents.length > 3) {
@@ -2657,7 +2665,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const hasEvents = eventsByDate[dateStr] && eventsByDate[dateStr].length > 0;
                 const isToday = date.toDateString() === new Date().toDateString();
                 
-                html += `<div class="mini-day ${isToday ? 'today' : ''} ${hasEvents ? 'has-events' : ''}">${day}</div>`;
+                html += `<div class="mini-day ${isToday ? 'today' : ''} ${hasEvents ? 'has-events' : ''}" onclick="navigateToDay(${year}, ${month}, ${day})">${day}</div>`;
             }
             
             html += `</div></div>`;

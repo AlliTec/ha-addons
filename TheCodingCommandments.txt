@@ -11,6 +11,7 @@ IV. Thou shalt test thy work with diligence.
 Thine addon shall load and not crash.
 Thine existing features shall remain functional, with no regressions.
 Thine new or modified features shall address the user's needs.
+Thou shalt test the feature under attention as the user would see it from the user interface and ensure it meets the users requested functionality.
 Thine feature in progress shall have no console or API errors.
 If thoust findeth errors withing thine code, thou shalt remedy the error with care and ensure the error is addressed appropriately.
 If error is found and remedied, though shalt perform step IV once more.

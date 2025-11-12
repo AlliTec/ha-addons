@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.10.12 - 2025-11-12
+
+### Enhanced
+- **Year View Navigation**: Clicking any day in year view now opens that day in day view
+- **Month View Event Names**: Asset/livestock names now display next to event indicators
+- **Month View Click Events**: Clicking on events in month view opens item details
+- **Interactive Calendar**: Added navigateToDay() function for seamless date navigation
+
+### Fixed
+- **Asset Details Fetch**: Fixed showAssetDetails() call to pass asset ID instead of asset object
+- **Event Click Handling**: Calendar events now properly open animal/asset details
+
 ## 1.10.11 - 2025-11-12
 
 ### Fixed
