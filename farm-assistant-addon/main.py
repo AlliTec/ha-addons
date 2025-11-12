@@ -911,8 +911,8 @@ async def get_calendar_events(
         maintenance_records = await conn.fetch(maintenance_query, datetime.strptime(start_date, '%Y-%m-%d').date(), datetime.strptime(end_date, '%Y-%m-%d').date())
         
         for record in maintenance_records:
-            # Due date event
-            if record['due_date'] and start_date <= record['due_date'].isoformat() <= end_date:
+            # Due date event - only show if maintenance is not completed
+            if record['due_date'] and start_date <= record['due_date'].isoformat() <= end_date and record['status'] != 'completed':
                 events.append({
                     "title": f"Maintenance Due: {record['asset_name']}",
                     "date": record['due_date'].isoformat(),
@@ -920,7 +920,9 @@ async def get_calendar_events(
                     "category": "asset",
                     "description": record['task_description'],
                     "related_id": record['asset_id'],
-                    "related_name": record['asset_name']
+                    "related_name": record['asset_name'],
+                    "maintenance_id": record['id'],
+                    "status": record['status']
                 })
             
             # Completed date event
@@ -932,7 +934,9 @@ async def get_calendar_events(
                     "category": "asset",
                     "description": record['task_description'],
                     "related_id": record['asset_id'],
-                    "related_name": record['asset_name']
+                    "related_name": record['asset_name'],
+                    "maintenance_id": record['id'],
+                    "status": record['status']
                 })
         
         # Apply filters

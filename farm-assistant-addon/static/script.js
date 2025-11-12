@@ -2511,11 +2511,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (dayEvents.length > 0 && hour === 9) { // Show events at 9 AM for simplicity
                 dayEvents.forEach(event => {
                     const displayName = event.related_name || event.title;
+                    const isCompleted = event.status === 'completed';
+                    const icon = event.category === 'livestock' ? '🐄' : '🔧';
+                    const completedIcon = isCompleted ? ' <i class="fa-solid fa-check-circle" style="color: #4caf50;"></i>' : '';
                     html += `<div class="event-item ${event.entry_type}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)">
                         <div class="event-time">9:00 AM</div>
                         <div class="event-content-small">
                             <div class="event-title-small">${event.title}</div>
-                            <div class="event-meta-small">${event.category === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>
+                            <div class="event-meta-small">${icon} ${displayName}${completedIcon}</div>
                         </div>
                     </div>`;
                 });
@@ -2553,11 +2556,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             dayEvents.forEach(event => {
                 const displayName = event.related_name || event.title;
-                html += `<div class="event-item ${event.entry_type}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)">
+                const isCompleted = event.status === 'completed';
+                const icon = event.category === 'livestock' ? '🐄' : '🔧';
+                const completedIcon = isCompleted ? ' <i class="fa-solid fa-check-circle" style="color: #4caf50;"></i>' : '';
+                html += `<div class="event-item ${event.entry_type} ${event.category}" title="${event.title}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)">
                     <div class="event-time">All Day</div>
                     <div class="event-content-small">
                         <div class="event-title-small">${event.title}</div>
-                        <div class="event-meta-small">${event.category === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>
+                        <div class="event-meta-small">${icon} ${displayName}${completedIcon}</div>
                     </div>
                 </div>`;
             });
@@ -2608,7 +2614,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             dayEvents.slice(0, 3).forEach(event => {
                 const displayName = event.related_name || event.title;
-                html += `<div class="event-item ${event.entry_type} ${event.category}" title="${event.title}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)">${event.category === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>`;
+                const isCompleted = event.status === 'completed';
+                const icon = event.category === 'livestock' ? '🐄' : '🔧';
+                const completedIcon = isCompleted ? ' <i class="fa-solid fa-check-circle" style="color: #4caf50;"></i>' : '';
+                html += `<div class="event-item ${event.entry_type} ${event.category}" title="${event.title}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)">${icon} ${displayName}${completedIcon}</div>`;
             });
             
             if (dayEvents.length > 3) {

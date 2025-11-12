@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.10.31 - 2025-11-12
+
+### Enhanced
+- **Completed Maintenance Icons**: Added green check-circle icons for completed maintenance events
+- **Smart Event Filtering**: Hide due date events when corresponding maintenance task is completed
+- **Visual Status Indicators**: Completed maintenance tasks now show green tick (✓) icon in all calendar views
+- **Calendar Intelligence**: Prevents duplicate/obsolete events for completed maintenance
+
+### Fixed
+- **Due Date Logic**: Maintenance due events are now hidden if task status is 'completed'
+- **Event Duplication**: Eliminates showing both due and completed events for finished maintenance
+- **Status Display**: All calendar views (day, week, month) now show completion status consistently
+
+### Technical
+- **Backend Enhancement**: Modified calendar API to include maintenance_id and status in event data
+- **Frontend Logic**: Added status checking and icon rendering for completed events
+- **Database Query**: Updated maintenance query to filter out due events for completed tasks
+- **UI Consistency**: Green check-circle icons appear across all calendar views for completed items
+
 ## 1.10.30 - 2025-11-12
 
 ### Fixed
