@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.10.11 - 2025-11-12
+
+### Fixed
+- **Calendar Event Click 404 Errors**: Fixed absolute path `/get_animal/` to relative path `get_animal/` for livestock event clicks
+- **Event Details**: Calendar events now open animal/asset details correctly in Home Assistant ingress
+- **User Interaction**: Clicking calendar events now works as expected without 404 errors
+
 ## 1.10.10 - 2025-11-12
 
 ### Fixed

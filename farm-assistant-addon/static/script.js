@@ -2380,7 +2380,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     function handleCalendarEventClick(event) {
         if (event.category === 'livestock' && event.related_id) {
             // Show livestock details
-            fetch(`/get_animal/${event.related_id}`)
+            fetch(`get_animal/${event.related_id}`)
                 .then(response => response.json())
                 .then(animal => {
                     showAnimalDetails(animal);

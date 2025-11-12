@@ -4,6 +4,7 @@ There shall be no "No such file or directory" errors.
 If you cannot find a file try the /farm-assistant-addon/ directory.
 II. Thou shalt ensure thy code is syntactically pure.
 python3 -m py_compile main.py shall complete with no errors.
+If a path error or similar error is found, check and correct all like code in the addon.
 III. Thou shalt validate thy configuration.
 python3 -c "import json; json.load(open('data/options.json'))" shall complete successfully.
 IV. Thou shalt test thy work with diligence.
