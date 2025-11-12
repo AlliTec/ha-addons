@@ -3023,4 +3023,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Refresh button
         document.getElementById('refresh-calendar').addEventListener('click', loadCalendarEvents);
     }
+    
+    // Make functions globally accessible for onclick handlers
+    window.showEventDetailsModal = showEventDetailsModal;
+    window.deleteEvent = deleteEvent;
+    window.showAssetDetails = showAssetDetails;
+    window.showAnimalDetails = showAnimalDetails;
+    window.handleCalendarEventClick = handleCalendarEventClick;
+    window.navigateToDay = navigateToDay;
 });

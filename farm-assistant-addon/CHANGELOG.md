@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.10.40 - 2025-11-13
+
+### Fixed
+- **Event Details Modal Functions**: Made JavaScript functions globally accessible for onclick handlers
+- **Asset Details Button**: View Asset Details button now works correctly from event modal
+- **Delete Event Function**: Event deletion now works properly with confirmation dialog
+- **Global Function Scope**: Added window object assignments for modal functions
+
+### Enhanced
+- **Modal Interactions**: All modal buttons and functions now properly accessible
+- **Event Management**: Complete event lifecycle (create, view, delete) now functional
+- **User Experience**: Reliable event details and deletion workflow
+
+### Technical
+- **JavaScript Scope**: Fixed function accessibility issues in modal event handlers
+- **Function Exports**: Ensured all modal functions available globally
+- **Error Prevention**: Eliminated undefined function errors in browser console
+
 ## 1.10.39 - 2025-11-13
 
 ### Fixed
