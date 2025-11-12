@@ -1,6 +1,12 @@
 # Changelog
 
-## 1.10.15 - 2025-11-12
+## 1.10.16 - 2025-11-12
+
+### Enhanced
+- **Period Display Tab Width**: Extended middle navigation tab to ensure proper overlapping with adjacent tabs
+- **Tab Overlap Design**: Period display tab now wide enough for top right corner to overlap "Future" tab
+- **Visual Tab Integration**: Improved tab connection with proper clip-path polygon styling
+- **Navigation Tab Sizing**: Added min-width and enhanced padding for period display
 
 ### Fixed
 - **Calendar Navigation Positioning**: Moved navigation tabs to top of calendar container for proper connection
@@ -11,7 +17,7 @@
 ### Enhanced
 - **Navigation Tab Placement**: Calendar navigation now positioned at calendar top instead of controls section
 - **Consistent Tab Design**: Navigation tabs maintain filter-btn styling with proper positioning
-- **Visual Hierarchy**: Clear separation between controls and calendar navigation areas
+- **Visual Hierarchy**: Clear separation between controls and navigation areas
 - **User Experience**: More intuitive navigation placement at calendar content level
 
 ### Technical
@@ -19,6 +25,7 @@
 - **CSS Positioning**: Added margin-top and border adjustments for proper tab-container connection
 - **Container Styling**: Updated calendar-container to connect with navigation tabs visually
 - **Layout Consistency**: Calendar navigation now follows same pattern as register filter tabs
+- **Tab Sizing**: Added min-width: 200px and enhanced padding for period display tab
 
 ## 1.10.14 - 2025-11-12
 

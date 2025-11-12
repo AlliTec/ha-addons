@@ -353,6 +353,8 @@ th {
     color: var(--text-color);
     cursor: default;
     z-index: 2;
+    min-width: 200px;
+    padding: 10px 30px;
 }
 
 #calendar-period-display:hover {
