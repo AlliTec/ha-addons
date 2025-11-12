@@ -770,22 +770,26 @@ async def get_calendar_events(
         
         for record in livestock_records:
             # Birth date event
-            if record['birth_date'] and start_date <= record['birth_date'].isoformat() <= end_date:
-                events.append({
-                    "title": f"Birth: {record['name']}",
-                    "date": record['birth_date'].isoformat(),
-                    "entry_type": "informational",
-                    "category": "livestock",
-                    "description": f"{record['gender']} - {record.get('health_status', 'Unknown status')}",
-                    "related_id": record['id'],
-                    "related_name": record['name']
-                })
+            if record['birth_date']:
+                birth_date_str = record['birth_date'].isoformat()
+                if start_date <= birth_date_str <= end_date:
+                    events.append({
+                        "title": f"Birth: {record['name']}",
+                        "date": birth_date_str,
+                        "entry_type": "informational",
+                        "category": "livestock",
+                        "description": f"{record['gender']} - {record.get('health_status', 'Unknown status')}",
+                        "related_id": record['id'],
+                        "related_name": record['name']
+                    })
             
             # Death date event
-            if record['dod'] and start_date <= record['dod'].isoformat() <= end_date:
-                events.append({
+            if record['dod']:
+                dod_date_str = record['dod'].isoformat()
+                if start_date <= dod_date_str <= end_date:
+                    events.append({
                     "title": f"Deceased: {record['name']}",
-                    "date": record['dod'].isoformat(),
+                    "date": dod_date_str,
                     "entry_type": "informational",
                     "category": "livestock",
                     "description": f"{record['gender']} - {record.get('health_status', 'Unknown status')}",
@@ -816,52 +820,60 @@ async def get_calendar_events(
         
         for record in asset_records:
             # Purchase date event
-            if record['purchase_date'] and start_date <= record['purchase_date'].isoformat() <= end_date:
-                events.append({
-                    "title": f"Purchased: {record['name']}",
-                    "date": record['purchase_date'].isoformat(),
-                    "entry_type": "informational",
-                    "category": "asset",
-                    "description": f"{record.get('category', 'Unknown category')} - {record.get('status', 'Unknown status')}",
-                    "related_id": record['id'],
-                    "related_name": record['name']
-                })
+            if record['purchase_date']:
+                purchase_date_str = record['purchase_date'].isoformat()
+                if start_date <= purchase_date_str <= end_date:
+                    events.append({
+                        "title": f"Purchased: {record['name']}",
+                        "date": purchase_date_str,
+                        "entry_type": "informational",
+                        "category": "asset",
+                        "description": f"{record.get('category', 'Unknown category')} - {record.get('status', 'Unknown status')}",
+                        "related_id": record['id'],
+                        "related_name": record['name']
+                    })
             
             # Registration due event
-            if record['registration_due'] and start_date <= record['registration_due'].isoformat() <= end_date:
-                events.append({
-                    "title": f"Registration Due: {record['name']}",
-                    "date": record['registration_due'].isoformat(),
-                    "entry_type": "action",
-                    "category": "asset",
-                    "description": f"Registration renewal required for {record.get('category', 'asset')}",
-                    "related_id": record['id'],
-                    "related_name": record['name']
-                })
+            if record['registration_due']:
+                reg_date_str = record['registration_due'].isoformat()
+                if start_date <= reg_date_str <= end_date:
+                    events.append({
+                        "title": f"Registration Due: {record['name']}",
+                        "date": reg_date_str,
+                        "entry_type": "action",
+                        "category": "asset",
+                        "description": f"Registration renewal required for {record.get('category', 'asset')}",
+                        "related_id": record['id'],
+                        "related_name": record['name']
+                    })
             
             # Insurance due event
-            if record['insurance_due'] and start_date <= record['insurance_due'].isoformat() <= end_date:
-                events.append({
-                    "title": f"Insurance Due: {record['name']}",
-                    "date": record['insurance_due'].isoformat(),
-                    "entry_type": "action",
-                    "category": "asset",
-                    "description": f"Insurance renewal required for {record.get('category', 'asset')}",
-                    "related_id": record['id'],
-                    "related_name": record['name']
-                })
+            if record['insurance_due']:
+                insurance_date_str = record['insurance_due'].isoformat()
+                if start_date <= insurance_date_str <= end_date:
+                    events.append({
+                        "title": f"Insurance Due: {record['name']}",
+                        "date": insurance_date_str,
+                        "entry_type": "action",
+                        "category": "asset",
+                        "description": f"Insurance renewal required for {record.get('category', 'asset')}",
+                        "related_id": record['id'],
+                        "related_name": record['name']
+                    })
             
             # Warranty expiry event
-            if record['warranty_expiry_date'] and start_date <= record['warranty_expiry_date'].isoformat() <= end_date:
-                events.append({
-                    "title": f"Warranty Expiry: {record['name']}",
-                    "date": record['warranty_expiry_date'].isoformat(),
-                    "entry_type": "action",
-                    "category": "asset",
-                    "description": f"Warranty expiring for {record.get('category', 'asset')}",
-                    "related_id": record['id'],
-                    "related_name": record['name']
-                })
+            if record['warranty_expiry_date']:
+                warranty_date_str = record['warranty_expiry_date'].isoformat()
+                if start_date <= warranty_date_str <= end_date:
+                    events.append({
+                        "title": f"Warranty Expiry: {record['name']}",
+                        "date": warranty_date_str,
+                        "entry_type": "action",
+                        "category": "asset",
+                        "description": f"Warranty expiring for {record.get('category', 'asset')}",
+                        "related_id": record['id'],
+                        "related_name": record['name']
+                    })
         
         # Maintenance events
         maintenance_query = """

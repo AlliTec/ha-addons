@@ -2421,8 +2421,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         const filterType = document.getElementById('calendar-filter-type').value;
         const eventsContainer = document.getElementById('calendar-events');
         
-        if (events.length === 0) {
-            eventsContainer.innerHTML = '<div class="no-events">No events found for the selected period.</div>';
+        // For day view, always show the 24-hour layout even if no events
+        if (events.length === 0 && filterType !== 'day') {
+            eventsContainer.innerHTML = '<div class="no-events">No events found for selected period.</div>';
             updateDateDisplay();
             return;
         }
@@ -2503,7 +2504,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (dayEvents.length > 0 && hour === 9) { // Show events at 9 AM for simplicity
                 dayEvents.forEach(event => {
                     const displayName = event.related_name || event.title;
-                    html += `<div class="event-item ${event.entry_type}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="handleCalendarEventClick(this)">
+                    html += `<div class="event-item ${event.entry_type}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)">
                         <div class="event-time">9:00 AM</div>
                         <div class="event-content-small">
                             <div class="event-title-small">${event.title}</div>
@@ -2544,7 +2545,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             dayEvents.forEach(event => {
                 const displayName = event.related_name || event.title;
-                html += `<div class="event-item ${event.entry_type}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="handleCalendarEventClick(this)">
+                html += `<div class="event-item ${event.entry_type}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)">
                     <div class="event-time">All Day</div>
                     <div class="event-content-small">
                         <div class="event-title-small">${event.title}</div>
@@ -2593,7 +2594,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             dayEvents.slice(0, 3).forEach(event => {
                 const displayName = event.related_name || event.title;
-                html += `<div class="event-dot ${event.entry_type}" title="${event.title}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="handleCalendarEventClick(this)">${event.entry_type === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>`;
+                html += `<div class="event-dot ${event.entry_type}" title="${event.title}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)">${event.entry_type === 'livestock' ? '🐄' : '🔧'} ${displayName}</div>`;
             });
             
             if (dayEvents.length > 3) {

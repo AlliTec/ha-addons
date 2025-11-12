@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.10.21 - 2025-11-12
+
+### Fixed
+- **Day View 24-Hour Layout**: Fixed day view to always show 24-hour timeline even when no events exist
+- **Date Alignment Issues**: Corrected backend date handling to prevent timezone-related date offset problems
+- **Event Click Conflicts**: Added event.stopPropagation() to prevent conflicts between event clicks and day navigation
+- **Date String Comparison**: Improved backend date comparison logic for consistent event placement
+
+### Enhanced
+- **Calendar Navigation**: Click functionality now works properly on month, week, and year views to open day view
+- **Date Processing**: Better date string handling in backend to ensure accurate event display
+- **User Experience**: Day view now consistently shows full 24-hour schedule regardless of event count
+- **Debug Support**: Enhanced logging for troubleshooting date and event display issues
+
+### Technical
+- **Backend Date Handling**: Fixed date string extraction and comparison in calendar API
+- **Frontend Logic**: Modified displayCalendarEvents to handle day view as special case
+- **Event Handlers**: Improved click event handling to prevent navigation conflicts
+- **Date Consistency**: Ensured consistent date format handling between frontend and backend
+
 ## 1.10.20 - 2025-11-12
 
 ### Fixed
