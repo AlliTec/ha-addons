@@ -11,6 +11,8 @@ Thine addon shall load and not crash.
 Thine existing features shall remain functional, with no regressions.
 Thine new or modified features shall address the user's needs.
 Thine feature in progress shall have no console or API errors.
+If thoust findeth errors withing thine code, thou shalt remedy the error with care and ensure the error is addressed appropriately.
+If error is found and remedied, though shalt perform step IV once more.
 All of the above shall be tested and remedied before proceeding.
 V. Thou shalt follow the sacred process.
 The version in config.yaml shall be updated.

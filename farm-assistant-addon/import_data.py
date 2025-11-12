@@ -39,6 +39,4 @@ async def import_data():
 
 if __name__ == "__main__":
     import asyncio
-    asyncio.run(import_data())</content>
-</xai:function_call ><xai:function_call name="edit">
-<parameter name="filePath">farm-assistant-addon/Dockerfile
+    asyncio.run(import_data())
