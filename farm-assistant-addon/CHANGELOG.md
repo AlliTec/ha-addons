@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.10.38 - 2025-11-13
+
+### Added
+- **Event Deletion**: Ability to delete user-created calendar events
+- **Event Details Modal**: New modal to view event details before deletion
+- **Delete API Endpoint**: DELETE /api/events/{event_id} endpoint for removing events
+- **Confirmation Dialog**: Safety confirmation before deleting events
+- **Smart Delete Button**: Only shows delete option for user-created events (not system-generated)
+
+### Enhanced
+- **Calendar Event IDs**: User-created events now include IDs in API responses
+- **Event Information**: Detailed event information display in modal
+- **Related Item Links**: Quick access to livestock/asset details from event modal
+- **Event Type Indicators**: Visual icons for event categories and types
+
+### Technical
+- **Database Cleanup**: Delete removes events from calendar_entries and related history tables
+- **Frontend Integration**: Complete modal workflow with proper event handling
+- **API Consistency**: Maintained RESTful patterns for event operations
+
 ## 1.10.37 - 2025-11-13
 
 ### Fixed

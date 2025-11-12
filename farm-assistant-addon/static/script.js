@@ -1128,6 +1128,126 @@ async function saveEvent(eventData) {
     }
 }
 
+// Function to show event details modal
+function showEventDetailsModal(eventData) {
+    const modal = document.getElementById('event-details-modal');
+    const content = document.getElementById('event-details-content');
+    const deleteBtn = document.getElementById('delete-event-btn');
+    
+    // Format event details
+    const eventDate = new Date(eventData.date + 'T00:00:00');
+    const formattedDate = eventDate.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    
+    const icon = eventData.category === 'livestock' ? '🐄' : '🔧';
+    const typeIcon = eventData.entry_type === 'action' ? '⚠️' : 'ℹ️';
+    
+    let detailsHtml = `
+        <div class="event-detail-item">
+            <strong>Title:</strong> ${eventData.title}
+        </div>
+        <div class="event-detail-item">
+            <strong>Date:</strong> ${formattedDate}
+        </div>
+        <div class="event-detail-item">
+            <strong>Category:</strong> ${icon} ${eventData.category.charAt(0).toUpperCase() + eventData.category.slice(1)}
+        </div>
+        <div class="event-detail-item">
+            <strong>Type:</strong> ${typeIcon} ${eventData.entry_type.charAt(0).toUpperCase() + eventData.entry_type.slice(1)}
+        </div>
+    `;
+    
+    if (eventData.related_name) {
+        detailsHtml += `
+            <div class="event-detail-item">
+                <strong>Related Item:</strong> ${eventData.related_name}
+            </div>
+        `;
+    }
+    
+    if (eventData.description) {
+        detailsHtml += `
+            <div class="event-detail-item">
+                <strong>Description:</strong> ${eventData.description}
+            </div>
+        `;
+    }
+    
+    if (eventData.status) {
+        detailsHtml += `
+            <div class="event-detail-item">
+                <strong>Status:</strong> ${eventData.status.charAt(0).toUpperCase() + eventData.status.slice(1)}
+            </div>
+        `;
+    }
+    
+    content.innerHTML = detailsHtml;
+    
+    // Show delete button only for user-created events (those with an ID)
+    if (eventData.id && eventData.entry_type === 'event') {
+        deleteBtn.style.display = 'inline-block';
+        deleteBtn.onclick = () => deleteEvent(eventData.id);
+    } else {
+        deleteBtn.style.display = 'none';
+    }
+    
+    // Add click handlers for related item links
+    if (eventData.category === 'livestock' && eventData.related_id) {
+        content.innerHTML += `
+            <div style="margin-top: 15px;">
+                <button class="action-btn" onclick="showAnimalDetails(${eventData.related_id}); document.getElementById('event-details-modal').style.display='none';">
+                    <i class="fa-solid fa-eye"></i> View Livestock Details
+                </button>
+            </div>
+        `;
+    } else if (eventData.category === 'asset' && eventData.related_id) {
+        content.innerHTML += `
+            <div style="margin-top: 15px;">
+                <button class="action-btn" onclick="showAssetDetails(${eventData.related_id}); document.getElementById('event-details-modal').style.display='none';">
+                    <i class="fa-solid fa-eye"></i> View Asset Details
+                </button>
+            </div>
+        `;
+    }
+    
+    modal.style.display = 'block';
+}
+
+// Function to delete event
+async function deleteEvent(eventId) {
+    if (!confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`api/events/${eventId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete event');
+        }
+        
+        const result = await response.json();
+        console.log('Event deleted successfully:', result);
+        
+        // Close modal and refresh calendar
+        document.getElementById('event-details-modal').style.display = 'none';
+        await loadCalendarEvents();
+        
+        return result;
+        
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        alert('Error deleting event. Please try again.');
+        throw error;
+    }
+}
+
 // Main initialization
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("script.js: DOMContentLoaded event fired.");
@@ -1828,6 +1948,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
+    // Event Details Modal Event Listeners
+    const closeEventDetailsBtns = document.querySelectorAll('.close-event-details-btn');
+    closeEventDetailsBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('event-details-modal').style.display = 'none';
+        });
+    });
+
     // Name Generator Wizard Event Listeners
     const translateWordsBtn = document.getElementById('translate-words-btn');
     if (translateWordsBtn) {
@@ -2480,25 +2608,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Get event data from data attribute or use element directly if it's already an event object
         const eventData = element.dataset ? JSON.parse(element.dataset.event) : element;
         
-        if (eventData.category === 'livestock' && eventData.related_id) {
-            // Show livestock details
-            showAnimalDetails(eventData.related_id)
-                .catch(error => {
-                    console.error('Error loading animal details:', error);
-                    alert('Error loading animal details');
-                });
-        } else if (eventData.category === 'asset' && eventData.related_id) {
-            // Show asset details
-            fetch(`api/asset/${eventData.related_id}`)
-                .then(response => response.json())
-                .then(asset => {
-                    showAssetDetails(eventData.related_id);
-                })
-                .catch(error => {
-                    console.error('Error loading asset details:', error);
-                    alert('Error loading asset details');
-                });
-        }
+        // Show event details modal
+        showEventDetailsModal(eventData);
     }
     
     function navigateToDay(year, month, day) {

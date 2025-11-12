@@ -403,6 +403,40 @@ async def add_event(event: Event):
     finally:
         await conn.close()
 
+@app.delete("/api/events/{event_id}")
+async def delete_event(event_id: int):
+    """Delete a calendar event by ID"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        logging.info(f"Deleting event with ID: {event_id}")
+        
+        # Delete from calendar_entries table
+        result = await conn.execute("""
+            DELETE FROM calendar_entries 
+            WHERE id = $1
+        """, event_id)
+        
+        # Also delete from animal_history if it exists there
+        await conn.execute("""
+            DELETE FROM animal_history 
+            WHERE id = $1
+        """, event_id)
+        
+        # Also delete from maintenance_history if it exists there  
+        await conn.execute("""
+            DELETE FROM maintenance_history 
+            WHERE id = $1
+        """, event_id)
+        
+        logging.info(f"Event {event_id} deleted successfully")
+        return {"message": "Event deleted successfully"}
+        
+    except Exception as e:
+        logging.error(f"Error deleting event: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
 @app.post("/api/migrate/animal_history")
 async def migrate_animal_history():
     """Create animal_history table if it doesn't exist"""
@@ -1082,6 +1116,7 @@ async def get_calendar_events(
         
         for record in calendar_records:
             events.append({
+                "id": record['id'],
                 "title": record['title'],
                 "date": record['entry_date'].isoformat(),
                 "entry_type": record['entry_type'],
