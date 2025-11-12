@@ -550,6 +550,7 @@ async function openAddAnimalForm() {
     document.getElementById('edit-name').value = '';
     document.getElementById('edit-breed').value = '';
     document.getElementById('edit-date-of-birth').value = '';
+    document.getElementById('edit-date-of-disposal').value = '';
     document.getElementById('edit-health-status').value = 'Healthy';
     document.getElementById('edit-notes').value = '';
     document.getElementById('edit-dam-id').value = '';
@@ -724,6 +725,7 @@ async function enableEditMode(animalId) {
         document.getElementById('edit-name').value = animal.name || '';
         document.getElementById('edit-breed').value = animal.breed || '';
         document.getElementById('edit-date-of-birth').value = animal.birth_date || '';
+        document.getElementById('edit-date-of-disposal').value = animal.dod || '';
         document.getElementById('edit-health-status').value = animal.health_status || 'Healthy';
         document.getElementById('edit-notes').value = animal.notes || '';
         document.getElementById('edit-dam-id').value = animal.dam_id || '';
@@ -1940,6 +1942,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 gender: formData.get('gender'),
                 breed: formData.get('breed'),
                 birth_date: formData.get('date_of_birth') || null,
+                dod: formData.get('dod') || null,
                 health_status: formData.get('health_status') || 'Healthy',
                 notes: formData.get('notes'),
                 dam_id: formData.get('dam_id') ? parseInt(formData.get('dam_id')) : null,
@@ -1947,12 +1950,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 features: formData.get('features'),
                 photo_path: formData.get('photo_path'),
                 pic: formData.get('pic'),
-                dod: null, // Will be set based on status
                 status: formData.get('status')
             };
             
-            // Set dod if status is Deceased
-            if (animalData.status === 'Deceased') {
+            // Auto-set dod if status is Deceased and no dod is provided
+            if (animalData.status === 'Deceased' && !animalData.dod) {
                 animalData.dod = new Date().toISOString().split('T')[0];
             }
             

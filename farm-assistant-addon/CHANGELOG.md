@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.10.32 - 2025-11-13
+
+### Added
+- **Date of Disposal/Death Field**: Added DoD field to edit animal modal underneath DoB field
+- **Form Enhancement**: New date input field for recording when animal dies or leaves property
+- **Backend Integration**: DoD field properly integrated with add/update animal endpoints
+- **Form Population**: DoD field populated when editing existing animals
+- **Form Clearing**: DoD field cleared when adding new animals
+
+### Technical
+- **HTML Form**: Added `edit-date-of-disposal` input field with proper labeling
+- **JavaScript Integration**: Updated `enableEditMode` and `openAddAnimalForm` functions
+- **Form Submission**: Modified form data handling to include DoD field value
+- **Auto-Logic**: Maintains auto-setting DoD when status is Deceased and no date provided
+
 ## 1.10.31 - 2025-11-12
 
 ### Enhanced
