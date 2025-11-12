@@ -2340,6 +2340,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Get event data from data attribute or use element directly if it's already the event object
         const eventData = element.dataset ? JSON.parse(element.dataset.event) : element;
         
+        console.log('handleCalendarEventClick called with:', element);
+        console.log('Parsed eventData:', eventData);
+        console.log('eventData.related_id:', eventData.related_id);
+        console.log('eventData.category:', eventData.category);
+        
         if (eventData.category === 'livestock' && eventData.related_id) {
             // Show livestock details
             fetch(`get_animal/${eventData.related_id}`)
