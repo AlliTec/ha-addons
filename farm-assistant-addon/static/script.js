@@ -524,7 +524,7 @@ async function populateParentAssetDropdowns() {
         const eventsByDate = {};
         events.forEach(event => {
             const eventDate = event.date; // Use the date directly from the backend
-            console.log(`Processing event: ${event.title} on ${eventDate}`);
+            console.log(`Processing event: ${event.title} on ${eventDate} (raw date: ${event.date})`);
             if (!eventsByDate[eventDate]) {
                 eventsByDate[eventDate] = [];
             }
@@ -532,6 +532,8 @@ async function populateParentAssetDropdowns() {
         });
         
         console.log("Events grouped by date:", eventsByDate);
+        console.log("Current view type:", filterType);
+        console.log("Current date:", currentDate.toISOString().split('T')[0]);
         
         console.log("Parent asset dropdowns populated successfully");
         
@@ -2477,7 +2479,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     
     function displayDayView(eventsByDate) {
-        const dateStr = currentDate.toISOString().split('T')[0];
+        // Fix timezone issue: create date string manually to avoid UTC conversion
+        const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
         const dayEvents = eventsByDate[dateStr] || [];
         const dateObj = new Date(dateStr + 'T00:00:00');
         
@@ -2533,7 +2536,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         for (let i = 0; i < 7; i++) {
             const date = new Date(startOfWeek);
             date.setDate(startOfWeek.getDate() + i);
-            const dateStr = date.toISOString().split('T')[0];
+            // Fix timezone issue: create date string manually to avoid UTC conversion
+            const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
             const dayEvents = eventsByDate[dateStr] || [];
             
             html += `<div class="day-column" onclick="navigateToDay(${date.getFullYear()}, ${date.getMonth()}, ${date.getDate()})">
@@ -2584,9 +2588,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Days of month
         for (let day = 1; day <= daysInMonth; day++) {
             const date = new Date(year, month, day);
-            const dateStr = date.toISOString().split('T')[0];
+            // Fix timezone issue: create date string manually to avoid UTC conversion
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             const dayEvents = eventsByDate[dateStr] || [];
             const isToday = date.toDateString() === new Date().toDateString();
+            
+            // Debug logging for specific days that have events
+            if (dayEvents.length > 0) {
+                console.log(`Month view Day ${day} (${dateStr}): Found ${dayEvents.length} events:`, dayEvents.map(e => e.title));
+            }
             
             html += `<div class="month-day ${isToday ? 'today' : ''}" onclick="navigateToDay(${year}, ${month}, ${day})">
                 <div class="day-number">${day}</div>
@@ -2628,9 +2638,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             for (let day = 1; day <= Math.min(daysInMonth, 35); day++) {
                 const date = new Date(year, month, day);
-                const dateStr = date.toISOString().split('T')[0];
+                // Fix timezone issue: create date string manually to avoid UTC conversion
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const hasEvents = eventsByDate[dateStr] && eventsByDate[dateStr].length > 0;
                 const isToday = date.toDateString() === new Date().toDateString();
+                
+                // Debug logging for specific days that have events
+                if (hasEvents) {
+                    console.log(`Year view ${monthName} Day ${day} (${dateStr}): Found events:`, eventsByDate[dateStr].map(e => e.title));
+                }
                 
                 html += `<div class="mini-day ${isToday ? 'today' : ''} ${hasEvents ? 'has-events' : ''}" onclick="navigateToDay(${year}, ${month}, ${day})">${day}</div>`;
             }

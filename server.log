@@ -1,1 +1,22 @@
-ERROR:    Error loading ASGI app. Could not import module "main".
+2025-11-12 14:30:49,279 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [225205]
+INFO:     Waiting for application startup.
+2025-11-12 14:30:49,309 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-12 14:30:49,359 - INFO - Database connection successful.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+Calendar API called with: start_date=2025-11-01, end_date=2025-11-30, filter_type=month
+Parsed dates: start_date_obj=2025-11-01, end_date_obj=2025-11-30
+Processing livestock birth: Lutr, birth_date=2025-11-09, birth_date_str=2025-11-09
+Adding birth event for Lutr on 2025-11-09
+Processing livestock birth: Mjolka, birth_date=2018-02-18, birth_date_str=2018-02-18
+Skipping birth event for Mjolka - date 2018-02-18 not in range 2025-11-01 to 2025-11-30
+Processing livestock death: Mjolka, dod=2025-11-08, dod_date_str=2025-11-08
+Adding death event for Mjolka on 2025-11-08
+Processing livestock birth: Duke, birth_date=2008-07-01, birth_date_str=2008-07-01
+Skipping birth event for Duke - date 2008-07-01 not in range 2025-11-01 to 2025-11-30
+Processing livestock death: Duke, dod=2025-11-08, dod_date_str=2025-11-08
+Adding death event for Duke on 2025-11-08
+Processing asset registration: Amarok, registration_due=2025-11-13, reg_date_str=2025-11-13
+Adding registration event for Amarok on 2025-11-13
+INFO:     127.0.0.1:49362 - "GET /api/calendar?start_date=2025-11-01&end_date=2025-11-30&filter_type=month HTTP/1.1" 200 OK

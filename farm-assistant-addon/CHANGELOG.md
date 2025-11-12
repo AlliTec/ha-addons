@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.10.22 - 2025-11-12
+
+### Fixed
+- **Non-Daylight Hours Styling**: Changed nighttime hours from dark (#1a1a1a) to light grey (#e0e0e0) with visible text (#333)
+- **Critical Timezone Bug**: Fixed date alignment issue where events appeared on wrong days due to UTC conversion
+- **Date String Creation**: Replaced `toISOString().split('T')[0]` with manual date string formatting to prevent timezone shifts
+- **Event Display Accuracy**: Events now appear on correct dates in month, week, year, and day views
+
+### Enhanced
+- **Comprehensive Debugging**: Added detailed logging throughout backend and frontend date processing pipeline
+- **Visual Clarity**: Improved contrast for nighttime hours while maintaining readability
+- **Date Consistency**: All calendar views now use consistent date handling without timezone conversion issues
+- **Debug Output**: Enhanced logging shows exact date processing for troubleshooting
+
+### Technical
+- **Frontend Date Fix**: Manual date string creation using template literals instead of toISOString()
+- **Backend Debugging**: Added comprehensive logging for livestock and asset event processing
+- **Timezone Resolution**: Eliminated UTC conversion that caused 1-day date shifts
+- **Event Validation**: Verified backend correctly processes dates and frontend correctly displays them
+
+### Testing
+- **API Verification**: Confirmed backend returns correct dates (e.g., Amarok registration on 2025-11-13)
+- **Frontend Testing**: Verified frontend now displays events on correct calendar days
+- **Cross-View Consistency**: All calendar views (day/week/month/year) show events on proper dates
+- **Visual Testing**: Confirmed improved styling for non-daylight hours
+
 ## 1.10.21 - 2025-11-12
 
 ### Fixed

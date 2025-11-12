@@ -766,13 +766,19 @@ async def get_calendar_events(
                    OR dod BETWEEN $1 AND $2)
         """
         
-        livestock_records = await conn.fetch(livestock_query, datetime.strptime(start_date, '%Y-%m-%d').date(), datetime.strptime(end_date, '%Y-%m-%d').date())
+        start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
+        print(f"Parsed dates: start_date_obj={start_date_obj}, end_date_obj={end_date_obj}")
+        
+        livestock_records = await conn.fetch(livestock_query, start_date_obj, end_date_obj)
         
         for record in livestock_records:
             # Birth date event
             if record['birth_date']:
                 birth_date_str = record['birth_date'].isoformat()
+                print(f"Processing livestock birth: {record['name']}, birth_date={record['birth_date']}, birth_date_str={birth_date_str}")
                 if start_date <= birth_date_str <= end_date:
+                    print(f"Adding birth event for {record['name']} on {birth_date_str}")
                     events.append({
                         "title": f"Birth: {record['name']}",
                         "date": birth_date_str,
@@ -782,20 +788,26 @@ async def get_calendar_events(
                         "related_id": record['id'],
                         "related_name": record['name']
                     })
+                else:
+                    print(f"Skipping birth event for {record['name']} - date {birth_date_str} not in range {start_date} to {end_date}")
             
             # Death date event
             if record['dod']:
                 dod_date_str = record['dod'].isoformat()
+                print(f"Processing livestock death: {record['name']}, dod={record['dod']}, dod_date_str={dod_date_str}")
                 if start_date <= dod_date_str <= end_date:
+                    print(f"Adding death event for {record['name']} on {dod_date_str}")
                     events.append({
-                    "title": f"Deceased: {record['name']}",
-                    "date": dod_date_str,
-                    "entry_type": "informational",
-                    "category": "livestock",
-                    "description": f"{record['gender']} - {record.get('health_status', 'Unknown status')}",
-                    "related_id": record['id'],
-                    "related_name": record['name']
-                })
+                        "title": f"Deceased: {record['name']}",
+                        "date": dod_date_str,
+                        "entry_type": "informational",
+                        "category": "livestock",
+                        "description": f"{record['gender']} - {record.get('health_status', 'Unknown status')}",
+                        "related_id": record['id'],
+                        "related_name": record['name']
+                    })
+                else:
+                    print(f"Skipping death event for {record['name']} - date {dod_date_str} not in range {start_date} to {end_date}")
         
         # Asset events
         asset_query = """
@@ -836,7 +848,9 @@ async def get_calendar_events(
             # Registration due event
             if record['registration_due']:
                 reg_date_str = record['registration_due'].isoformat()
+                print(f"Processing asset registration: {record['name']}, registration_due={record['registration_due']}, reg_date_str={reg_date_str}")
                 if start_date <= reg_date_str <= end_date:
+                    print(f"Adding registration event for {record['name']} on {reg_date_str}")
                     events.append({
                         "title": f"Registration Due: {record['name']}",
                         "date": reg_date_str,
@@ -846,6 +860,8 @@ async def get_calendar_events(
                         "related_id": record['id'],
                         "related_name": record['name']
                     })
+                else:
+                    print(f"Skipping registration event for {record['name']} - date {reg_date_str} not in range {start_date} to {end_date}")
             
             # Insurance due event
             if record['insurance_due']:
