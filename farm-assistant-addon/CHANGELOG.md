@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.42 - 2025-11-13
+
+### Fixed
+- **Add Event Modal Function**: Made openAddEventModal globally accessible for onclick handlers
+- **Event Creation Button**: Calendar hour segments now properly open event creation form
+- **Missing Function Export**: Added window.openAddEventModal to global scope
+- **Form Accessibility**: Event creation modal now opens correctly from calendar view
+
+### Enhanced
+- **Calendar Interaction**: Click-to-add-event functionality now works properly
+- **User Experience**: Seamless event creation workflow from calendar interface
+- **Function Scope**: All modal functions now properly exported for browser access
+
 ## 1.10.41 - 2025-11-13
 
 ### Verified

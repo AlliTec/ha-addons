@@ -3031,4 +3031,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.showAnimalDetails = showAnimalDetails;
     window.handleCalendarEventClick = handleCalendarEventClick;
     window.navigateToDay = navigateToDay;
+    window.openAddEventModal = openAddEventModal;
 });
