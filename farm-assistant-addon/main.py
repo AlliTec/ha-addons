@@ -487,12 +487,14 @@ async def update_event(event_id: int, event: Event):
         event_datetime = f"{event.date} {event.time}:00"
         
         # Update calendar_entries table
+        event_date = datetime.strptime(event.date, '%Y-%m-%d').date()
+        event_time = datetime.strptime(event.time, '%H:%M').time() if event.time else None
         await conn.execute("""
             UPDATE calendar_entries 
             SET entry_date = $1, event_time = $2, duration_hours = $3, category = $4, 
                 title = $5, description = $6, related_id = $7, updated_at = NOW()
             WHERE id = $8
-        """, event.date, datetime.strptime(event.time, '%H:%M').time(), event.duration, 
+        """, event_date, event_time, event.duration, 
               event.category, event.title, event.notes, event.item_id, event_id)
         
         # Update animal_history if it's a livestock event

@@ -74,233 +74,299 @@ c.a @ async_module:58
 32494 @ app.1d24f37c18c00da1.js:14
 c @ app.1d24f37c18c00da1.js:60
 (anonymous) @ app.1d24f37c18c00da1.js:60
-script.js?v=unknown&t=1763032533:1498 script.js: DOMContentLoaded event fired.
-script.js?v=unknown&t=1763032533:326 populateAnimalList called with filter: All
-script.js?v=unknown&t=1763032533:328 Fetch response status: 200
-script.js?v=unknown&t=1763032533:335 Animals data received: (29) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
-script.js?v=unknown&t=1763032533:336 Number of animals: 29
-script.js?v=unknown&t=1763032533:339 Filtered animals count: 29
-script.js?v=unknown&t=1763032533:350 Processing animal 1: {id: 9, tag_id: '12345-8', name: 'Brjost', breed: 'Santa Gertrudis', birth_date: '2019-07-01', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2019-07-01 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Mon Jul 01 2019 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 2: {id: 15, tag_id: '12345-14', name: 'Digr', breed: 'Santa Gertrudis', birth_date: '2024-09-24', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2024-09-24 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Tue Sep 24 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 3: {id: 2, tag_id: '12345-1', name: 'Duke', breed: 'Santa Gertrudis', birth_date: '2008-07-01', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2008-07-01 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Tue Jul 01 2008 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 4: {id: 8, tag_id: '12345-7', name: 'George', breed: 'Santa Gertrudis', birth_date: '2018-07-01', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2018-07-01 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Sun Jul 01 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 5: {id: 17, tag_id: '12345-15', name: 'Grind', breed: 'Santa Gertrudis', birth_date: '2025-08-26', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2025-08-26 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Tue Aug 26 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 6: {id: 59, tag_id: '159263487', name: 'Henny', breed: 'Austral', birth_date: '2024-04-10', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2024-04-10 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 7: {id: 56, tag_id: '987456123', name: 'Hjartr', breed: 'Persian/Ragdoll', birth_date: '2023-12-21', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2023-12-21 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Thu Dec 21 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 8: {id: 10, tag_id: '12345-9', name: 'Horn', breed: 'Santa Gertrudis', birth_date: '2020-07-01', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2020-07-01 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Wed Jul 01 2020 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 9: {id: 22, tag_id: '162534', name: 'Indie', breed: 'Husky-Malamute', birth_date: '2015-08-08', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2015-08-08 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Sat Aug 08 2015 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 10: {id: 61, tag_id: '357421869', name: 'Jenny', breed: 'Austral', birth_date: '2024-04-10', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2024-04-10 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 11: {id: 13, tag_id: '12345-11', name: 'Juliet', breed: 'Santa Gertrudis', birth_date: '2023-07-01', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2023-07-01 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Sat Jul 01 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 12: {id: 58, tag_id: '159487623', name: 'Kiriko', breed: 'Rhode Island Red', birth_date: '2025-04-04', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2025-04-04 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Fri Apr 04 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 13: {id: 14, tag_id: '12345-12', name: 'Lag', breed: 'Santa Gertrudis', birth_date: '2024-09-18', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2024-09-18 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Wed Sep 18 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 14: {id: 64, tag_id: '456123456', name: 'Lutr', breed: 'Santa Gertrudis', birth_date: '2025-11-09', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2025-11-09 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Sun Nov 09 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 15: {id: 55, tag_id: '456456456', name: 'Meyla', breed: 'Sheprador', birth_date: '2024-12-08', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2024-12-08 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Sun Dec 08 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 16: {id: 11, tag_id: '12345-0', name: 'Mini', breed: 'Santa Gertrudis', birth_date: '2021-07-01', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2021-07-01 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Thu Jul 01 2021 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 17: {id: 7, tag_id: '12345-6', name: 'Mjolka', breed: 'Santa Gertrudis', birth_date: '2018-02-18', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2018-02-18 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Sun Feb 18 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 18: {id: 6, tag_id: '12345-5', name: 'Ms July', breed: 'Santa Gertrudis', birth_date: '2018-07-01', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2018-07-01 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Sun Jul 01 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 19: {id: 5, tag_id: '12345-4', name: 'Mum', breed: 'Santa Gertrudis', birth_date: '2005-07-01', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2005-07-01 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Fri Jul 01 2005 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 20: {id: 4, tag_id: '12345-3', name: 'OldGirl', breed: 'Santa Gertrudis', birth_date: '2003-07-01', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2003-07-01 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Tue Jul 01 2003 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 21: {id: 60, tag_id: '147852369', name: 'Penny', breed: 'Austral', birth_date: '2024-04-10', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2024-04-10 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 22: {id: 3, tag_id: '12345 -2', name: 'Prince', breed: 'Santa Gertrudis', birth_date: '2007-07-01', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2007-07-01 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Sun Jul 01 2007 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 23: {id: 63, tag_id: '789159357', name: 'Renny', breed: 'Austral', birth_date: '2024-04-10', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2024-04-10 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 24: {id: 57, tag_id: '321987654', name: 'Rinna', breed: 'Tabby', birth_date: '2024-03-18', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2024-03-18 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Mon Mar 18 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 25: {id: 21, tag_id: '123654', name: 'Rocco', breed: 'German Shepherd', birth_date: '2014-08-15', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2014-08-15 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Fri Aug 15 2014 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 26: {id: 12, tag_id: '12345-10', name: 'Romeo', breed: 'Santa Gertrudis', birth_date: '2023-07-01', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2023-07-01 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Sat Jul 01 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 27: {id: 16, tag_id: '12345-13', name: 'Tekn', breed: 'Santa Gertrudis', birth_date: '2024-10-05', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2024-10-05 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Sat Oct 05 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 28: {id: 20, tag_id: '12345-54321', name: 'Thor', breed: 'Santa Gertrudis', birth_date: '2025-10-29', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2025-10-29 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Wed Oct 29 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:350 Processing animal 29: {id: 62, tag_id: '689357241', name: 'Zenny', breed: 'Austral', birth_date: '2024-04-10', …}
-script.js?v=unknown&t=1763032533:8 Calculating age for birthDate: 2024-04-10 type: string
-script.js?v=unknown&t=1763032533:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:15:33 GMT+1000 (Australian Eastern Standard Time)
-script.js?v=unknown&t=1763032533:396 Total filter width for livestock: 0px
-script.js?v=unknown&t=1763032533:397 Current table width: 321px
-script.js?v=unknown&t=1763032533:441 Set livestock table width to 0px with 4 columns
-script.js?v=unknown&t=1763032533:368 Table population completed
-script.js?v=unknown&t=1763032533:213 Populating filter tabs...
-script.js?v=unknown&t=1763032533:216 Fetching animals for dynamic type extraction...
-script.js?v=unknown&t=1763032533:218 Animals response status: 200
-script.js?v=unknown&t=1763032533:226 All animals: (29) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
-script.js?v=unknown&t=1763032533:233 Processing animal: Brjost, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Digr, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Duke, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: George, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Grind, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Henny, Gender: "Hen", Breed: "Austral", Type: Fowl
-script.js?v=unknown&t=1763032533:233 Processing animal: Hjartr, Gender: "Queen", Breed: "Persian/Ragdoll", Type: Cat
-script.js?v=unknown&t=1763032533:233 Processing animal: Horn, Gender: "Heifer", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Indie, Gender: "Bitch", Breed: "Husky-Malamute", Type: Dog
-script.js?v=unknown&t=1763032533:233 Processing animal: Jenny, Gender: "Hen", Breed: "Austral", Type: Fowl
-script.js?v=unknown&t=1763032533:233 Processing animal: Juliet, Gender: "Heifer", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Kiriko, Gender: "Rooster", Breed: "Rhode Island Red", Type: Fowl
-script.js?v=unknown&t=1763032533:233 Processing animal: Lag, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Lutr, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Meyla, Gender: "Bitch", Breed: "Sheprador", Type: Dog
-script.js?v=unknown&t=1763032533:233 Processing animal: Mini, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Mjolka, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Ms July, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Mum, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: OldGirl, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Penny, Gender: "Hen", Breed: "Austral", Type: Fowl
-script.js?v=unknown&t=1763032533:233 Processing animal: Prince, Gender: "Steer", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Renny, Gender: "Hen", Breed: "Austral", Type: Fowl
-script.js?v=unknown&t=1763032533:233 Processing animal: Rinna, Gender: "Queen", Breed: "Tabby", Type: Cat
-script.js?v=unknown&t=1763032533:233 Processing animal: Rocco, Gender: "Dog", Breed: "German Shepherd", Type: Dog
-script.js?v=unknown&t=1763032533:233 Processing animal: Romeo, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Tekn, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Thor, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
-script.js?v=unknown&t=1763032533:233 Processing animal: Zenny, Gender: "Hen", Breed: "Austral", Type: Fowl
-script.js?v=unknown&t=1763032533:238 Dynamic animal types extracted: (5) ['All', 'Cat', 'Cattle', 'Dog', 'Fowl']
-script.js?v=unknown&t=1763032533:256 Animal: Brjost, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Digr, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: George, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Grind, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Henny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Hjartr, Gender: Queen, Breed: Persian/Ragdoll, Type: Cat, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Horn, Gender: Heifer, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Indie, Gender: Bitch, Breed: Husky-Malamute, Type: Dog, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Jenny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Juliet, Gender: Heifer, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Kiriko, Gender: Rooster, Breed: Rhode Island Red, Type: Fowl, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Lag, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Lutr, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Meyla, Gender: Bitch, Breed: Sheprador, Type: Dog, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Mini, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Ms July, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Mum, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: OldGirl, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Penny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Prince, Gender: Steer, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Renny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Rinna, Gender: Queen, Breed: Tabby, Type: Cat, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Rocco, Gender: Dog, Breed: German Shepherd, Type: Dog, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Romeo, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Tekn, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Thor, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
-script.js?v=unknown&t=1763032533:256 Animal: Zenny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
-script.js?v=unknown&t=1763032533:294 Creating tab for Cat with count: 2
-script.js?v=unknown&t=1763032533:294 Creating tab for Cattle with count: 16
-script.js?v=unknown&t=1763032533:294 Creating tab for Dog with count: 3
-script.js?v=unknown&t=1763032533:294 Creating tab for Fowl with count: 6
-script.js?v=unknown&t=1763032533:318 Filter tabs populated successfully with counts: {Cattle: 16, Fowl: 6, Cat: 2, Dog: 3}
-script.js?v=unknown&t=1763032533:1514 setupSectionTabs: Found 3 section tabs
-script.js?v=unknown&t=1763032533:1517 setupSectionTabs: Setting up listener for tab: livestock
-script.js?v=unknown&t=1763032533:1517 setupSectionTabs: Setting up listener for tab: assets
-script.js?v=unknown&t=1763032533:1517 setupSectionTabs: Setting up listener for tab: calendar
-script.js?v=unknown&t=1763032533:2245 script.js: Found table element: <table id=​"livestock-list" style=​"width:​ 0px;​ min-width:​ 0px;​ table-layout:​ fixed;​">​…​</table>​
-script.js?v=unknown&t=1763032533:393 Filter button width: 99px, margins: 0px, total so far: 99px
-script.js?v=unknown&t=1763032533:393 Filter button width: 100px, margins: -2px, total so far: 197px
-script.js?v=unknown&t=1763032533:393 Filter button width: 125px, margins: -2px, total so far: 320px
-script.js?v=unknown&t=1763032533:393 Filter button width: 105px, margins: -2px, total so far: 423px
-script.js?v=unknown&t=1763032533:393 Filter button width: 111px, margins: -2px, total so far: 532px
-script.js?v=unknown&t=1763032533:393 Filter button width: 84px, margins: -2px, total so far: 614px
-script.js?v=unknown&t=1763032533:396 Total filter width for livestock: 614px
-script.js?v=unknown&t=1763032533:397 Current table width: 301px
-script.js?v=unknown&t=1763032533:441 Set livestock table width to 614px with 4 columns
-script.js?v=unknown&t=1763032533:1520 Tab clicked: calendar
-script.js?v=unknown&t=1763032533:1550 Showing calendar section
-script.js?v=unknown&t=1763032533:2975 loadCalendarEvents: Starting to load calendar events
-script.js?v=unknown&t=1763032533:2980 loadCalendarEvents: Filters: {filterType: 'month', entryType: '', category: ''}
-script.js?v=unknown&t=1763032533:3025 loadCalendarEvents: Date range: {filterType: 'month', startDate: '2025-11-01', endDate: '2025-11-30', currentDate: '2025-11-13'}
-script.js?v=unknown&t=1763032533:3038 loadCalendarEvents: Fetching URL: api/calendar?filter_type=month&start_date=2025-11-01&end_date=2025-11-30
-script.js?v=unknown&t=1763032533:3039 loadCalendarEvents: Full URL would be: http://192.168.1.130:8123api/calendar?filter_type=month&start_date=2025-11-01&end_date=2025-11-30
-script.js?v=unknown&t=1763032533:3043 loadCalendarEvents: Response status: 200
-script.js?v=unknown&t=1763032533:3044 loadCalendarEvents: Response headers: (8) [Array(2), Array(2), Array(2), Array(2), Array(2), Array(2), Array(2), Array(2)]
-script.js?v=unknown&t=1763032533:3045 loadCalendarEvents: Response URL: http://192.168.1.130:8123/api/hassio_ingress/E-cW3ksrmsjgl9U53YJMYeHxTZ5U1YAyZBGWznjqqM4/api/calendar?filter_type=month&start_date=2025-11-01&end_date=2025-11-30
-script.js?v=unknown&t=1763032533:3055 loadCalendarEvents: Successfully loaded events: (4) [{…}, {…}, {…}, {…}]
-script.js?v=unknown&t=1763032533:3143 displayCalendarEvents: Received events: (4) [{…}, {…}, {…}, {…}]
-script.js?v=unknown&t=1763032533:3144 displayCalendarEvents: Event types breakdown: {informational: 2, action: 1, event: 1}
-script.js?v=unknown&t=1763032533:3397 Month view Day 1 (2025-11-01): Found 1 events: ['Maintenance Completed: Excavator']
-script.js?v=unknown&t=1763032533:3397 Month view Day 9 (2025-11-09): Found 1 events: ['Birth: Lutr']
-script.js?v=unknown&t=1763032533:3397 Month view Day 13 (2025-11-13): Found 1 events: ['Registration Due: Amarok']
-script.js?v=unknown&t=1763032533:3397 Month view Day 15 (2025-11-15): Found 1 events: ['Oil and Filter Change']
-script.js?v=unknown&t=1763032533:3071 === CALENDAR EVENT CLICK DEBUG ===
-script.js?v=unknown&t=1763032533:3072 Element dataset: DOMStringMap {event: '{"title":"Birth: Lutr","date":"2025-11-09","entry_…- Healthy","related_id":64,"related_name":"Lutr"}'}
-script.js?v=unknown&t=1763032533:3073 Raw dataset.event: {"title":"Birth: Lutr","date":"2025-11-09","entry_type":"informational","category":"livestock","description":"Bull - Healthy","related_id":64,"related_name":"Lutr"}
-script.js?v=unknown&t=1763032533:3074 Parsed eventData: {title: 'Birth: Lutr', date: '2025-11-09', entry_type: 'informational', category: 'livestock', description: 'Bull - Healthy', …}
-script.js?v=unknown&t=1763032533:1275 === DELETE BUTTON LOGIC DEBUG ===
-script.js?v=unknown&t=1763032533:1276 Full eventData object: {title: 'Birth: Lutr', date: '2025-11-09', entry_type: 'informational', category: 'livestock', description: 'Bull - Healthy', …}
-script.js?v=unknown&t=1763032533:1277 eventData.id: undefined
-script.js?v=unknown&t=1763032533:1278 eventData.entry_type: informational
-script.js?v=unknown&t=1763032533:1279 eventData.entry_type === "event": false
-script.js?v=unknown&t=1763032533:1280 Both conditions (id && entry_type === "event"): undefined
-script.js?v=unknown&t=1763032533:1299 ❌ HIDING DELETE BUTTON
-script.js?v=unknown&t=1763032533:1302 Delete button hidden for event: {id: undefined, entry_type: 'informational', title: 'Birth: Lutr', category: 'livestock'}
-script.js?v=unknown&t=1763032533:3071 === CALENDAR EVENT CLICK DEBUG ===
-script.js?v=unknown&t=1763032533:3072 Element dataset: DOMStringMap {event: '{"id":32,"title":"Oil and Filter Change","date":"2…_name":"Golf (VolksWagen 2011 Golf MK6 TDI 2.0)"}'}
-script.js?v=unknown&t=1763032533:3073 Raw dataset.event: {"id":32,"title":"Oil and Filter Change","date":"2025-11-15","time":"10:00:00","duration":2,"entry_type":"event","category":"asset","description":"Change oil and filters for golf.","related_id":8,"related_name":"Golf (VolksWagen 2011 Golf MK6 TDI 2.0)"}
-script.js?v=unknown&t=1763032533:3074 Parsed eventData: {id: 32, title: 'Oil and Filter Change', date: '2025-11-15', time: '10:00:00', duration: 2, …}
-script.js?v=unknown&t=1763032533:1275 === DELETE BUTTON LOGIC DEBUG ===
-script.js?v=unknown&t=1763032533:1276 Full eventData object: {id: 32, title: 'Oil and Filter Change', date: '2025-11-15', time: '10:00:00', duration: 2, …}
-script.js?v=unknown&t=1763032533:1277 eventData.id: 32
-script.js?v=unknown&t=1763032533:1278 eventData.entry_type: event
-script.js?v=unknown&t=1763032533:1279 eventData.entry_type === "event": true
-script.js?v=unknown&t=1763032533:1280 Both conditions (id && entry_type === "event"): true
-script.js?v=unknown&t=1763032533:1283 ✅ SHOWING DELETE BUTTON
-script.js?v=unknown&t=1763032533:1927 Loading maintenance history for asset: 8
-script.js?v=unknown&t=1763032533:1935 Maintenance records: [{…}]
-script.js?v=unknown&t=1763032533:2570 Scheduled event row clicked!
-script.js?v=unknown&t=1763032533:2573 Event ID: 32
-script.js?v=unknown&t=1763032533:1431 loadEventForEdit called with eventId: 32
-script.js?v=unknown&t=1763032533:1432  GET http://192.168.1.130:8123/api/hassio_ingress/E-cW3ksrmsjgl9U53YJMYeHxTZ5U1YAyZBGWznjqqM4/api/events/32 500 (Internal Server Error)
-loadEventForEdit @ script.js?v=unknown&t=1763032533:1432
-(anonymous) @ script.js?v=unknown&t=1763032533:2582
-script.js?v=unknown&t=1763032533:1491 Error loading event for editing: Error: Failed to fetch event
-    at loadEventForEdit (script.js?v=unknown&t=1763032533:1434:19)
-loadEventForEdit @ script.js?v=unknown&t=1763032533:1491
+script.js?v=unknown&t=1763033973:1498 script.js: DOMContentLoaded event fired.
+script.js?v=unknown&t=1763033973:326 populateAnimalList called with filter: All
+script.js?v=unknown&t=1763033973:328 Fetch response status: 200
+script.js?v=unknown&t=1763033973:335 Animals data received: (29) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+script.js?v=unknown&t=1763033973:336 Number of animals: 29
+script.js?v=unknown&t=1763033973:339 Filtered animals count: 29
+script.js?v=unknown&t=1763033973:350 Processing animal 1: {id: 9, tag_id: '12345-8', name: 'Brjost', breed: 'Santa Gertrudis', birth_date: '2019-07-01', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2019-07-01 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Mon Jul 01 2019 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 2: {id: 15, tag_id: '12345-14', name: 'Digr', breed: 'Santa Gertrudis', birth_date: '2024-09-24', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2024-09-24 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Tue Sep 24 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 3: {id: 2, tag_id: '12345-1', name: 'Duke', breed: 'Santa Gertrudis', birth_date: '2008-07-01', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2008-07-01 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Tue Jul 01 2008 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 4: {id: 8, tag_id: '12345-7', name: 'George', breed: 'Santa Gertrudis', birth_date: '2018-07-01', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2018-07-01 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Sun Jul 01 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 5: {id: 17, tag_id: '12345-15', name: 'Grind', breed: 'Santa Gertrudis', birth_date: '2025-08-26', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2025-08-26 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Tue Aug 26 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 6: {id: 59, tag_id: '159263487', name: 'Henny', breed: 'Austral', birth_date: '2024-04-10', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2024-04-10 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 7: {id: 56, tag_id: '987456123', name: 'Hjartr', breed: 'Persian/Ragdoll', birth_date: '2023-12-21', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2023-12-21 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Thu Dec 21 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 8: {id: 10, tag_id: '12345-9', name: 'Horn', breed: 'Santa Gertrudis', birth_date: '2020-07-01', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2020-07-01 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Wed Jul 01 2020 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 9: {id: 22, tag_id: '162534', name: 'Indie', breed: 'Husky-Malamute', birth_date: '2015-08-08', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2015-08-08 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Sat Aug 08 2015 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 10: {id: 61, tag_id: '357421869', name: 'Jenny', breed: 'Austral', birth_date: '2024-04-10', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2024-04-10 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 11: {id: 13, tag_id: '12345-11', name: 'Juliet', breed: 'Santa Gertrudis', birth_date: '2023-07-01', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2023-07-01 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Sat Jul 01 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 12: {id: 58, tag_id: '159487623', name: 'Kiriko', breed: 'Rhode Island Red', birth_date: '2025-04-04', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2025-04-04 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Fri Apr 04 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 13: {id: 14, tag_id: '12345-12', name: 'Lag', breed: 'Santa Gertrudis', birth_date: '2024-09-18', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2024-09-18 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Wed Sep 18 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 14: {id: 64, tag_id: '456123456', name: 'Lutr', breed: 'Santa Gertrudis', birth_date: '2025-11-09', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2025-11-09 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Sun Nov 09 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 15: {id: 55, tag_id: '456456456', name: 'Meyla', breed: 'Sheprador', birth_date: '2024-12-08', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2024-12-08 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Sun Dec 08 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 16: {id: 11, tag_id: '12345-0', name: 'Mini', breed: 'Santa Gertrudis', birth_date: '2021-07-01', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2021-07-01 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Thu Jul 01 2021 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 17: {id: 7, tag_id: '12345-6', name: 'Mjolka', breed: 'Santa Gertrudis', birth_date: '2018-02-18', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2018-02-18 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Sun Feb 18 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 18: {id: 6, tag_id: '12345-5', name: 'Ms July', breed: 'Santa Gertrudis', birth_date: '2018-07-01', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2018-07-01 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Sun Jul 01 2018 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 19: {id: 5, tag_id: '12345-4', name: 'Mum', breed: 'Santa Gertrudis', birth_date: '2005-07-01', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2005-07-01 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Fri Jul 01 2005 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 20: {id: 4, tag_id: '12345-3', name: 'OldGirl', breed: 'Santa Gertrudis', birth_date: '2003-07-01', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2003-07-01 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Tue Jul 01 2003 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 21: {id: 60, tag_id: '147852369', name: 'Penny', breed: 'Austral', birth_date: '2024-04-10', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2024-04-10 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 22: {id: 3, tag_id: '12345 -2', name: 'Prince', breed: 'Santa Gertrudis', birth_date: '2007-07-01', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2007-07-01 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Sun Jul 01 2007 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 23: {id: 63, tag_id: '789159357', name: 'Renny', breed: 'Austral', birth_date: '2024-04-10', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2024-04-10 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 24: {id: 57, tag_id: '321987654', name: 'Rinna', breed: 'Tabby', birth_date: '2024-03-18', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2024-03-18 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Mon Mar 18 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 25: {id: 21, tag_id: '123654', name: 'Rocco', breed: 'German Shepherd', birth_date: '2014-08-15', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2014-08-15 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Fri Aug 15 2014 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 26: {id: 12, tag_id: '12345-10', name: 'Romeo', breed: 'Santa Gertrudis', birth_date: '2023-07-01', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2023-07-01 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Sat Jul 01 2023 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 27: {id: 16, tag_id: '12345-13', name: 'Tekn', breed: 'Santa Gertrudis', birth_date: '2024-10-05', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2024-10-05 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Sat Oct 05 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 28: {id: 20, tag_id: '12345-54321', name: 'Thor', breed: 'Santa Gertrudis', birth_date: '2025-10-29', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2025-10-29 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Wed Oct 29 2025 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:350 Processing animal 29: {id: 62, tag_id: '689357241', name: 'Zenny', breed: 'Austral', birth_date: '2024-04-10', …}
+script.js?v=unknown&t=1763033973:8 Calculating age for birthDate: 2024-04-10 type: string
+script.js?v=unknown&t=1763033973:22 Parsed birth date: Wed Apr 10 2024 10:00:00 GMT+1000 (Australian Eastern Standard Time) today: Thu Nov 13 2025 21:39:33 GMT+1000 (Australian Eastern Standard Time)
+script.js?v=unknown&t=1763033973:396 Total filter width for livestock: 0px
+script.js?v=unknown&t=1763033973:397 Current table width: 321px
+script.js?v=unknown&t=1763033973:441 Set livestock table width to 0px with 4 columns
+script.js?v=unknown&t=1763033973:368 Table population completed
+script.js?v=unknown&t=1763033973:213 Populating filter tabs...
+script.js?v=unknown&t=1763033973:216 Fetching animals for dynamic type extraction...
+script.js?v=unknown&t=1763033973:218 Animals response status: 200
+script.js?v=unknown&t=1763033973:226 All animals: (29) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+script.js?v=unknown&t=1763033973:233 Processing animal: Brjost, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Digr, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Duke, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: George, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Grind, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Henny, Gender: "Hen", Breed: "Austral", Type: Fowl
+script.js?v=unknown&t=1763033973:233 Processing animal: Hjartr, Gender: "Queen", Breed: "Persian/Ragdoll", Type: Cat
+script.js?v=unknown&t=1763033973:233 Processing animal: Horn, Gender: "Heifer", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Indie, Gender: "Bitch", Breed: "Husky-Malamute", Type: Dog
+script.js?v=unknown&t=1763033973:233 Processing animal: Jenny, Gender: "Hen", Breed: "Austral", Type: Fowl
+script.js?v=unknown&t=1763033973:233 Processing animal: Juliet, Gender: "Heifer", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Kiriko, Gender: "Rooster", Breed: "Rhode Island Red", Type: Fowl
+script.js?v=unknown&t=1763033973:233 Processing animal: Lag, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Lutr, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Meyla, Gender: "Bitch", Breed: "Sheprador", Type: Dog
+script.js?v=unknown&t=1763033973:233 Processing animal: Mini, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Mjolka, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Ms July, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Mum, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: OldGirl, Gender: "Cow", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Penny, Gender: "Hen", Breed: "Austral", Type: Fowl
+script.js?v=unknown&t=1763033973:233 Processing animal: Prince, Gender: "Steer", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Renny, Gender: "Hen", Breed: "Austral", Type: Fowl
+script.js?v=unknown&t=1763033973:233 Processing animal: Rinna, Gender: "Queen", Breed: "Tabby", Type: Cat
+script.js?v=unknown&t=1763033973:233 Processing animal: Rocco, Gender: "Dog", Breed: "German Shepherd", Type: Dog
+script.js?v=unknown&t=1763033973:233 Processing animal: Romeo, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Tekn, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Thor, Gender: "Bull", Breed: "Santa Gertrudis", Type: Cattle
+script.js?v=unknown&t=1763033973:233 Processing animal: Zenny, Gender: "Hen", Breed: "Austral", Type: Fowl
+script.js?v=unknown&t=1763033973:238 Dynamic animal types extracted: (5) ['All', 'Cat', 'Cattle', 'Dog', 'Fowl']
+script.js?v=unknown&t=1763033973:256 Animal: Brjost, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Digr, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: George, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Grind, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Henny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Hjartr, Gender: Queen, Breed: Persian/Ragdoll, Type: Cat, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Horn, Gender: Heifer, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Indie, Gender: Bitch, Breed: Husky-Malamute, Type: Dog, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Jenny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Juliet, Gender: Heifer, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Kiriko, Gender: Rooster, Breed: Rhode Island Red, Type: Fowl, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Lag, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Lutr, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Meyla, Gender: Bitch, Breed: Sheprador, Type: Dog, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Mini, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Ms July, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Mum, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: OldGirl, Gender: Cow, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Penny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Prince, Gender: Steer, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Renny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Rinna, Gender: Queen, Breed: Tabby, Type: Cat, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Rocco, Gender: Dog, Breed: German Shepherd, Type: Dog, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Romeo, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Tekn, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Thor, Gender: Bull, Breed: Santa Gertrudis, Type: Cattle, Status: Active
+script.js?v=unknown&t=1763033973:256 Animal: Zenny, Gender: Hen, Breed: Austral, Type: Fowl, Status: Active
+script.js?v=unknown&t=1763033973:294 Creating tab for Cat with count: 2
+script.js?v=unknown&t=1763033973:294 Creating tab for Cattle with count: 16
+script.js?v=unknown&t=1763033973:294 Creating tab for Dog with count: 3
+script.js?v=unknown&t=1763033973:294 Creating tab for Fowl with count: 6
+script.js?v=unknown&t=1763033973:318 Filter tabs populated successfully with counts: {Cattle: 16, Fowl: 6, Cat: 2, Dog: 3}
+script.js?v=unknown&t=1763033973:1514 setupSectionTabs: Found 3 section tabs
+script.js?v=unknown&t=1763033973:1517 setupSectionTabs: Setting up listener for tab: livestock
+script.js?v=unknown&t=1763033973:1517 setupSectionTabs: Setting up listener for tab: assets
+script.js?v=unknown&t=1763033973:1517 setupSectionTabs: Setting up listener for tab: calendar
+script.js?v=unknown&t=1763033973:2245 script.js: Found table element: <table id=​"livestock-list" style=​"width:​ 0px;​ min-width:​ 0px;​ table-layout:​ fixed;​">​…​</table>​
+script.js?v=unknown&t=1763033973:393 Filter button width: 99px, margins: 0px, total so far: 99px
+script.js?v=unknown&t=1763033973:393 Filter button width: 100px, margins: -2px, total so far: 197px
+script.js?v=unknown&t=1763033973:393 Filter button width: 125px, margins: -2px, total so far: 320px
+script.js?v=unknown&t=1763033973:393 Filter button width: 105px, margins: -2px, total so far: 423px
+script.js?v=unknown&t=1763033973:393 Filter button width: 111px, margins: -2px, total so far: 532px
+script.js?v=unknown&t=1763033973:393 Filter button width: 84px, margins: -2px, total so far: 614px
+script.js?v=unknown&t=1763033973:396 Total filter width for livestock: 614px
+script.js?v=unknown&t=1763033973:397 Current table width: 301px
+script.js?v=unknown&t=1763033973:441 Set livestock table width to 614px with 4 columns
+script.js?v=unknown&t=1763033973:1520 Tab clicked: calendar
+script.js?v=unknown&t=1763033973:1550 Showing calendar section
+script.js?v=unknown&t=1763033973:2975 loadCalendarEvents: Starting to load calendar events
+script.js?v=unknown&t=1763033973:2980 loadCalendarEvents: Filters: {filterType: 'month', entryType: '', category: ''}
+script.js?v=unknown&t=1763033973:3025 loadCalendarEvents: Date range: {filterType: 'month', startDate: '2025-11-01', endDate: '2025-11-30', currentDate: '2025-11-13'}
+script.js?v=unknown&t=1763033973:3038 loadCalendarEvents: Fetching URL: api/calendar?filter_type=month&start_date=2025-11-01&end_date=2025-11-30
+script.js?v=unknown&t=1763033973:3039 loadCalendarEvents: Full URL would be: http://192.168.1.130:8123api/calendar?filter_type=month&start_date=2025-11-01&end_date=2025-11-30
+script.js?v=unknown&t=1763033973:3043 loadCalendarEvents: Response status: 200
+script.js?v=unknown&t=1763033973:3044 loadCalendarEvents: Response headers: (8) [Array(2), Array(2), Array(2), Array(2), Array(2), Array(2), Array(2), Array(2)]
+script.js?v=unknown&t=1763033973:3045 loadCalendarEvents: Response URL: http://192.168.1.130:8123/api/hassio_ingress/E-cW3ksrmsjgl9U53YJMYeHxTZ5U1YAyZBGWznjqqM4/api/calendar?filter_type=month&start_date=2025-11-01&end_date=2025-11-30
+script.js?v=unknown&t=1763033973:3055 loadCalendarEvents: Successfully loaded events: (3) [{…}, {…}, {…}]
+script.js?v=unknown&t=1763033973:3143 displayCalendarEvents: Received events: (3) [{…}, {…}, {…}]
+script.js?v=unknown&t=1763033973:3144 displayCalendarEvents: Event types breakdown: {informational: 2, event: 1}
+script.js?v=unknown&t=1763033973:3397 Month view Day 1 (2025-11-01): Found 1 events: ['Maintenance Completed: Excavator']
+script.js?v=unknown&t=1763033973:3397 Month view Day 9 (2025-11-09): Found 1 events: ['Birth: Lutr']
+script.js?v=unknown&t=1763033973:3397 Month view Day 15 (2025-11-15): Found 1 events: ['Oil and Filter Change']
+script.js?v=unknown&t=1763033973:3071 === CALENDAR EVENT CLICK DEBUG ===
+script.js?v=unknown&t=1763033973:3072 Element dataset: DOMStringMap {event: '{"id":32,"title":"Oil and Filter Change","date":"2…_name":"Golf (VolksWagen 2011 Golf MK6 TDI 2.0)"}'}
+script.js?v=unknown&t=1763033973:3073 Raw dataset.event: {"id":32,"title":"Oil and Filter Change","date":"2025-11-15","time":"10:00:00","duration":2,"entry_type":"event","category":"asset","description":"Change oil and filters for golf.","related_id":8,"related_name":"Golf (VolksWagen 2011 Golf MK6 TDI 2.0)"}
+script.js?v=unknown&t=1763033973:3074 Parsed eventData: {id: 32, title: 'Oil and Filter Change', date: '2025-11-15', time: '10:00:00', duration: 2, …}
+script.js?v=unknown&t=1763033973:1275 === DELETE BUTTON LOGIC DEBUG ===
+script.js?v=unknown&t=1763033973:1276 Full eventData object: {id: 32, title: 'Oil and Filter Change', date: '2025-11-15', time: '10:00:00', duration: 2, …}
+script.js?v=unknown&t=1763033973:1277 eventData.id: 32
+script.js?v=unknown&t=1763033973:1278 eventData.entry_type: event
+script.js?v=unknown&t=1763033973:1279 eventData.entry_type === "event": true
+script.js?v=unknown&t=1763033973:1280 Both conditions (id && entry_type === "event"): true
+script.js?v=unknown&t=1763033973:1283 ✅ SHOWING DELETE BUTTON
+script.js?v=unknown&t=1763033973:1927 Loading maintenance history for asset: 8
+script.js?v=unknown&t=1763033973:1935 Maintenance records: [{…}]
+script.js?v=unknown&t=1763033973:2570 Scheduled event row clicked!
+script.js?v=unknown&t=1763033973:2573 Event ID: 32
+script.js?v=unknown&t=1763033973:1431 loadEventForEdit called with eventId: 32
+script.js?v=unknown&t=1763033973:1438 Event loaded for editing: {id: 32, date: '2025-11-15', time: '10:00', duration: 2, category: 'asset', …}
+script.js?v=unknown&t=1763033973:1491 Error loading event for editing: TypeError: Cannot set properties of null (setting 'textContent')
+    at loadEventForEdit (script.js?v=unknown&t=1763033973:1476:31)
+loadEventForEdit @ script.js?v=unknown&t=1763033973:1491
 await in loadEventForEdit
-(anonymous) @ script.js?v=unknown&t=1763032533:2582
+(anonymous) @ script.js?v=unknown&t=1763033973:2582
+script.js?v=unknown&t=1763033973:1520 Tab clicked: assets
+script.js?v=unknown&t=1763033973:1564 Populating asset filter tabs...
+script.js?v=unknown&t=1763033973:1639 populateAssetList called with filter: All
+script.js?v=unknown&t=1763033973:1520 Tab clicked: assets
+script.js?v=unknown&t=1763033973:1564 Populating asset filter tabs...
+script.js?v=unknown&t=1763033973:1639 populateAssetList called with filter: All
+script.js?v=unknown&t=1763033973:1571 Assets data received for filter tabs: (25) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+script.js?v=unknown&t=1763033973:1575 Asset categories found: (5) ['Tool', 'Vehicle', 'Machinery', 'Equipment', 'Building']
+script.js?v=unknown&t=1763033973:1619 Asset filter tabs populated successfully
+script.js?v=unknown&t=1763033973:1641 Assets fetch response status: 200
+script.js?v=unknown&t=1763033973:1648 Assets data received: (25) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+script.js?v=unknown&t=1763033973:1649 Number of assets: 25
+script.js?v=unknown&t=1763033973:1656 Filtered assets count: 16
+script.js?v=unknown&t=1763033973:1667 Processing asset 1: {id: 7, name: 'Amarok', make: 'VolksWagen', model: '2013 AMAROK TDI420 2H', location: '210 Woodswallow Moolboolaman Qld 6571', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 2: {id: 17, name: 'Bambu Printer', make: 'BambuLab', model: 'P1S', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 3: {id: 15, name: 'Blue Mower', make: 'Bushranger', model: '72V electric 30" ride-on Mower', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 4: {id: 3, name: 'Bus', make: 'Toyota', model: '2010 Coaster', location: 'NMT Toowoomba Depot', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 5: {id: 23, name: 'Car Trailer', make: 'Trailers Direct', model: "2022 16' 2.9T Dual Axle", location: 'Cattle Yard', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 6: {id: 25, name: 'Enclosed Trailer', make: 'Nathan Trailers', model: 'Enclosed 3 Door Single Axel', location: 'Cattle Yard', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 7: {id: 6, name: 'Excavator', make: 'China Excavators', model: 'EX10-1 (1 ton mini excavator)', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 8: {id: 4, name: 'Falcon Ute', make: 'Ford', model: '2009 FG Falcon XR6 Turbo Ute', location: '210 Woodswallow Moolboolaman Qld 6571', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 9: {id: 2, name: 'Generator 10KVA ', make: 'EXEQ', model: '2025 EXEQ10-1', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 10: {id: 8, name: 'Golf', make: 'VolksWagen', model: '2011 Golf MK6 TDI 2.0', location: 'NMT Toowoomba Depot', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 11: {id: 5, name: 'Mini', make: 'BMW Mini', model: '2003 R52', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 12: {id: 10, name: 'Ryobi Mower', make: 'Ryobi', model: '2024 R80XZTR42', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 13: {id: 9, name: 'SWM', make: 'SWM', model: '2016 RS650R', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 14: {id: 16, name: 'Studio', make: 'China Home', model: 'L0206-1', location: '210 Woodswallow Moolboolaman Qld 6571', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 15: {id: 1, name: 'Tractor', make: 'Massey Fergusson', model: 'MF35', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 16: {id: 24, name: 'Trailer', make: 'Nathan Trailers', model: '8x5 dual axel', location: 'Cattle Yard', …}
+script.js?v=unknown&t=1763033973:393 Filter button width: 99px, margins: 0px, total so far: 99px
+script.js?v=unknown&t=1763033973:393 Filter button width: 105px, margins: -2px, total so far: 202px
+script.js?v=unknown&t=1763033973:393 Filter button width: 125px, margins: -2px, total so far: 325px
+script.js?v=unknown&t=1763033973:393 Filter button width: 151px, margins: -2px, total so far: 474px
+script.js?v=unknown&t=1763033973:393 Filter button width: 150px, margins: -2px, total so far: 622px
+script.js?v=unknown&t=1763033973:393 Filter button width: 126px, margins: -2px, total so far: 746px
+script.js?v=unknown&t=1763033973:393 Filter button width: 84px, margins: -2px, total so far: 828px
+script.js?v=unknown&t=1763033973:396 Total filter width for assets: 828px
+script.js?v=unknown&t=1763033973:397 Current table width: 2679px
+script.js?v=unknown&t=1763033973:441 Set assets table width to 828px with 5 columns
+script.js?v=unknown&t=1763033973:1571 Assets data received for filter tabs: (25) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+script.js?v=unknown&t=1763033973:1575 Asset categories found: (5) ['Tool', 'Vehicle', 'Machinery', 'Equipment', 'Building']
+script.js?v=unknown&t=1763033973:1619 Asset filter tabs populated successfully
+script.js?v=unknown&t=1763033973:1641 Assets fetch response status: 200
+script.js?v=unknown&t=1763033973:1648 Assets data received: (25) [{…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}, {…}]
+script.js?v=unknown&t=1763033973:1649 Number of assets: 25
+script.js?v=unknown&t=1763033973:1656 Filtered assets count: 16
+script.js?v=unknown&t=1763033973:1667 Processing asset 1: {id: 7, name: 'Amarok', make: 'VolksWagen', model: '2013 AMAROK TDI420 2H', location: '210 Woodswallow Moolboolaman Qld 6571', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 2: {id: 17, name: 'Bambu Printer', make: 'BambuLab', model: 'P1S', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 3: {id: 15, name: 'Blue Mower', make: 'Bushranger', model: '72V electric 30" ride-on Mower', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 4: {id: 3, name: 'Bus', make: 'Toyota', model: '2010 Coaster', location: 'NMT Toowoomba Depot', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 5: {id: 23, name: 'Car Trailer', make: 'Trailers Direct', model: "2022 16' 2.9T Dual Axle", location: 'Cattle Yard', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 6: {id: 25, name: 'Enclosed Trailer', make: 'Nathan Trailers', model: 'Enclosed 3 Door Single Axel', location: 'Cattle Yard', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 7: {id: 6, name: 'Excavator', make: 'China Excavators', model: 'EX10-1 (1 ton mini excavator)', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 8: {id: 4, name: 'Falcon Ute', make: 'Ford', model: '2009 FG Falcon XR6 Turbo Ute', location: '210 Woodswallow Moolboolaman Qld 6571', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 9: {id: 2, name: 'Generator 10KVA ', make: 'EXEQ', model: '2025 EXEQ10-1', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 10: {id: 8, name: 'Golf', make: 'VolksWagen', model: '2011 Golf MK6 TDI 2.0', location: 'NMT Toowoomba Depot', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 11: {id: 5, name: 'Mini', make: 'BMW Mini', model: '2003 R52', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 12: {id: 10, name: 'Ryobi Mower', make: 'Ryobi', model: '2024 R80XZTR42', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 13: {id: 9, name: 'SWM', make: 'SWM', model: '2016 RS650R', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 14: {id: 16, name: 'Studio', make: 'China Home', model: 'L0206-1', location: '210 Woodswallow Moolboolaman Qld 6571', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 15: {id: 1, name: 'Tractor', make: 'Massey Fergusson', model: 'MF35', location: 'Big Shed', …}
+script.js?v=unknown&t=1763033973:1667 Processing asset 16: {id: 24, name: 'Trailer', make: 'Nathan Trailers', model: '8x5 dual axel', location: 'Cattle Yard', …}
+script.js?v=unknown&t=1763033973:393 Filter button width: 99px, margins: 0px, total so far: 99px
+script.js?v=unknown&t=1763033973:393 Filter button width: 105px, margins: -2px, total so far: 202px
+script.js?v=unknown&t=1763033973:393 Filter button width: 125px, margins: -2px, total so far: 325px
+script.js?v=unknown&t=1763033973:393 Filter button width: 151px, margins: -2px, total so far: 474px
+script.js?v=unknown&t=1763033973:393 Filter button width: 150px, margins: -2px, total so far: 622px
+script.js?v=unknown&t=1763033973:393 Filter button width: 126px, margins: -2px, total so far: 746px
+script.js?v=unknown&t=1763033973:393 Filter button width: 84px, margins: -2px, total so far: 828px
+script.js?v=unknown&t=1763033973:396 Total filter width for assets: 828px
+script.js?v=unknown&t=1763033973:397 Current table width: 828px
+script.js?v=unknown&t=1763033973:441 Set assets table width to 828px with 5 columns
+script.js?v=unknown&t=1763033973:2825 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'dataset')
+    at HTMLFormElement.<anonymous> (script.js?v=unknown&t=1763033973:2825:42)
+(anonymous) @ script.js?v=unknown&t=1763033973:2825
+script.js?v=unknown&t=1763033973:2825 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'dataset')
+    at HTMLFormElement.<anonymous> (script.js?v=unknown&t=1763033973:2825:42)
+(anonymous) @ script.js?v=unknown&t=1763033973:2825
+script.js?v=unknown&t=1763033973:2825 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'dataset')
+    at HTMLFormElement.<anonymous> (script.js?v=unknown&t=1763033973:2825:42)
+(anonymous) @ script.js?v=unknown&t=1763033973:2825

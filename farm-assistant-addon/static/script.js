@@ -2014,10 +2014,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                     
                     // Add special styling for scheduled events
                     const rowClass = record.record_type === 'scheduled' ? 'scheduled-event-row' : 'maintenance-record-row';
-                    const dataAttr = record.record_type === 'scheduled' ? 'data-scheduled-id' : 'data-maintenance-id';
                     
                     tableHtml += `
-                        <tr class="${rowClass}" ${dataAttr}="${record.id}" style="cursor: pointer;">
+                        <tr class="${rowClass}" ${record.record_type === 'scheduled' ? 'data-scheduled-id' : 'data-maintenance-id'}="${record.id}" style="cursor: pointer;">
                             <td>${date}</td>
                             <td>${taskDescription}</td>
                             <td>${record.supplier || 'N/A'}</td>

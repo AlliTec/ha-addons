@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.55 - 2025-11-13
+
+### Fixed
+- **Scheduled Event Data Attribute**: Fixed incorrect data attribute rendering in maintenance history table
+- **Event Edit Click Handler**: Scheduled events now properly have `data-scheduled-id` attribute set
+- **JavaScript Template Literal**: Fixed dynamic attribute assignment in table row generation
+- **Event Editing Access**: Users can now click scheduled events in maintenance history to edit them
+
+### Technical
+- **Data Attribute Assignment**: Corrected template literal to properly set data attributes for scheduled events
+- **Row Click Detection**: Scheduled event rows now have correct data attributes for JavaScript event handling
+- **Edit Workflow**: Complete edit workflow now functional from maintenance history modal
+
 ## 1.10.54 - 2025-11-13
 
 ### Fixed
