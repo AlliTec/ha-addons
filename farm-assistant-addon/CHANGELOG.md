@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.10.59 - 2025-11-14
+
+### Investigated
+- **Future Events Display**: Calendar API correctly returns future events when they exist
+- **Database Verification**: Confirmed future asset dates (registration due, warranty expiry) are present
+- **API Testing**: March 2026, May 2026, May 2028 all return correct future events
+- **Test Event Creation**: Created test event for December 2025 to verify functionality
+
+### Confirmed Working
+- **Future Date API**: Calendar API properly handles future dates beyond current year
+- **Asset Registration**: Golf and SWM registration due dates show for March 2026
+- **Warranty Expiry**: Ryobi battery warranty expiry dates show for May 2028
+- **User-Created Events**: Future calendar events display correctly when present
+
+### User Guidance
+- **Navigation Required**: Users must navigate to specific months using calendar navigation
+- **Event Availability**: Future events only display for months that actually have events
+- **Working Months**: March 2026, May 2026, May 2028 confirmed to have events
+
 ## 1.10.58 - 2025-11-14
 
 ### Fixed

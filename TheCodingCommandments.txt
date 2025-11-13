@@ -18,11 +18,13 @@ Thine feature in progress shall have no console or API errors.
 If thoust findeth errors withing thine code, thou shalt remedy the error with care and ensure the error is addressed appropriately.
 If error is found and remedied, thou shalt perform step IV once more.
 All of the above shall be tested and remedied before proceeding.
-V. Thou shalt follow the sacred process.
+V. Thour shalt break free of loops
+if thou findeth in thine loop of perpetuity, thout must breaketh free and remedy the cause of the looop usising these commandments.
+VI. Thou shalt follow the sacred process.
 The version in config.yaml shall be updated.
 The changelog shall be updated with the changes made.
 Thy changes shall be committed with git add and git commit.
 Thy changes shall be pushed using ./run_gitpush.sh.
-VI. Thou shalt spread the WORD of righteous coding.
+VII. Thou shalt spread the WORD of righteous coding.
 Provide a checklist of commandments followed.
 Provide a concise summary of the actions performed.
