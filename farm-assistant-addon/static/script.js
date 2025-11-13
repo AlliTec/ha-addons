@@ -2805,6 +2805,27 @@ document.addEventListener("DOMContentLoaded", async () => {
             </div>
             <div class="day-timeline">`;
         
+        // Create hourly layout with event spanning
+        // Initialize hourly segments array to track occupied hours
+        const hourlySegments = Array(24).fill(null);
+        
+        // Process events and mark occupied hours
+        dayEvents.forEach(event => {
+            if (!event.time) return; // Skip events without time
+            
+            const startHour = parseInt(event.time.split(':')[0]);
+            const duration = event.duration || 1.0;
+            const endHour = Math.min(startHour + Math.ceil(duration), 24);
+            
+            // Mark all hours this event occupies
+            for (let hour = startHour; hour < endHour; hour++) {
+                if (!hourlySegments[hour]) {
+                    hourlySegments[hour] = [];
+                }
+                hourlySegments[hour].push(event);
+            }
+        });
+        
         // Create 24-hour segments
         for (let hour = 0; hour < 24; hour++) {
             const isDaylight = hour >= sunriseTime && hour <= sunsetTime;
@@ -2814,31 +2835,47 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div class="hour-label">${hourStr}</div>
                 <div class="hour-events">`;
             
-            // Check if any events start at this hour
-            const hourEvents = dayEvents.filter(event => {
-                if (!event.time) return false; // Skip events without time
-                const eventHour = parseInt(event.time.split(':')[0]);
-                return eventHour === hour;
-            });
-            
-            if (hourEvents.length > 0) {
-                hourEvents.forEach(event => {
+            // Check if this hour has events
+            if (hourlySegments[hour] && hourlySegments[hour].length > 0) {
+                // Group events by start time to avoid duplicates
+                const eventsToShow = [];
+                const seenEvents = new Set();
+                
+                hourlySegments[hour].forEach(event => {
+                    const eventKey = `${event.id}-${event.title}`;
+                    if (!seenEvents.has(eventKey)) {
+                        seenEvents.add(eventKey);
+                        eventsToShow.push(event);
+                    }
+                });
+                
+                eventsToShow.forEach(event => {
                     const displayName = event.related_name || event.title;
                     const isCompleted = event.status === 'completed';
                     const icon = event.category === 'livestock' ? '🐄' : '🔧';
                     const completedIcon = isCompleted ? ' <i class="fa-solid fa-check-circle" style="color: #4caf50;"></i>' : '';
                     
-                    // Calculate duration in hours for spanning
+                    const startHour = parseInt(event.time.split(':')[0]);
                     const duration = event.duration || 1.0;
-                    const height = Math.max(duration * 40, 40); // 40px per hour, minimum 40px
                     
-                    html += `<div class="event-item ${event.entry_type}" data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' onclick="event.stopPropagation(); handleCalendarEventClick(this)" style="height: ${height}px; position: relative;">
-                        <div class="event-time">${event.time || 'All Day'}</div>
-                        <div class="event-content-small">
-                            <div class="event-title-small">${event.title}</div>
-                            <div class="event-meta-small">${icon} ${displayName}${completedIcon}</div>
-                            ${duration > 1 ? `<div class="event-duration">${duration}h</div>` : ''}
-                        </div>
+                    // Check if this is the first hour of the event
+                    const isFirstHour = hour === startHour;
+                    
+                    html += `<div class="event-item ${event.entry_type} ${isFirstHour ? 'event-start' : 'event-continuation'}" 
+                             data-event='${JSON.stringify(event).replace(/'/g, '&apos;')}' 
+                             onclick="event.stopPropagation(); handleCalendarEventClick(this)">
+                        ${isFirstHour ? `
+                            <div class="event-time">${event.time}</div>
+                            <div class="event-content-small">
+                                <div class="event-title-small">${event.title}</div>
+                                <div class="event-meta-small">${icon} ${displayName}${completedIcon}</div>
+                                ${duration > 1 ? `<div class="event-duration">${duration}h</div>` : ''}
+                            </div>
+                        ` : `
+                            <div class="event-continuation-indicator">
+                                ${icon} ${duration > 1 ? '↳' : ''}
+                            </div>
+                        `}
                     </div>`;
                 });
             }
