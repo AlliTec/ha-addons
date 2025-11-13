@@ -370,10 +370,10 @@ async def add_event(event: Event):
             # Also add to calendar for display
             await conn.execute("""
                 INSERT INTO calendar_entries 
-                (entry_date, entry_type, category, title, description, related_id, related_name, created_at)
-                VALUES ($1, 'event', $2, $3, $4, $5, 
-                        (SELECT name || ' (' || tag_id || ')' FROM livestock_records WHERE id = $5), NOW())
-            """, event_date, 'livestock', event.title, event.notes, event.item_id)
+                (entry_date, event_time, duration_hours, entry_type, category, title, description, related_id, related_name, created_at)
+                VALUES ($1, $2, $3, 'event', $4, $5, $6, $7, 
+                        (SELECT name || ' (' || tag_id || ')' FROM livestock_records WHERE id = $7), NOW())
+            """, event_date, datetime.strptime(event.time, '%H:%M').time(), event.duration, 'livestock', event.title, event.notes, event.item_id)
             
         elif event.category == 'asset':
             # Add to maintenance_history table
@@ -389,10 +389,10 @@ async def add_event(event: Event):
             # Also add to calendar for display
             await conn.execute("""
                 INSERT INTO calendar_entries 
-                (entry_date, entry_type, category, title, description, related_id, related_name, created_at)
-                VALUES ($1, 'event', $2, $3, $4, $5, 
-                        (SELECT name || ' (' || make || ' ' || COALESCE(model, '') || ')' FROM asset_inventory WHERE id = $5), NOW())
-            """, event_date, 'asset', event.title, event.notes, event.item_id)
+                (entry_date, event_time, duration_hours, entry_type, category, title, description, related_id, related_name, created_at)
+                VALUES ($1, $2, $3, 'event', $4, $5, $6, $7, 
+                        (SELECT name || ' (' || make || ' ' || COALESCE(model, '') || ')' FROM asset_inventory WHERE id = $7), NOW())
+            """, event_date, datetime.strptime(event.time, '%H:%M').time(), event.duration, 'asset', event.title, event.notes, event.item_id)
         
         logging.info(f"Event added successfully for {event.category} item {event.item_id}")
         return {"message": "Event added successfully", "id": "success"}
@@ -1106,7 +1106,7 @@ async def get_calendar_events(
         # Calendar events (user-created events)
         calendar_events_query = """
             SELECT 
-                id, entry_date, title, description, entry_type, 
+                id, entry_date, event_time, duration_hours, title, description, entry_type, 
                 category, related_id, related_name
             FROM calendar_entries 
             WHERE entry_date BETWEEN $1 AND $2
@@ -1119,6 +1119,8 @@ async def get_calendar_events(
                 "id": record['id'],
                 "title": record['title'],
                 "date": record['entry_date'].isoformat(),
+                "time": record['event_time'].isoformat() if record['event_time'] else None,
+                "duration": float(record['duration_hours']) if record['duration_hours'] else 1.0,
                 "entry_type": record['entry_type'],
                 "category": record['category'],
                 "description": record['description'] or '',
