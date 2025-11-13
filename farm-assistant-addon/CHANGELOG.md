@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.10.57 - 2025-11-14
+
+### Fixed
+- **Invalid Date Handling**: Fixed calendar not displaying events with invalid dates (year 6, etc.)
+- **Asset Registration Display**: Bus registration due event now properly shows in February calendar
+- **Date Validation**: Added comprehensive date validation for all calendar events (1900-2100 range)
+- **Database Date Fix**: Corrected invalid registration date from 0006-02-16 to 2025-02-16
+
+### Technical
+- **Date Range Validation**: Added year validation for livestock birth/death dates and asset due dates
+- **Calendar Reliability**: Prevents invalid dates from breaking calendar display
+- **Error Logging**: Added logging for skipped invalid dates for debugging
+- **API Testing**: Verified calendar API correctly returns February events
+
 ## 1.10.56 - 2025-11-14
 
 ### Fixed

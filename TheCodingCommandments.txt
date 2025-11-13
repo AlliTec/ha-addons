@@ -3,6 +3,7 @@ The holy paths, such as /farm-assistant-addon/, or /home/sog/ai-projects/ha-addo
 There shall be no "No such file or directory" errors.
 There shall be no "...did nto match any file."
 If you cannot find a file thou shalt add "/farm-assistant-addon/" to ensure they are on the righteous path.
+If thou find thyself in a loop, one must then cd /home/sog/ai-projects/ha-addons/farm-assistant-addon
 II. Thou shalt ensure thy code is syntactically pure.
 python3 -m py_compile main.py shall complete with no errors.
 If a path error or similar error is found, check and correct all like code in the addon.

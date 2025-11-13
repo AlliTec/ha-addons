@@ -1284,39 +1284,49 @@ async def get_calendar_events(
         for record in livestock_records:
             # Birth date event
             if record['birth_date']:
-                birth_date_str = record['birth_date'].isoformat()
-                print(f"Processing livestock birth: {record['name']}, birth_date={record['birth_date']}, birth_date_str={birth_date_str}")
-                if start_date <= birth_date_str <= end_date:
-                    print(f"Adding birth event for {record['name']} on {birth_date_str}")
-                    events.append({
-                        "title": f"Birth: {record['name']}",
-                        "date": birth_date_str,
-                        "entry_type": "informational",
-                        "category": "livestock",
-                        "description": f"{record['gender']} - {record.get('health_status', 'Unknown status')}",
-                        "related_id": record['id'],
-                        "related_name": record['name']
-                    })
+                # Validate date is reasonable (between 1900 and current year + 1)
+                current_year = datetime.now().year
+                if record['birth_date'].year >= 1900 and record['birth_date'].year <= current_year + 1:
+                    birth_date_str = record['birth_date'].isoformat()
+                    print(f"Processing livestock birth: {record['name']}, birth_date={record['birth_date']}, birth_date_str={birth_date_str}")
+                    if start_date <= birth_date_str <= end_date:
+                        print(f"Adding birth event for {record['name']} on {birth_date_str}")
+                        events.append({
+                            "title": f"Birth: {record['name']}",
+                            "date": birth_date_str,
+                            "entry_type": "informational",
+                            "category": "livestock",
+                            "description": f"{record['gender']} - {record.get('health_status', 'Unknown status')}",
+                            "related_id": record['id'],
+                            "related_name": record['name']
+                        })
+                    else:
+                        print(f"Skipping birth event for {record['name']} - date {birth_date_str} not in range {start_date} to {end_date}")
                 else:
-                    print(f"Skipping birth event for {record['name']} - date {birth_date_str} not in range {start_date} to {end_date}")
+                    print(f"Skipping invalid birth date for {record['name']}: {record['birth_date']} (year out of range)")
             
             # Death date event
             if record['dod']:
-                dod_date_str = record['dod'].isoformat()
-                print(f"Processing livestock death: {record['name']}, dod={record['dod']}, dod_date_str={dod_date_str}")
-                if start_date <= dod_date_str <= end_date:
-                    print(f"Adding death event for {record['name']} on {dod_date_str}")
-                    events.append({
-                        "title": f"Deceased: {record['name']}",
-                        "date": dod_date_str,
-                        "entry_type": "informational",
-                        "category": "livestock",
-                        "description": f"{record['gender']} - {record.get('health_status', 'Unknown status')}",
-                        "related_id": record['id'],
-                        "related_name": record['name']
-                    })
+                # Validate date is reasonable (between 1900 and current year + 1)
+                current_year = datetime.now().year
+                if record['dod'].year >= 1900 and record['dod'].year <= current_year + 1:
+                    dod_date_str = record['dod'].isoformat()
+                    print(f"Processing livestock death: {record['name']}, dod={record['dod']}, dod_date_str={dod_date_str}")
+                    if start_date <= dod_date_str <= end_date:
+                        print(f"Adding death event for {record['name']} on {dod_date_str}")
+                        events.append({
+                            "title": f"Deceased: {record['name']}",
+                            "date": dod_date_str,
+                            "entry_type": "informational",
+                            "category": "livestock",
+                            "description": f"{record['gender']} - {record.get('health_status', 'Unknown status')}",
+                            "related_id": record['id'],
+                            "related_name": record['name']
+                        })
+                    else:
+                        print(f"Skipping death event for {record['name']} - date {dod_date_str} not in range {start_date} to {end_date}")
                 else:
-                    print(f"Skipping death event for {record['name']} - date {dod_date_str} not in range {start_date} to {end_date}")
+                    print(f"Skipping invalid death date for {record['name']}: {record['dod']} (year out of range)")
         
         # Asset events
         asset_query = """
@@ -1356,49 +1366,61 @@ async def get_calendar_events(
             
             # Registration due event
             if record['registration_due']:
-                reg_date_str = record['registration_due'].isoformat()
-                print(f"Processing asset registration: {record['name']}, registration_due={record['registration_due']}, reg_date_str={reg_date_str}")
-                if start_date <= reg_date_str <= end_date:
-                    print(f"Adding registration event for {record['name']} on {reg_date_str}")
-                    events.append({
-                        "title": f"Registration Due: {record['name']}",
-                        "date": reg_date_str,
-                        "entry_type": "action",
-                        "category": "asset",
-                        "description": f"Registration renewal required for {record.get('category', 'asset')}",
-                        "related_id": record['id'],
-                        "related_name": record['name']
-                    })
+                # Validate date is reasonable (between 1900 and 2100)
+                if record['registration_due'].year >= 1900 and record['registration_due'].year <= 2100:
+                    reg_date_str = record['registration_due'].isoformat()
+                    print(f"Processing asset registration: {record['name']}, registration_due={record['registration_due']}, reg_date_str={reg_date_str}")
+                    if start_date <= reg_date_str <= end_date:
+                        print(f"Adding registration event for {record['name']} on {reg_date_str}")
+                        events.append({
+                            "title": f"Registration Due: {record['name']}",
+                            "date": reg_date_str,
+                            "entry_type": "action",
+                            "category": "asset",
+                            "description": f"Registration renewal required for {record.get('category', 'asset')}",
+                            "related_id": record['id'],
+                            "related_name": record['name']
+                        })
+                    else:
+                        print(f"Skipping registration event for {record['name']} - date {reg_date_str} not in range {start_date} to {end_date}")
                 else:
-                    print(f"Skipping registration event for {record['name']} - date {reg_date_str} not in range {start_date} to {end_date}")
+                    print(f"Skipping invalid registration date for {record['name']}: {record['registration_due']} (year out of range)")
             
             # Insurance due event
             if record['insurance_due']:
-                insurance_date_str = record['insurance_due'].isoformat()
-                if start_date <= insurance_date_str <= end_date:
-                    events.append({
-                        "title": f"Insurance Due: {record['name']}",
-                        "date": insurance_date_str,
-                        "entry_type": "action",
-                        "category": "asset",
-                        "description": f"Insurance renewal required for {record.get('category', 'asset')}",
-                        "related_id": record['id'],
-                        "related_name": record['name']
-                    })
+                # Validate date is reasonable (between 1900 and 2100)
+                if record['insurance_due'].year >= 1900 and record['insurance_due'].year <= 2100:
+                    insurance_date_str = record['insurance_due'].isoformat()
+                    if start_date <= insurance_date_str <= end_date:
+                        events.append({
+                            "title": f"Insurance Due: {record['name']}",
+                            "date": insurance_date_str,
+                            "entry_type": "action",
+                            "category": "asset",
+                            "description": f"Insurance renewal required for {record.get('category', 'asset')}",
+                            "related_id": record['id'],
+                            "related_name": record['name']
+                        })
+                else:
+                    print(f"Skipping invalid insurance date for {record['name']}: {record['insurance_due']} (year out of range)")
             
             # Warranty expiry event
             if record['warranty_expiry_date']:
-                warranty_date_str = record['warranty_expiry_date'].isoformat()
-                if start_date <= warranty_date_str <= end_date:
-                    events.append({
-                        "title": f"Warranty Expiry: {record['name']}",
-                        "date": warranty_date_str,
-                        "entry_type": "action",
-                        "category": "asset",
-                        "description": f"Warranty expiring for {record.get('category', 'asset')}",
-                        "related_id": record['id'],
-                        "related_name": record['name']
-                    })
+                # Validate date is reasonable (between 1900 and 2100)
+                if record['warranty_expiry_date'].year >= 1900 and record['warranty_expiry_date'].year <= 2100:
+                    warranty_date_str = record['warranty_expiry_date'].isoformat()
+                    if start_date <= warranty_date_str <= end_date:
+                        events.append({
+                            "title": f"Warranty Expiry: {record['name']}",
+                            "date": warranty_date_str,
+                            "entry_type": "action",
+                            "category": "asset",
+                            "description": f"Warranty expiring for {record.get('category', 'asset')}",
+                            "related_id": record['id'],
+                            "related_name": record['name']
+                        })
+                else:
+                    print(f"Skipping invalid warranty date for {record['name']}: {record['warranty_expiry_date']} (year out of range)")
         
         # Maintenance events
         maintenance_query = """
