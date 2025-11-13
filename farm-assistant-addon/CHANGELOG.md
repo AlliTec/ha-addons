@@ -1,5 +1,34 @@
 # Changelog
 
+## 1.10.50 - 2025-11-13
+
+### Fixed
+- **Multi-Row Event Spanning**: Events now properly span multiple hourly rows in day view
+- **Uniform Hour Heights**: All hourly segments maintain fixed 40px height
+- **Visual Event Continuity**: Multi-hour events show proper visual flow across time slots
+
+### Enhanced
+- **Hourly Segment Tracking**: Calendar tracks which hours are occupied by events
+- **Event Start vs Continuation**: First hour shows full details, subsequent hours show continuation indicator
+- **Time-Based Layout**: Events appear at correct start time and span appropriate duration
+- **Visual Distinction**: Clear difference between event start (solid border) and continuation (dashed border)
+
+### Technical
+- **Hourly Occupancy Array**: Track events in 24-hour array for proper spanning calculation
+- **Event Deduplication**: Prevent duplicate event rendering across multiple hours
+- **CSS Enhancements**: 
+  - `.event-start`: Solid border for first hour of multi-hour events
+  - `.event-continuation`: Dashed border for subsequent hours
+  - `.event-continuation-indicator`: Visual flow indicator with icon
+- **Responsive Layout**: Flexbox ensures proper alignment within hourly segments
+
+### User Experience
+- **Accurate Time Blocks**: 2-hour oil change spans exactly 10:00-11:00 rows
+- **3-Hour Events**: Properly cover 14:00, 15:00, and 16:00 time slots
+- **Visual Planning**: Users can see exact time commitments and availability
+- **Consistent Interface**: Uniform row heights maintain calendar readability
+- **Color-Coded Categories**: Asset/livestock events maintain category colors across all spanned hours
+
 ## 1.10.49 - 2025-11-13
 
 ### Added
