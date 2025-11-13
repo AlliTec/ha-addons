@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.48 - 2025-11-13
+
+### Fixed
+- **Event Creation JavaScript Error**: Fixed scope issue with saveEvent function causing "Error saving event" message
+- **Global Function Access**: Added saveEvent to global window object for proper accessibility
+- **Enhanced Debugging**: Added detailed error logging (error.message, error.stack) for better troubleshooting
+- **User Experience**: Both event creation and deletion now work without frontend error messages
+
+### Technical
+- **Function Scope**: Made saveEvent globally accessible alongside loadCalendarEvents
+- **Error Handling**: Enhanced console logging to capture full error details for debugging
+- **Consistency**: All event-related functions now properly accessible in global scope
+
 ## 1.10.47 - 2025-11-13
 
 ### Fixed
