@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.10.41 - 2025-11-13
+
+### Verified
+- **Event Deletion API**: Confirmed deletion functionality works correctly for user-created events
+- **Event ID Handling**: User-created events properly include ID field for deletion
+- **System Event Protection**: System-generated events correctly hide delete option
+- **Backend API Testing**: All calendar and event endpoints tested and working
+
+### Clarified
+- **Event Types**: Only user-created events (entry_type: 'event') can be deleted
+- **System Events**: System-generated events (births, deaths, maintenance) cannot be deleted
+- **Delete Button Logic**: Delete button only shows for events with valid ID and entry_type 'event'
+
+### Tested
+- **Event Creation**: Confirmed events are created with proper ID in calendar_entries table
+- **Event Deletion**: Verified DELETE /api/events/{event_id} endpoint works correctly
+- **Calendar Display**: Confirmed events appear/disappear properly in calendar view
+- **Modal Functionality**: Event details modal shows correct delete option based on event type
+
 ## 1.10.40 - 2025-11-13
 
 ### Fixed
