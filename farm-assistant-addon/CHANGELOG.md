@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.10.53 - 2025-11-13
+
+### Added
+- **Event Editing Functionality**: Complete event editing capability with modal form
+- **GET Event Endpoint**: Added `/api/events/{event_id}` endpoint to fetch individual events
+- **Scheduled Event Editing**: Click scheduled events in maintenance history to edit
+- **Event Form Edit Mode**: Dynamic form switching between create and edit modes
+
+### Enhanced
+- **Event Update API**: PUT endpoint updates calendar_entries, animal_history, and maintenance_history tables
+- **Form Button ID**: Added proper ID to event form submit button for JavaScript access
+- **Modal State Management**: Smart modal title and button text based on edit/create mode
+- **Delete Button Integration**: Delete button shows in edit mode for existing events
+
+### Technical
+- **Event Data Loading**: Comprehensive event data loading with proper field mapping
+- **Category Dropdown Sync**: Automatic item dropdown population when loading events for editing
+- **Error Handling**: Enhanced error handling for event loading and updating operations
+- **Database Transactions**: Atomic updates across multiple tables for event consistency
+
 ## 1.10.52 - 2025-11-13
 
 ### Enhanced

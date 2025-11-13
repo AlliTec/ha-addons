@@ -437,6 +437,93 @@ async def delete_event(event_id: int):
     finally:
         await conn.close()
 
+@app.get("/api/events/{event_id}")
+async def get_event(event_id: int):
+    """Get a specific calendar event by ID"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        logging.info(f"Fetching event with ID: {event_id}")
+        
+        # Get event from calendar_entries table
+        event = await conn.fetchrow("""
+            SELECT id, entry_date as date, event_time as time, duration_hours as duration,
+                   category, title, description as notes, related_id as item_id,
+                   entry_type, priority, status
+            FROM calendar_entries 
+            WHERE id = $1
+        """, event_id)
+        
+        if not event:
+            raise HTTPException(status_code=404, detail="Event not found")
+        
+        # Convert to dict and format time
+        event_dict = dict(event)
+        if event_dict['time']:
+            event_dict['time'] = event_dict['time'].strftime('%H:%M')
+        
+        logging.info(f"Event {event_id} retrieved successfully")
+        return event_dict
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error fetching event: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
+@app.put("/api/events/{event_id}")
+async def update_event(event_id: int, event: Event):
+    """Update a calendar event by ID"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        logging.info(f"Updating event {event_id}: {event}")
+        
+        # Combine date and time into full timestamp
+        event_datetime = f"{event.date} {event.time}:00"
+        
+        # Update calendar_entries table
+        await conn.execute("""
+            UPDATE calendar_entries 
+            SET entry_date = $1, event_time = $2, duration_hours = $3, category = $4, 
+                title = $5, description = $6, related_id = $7, updated_at = NOW()
+            WHERE id = $8
+        """, event.date, datetime.strptime(event.time, '%H:%M').time(), event.duration, 
+              event.category, event.title, event.notes, event.item_id, event_id)
+        
+        # Update animal_history if it's a livestock event
+        if event.category == 'livestock':
+            event_date = datetime.strptime(event.date, '%Y-%m-%d').date()
+            event_time = datetime.strptime(event.time, '%H:%M').time()
+            await conn.execute("""
+                UPDATE animal_history 
+                SET event_date = $1, event_time = $2, title = $3, duration_hours = $4, 
+                    notes = $5, status = $6, priority = $7, updated_at = NOW()
+                WHERE id = $8
+            """, event_date, event_time, event.title, event.duration, 
+                  event.notes, event.status, event.priority, event_id)
+        
+        # Update maintenance_history if it's an asset event
+        elif event.category == 'asset':
+            event_date = datetime.strptime(event.date, '%Y-%m-%d').date()
+            await conn.execute("""
+                UPDATE maintenance_history 
+                SET maintenance_type = $1, start_date = $2, completion_date = $3, 
+                    duration_hours = $4, notes = $5, status = $6, priority = $7, updated_at = NOW()
+                WHERE id = $8
+            """, event.title, event_date, 
+                  event_date if event.status == 'completed' else None, 
+                  event.duration, event.notes, event.status, event.priority, event_id)
+        
+        logging.info(f"Event {event_id} updated successfully")
+        return {"message": "Event updated successfully"}
+        
+    except Exception as e:
+        logging.error(f"Error updating event: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
 @app.post("/api/migrate/animal_history")
 async def migrate_animal_history():
     """Create animal_history table if it doesn't exist"""

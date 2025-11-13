@@ -1180,6 +1180,38 @@ async function saveEvent(eventData) {
     }
 }
 
+async function updateEvent(eventId, eventData) {
+    try {
+        console.log('Updating event with ID:', eventId, 'and data:', eventData);
+        const response = await fetch(`api/events/${eventId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(eventData)
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to update event');
+        }
+        
+        const result = await response.json();
+        console.log('Event updated successfully:', result);
+        
+        // Close modal and refresh calendar
+        document.getElementById('add-event-modal').style.display = 'none';
+        await loadCalendarEvents();
+        
+        return result;
+        
+    } catch (error) {
+        console.error('Error updating event:', error);
+        console.error('Error details:', error.message, error.stack);
+        alert('Error updating event. Please try again.');
+        throw error;
+    }
+}
+
 // Function to show event details modal
 function showEventDetailsModal(eventData) {
     const modal = document.getElementById('event-details-modal');
@@ -1390,6 +1422,74 @@ async function deleteMaintenanceSchedule(scheduleId) {
         console.error('Error details:', error.message, error.stack);
         alert('Error deleting maintenance schedule. Please try again.');
         throw error;
+    }
+}
+
+// Function to load event for editing
+async function loadEventForEdit(eventId) {
+    try {
+        console.log('loadEventForEdit called with eventId:', eventId);
+        const response = await fetch(`api/events/${eventId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch event');
+        }
+        
+        const event = await response.json();
+        console.log('Event loaded for editing:', event);
+        
+        // Set date and time in form fields
+        document.getElementById('event-date').value = event.date || '';
+        document.getElementById('event-time').value = event.time ? event.time.substring(0, 5) : '';
+        
+        // Set category and populate item dropdown
+        document.getElementById('event-category').value = event.category || '';
+        await populateEventItemDropdown(event.category);
+        
+        // Wait for dropdown to populate, then select the item
+        setTimeout(() => {
+            const itemDropdown = document.getElementById('event-item-name');
+            if (itemDropdown && event.related_id) {
+                // Find and select the specific item
+                for (let option of itemDropdown.options) {
+                    if (option.value == event.related_id) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+            }
+        }, 500);
+        
+        // Set other form fields
+        document.getElementById('event-title').value = event.title || '';
+        document.getElementById('event-duration').value = event.duration || 1;
+        document.getElementById('event-notes').value = event.description || '';
+        document.getElementById('event-status').value = event.status || 'scheduled';
+        document.getElementById('event-priority').value = event.priority || 'medium';
+        
+        // Change modal to edit mode
+        const modal = document.getElementById('add-event-modal');
+        const modalTitle = modal.querySelector('h2');
+        modalTitle.textContent = 'Edit Event';
+        
+        // Change submit button text and add update mode flag
+        const submitBtn = document.querySelector('#add-event-form button[type="submit"]');
+        submitBtn.textContent = 'Update Event';
+        submitBtn.dataset.mode = 'edit';
+        submitBtn.dataset.eventId = eventId;
+        
+        // Show delete button for existing events
+        const deleteBtn = document.getElementById('delete-event-btn');
+        if (deleteBtn) {
+            deleteBtn.style.display = 'inline-block';
+            deleteBtn.dataset.eventId = eventId;
+        }
+        
+        // Show modal
+        modal.style.display = 'block';
+        
+    } catch (error) {
+        console.error('Error loading event for editing:', error);
+        alert('Error loading event for editing. Please try again.');
     }
 }
 
@@ -2190,6 +2290,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         addEventForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const submitBtn = document.getElementById('submit-event-btn');
+            const isEditMode = submitBtn.dataset.mode === 'edit';
+            const eventId = submitBtn.dataset.eventId;
+            
             const formData = new FormData(e.target);
             const eventData = {
                 date: document.getElementById('event-date').value,
@@ -2204,7 +2308,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             };
             
             try {
-                await saveEvent(eventData);
+                if (isEditMode && eventId) {
+                    await updateEvent(eventId, eventData);
+                } else {
+                    await saveEvent(eventData);
+                }
             } catch (error) {
                 console.error('Failed to save event:', error);
             }
@@ -2232,6 +2340,30 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById('add-event-modal').style.display = 'none';
         });
     });
+
+    // Delete button for add event modal (edit mode)
+    const deleteEventBtn = document.getElementById('delete-event-btn');
+    if (deleteEventBtn) {
+        deleteEventBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const eventId = deleteEventBtn.dataset.eventId;
+            if (!eventId) {
+                console.error('No event ID found for deletion');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to delete this event?')) {
+                try {
+                    await deleteEvent(eventId);
+                    document.getElementById('add-event-modal').style.display = 'none';
+                } catch (error) {
+                    console.error('Failed to delete event:', error);
+                }
+            }
+        });
+    }
 
     // Event Details Modal Event Listeners
     const closeEventDetailsBtns = document.querySelectorAll('.close-event-details-btn');
@@ -2430,6 +2562,24 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             // Then load the maintenance record for editing
             loadMaintenanceRecordForEdit(scheduleId);
+            return;
+        }
+
+        // Handle scheduled event row clicks for editing
+        if (target.closest('.scheduled-event-row')) {
+            console.log('Scheduled event row clicked!');
+            const row = target.closest('.scheduled-event-row');
+            const eventId = row.dataset.scheduledId;
+            console.log('Event ID:', eventId);
+            
+            // Close history modal first
+            const currentModal = target.closest('.modal');
+            if (currentModal) {
+                currentModal.style.display = 'none';
+            }
+            
+            // Load the event for editing
+            loadEventForEdit(eventId);
             return;
         }
 
