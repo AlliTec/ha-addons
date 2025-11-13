@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.10.47 - 2025-11-13
+
+### Fixed
+- **Event Deletion JavaScript Error**: Fixed `ReferenceError: loadCalendarEvents is not defined` after successful event deletion
+- **Function Scope Issue**: Made `loadCalendarEvents` globally accessible to resolve post-deletion refresh error
+- **User Experience**: Event deletion now completes successfully without JavaScript errors
+
+### Technical
+- **Global Function Access**: Added `window.loadCalendarEvents = loadCalendarEvents` to expose function globally
+- **Scope Resolution**: Fixed issue where deleteEvent function couldn't access loadCalendarEvents due to scope
+- **Error Prevention**: Eliminated "ERROR DELETING EVENT. PLEASE TRY AGAIN" message that was actually a JavaScript error
+
 ## 1.10.46 - 2025-11-13
 
 ### Fixed

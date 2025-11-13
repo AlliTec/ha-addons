@@ -1100,6 +1100,7 @@ async function populateEventItemDropdown(category) {
 // Function to save event
 async function saveEvent(eventData) {
     try {
+        console.log('Saving event with data:', eventData);
         const response = await fetch('api/events', {
             method: 'POST',
             headers: {
@@ -1187,8 +1188,16 @@ function showEventDetailsModal(eventData) {
     
     content.innerHTML = detailsHtml;
     
-    // Show delete button only for user-created events (those with an ID)
+    // Show delete button only for user-created events (those with entry_type = 'event')
+    console.log('=== DELETE BUTTON LOGIC DEBUG ===');
+    console.log('Full eventData object:', eventData);
+    console.log('eventData.id:', eventData.id);
+    console.log('eventData.entry_type:', eventData.entry_type);
+    console.log('eventData.entry_type === "event":', eventData.entry_type === 'event');
+    console.log('Both conditions (id && entry_type === "event"):', eventData.id && eventData.entry_type === 'event');
+    
     if (eventData.id && eventData.entry_type === 'event') {
+        console.log('✅ SHOWING DELETE BUTTON');
         deleteBtn.style.display = 'inline-block';
         // Remove all existing event listeners
         const newDeleteBtn = deleteBtn.cloneNode(true);
@@ -1204,7 +1213,15 @@ function showEventDetailsModal(eventData) {
             }
         });
     } else {
+        console.log('❌ HIDING DELETE BUTTON');
         deleteBtn.style.display = 'none';
+        // Add debug info to help understand why delete button is hidden
+        console.log('Delete button hidden for event:', {
+            id: eventData.id,
+            entry_type: eventData.entry_type,
+            title: eventData.title,
+            category: eventData.category
+        });
     }
     
     // Add click handlers for related item links
@@ -2634,6 +2651,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Get event data from data attribute or use element directly if it's already an event object
         const eventData = element.dataset ? JSON.parse(element.dataset.event) : element;
         
+        console.log('=== CALENDAR EVENT CLICK DEBUG ===');
+        console.log('Element dataset:', element.dataset);
+        console.log('Raw dataset.event:', element.dataset.event);
+        console.log('Parsed eventData:', eventData);
+        
         // Show event details modal
         showEventDetailsModal(eventData);
     }
@@ -2701,6 +2723,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     
     
     function displayCalendarEvents(events) {
+        console.log("displayCalendarEvents: Received events:", events);
+        console.log("displayCalendarEvents: Event types breakdown:", events.reduce((acc, event) => {
+            acc[event.entry_type] = (acc[event.entry_type] || 0) + 1;
+            return acc;
+        }, {}));
         const filterType = document.getElementById('calendar-filter-type').value;
         const eventsContainer = document.getElementById('calendar-events');
         
@@ -3044,4 +3071,5 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.handleCalendarEventClick = handleCalendarEventClick;
     window.navigateToDay = navigateToDay;
     window.openAddEventModal = openAddEventModal;
+    window.loadCalendarEvents = loadCalendarEvents;
 });
