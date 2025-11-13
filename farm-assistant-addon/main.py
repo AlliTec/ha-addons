@@ -396,7 +396,7 @@ async def add_event(event: Event):
         
         logging.info(f"Event added successfully for {event.category} item {event.item_id}")
         return {"message": "Event added successfully", "id": "success"}
-        
+
     except Exception as e:
         logging.error(f"Error adding event: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -430,7 +430,7 @@ async def delete_event(event_id: int):
         
         logging.info(f"Event {event_id} deleted successfully")
         return {"message": "Event deleted successfully"}
-        
+
     except Exception as e:
         logging.error(f"Error deleting event: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
@@ -529,6 +529,91 @@ async def update_event(event_id: int, event: Event):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         await conn.close()
+
+class MaintenanceScheduleCreate(BaseModel):
+    asset_id: int
+    task_description: str
+    due_date: Optional[str] = None
+    completed_date: Optional[str] = None
+    status: Optional[str] = "pending"
+    is_unscheduled: Optional[bool] = False
+    maintenance_trigger_type: Optional[str] = None
+    maintenance_trigger_value: Optional[int] = None
+    last_maintenance_usage: Optional[float] = None
+    meter_reading: Optional[int] = None
+    interval_type: Optional[str] = None
+    interval_value: Optional[int] = None
+    cost: Optional[float] = None
+    supplier: Optional[str] = None
+    invoice_number: Optional[str] = None
+    notes: Optional[str] = None
+
+@app.post("/api/maintenance-schedule")
+async def create_maintenance_schedule(schedule: MaintenanceScheduleCreate):
+    # Create the maintenance schedule
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Convert date strings to date objects for asyncpg
+        due_date_obj = None
+        completed_date_obj = None
+        
+        if schedule.due_date:
+            due_date_obj = datetime.strptime(schedule.due_date, '%Y-%m-%d').date()
+        
+        if schedule.completed_date:
+            completed_date_obj = datetime.strptime(schedule.completed_date, '%Y-%m-%d').date()
+        
+        # Convert empty strings to None for database constraints
+        maintenance_trigger_type = schedule.maintenance_trigger_type.strip() if schedule.maintenance_trigger_type and schedule.maintenance_trigger_type.strip() else None
+        interval_type = schedule.interval_type.strip() if schedule.interval_type and schedule.interval_type.strip() else None
+        supplier = schedule.supplier.strip() if schedule.supplier and schedule.supplier.strip() else None
+        invoice_number = schedule.invoice_number.strip() if schedule.invoice_number and schedule.invoice_number.strip() else None
+        notes = schedule.notes.strip() if schedule.notes and schedule.notes.strip() else None
+        
+        # Insert maintenance schedule
+        query = """
+            INSERT INTO maintenance_schedules (
+                asset_id, task_description, due_date, completed_date, status, 
+                is_unscheduled, maintenance_trigger_type, maintenance_trigger_value,
+                last_maintenance_usage, meter_reading, interval_type, interval_value,
+                cost, supplier, invoice_number, notes
+            ) VALUES (
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16
+            ) RETURNING id
+        """
+        
+        result = await conn.fetchrow(
+            query,
+            schedule.asset_id,
+            schedule.task_description,
+            due_date_obj,
+            completed_date_obj,
+            schedule.status,
+            schedule.is_unscheduled,
+            maintenance_trigger_type,
+            schedule.maintenance_trigger_value,
+            schedule.last_maintenance_usage,
+            schedule.meter_reading,
+            interval_type,
+            schedule.interval_value,
+            schedule.cost,
+            supplier,
+            invoice_number,
+            notes
+        )
+        
+        # If this is an interval-based schedule, immediately check if maintenance is due
+        if interval_type and schedule.interval_value:
+            await check_and_schedule_maintenance()
+        
+        return {"message": "Maintenance schedule created successfully", "id": result['id']}
+    finally:
+        await conn.close()
+
+@app.post("/api/maintenance/check-schedule")
+async def trigger_maintenance_scheduling():
+    """Manually trigger maintenance scheduling check"""
+    return await check_and_schedule_maintenance()
 
 @app.post("/api/migrate/animal_history")
 async def migrate_animal_history():
@@ -633,23 +718,108 @@ class AssetCreate(BaseModel):
     usage_value: Optional[float] = None
     usage_notes: Optional[str] = None
 
-class MaintenanceScheduleCreate(BaseModel):
-    asset_id: int
-    task_description: str
-    due_date: Optional[str] = None
-    completed_date: Optional[str] = None
-    status: Optional[str] = "pending"
-    is_unscheduled: Optional[bool] = False
-    maintenance_trigger_type: Optional[str] = None
-    maintenance_trigger_value: Optional[int] = None
-    last_maintenance_usage: Optional[float] = None
-    meter_reading: Optional[int] = None
-    interval_type: Optional[str] = None
-    interval_value: Optional[int] = None
-    cost: Optional[float] = None
-    supplier: Optional[str] = None
-    invoice_number: Optional[str] = None
-    notes: Optional[str] = None
+
+
+def get_next_saturday():
+    """Get the date of the next Saturday"""
+    today = datetime.now().date()
+    days_until_saturday = (5 - today.weekday()) % 7  # Saturday is weekday 5
+    if days_until_saturday == 0:
+        # Today is Saturday, schedule for next Saturday
+        days_until_saturday = 7
+    return today + timedelta(days=days_until_saturday)
+
+async def check_and_schedule_maintenance():
+    """Check all maintenance schedules and create calendar events for due maintenance"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Get all maintenance schedules with interval-based triggers
+        schedules = await conn.fetch("""
+            SELECT ms.*, ai.name as asset_name, ai.make, ai.model
+            FROM maintenance_schedules ms
+            JOIN asset_inventory ai ON ms.asset_id = ai.id
+            WHERE ms.interval_type IS NOT NULL 
+            AND ms.interval_value IS NOT NULL
+            AND ms.status != 'completed'
+        """)
+        
+        for schedule in schedules:
+            # Get latest usage for this asset
+            latest_usage = await conn.fetchrow("""
+                SELECT usage_value, usage_type, timestamp 
+                FROM asset_usage_log 
+                WHERE asset_id = $1 
+                ORDER BY timestamp DESC 
+                LIMIT 1
+            """, schedule['asset_id'])
+            
+            if not latest_usage:
+                logging.info(f"No usage records found for asset {schedule['asset_name']}")
+                continue
+            
+            current_usage = latest_usage['usage_value']
+            last_maintenance_usage = schedule['last_maintenance_usage'] or 0
+            
+            # Calculate usage since last maintenance
+            usage_since_last = current_usage - last_maintenance_usage
+            
+            # Calculate 10% threshold
+            threshold = schedule['interval_value'] * 0.1
+            remaining_usage = schedule['interval_value'] - usage_since_last
+            
+            logging.info(f"Asset {schedule['asset_name']}: "
+                       f"current={current_usage}, last_maintenance={last_maintenance_usage}, "
+                       f"usage_since_last={usage_since_last}, "
+                       f"interval={schedule['interval_value']}, "
+                       f"remaining={remaining_usage}, threshold={threshold}")
+            
+            # Check if asset is within 10% of interval
+            if remaining_usage <= threshold and remaining_usage > 0:
+                # Check if we already have a scheduled event for this maintenance
+                existing_event = await conn.fetchrow("""
+                    SELECT id FROM calendar_entries 
+                    WHERE related_id = $1 
+                    AND category = 'asset'
+                    AND entry_date >= CURRENT_DATE
+                    AND title = $2
+                """, schedule['asset_id'], schedule['task_description'])
+                
+                if existing_event:
+                    logging.info(f"Event already scheduled for {schedule['asset_name']} - {schedule['task_description']}")
+                    continue
+                
+                # Schedule maintenance for next Saturday
+                next_saturday = get_next_saturday()
+                
+                # Create calendar event
+                await conn.execute("""
+                    INSERT INTO calendar_entries (
+                        entry_date, category, title, description, related_id, 
+                        related_name, entry_type, created_at, updated_at
+                    ) VALUES (
+                        $1, 'asset', $2, $3, $4, $5, 'event', NOW(), NOW()
+                    )
+                """, next_saturday, schedule['task_description'], 
+                      f"Scheduled maintenance for {schedule['asset_name']}. "
+                      f"Current usage: {current_usage:.1f}, Interval: {schedule['interval_value']} {schedule['interval_type']}",
+                      schedule['asset_id'], f"{schedule['asset_name']} - {schedule['make']} {schedule['model']}")
+                
+                logging.info(f"Scheduled maintenance for {schedule['asset_name']} on {next_saturday}: {schedule['task_description']}")
+                
+                # Update maintenance schedule to mark as scheduled
+                await conn.execute("""
+                    UPDATE maintenance_schedules 
+                    SET status = 'scheduled', due_date = $1
+                    WHERE id = $2
+                """, next_saturday, schedule['id'])
+        
+        return {"message": "Maintenance scheduling check completed"}
+        
+    except Exception as e:
+        logging.error(f"Error in maintenance scheduling: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
 
 @app.get("/api/assets")
 async def get_assets(parent_id: Optional[int] = None):
