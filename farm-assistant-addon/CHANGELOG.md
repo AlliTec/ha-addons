@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.10.45 - 2025-11-13
+
+### Fixed
+- **Event Deletion Button**: Improved event listener handling for delete button in event details modal
+- **Multiple Listener Issue**: Fixed potential conflicts by cloning and replacing delete button element
+- **Event Propagation**: Added stopPropagation to prevent modal interference
+- **Error Handling**: Enhanced error handling in delete button click handler
+
+### Enhanced
+- **Robust Event Handling**: Replace button element to ensure clean event listener attachment
+- **Debug Support**: Added console error logging for delete button issues
+- **Click Prevention**: Added preventDefault to ensure proper event handling
+
+### Technical
+- **Element Cloning**: Use cloneNode to remove existing event listeners before adding new ones
+- **Event Cleanup**: Proper cleanup of previous event handlers to prevent conflicts
+- **Async Error Handling**: Added try-catch around deleteEvent call with proper logging
+
 ## 1.10.44 - 2025-11-13
 
 ### Fixed

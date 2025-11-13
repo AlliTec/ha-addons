@@ -1190,7 +1190,19 @@ function showEventDetailsModal(eventData) {
     // Show delete button only for user-created events (those with an ID)
     if (eventData.id && eventData.entry_type === 'event') {
         deleteBtn.style.display = 'inline-block';
-        deleteBtn.onclick = () => deleteEvent(eventData.id);
+        // Remove all existing event listeners
+        const newDeleteBtn = deleteBtn.cloneNode(true);
+        deleteBtn.parentNode.replaceChild(newDeleteBtn, deleteBtn);
+        // Add new event listener
+        newDeleteBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                await deleteEvent(eventData.id);
+            } catch (error) {
+                console.error('Delete button error:', error);
+            }
+        });
     } else {
         deleteBtn.style.display = 'none';
     }
