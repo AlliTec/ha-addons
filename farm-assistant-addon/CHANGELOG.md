@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.10.49 - 2025-11-13
+
+### Added
+- **Event Duration Spanning**: Events now visually span their scheduled duration on calendar
+- **Time-Based Display**: Events show at actual start time instead of default 9 AM
+- **Visual Duration Indicators**: Multi-hour events show height proportional to duration
+- **Time Display**: Week and day views show actual event times (e.g., "10:00 (2h)")
+
+### Technical
+- **Database Schema**: Added event_time and duration_hours fields to calendar_entries table
+- **Event Creation**: Updated to store time and duration in calendar_entries during event creation
+- **Calendar API**: Enhanced to return time and duration data for frontend rendering
+- **Frontend Rendering**: 
+  - Day view: Events display at correct hour with height spanning duration
+  - Week view: Shows actual time instead of "All Day"
+  - CSS: Added styling for duration indicators and enhanced event blocks
+
+### User Experience
+- **Visual Calendar**: Events now properly represent their scheduled time blocks
+- **Better Planning**: 2-hour oil change visually spans 2 hours on calendar
+- **Time Accuracy**: Calendar reflects actual event schedule, not placeholder times
+- **Duration Awareness**: Users can see event length at a glance
+
 ## 1.10.48 - 2025-11-13
 
 ### Fixed
