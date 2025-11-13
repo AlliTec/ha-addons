@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.10.58 - 2025-11-14
+
+### Fixed
+- **JavaScript Error**: Fixed undefined `currentDate` variable in loadCalendarEvents function
+- **Calendar Display**: Frontend calendar now properly loads and displays events
+- **February Events**: Registration due for bus now displays in February as user sees it
+- **Frontend-Backend Sync**: JavaScript calendar loading matches API functionality
+
+### Technical
+- **Variable Definition**: Added missing `currentDate` variable in loadCalendarEvents function
+- **User Interface**: Calendar now works correctly from user perspective
+- **API Integration**: Frontend properly calls backend calendar API
+- **Error Prevention**: Eliminated JavaScript errors that prevented calendar loading
+
 ## 1.10.57 - 2025-11-14
 
 ### Fixed
