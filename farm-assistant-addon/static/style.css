@@ -1248,13 +1248,6 @@ th {
     border-right: none;
 }
 
-.weekday-headers div {
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
-    border-right: 1px solid var(--table-border);
-}
-
 .weekday-headers div:last-child {
     border-right: none;
 }
@@ -1271,6 +1264,11 @@ th {
     background: var(--cell-bg);
     height: 100px;
     border-right: 1px solid var(--table-border);
+    border-bottom: 1px solid var(--table-border);
+}
+
+.empty-day:last-child {
+    border-right: none;
 }
 
 .month-day {
@@ -1278,8 +1276,13 @@ th {
     height: 100px;
     padding: 4px;
     border-right: 1px solid var(--table-border);
+    border-bottom: 1px solid var(--table-border);
     position: relative;
     overflow: hidden;
+}
+
+.month-day:last-child {
+    border-right: none;
 }
 
 .month-day.today {

@@ -1,30 +1,41 @@
-I. Thou shalt folow the devine paths.
-The holy paths, such as /farm-assistant-addon/, or /home/sog/ai-projects/ha-addons/farm-assistant-addon/, shall be used when the file can not be found.
-There shall be no "No such file or directory" errors.
-There shall be no "...did nto match any file."
-If you cannot find a file thou shalt add "/farm-assistant-addon/" to ensure they are on the righteous path.
-If thou find thyself in a loop, one must then cd /home/sog/ai-projects/ha-addons/farm-assistant-addon
-II. Thou shalt ensure thy code is syntactically pure.
-python3 -m py_compile main.py shall complete with no errors.
-If a path error or similar error is found, check and correct all like code in the addon.
-III. Thou shalt validate thy configuration.
-python3 -c "import json; json.load(open('data/options.json'))" shall complete successfully.
-IV. Thou shalt test thy work with diligence.
-Thine addon shall load and not crash.
-Thine existing features shall remain functional, with no regressions.
-Thine new or modified features shall address the user's needs.
-Thou shalt test the feature in progress, as the user would see it from the user interface, and ensure it meets the users requested functionality.
-Thine feature in progress shall have no console or API errors.
-If thoust findeth errors withing thine code, thou shalt remedy the error with care and ensure the error is addressed appropriately.
-If error is found and remedied, thou shalt perform step IV once more.
-All of the above shall be tested and remedied before proceeding.
-V. Thour shalt break free of loops
-if thou findeth in thine loop of perpetuity, thout must breaketh free and remedy the cause of the looop usising these commandments.
-VI. Thou shalt follow the sacred process.
-The version in config.yaml shall be updated.
-The changelog shall be updated with the changes made.
-Thy changes shall be committed with git add and git commit.
-Thy changes shall be pushed using ./run_gitpush.sh.
-VII. Thou shalt spread the WORD of righteous coding.
-Provide a checklist of commandments followed.
-Provide a concise summary of the actions performed.
+I. The Path of Righteous Files
+
+Thou shalt tread the divine paths when seeking files. Specifically, employ these locations: /farm-assistant-addon/ or /home/sog/ai-projects/ha-addons/farm-assistant-addon/. Let no error of "No such file or directory" plague thy code, nor any lament of "...did not match any file." Should a file prove elusive, add /farm-assistant-addon/ to its address, and guide it onto the righteous path. Shouldst thou find thyself ensnared in a ceaseless search, then cd /home/sog/ai-projects/ha-addons/farm-assistant-addon and begin anew.
+
+II. Purity of Syntax
+
+Thy code must be syntactically pure. The command python3 -m py_compile main.py shall execute without fault. Should any path error or like imperfection be discovered, examine and correct all such instances within the addon.
+
+III. Validation of Configuration
+
+The configuration must be validated. The command python3 -c "import json; json.load(open('data/options.json'))" shall complete successfully, without raising exceptions.
+
+IV. Diligence in Testing
+
+Test thy work with diligence, for errors are the bane of progress.
+
+The addon shall load and function without crashing.
+Existing features must remain functional, free from regressions.
+New or modified features shall address the user's needs precisely.
+Test the feature in progress as the user would see it, through the user interface, ensuring it aligns with the requested functionality.
+The feature in progress shall not generate console or API errors.
+Shouldst thou discover errors within thy code, remedy them with care, and ensure the error is addressed appropriately. Once remedied, repeat step IV to confirm thy success. All of the above must be tested and rectified before proceeding further.
+
+V. Breaking the Chains of Loops
+
+Shouldst thou find thyself trapped in an endless loop, break free and address the root cause, guided by these commandments. First, traverse the divine path – cd to the addon's directory – before executing any command which brought forth the blasphemous loop.
+
+The divine path is the absolute path to the file.  Thou shalt use the absolute path inplace of simply the filename in any command thou hath issued bringing forth the loop of blasphemy.
+
+VI. The Sacred Process
+
+Follow this process diligently:
+
+Update the version number within config.yaml.
+Record the changes made within the changelog.
+Commit thy changes using git add and git commit.
+Push thy changes using ./run_gitpush.sh.
+
+VII. Spreading the Word
+
+Provide a checklist of commandments followed, and a concise summary of the actions performed, that all may know of thy righteous efforts.

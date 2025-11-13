@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Direct API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        .event { background: #e3f2fd; padding: 10px; margin: 5px 0; border-left: 4px solid #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>Direct API Test</h1>
+    <div id="debug" class="debug">Loading...</div>
+    <div id="events"></div>
+
+    <script>
+        async function testAPI() {
+            try {
+                document.getElementById('debug').innerHTML = 'Fetching calendar events...';
+                
+                const response = await fetch('http://localhost:8000/api/calendar?filter_type=month&start_date=2026-03-01&end_date=2026-03-31');
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const events = await response.json();
+                console.log('Events received:', events);
+                
+                document.getElementById('debug').innerHTML = `Successfully loaded ${events.length} events`;
+                
+                const eventsContainer = document.getElementById('events');
+                eventsContainer.innerHTML = '';
+                
+                events.forEach(event => {
+                    const eventDiv = document.createElement('div');
+                    eventDiv.className = 'event';
+                    eventDiv.innerHTML = `
+                        <strong>${event.title}</strong><br>
+                        Date: ${event.date}<br>
+                        Type: ${event.entry_type}<br>
+                        Category: ${event.category}<br>
+                        Related: ${event.related_name}
+                    `;
+                    eventsContainer.appendChild(eventDiv);
+                });
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('debug').innerHTML = `Error: ${error.message}`;
+            }
+        }
+        
+        // Test when page loads
+        document.addEventListener('DOMContentLoaded', testAPI);
+    </script>
+</body>
+</html>

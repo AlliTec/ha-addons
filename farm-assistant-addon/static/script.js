@@ -3416,6 +3416,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             html += `</div></div>`;
         }
         
+        // Calculate total cells to ensure proper grid
+        const totalCells = startingDayOfWeek + daysInMonth;
+        const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+        
+        // Empty cells for days after month ends
+        for (let i = 0; i < remainingCells; i++) {
+            html += '<div class="empty-day"></div>';
+        }
+        
         html += `</div></div></div>`;
         return html;
     }

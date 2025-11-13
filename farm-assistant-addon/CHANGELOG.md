@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.10.61 - 2025-11-14
+
+### Enhanced
+- **Version Update**: Updated to version 1.10.61 with proper script cache busting
+- **System Stability**: All core functionality tested and working correctly
+- **API Performance**: Calendar and animal APIs responding properly without errors
+
+### Technical
+- **Script Loading**: JavaScript version properly synchronized with config.yaml
+- **Cache Management**: Browser cache invalidation working with timestamp-based versioning
+- **Server Health**: Uvicorn server running stable on port 8000
+
 ## 1.10.60 - 2025-11-14
 
 ### Fixed

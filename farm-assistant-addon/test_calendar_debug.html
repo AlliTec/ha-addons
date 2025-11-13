@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Calendar Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; border: 1px solid #ccc; }
+        .weekday-headers { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; }
+        .weekday-headers div { background: #f5f5f5; padding: 10px; text-align: center; font-weight: bold; }
+        .month-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; }
+        .empty-day { background: #fafafa; height: 100px; border: 1px solid #ddd; }
+        .month-day { background: white; height: 100px; padding: 4px; border: 1px solid #ddd; }
+        .month-day.today { background: #e3f2fd; }
+        .day-number { font-weight: bold; font-size: 0.9rem; margin-bottom: 4px; }
+        .day-events-mini { display: flex; flex-direction: column; gap: 1px; height: 70px; overflow: hidden; }
+        .event-item { font-size: 0.7rem; padding: 1px 3px; margin: 1px 0; border-radius: 3px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px; border-left: 2px solid; background-color: #f9f9f9; display: block; }
+        .event-item.action { border-left-color: #dc3545; background-color: rgba(220, 53, 69, 0.1); }
+        .event-item.asset { border-left-color: #2196f3; background-color: rgba(33, 150, 243, 0.1); }
+    </style>
+</head>
+<body>
+    <h1>Calendar Debug Test</h1>
+    <div id="debug" class="debug">Loading...</div>
+    <div id="calendar-container"></div>
+
+    <script>
+        // Test data from API
+        const testEvents = [
+            {
+                "title": "Registration Due: Golf",
+                "date": "2026-03-24",
+                "entry_type": "action",
+                "category": "asset",
+                "description": "Registration renewal required for asset",
+                "related_id": 8,
+                "related_name": "Golf"
+            },
+            {
+                "title": "Registration Due: SWM", 
+                "date": "2026-03-26",
+                "entry_type": "action",
+                "category": "asset",
+                "description": "Registration renewal required for asset",
+                "related_id": 9,
+                "related_name": "SWM"
+            }
+        ];
+
+        // Simulate displayMonthView function
+        function displayMonthView(eventsByDate) {
+            console.log("displayMonthView called with:", eventsByDate);
+            
+            const year = 2026;
+            const month = 2; // March (0-indexed)
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const daysInMonth = lastDay.getDate();
+            const startingDayOfWeek = firstDay.getDay();
+            
+            let html = `<div class="month-view">
+                <div class="month-grid">
+                    <div class="weekday-headers">
+                        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                    </div>
+                    <div class="month-days">`;
+            
+            // Empty cells for days before month starts
+            for (let i = 0; i < startingDayOfWeek; i++) {
+                html += '<div class="empty-day"></div>';
+            }
+            
+            // Days of month
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayEvents = eventsByDate[dateStr] || [];
+                const isToday = date.toDateString() === new Date().toDateString();
+                
+                // Debug logging for specific days that have events
+                if (dayEvents.length > 0) {
+                    console.log(`Month view Day ${day} (${dateStr}): Found ${dayEvents.length} events:`, dayEvents.map(e => e.title));
+                    document.getElementById('debug').innerHTML += `<br>Day ${day} (${dateStr}): Found ${dayEvents.length} events: ${dayEvents.map(e => e.title).join(', ')}`;
+                }
+                
+                html += `<div class="month-day ${isToday ? 'today' : ''}">
+                    <div class="day-number">${day}</div>
+                    <div class="day-events-mini">`;
+                
+                dayEvents.slice(0, 3).forEach(event => {
+                    const displayName = event.related_name || event.title;
+                    const isCompleted = event.status === 'completed';
+                    const icon = event.category === 'livestock' ? '🐄' : '🔧';
+                    const completedIcon = isCompleted ? ' ✓' : '';
+                    html += `<div class="event-item ${event.entry_type} ${event.category}" title="${event.title}">${icon} ${displayName}${completedIcon}</div>`;
+                });
+                
+                if (dayEvents.length > 3) {
+                    html += `<div class="event-more">+${dayEvents.length - 3}</div>`;
+                }
+                
+                html += `</div></div>`;
+            }
+            
+            // Calculate total cells to ensure proper grid
+            const totalCells = startingDayOfWeek + daysInMonth;
+            const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+            
+            // Empty cells for days after month ends
+            for (let i = 0; i < remainingCells; i++) {
+                html += '<div class="empty-day"></div>';
+            }
+            
+            html += `</div></div></div>`;
+            return html;
+        }
+
+        // Test the function
+        document.addEventListener('DOMContentLoaded', function() {
+            // Group events by date
+            const eventsByDate = {};
+            testEvents.forEach(event => {
+                if (!eventsByDate[event.date]) {
+                    eventsByDate[event.date] = [];
+                }
+                eventsByDate[event.date].push(event);
+            });
+            
+            console.log('Events by date:', eventsByDate);
+            document.getElementById('debug').innerHTML = `Events by date: ${JSON.stringify(eventsByDate, null, 2)}`;
+            
+            // Generate calendar
+            const calendarHTML = displayMonthView(eventsByDate);
+            document.getElementById('calendar-container').innerHTML = calendarHTML;
+        });
+    </script>
+</body>
+</html>

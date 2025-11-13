@@ -1,0 +1,2 @@
+127.0.0.1 - - [14/Nov/2025 08:27:26] code 404, message File not found
+127.0.0.1 - - [14/Nov/2025 08:27:26] "GET /test_calendar_debug.html HTTP/1.1" 404 -
