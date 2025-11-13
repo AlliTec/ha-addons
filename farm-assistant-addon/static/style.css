@@ -1189,12 +1189,12 @@ th {
 }
 
 .month-grid {
-    min-width: 800px;
+    min-width: 840px; /* 7 columns * 120px width */
 }
 
 .weekday-headers {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, 120px);
     background: var(--header-bg);
     border: 1px solid var(--table-border);
 }
@@ -1212,7 +1212,7 @@ th {
 
 .month-days {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, 120px);
     gap: 1px;
     border: 1px solid var(--table-border);
     border-top: none;
@@ -1220,15 +1220,18 @@ th {
 
 .empty-day {
     background: #e0e0e0;
-    min-height: 80px;
+    height: 100px;
+    width: 120px;
 }
 
 .month-day {
     background: var(--cell-bg);
-    min-height: 80px;
+    height: 100px;
+    width: 120px;
     padding: 4px;
     border-right: 1px solid var(--table-border);
     position: relative;
+    overflow: hidden;
 }
 
 .month-day.today {
@@ -1243,8 +1246,10 @@ th {
 
 .day-events-mini {
     display: flex;
-    flex-wrap: wrap;
-    gap: 2px;
+    flex-direction: column;
+    gap: 1px;
+    height: 70px; /* 100px cell height - 30px for day number */
+    overflow: hidden;
 }
 
 .event-dot {
@@ -1271,9 +1276,10 @@ th {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
+    max-width: 110px; /* 120px cell width - 10px for padding/border */
     border-left: 2px solid;
     background-color: var(--input-bg);
+    display: block;
 }
 
 .event-item.informational {

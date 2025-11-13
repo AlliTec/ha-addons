@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.10.43 - 2025-11-13
+
+### Enhanced
+- **Month View Cell Dimensions**: Set fixed width (120px) and height (100px) for day cells
+- **Event Truncation**: Improved text overflow handling with ellipsis for long event titles
+- **Calendar Layout**: Fixed grid layout to maintain consistent cell sizes across month view
+- **Visual Consistency**: All day cells now have uniform dimensions regardless of content
+
+### Fixed
+- **Month Grid Layout**: Updated grid templates to use fixed column widths instead of flexible fractions
+- **Event Container**: Added proper height constraints and overflow handling for event containers
+- **Text Overflow**: Enhanced event item truncation with specific max-width constraints
+- **Header Alignment**: Weekday headers now match day cell widths for perfect alignment
+
+### Technical
+- **CSS Grid**: Changed from 1fr to 120px fixed columns for consistent layout
+- **Overflow Handling**: Added proper overflow hidden to prevent content breaking cell boundaries
+- **Event Display**: Optimized event item display with block layout and precise width constraints
+
 ## 1.10.42 - 2025-11-13
 
 ### Fixed
