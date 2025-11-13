@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Delete Functionality</title>
+</head>
+<body>
+    <h1>Test Event Deletion</h1>
+    <p>Open browser console and test the showEventDetailsModal function with different event types</p>
+    
+    <button onclick="testUserEvent()">Test User Event (ID: 16)</button>
+    <button onclick="testSystemEvent()">Test System Event</button>
+    
+    <script>
+        // Simulate the showEventDetailsModal function logic
+        function testShowEventDetailsModal(eventData) {
+            console.log('Testing event:', eventData);
+            console.log('Event entry_type:', eventData.entry_type);
+            console.log('Condition eventData.entry_type === "event":', eventData.entry_type === 'event');
+            
+            // This is the actual condition from the code
+            const shouldShowDelete = eventData.entry_type === 'event';
+            console.log('Should show delete button:', shouldShowDelete);
+            
+            return shouldShowDelete;
+        }
+        
+        function testUserEvent() {
+            const userEvent = {
+                id: 16,
+                title: 'Engin run',
+                entry_type: 'event',
+                entry_date: '2025-11-15'
+            };
+            
+            console.log('=== Testing User Event ===');
+            const result = testShowEventDetailsModal(userEvent);
+            console.log('Result:', result ? 'DELETE BUTTON SHOULD SHOW' : 'DELETE BUTTON SHOULD HIDE');
+        }
+        
+        function testSystemEvent() {
+            const systemEvent = {
+                id: 1,
+                title: 'System Information',
+                entry_type: 'informational',
+                entry_date: '2025-11-13'
+            };
+            
+            console.log('=== Testing System Event ===');
+            const result = testShowEventDetailsModal(systemEvent);
+            console.log('Result:', result ? 'DELETE BUTTON SHOULD SHOW' : 'DELETE BUTTON SHOULD HIDE');
+        }
+    </script>
+</body>
+</html>

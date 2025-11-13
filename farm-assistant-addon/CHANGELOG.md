@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.51 - 2025-11-13
+
+### Enhanced
+- **Event Shading in Day View**: Hours with scheduled events now show gradient shading and accent borders
+- **Scheduled Events in Asset History**: Maintenance history now includes future scheduled events from calendar
+- **Livestock History Integration**: New animal history endpoint combines completed records with scheduled events
+- **Visual Distinction**: Scheduled events display with yellow background and time/duration information
+- **Quick Delete Functionality**: Delete buttons added to day and week views for easy event removal
+
+### Fixed
+- **API Integration**: Fixed animal history table column references in livestock history endpoint
+- **Event Status Display**: Scheduled events properly show as 'scheduled' or 'overdue' based on date
+
 ## 1.10.50 - 2025-11-13
 
 ### Fixed

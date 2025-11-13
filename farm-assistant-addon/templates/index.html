@@ -133,6 +133,9 @@
             </div>
             <div id="animal-details-content" class="details-grid"></div>
             <div class="modal-actions">
+                <button id="view-animal-history-btn" class="action-btn">
+                    <i class="fa-solid fa-clock-rotate-left"></i> View History
+                </button>
                 <button id="update-animal-btn" class="action-btn update-btn">
                     <i class="fa-solid fa-pencil"></i> Update
                 </button>
@@ -812,6 +815,22 @@
             </div>
             <div id="maintenance-history-content">
                 <!-- Maintenance history will be populated here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Animal History Modal -->
+    <div id="animal-history-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-top-left">&times;</span>
+            <div class="modal-header">
+                <h2>Animal History</h2>
+                <button class="close-animal-history-btn action-btn">
+                    <i class="fa-solid fa-xmark"></i> Close
+                </button>
+            </div>
+            <div id="animal-history-content">
+                <!-- Animal history will be populated here -->
             </div>
         </div>
     </div>

@@ -494,7 +494,27 @@ th {
 }
 
 .maintenance-history-table tr:nth-child(even) {
-    background-color: rgba(96, 125, 139, 0.05);
+    background: var(--cell-bg);
+}
+
+/* Scheduled events in maintenance history */
+.scheduled-event-row {
+    background: linear-gradient(90deg, #fff3cd 0%, #fefefe 100%);
+    border-left: 3px solid #ffc107;
+}
+
+.scheduled-event-row:hover {
+    background: linear-gradient(90deg, #ffeaa7 0%, #fefefe 100%);
+}
+
+.status-badge.status-scheduled {
+    background: #28a745;
+    color: white;
+}
+
+.status-badge.status-overdue {
+    background: #dc3545;
+    color: white;
 }
 
 /* Wider modal for maintenance history to accommodate status column */
@@ -1117,6 +1137,19 @@ th {
     color: #333;
 }
 
+.hour-segment.has-events {
+    background: linear-gradient(135deg, var(--cell-bg) 0%, #f0f8ff 100%);
+    border-left: 3px solid var(--accent-color);
+}
+
+.hour-segment.has-events.daylight {
+    background: linear-gradient(135deg, #fafafa 0%, #e8f4fd 100%);
+}
+
+.hour-segment.has-events.nighttime {
+    background: linear-gradient(135deg, #e0e0e0 0%, #d0e8f2 100%);
+}
+
 .hour-label {
     width: 60px;
     padding: 8px;
@@ -1377,6 +1410,43 @@ th {
     background: var(--header-bg);
     padding: 1px 3px;
     border-radius: 3px;
+}
+
+/* Event delete button styles */
+.event-actions {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.event-item:hover .event-actions {
+    opacity: 1;
+}
+
+.event-delete-btn {
+    background: var(--delete-color);
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 2px 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+}
+
+.event-delete-btn:hover {
+    background: var(--delete-hover);
+}
+
+.event-delete-btn i {
+    font-size: 0.6rem;
 }
 
 /* Year View Styles */

@@ -624,8 +624,9 @@ async def get_asset_maintenance_history(asset_id: int):
     """Get maintenance history for a specific asset"""
     conn = await asyncpg.connect(DATABASE_URL)
     try:
-        records = await conn.fetch("""
-            SELECT id, task_description, completed_date, supplier, cost, meter_reading, status,
+        # Get completed maintenance records
+        maintenance_records = await conn.fetch("""
+            SELECT 'maintenance' as record_type, id, task_description, completed_date, supplier, cost, meter_reading, status,
                    notes, invoice_number, due_date, is_unscheduled, maintenance_trigger_type,
                    maintenance_trigger_value, last_maintenance_usage, interval_type, interval_value
             FROM maintenance_schedules 
@@ -633,7 +634,88 @@ async def get_asset_maintenance_history(asset_id: int):
             ORDER BY completed_date DESC
         """, asset_id)
         
-        return [dict(record) for record in records]
+        # Get scheduled calendar events for this asset
+        scheduled_events = await conn.fetch("""
+            SELECT 'scheduled' as record_type, id, title as task_description, entry_date as completed_date, 
+                   NULL as supplier, NULL as cost, NULL as meter_reading, 
+                   CASE WHEN entry_date < CURRENT_DATE THEN 'overdue' ELSE 'scheduled' END as status,
+                   description as notes, NULL as invoice_number, NULL as due_date, 
+                   NULL as is_unscheduled, NULL as maintenance_trigger_type,
+                   NULL as maintenance_trigger_value, NULL as last_maintenance_usage, 
+                   NULL as interval_type, NULL as interval_value,
+                   event_time, duration_hours
+            FROM calendar_entries 
+            WHERE related_id = $1 AND category = 'asset' AND entry_type = 'event'
+            ORDER BY entry_date DESC, event_time DESC
+        """, asset_id)
+        
+        # Combine and sort all records by date
+        all_records = []
+        
+        # Add maintenance records
+        for record in maintenance_records:
+            all_records.append(dict(record))
+        
+        # Add scheduled events
+        for record in scheduled_events:
+            all_records.append(dict(record))
+        
+        # Sort by date (scheduled events with future dates come after completed ones)
+        all_records.sort(key=lambda x: (x['completed_date'] or '9999-12-31'), reverse=True)
+        
+        return all_records
+    finally:
+        await conn.close()
+
+@app.get("/api/livestock/{animal_id}/history")
+async def get_livestock_history(animal_id: int):
+    """Get history for a specific animal"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Get completed animal history records
+        history_records = await conn.fetch("""
+            SELECT 'history' as record_type, id, title as task_description, event_date as completed_date, 
+                   NULL as supplier, NULL as cost, NULL as meter_reading, status,
+                   notes, NULL as invoice_number, NULL as due_date, 
+                   NULL as is_unscheduled, NULL as maintenance_trigger_type,
+                   NULL as maintenance_trigger_value, NULL as last_maintenance_usage, 
+                   NULL as interval_type, NULL as interval_value,
+                   event_time, duration_hours
+            FROM animal_history 
+            WHERE animal_id = $1 
+            ORDER BY event_date DESC
+        """, animal_id)
+        
+        # Get scheduled calendar events for this animal
+        scheduled_events = await conn.fetch("""
+            SELECT 'scheduled' as record_type, id, title as task_description, entry_date as completed_date, 
+                   NULL as supplier, NULL as cost, NULL as meter_reading, 
+                   CASE WHEN entry_date < CURRENT_DATE THEN 'overdue' ELSE 'scheduled' END as status,
+                   description as notes, NULL as invoice_number, NULL as due_date, 
+                   NULL as is_unscheduled, NULL as maintenance_trigger_type,
+                   NULL as maintenance_trigger_value, NULL as last_maintenance_usage, 
+                   NULL as interval_type, NULL as interval_value,
+                   event_time, duration_hours
+            FROM calendar_entries 
+            WHERE related_id = $1 AND category = 'livestock' AND entry_type = 'event'
+            ORDER BY entry_date DESC, event_time DESC
+        """, animal_id)
+        
+        # Combine and sort all records by date
+        all_records = []
+        
+        # Add history records
+        for record in history_records:
+            all_records.append(dict(record))
+        
+        # Add scheduled events
+        for record in scheduled_events:
+            all_records.append(dict(record))
+        
+        # Sort by date (scheduled events with future dates come after completed ones)
+        all_records.sort(key=lambda x: (x['completed_date'] or '9999-12-31'), reverse=True)
+        
+        return all_records
     finally:
         await conn.close()
 

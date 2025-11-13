@@ -1,7 +1,1 @@
-{
-  "db_host": "192.168.1.130",
-  "db_port": 5432,
-  "db_user": "postgres",
-  "db_password": "homeassistant",
-  "db_name": "hal_farm_db"
-}
+{"db_host": "192.168.1.130", "db_port": 5432, "db_user": "postgres", "db_password": "homeassistant", "db_name": "hal_farm_db"}

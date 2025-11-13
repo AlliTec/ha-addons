@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend Delete Test</title>
+</head>
+<body>
+    <h1>Frontend Delete Button Test</h1>
+    <div id="event-details-modal" style="display: block; border: 2px solid #ccc; padding: 20px; margin: 20px;">
+        <h3>Event Details</h3>
+        <div id="event-details-content"></div>
+        <button id="delete-event-btn" style="display: none;">Delete Event</button>
+    </div>
+    
+    <button onclick="testUserEvent()">Test User Event (ID: 13)</button>
+    <button onclick="testSystemEvent()">Test System Event</button>
+    <button onclick="testEventWithoutId()">Test Event Without ID</button>
+    
+    <script>
+        // Simulate the showEventDetailsModal function
+        function showEventDetailsModal(eventData) {
+            const content = document.getElementById('event-details-content');
+            const deleteBtn = document.getElementById('delete-event-btn');
+            
+            content.innerHTML = `
+                <p><strong>Title:</strong> ${eventData.title}</p>
+                <p><strong>Type:</strong> ${eventData.entry_type}</p>
+                <p><strong>ID:</strong> ${eventData.id || 'No ID'}</p>
+                <p><strong>Category:</strong> ${eventData.category || 'No category'}</p>
+            `;
+            
+            console.log('=== DELETE BUTTON LOGIC DEBUG ===');
+            console.log('Full eventData object:', eventData);
+            console.log('eventData.id:', eventData.id);
+            console.log('eventData.entry_type:', eventData.entry_type);
+            console.log('eventData.entry_type === "event":', eventData.entry_type === 'event');
+            console.log('Both conditions (id && entry_type === "event"):', eventData.id && eventData.entry_type === 'event');
+            
+            if (eventData.id && eventData.entry_type === 'event') {
+                console.log('✅ SHOWING DELETE BUTTON');
+                deleteBtn.style.display = 'inline-block';
+            } else {
+                console.log('❌ HIDING DELETE BUTTON');
+                deleteBtn.style.display = 'none';
+                console.log('Delete button hidden for event:', {
+                    id: eventData.id,
+                    entry_type: eventData.entry_type,
+                    title: eventData.title,
+                    category: eventData.category
+                });
+            }
+        }
+        
+        function testUserEvent() {
+            const userEvent = {
+                id: 13,
+                title: 'Oil and Filter Change',
+                entry_type: 'event',
+                category: 'asset',
+                related_id: 8,
+                related_name: 'Golf (VolksWagen 2011 Golf MK6 TDI 2.0)'
+            };
+            
+            console.log('=== TESTING USER EVENT ===');
+            showEventDetailsModal(userEvent);
+        }
+        
+        function testSystemEvent() {
+            const systemEvent = {
+                title: 'Birth: Lutr',
+                entry_type: 'informational',
+                category: 'livestock',
+                related_id: 64,
+                related_name: 'Lutr'
+            };
+            
+            console.log('=== TESTING SYSTEM EVENT ===');
+            showEventDetailsModal(systemEvent);
+        }
+        
+        function testEventWithoutId() {
+            const eventWithoutId = {
+                title: 'Some Event Without ID',
+                entry_type: 'event',
+                category: 'asset'
+            };
+            
+            console.log('=== TESTING EVENT WITHOUT ID ===');
+            showEventDetailsModal(eventWithoutId);
+        }
+    </script>
+</body>
+</html>

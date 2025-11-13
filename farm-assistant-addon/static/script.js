@@ -1279,6 +1279,37 @@ async function deleteEvent(eventId) {
     }
 }
 
+// Quick delete function for inline delete buttons
+async function quickDeleteEvent(eventId, eventTitle) {
+    if (!confirm(`Are you sure you want to delete "${eventTitle}"? This action cannot be undone.`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`api/events/${eventId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete event');
+        }
+        
+        const result = await response.json();
+        console.log('Event deleted successfully:', result);
+        
+        // Refresh calendar to show updated events
+        await loadCalendarEvents();
+        
+        return result;
+        
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        console.error('Error details:', error.message, error.stack);
+        alert('Error deleting event. Please try again.');
+        throw error;
+    }
+}
+
 // Main initialization
 document.addEventListener("DOMContentLoaded", async () => {
     console.log("script.js: DOMContentLoaded event fired.");
@@ -1725,15 +1756,18 @@ document.addEventListener("DOMContentLoaded", async () => {
                 let latestDate = null;
                 
                 maintenanceRecords.forEach(record => {
-                    if (record.cost) {
-                        totalCost += parseFloat(record.cost);
-                    }
-                    if (record.meter_reading) {
-                        const meterReading = parseFloat(record.meter_reading);
-                        const recordDate = record.completed_date ? new Date(record.completed_date) : new Date(0);
-                        if (!latestMeterReading || recordDate > latestDate) {
-                            latestMeterReading = meterReading;
-                            latestDate = recordDate;
+                    // Only include actual maintenance records in summary, not scheduled events
+                    if (record.record_type !== 'scheduled') {
+                        if (record.cost) {
+                            totalCost += parseFloat(record.cost);
+                        }
+                        if (record.meter_reading) {
+                            const meterReading = parseFloat(record.meter_reading);
+                            const recordDate = record.completed_date ? new Date(record.completed_date) : new Date(0);
+                            if (!latestMeterReading || recordDate > latestDate) {
+                                latestMeterReading = meterReading;
+                                latestDate = recordDate;
+                            }
                         }
                     }
                 });
@@ -1781,10 +1815,22 @@ document.addEventListener("DOMContentLoaded", async () => {
                     const km = record.meter_reading ? `${parseFloat(record.meter_reading).toLocaleString()} km` : 'N/A';
                     const status = record.status || 'N/A';
                     
+                    // Format task description for scheduled events
+                    let taskDescription = record.task_description || 'N/A';
+                    if (record.record_type === 'scheduled' && record.event_time) {
+                        const time = record.event_time.substring(0, 5);
+                        const duration = record.duration_hours || 1;
+                        taskDescription = `${taskDescription} (${time}${duration > 1 ? ` (${duration}h)` : ''})`;
+                    }
+                    
+                    // Add special styling for scheduled events
+                    const rowClass = record.record_type === 'scheduled' ? 'scheduled-event-row' : 'maintenance-record-row';
+                    const dataAttr = record.record_type === 'scheduled' ? 'data-scheduled-id' : 'data-maintenance-id';
+                    
                     tableHtml += `
-                        <tr class="maintenance-record-row" data-maintenance-id="${record.id}" style="cursor: pointer;">
+                        <tr class="${rowClass}" ${dataAttr}="${record.id}" style="cursor: pointer;">
                             <td>${date}</td>
-                            <td>${record.task_description || 'N/A'}</td>
+                            <td>${taskDescription}</td>
                             <td>${record.supplier || 'N/A'}</td>
                             <td>${cost}</td>
                             <td>${km}</td>
@@ -1807,6 +1853,104 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             console.error('Error loading maintenance history:', error);
             alert('Error loading maintenance history. Please try again.');
+        }
+    }
+
+    // Function to show animal history
+    async function showAnimalHistory(animalId) {
+        try {
+            console.log("Loading animal history for animal:", animalId);
+            
+            const response = await fetch(`api/livestock/${animalId}/history`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch animal history');
+            }
+            
+            const historyRecords = await response.json();
+            console.log("Animal history records:", historyRecords);
+            
+            const historyContent = document.getElementById('animal-history-content');
+            
+            if (historyRecords.length === 0) {
+                historyContent.innerHTML = '<p>No history records found for this animal.</p>';
+            } else {
+                // Create summary section
+                const summaryHtml = `
+                    <div class="maintenance-summary">
+                        <h3>Animal History Summary</h3>
+                        <div class="summary-grid">
+                            <div class="summary-item">
+                                <strong>Total Records:</strong> 
+                                <span class="record-count">${historyRecords.length}</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Scheduled Events:</strong> 
+                                <span class="scheduled-count">${historyRecords.filter(r => r.record_type === 'scheduled').length}</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Completed Events:</strong> 
+                                <span class="completed-count">${historyRecords.filter(r => r.record_type === 'history').length}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Create table for animal history
+                let tableHtml = `
+                    <table class="maintenance-history-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Event</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                historyRecords.forEach(record => {
+                    const date = record.completed_date ? new Date(record.completed_date).toLocaleDateString() : 'N/A';
+                    const status = record.status || 'N/A';
+                    
+                    // Format event description for scheduled events
+                    let eventDescription = record.task_description || 'N/A';
+                    if (record.record_type === 'scheduled' && record.event_time) {
+                        const time = record.event_time.substring(0, 5);
+                        const duration = record.duration_hours || 1;
+                        eventDescription = `${eventDescription} (${time}${duration > 1 ? ` (${duration}h)` : ''})`;
+                    }
+                    
+                    // Add special styling for scheduled events
+                    const rowClass = record.record_type === 'scheduled' ? 'scheduled-event-row' : 'maintenance-record-row';
+                    const dataAttr = record.record_type === 'scheduled' ? 'data-scheduled-id' : 'data-history-id';
+                    
+                    tableHtml += `
+                        <tr class="${rowClass}" ${dataAttr}="${record.id}" style="cursor: pointer;">
+                            <td>${date}</td>
+                            <td>${eventDescription}</td>
+                            <td>${record.supplier || 'N/A'}</td>
+                            <td><span class="status-badge status-${status}">${status}</span></td>
+                            <td>${record.notes || 'N/A'}</td>
+                        </tr>
+                    `;
+                });
+                
+                tableHtml += `
+                        </tbody>
+                    </table>
+                `;
+                
+                historyContent.innerHTML = summaryHtml + tableHtml;
+            }
+            
+            // Show modal
+            document.getElementById('animal-history-modal').style.display = 'block';
+            
+        } catch (error) {
+            console.error('Error loading animal history:', error);
+            alert('Error loading animal history. Please try again.');
         }
     }
 
@@ -2154,6 +2298,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+        // Handle animal history button
+        if (target.closest('#view-animal-history-btn')) {
+            const animalId = document.getElementById('update-animal-btn').dataset.animalId;
+            showAnimalHistory(animalId);
+            return;
+        }
+
         // Handle maintenance record row clicks for editing
         if (target.closest('.maintenance-record-row')) {
             console.log('Maintenance record row clicked!');
@@ -2207,7 +2358,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             target.closest('.close-edit-asset-btn') ||
             target.closest('.close-add-asset-btn') ||
             target.closest('.close-maintenance-schedule-btn') ||
-            target.closest('.close-maintenance-history-btn')) {
+            target.closest('.close-maintenance-history-btn') ||
+            target.closest('.close-animal-history-btn')) {
             
             const modal = target.closest('.modal');
             
@@ -2831,11 +2983,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             const isDaylight = hour >= sunriseTime && hour <= sunsetTime;
             const hourStr = hour.toString().padStart(2, '0') + ':00';
             
-            html += `<div class="hour-segment ${isDaylight ? 'daylight' : 'nighttime'}" onclick="openAddEventModal('${dateStr}', '${hourStr}')" style="cursor: pointer;">
+            // Check if this hour has events
+            const hasEvents = hourlySegments[hour] && hourlySegments[hour].length > 0;
+            
+            html += `<div class="hour-segment ${isDaylight ? 'daylight' : 'nighttime'} ${hasEvents ? 'has-events' : ''}" onclick="openAddEventModal('${dateStr}', '${hourStr}')" style="cursor: pointer;">
                 <div class="hour-label">${hourStr}</div>
                 <div class="hour-events">`;
-            
-            // Check if this hour has events
             if (hourlySegments[hour] && hourlySegments[hour].length > 0) {
                 // Group events by start time to avoid duplicates
                 const eventsToShow = [];
@@ -2871,6 +3024,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                                 <div class="event-meta-small">${icon} ${displayName}${completedIcon}</div>
                                 ${duration > 1 ? `<div class="event-duration">${duration}h</div>` : ''}
                             </div>
+                            ${event.entry_type === 'event' ? `
+                                <div class="event-actions">
+                                    <button class="event-delete-btn" onclick="event.stopPropagation(); quickDeleteEvent(${event.id}, '${event.title.replace(/'/g, "\\'")}')">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            ` : ''}
                         ` : `
                             <div class="event-continuation-indicator">
                                 ${icon} ${duration > 1 ? '↳' : ''}
@@ -2924,6 +3084,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <div class="event-title-small">${event.title}</div>
                         <div class="event-meta-small">${icon} ${displayName}${completedIcon}</div>
                     </div>
+                    ${event.entry_type === 'event' ? `
+                        <div class="event-actions">
+                            <button class="event-delete-btn" onclick="event.stopPropagation(); quickDeleteEvent(${event.id}, '${event.title.replace(/'/g, "\\'")}')">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    ` : ''}
                 </div>`;
             });
             
