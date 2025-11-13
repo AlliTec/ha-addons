@@ -1124,6 +1124,7 @@ async function saveEvent(eventData) {
         
     } catch (error) {
         console.error('Error saving event:', error);
+        console.error('Error details:', error.message, error.stack);
         alert('Error saving event. Please try again.');
         throw error;
     }
@@ -1272,6 +1273,7 @@ async function deleteEvent(eventId) {
         
     } catch (error) {
         console.error('Error deleting event:', error);
+        console.error('Error details:', error.message, error.stack);
         alert('Error deleting event. Please try again.');
         throw error;
     }
@@ -3066,6 +3068,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Make functions globally accessible for onclick handlers
     window.showEventDetailsModal = showEventDetailsModal;
     window.deleteEvent = deleteEvent;
+    window.saveEvent = saveEvent;
     window.showAssetDetails = showAssetDetails;
     window.showAnimalDetails = showAnimalDetails;
     window.handleCalendarEventClick = handleCalendarEventClick;
