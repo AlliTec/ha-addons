@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.10.52 - 2025-11-13
+
+### Enhanced
+- **Modal Layout Standardization**: All modals now have consistent button layout in header
+- **Animal Event Scheduling**: Added "Schedule Event" button to animal details modal
+- **Unified Modal Actions**: All primary actions (Save, Edit, Delete) moved to modal headers
+- **Maintenance Schedule Delete**: Added delete functionality to maintenance schedule modal
+- **Event Pre-filling**: Schedule event modal pre-fills livestock category and specific animal
+
+### Fixed
+- **Button Consistency**: All modals now follow same header button layout pattern
+- **Delete Button Visibility**: Delete buttons only show when editing existing records
+- **Form Attribute Updates**: Submit buttons properly reference form IDs when moved to headers
+
 ## 1.10.51 - 2025-11-13
 
 ### Enhanced

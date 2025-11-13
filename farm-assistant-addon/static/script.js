@@ -696,8 +696,9 @@ async function showAnimalDetails(animalId) {
             </div>
         `;
         
-        // Set the animal ID on the action buttons
+        // Set the animal ID and name on the action buttons
         document.getElementById('update-animal-btn').dataset.animalId = animalId;
+        document.getElementById('update-animal-btn').dataset.animalName = animal.name || 'Animal';
         document.getElementById('delete-animal-btn').dataset.animalId = animalId;
         
         // Show modal
@@ -1064,6 +1065,55 @@ async function openAddEventModal(date, time) {
     }
 }
 
+// Function to open add event modal pre-filled for animal
+async function openAddEventModalForAnimal(animalId, animalName) {
+    try {
+        console.log(`Opening add event modal for animal ${animalId} (${animalName})`);
+        
+        // Set today's date and default time
+        const today = new Date().toISOString().split('T')[0];
+        const defaultTime = '09:00';
+        
+        // Set date and time in hidden fields
+        document.getElementById('event-date').value = today;
+        document.getElementById('event-time').value = defaultTime;
+        
+        // Pre-fill livestock category
+        document.getElementById('event-category').value = 'livestock';
+        
+        // Populate livestock dropdown and select the specific animal
+        await populateEventItemDropdown('livestock');
+        
+        // Wait a moment for dropdown to populate, then select the animal
+        setTimeout(() => {
+            const itemDropdown = document.getElementById('event-item-name');
+            if (itemDropdown) {
+                // Find and select the specific animal
+                for (let option of itemDropdown.options) {
+                    if (option.value == animalId) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+            }
+        }, 500);
+        
+        // Clear other form data
+        document.getElementById('event-title').value = '';
+        document.getElementById('event-duration').value = '';
+        document.getElementById('event-notes').value = '';
+        document.getElementById('event-status').value = 'scheduled';
+        document.getElementById('event-priority').value = 'medium';
+        
+        // Show modal
+        document.getElementById('add-event-modal').style.display = 'block';
+        
+    } catch (error) {
+        console.error('Error opening add event modal for animal:', error);
+        alert('Error opening event modal. Please try again.');
+    }
+}
+
 // Function to populate item dropdown based on category
 async function populateEventItemDropdown(category) {
     try {
@@ -1306,6 +1356,39 @@ async function quickDeleteEvent(eventId, eventTitle) {
         console.error('Error deleting event:', error);
         console.error('Error details:', error.message, error.stack);
         alert('Error deleting event. Please try again.');
+        throw error;
+    }
+}
+
+// Function to delete maintenance schedule
+async function deleteMaintenanceSchedule(scheduleId) {
+    try {
+        const response = await fetch(`api/maintenance-schedule/${scheduleId}`, {
+            method: 'DELETE'
+        });
+        
+        if (!response.ok) {
+            throw new Error('Failed to delete maintenance schedule');
+        }
+        
+        const result = await response.json();
+        console.log('Maintenance schedule deleted successfully:', result);
+        
+        // Close modal and refresh asset details
+        document.getElementById('maintenance-schedule-modal').style.display = 'none';
+        
+        // Refresh asset details if open
+        const assetId = document.getElementById('edit-asset-btn').dataset.assetId;
+        if (assetId) {
+            showAssetDetails(assetId);
+        }
+        
+        return result;
+        
+    } catch (error) {
+        console.error('Error deleting maintenance schedule:', error);
+        console.error('Error details:', error.message, error.stack);
+        alert('Error deleting maintenance schedule. Please try again.');
         throw error;
     }
 }
@@ -1723,6 +1806,12 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }
             }
             
+            // Hide delete button for new schedules
+            const deleteBtn = document.getElementById('delete-maintenance-schedule-btn');
+            if (deleteBtn) {
+                deleteBtn.style.display = 'none';
+            }
+            
             // Show modal
             document.getElementById('maintenance-schedule-modal').style.display = 'block';
             
@@ -1968,6 +2057,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             // Populate form with record data
             document.getElementById('maintenance-schedule-asset-id').value = record.asset_id;
+            document.getElementById('maintenance-schedule-asset-id').dataset.scheduleId = scheduleId;
             document.getElementById('maintenance-schedule-task').value = record.task_description || '';
             document.getElementById('maintenance-schedule-status').value = record.status || 'pending';
             document.getElementById('maintenance-schedule-unscheduled').value = record.is_unscheduled ? 'true' : 'false';
@@ -1994,6 +2084,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             submitBtn.textContent = 'Update Schedule';
             submitBtn.dataset.mode = 'edit';
             submitBtn.dataset.scheduleId = scheduleId;
+            
+            // Show delete button for existing schedules
+            const deleteBtn = document.getElementById('delete-maintenance-schedule-btn');
+            if (deleteBtn) {
+                deleteBtn.style.display = 'inline-block';
+            }
             
             // Show modal
             modal.style.display = 'block';
@@ -2291,6 +2387,15 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
 
+        // Handle delete maintenance schedule button
+        if (target.closest('#delete-maintenance-schedule-btn')) {
+            const scheduleId = document.getElementById('maintenance-schedule-asset-id').dataset.scheduleId;
+            if (scheduleId && confirm('Are you sure you want to delete this maintenance schedule?')) {
+                deleteMaintenanceSchedule(scheduleId);
+            }
+            return;
+        }
+
         // Handle maintenance history button
         if (target.closest('#view-maintenance-history-btn')) {
             const assetId = document.getElementById('edit-asset-btn').dataset.assetId;
@@ -2302,6 +2407,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (target.closest('#view-animal-history-btn')) {
             const animalId = document.getElementById('update-animal-btn').dataset.animalId;
             showAnimalHistory(animalId);
+            return;
+        }
+
+        // Handle schedule event button for animals
+        if (target.closest('#schedule-event-btn')) {
+            const animalId = document.getElementById('update-animal-btn').dataset.animalId;
+            const animalName = document.getElementById('update-animal-btn').dataset.animalName || 'Animal';
+            openAddEventModalForAnimal(animalId, animalName);
             return;
         }
 

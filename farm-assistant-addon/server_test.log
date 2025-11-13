@@ -1,28 +1,14 @@
-2025-11-13 18:35:13,296 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
-INFO:     Started server process [79224]
+2025-11-13 18:52:58,622 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [84100]
 INFO:     Waiting for application startup.
-2025-11-13 18:35:13,327 - INFO - Attempting to connect to the database at 192.168.1.130...
-2025-11-13 18:35:13,416 - INFO - Database connection successful.
+2025-11-13 18:52:58,663 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-13 18:52:58,733 - INFO - Database connection successful.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
-INFO:     127.0.0.1:44550 - "GET /api/asset/1/maintenance HTTP/1.1" 200 OK
-INFO:     127.0.0.1:46644 - "GET /api/livestock/1/history HTTP/1.1" 200 OK
-Calendar API called with: start_date=None, end_date=None, filter_type=month
-Parsed dates: start_date_obj=2025-11-01, end_date_obj=2025-11-30
-Processing livestock birth: Lutr, birth_date=2025-11-09, birth_date_str=2025-11-09
-Adding birth event for Lutr on 2025-11-09
-Processing asset registration: Amarok, registration_due=2025-11-13, reg_date_str=2025-11-13
-Adding registration event for Amarok on 2025-11-13
-INFO:     127.0.0.1:46656 - "GET /api/calendar HTTP/1.1" 200 OK
-Calendar API called with: start_date=None, end_date=None, filter_type=month
-Parsed dates: start_date_obj=2025-11-01, end_date_obj=2025-11-30
-Processing livestock birth: Lutr, birth_date=2025-11-09, birth_date_str=2025-11-09
-Adding birth event for Lutr on 2025-11-09
-Processing asset registration: Amarok, registration_due=2025-11-13, reg_date_str=2025-11-13
-Adding registration event for Amarok on 2025-11-13
-INFO:     127.0.0.1:57254 - "GET /api/calendar HTTP/1.1" 200 OK
-INFO:     127.0.0.1:57268 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49480 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54644 - "GET /api/livestock HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:50742 - "GET /api/animals HTTP/1.1" 200 OK
 INFO:     Shutting down
 INFO:     Waiting for application shutdown.
 INFO:     Application shutdown complete.
-INFO:     Finished server process [79224]
+INFO:     Finished server process [84100]

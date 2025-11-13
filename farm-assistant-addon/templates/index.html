@@ -127,25 +127,25 @@
             <span class="close-modal close-top-left">&times;</span>
             <div class="modal-header">
                 <h2>Animal Details</h2>
-                <button class="close-details-btn action-btn">
-                    <i class="fa-solid fa-xmark"></i> Close
-                </button>
+                <div class="modal-actions">
+                    <button id="update-animal-btn" class="action-btn update-btn">
+                        <i class="fa-solid fa-pencil"></i> Edit
+                    </button>
+                    <button id="delete-animal-btn" class="action-btn delete-btn">
+                        <i class="fa-solid fa-trash-can"></i> Delete
+                    </button>
+                    <button id="schedule-event-btn" class="action-btn maintenance-btn">
+                        <i class="fa-solid fa-calendar-plus"></i> Schedule Event
+                    </button>
+                    <button id="view-animal-history-btn" class="action-btn">
+                        <i class="fa-solid fa-clock-rotate-left"></i> History
+                    </button>
+                    <button class="close-details-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Close
+                    </button>
+                </div>
             </div>
             <div id="animal-details-content" class="details-grid"></div>
-            <div class="modal-actions">
-                <button id="view-animal-history-btn" class="action-btn">
-                    <i class="fa-solid fa-clock-rotate-left"></i> View History
-                </button>
-                <button id="update-animal-btn" class="action-btn update-btn">
-                    <i class="fa-solid fa-pencil"></i> Update
-                </button>
-                <button id="delete-animal-btn" class="action-btn delete-btn">
-                    <i class="fa-solid fa-trash-can"></i> Delete
-                </button>
-                <button class="close-details-btn action-btn">
-                    <i class="fa-solid fa-xmark"></i> Close
-                </button>
-            </div>
         </div>
     </div>
     
@@ -155,9 +155,14 @@
             <span class="close-modal close-top-left">&times;</span>
             <div class="modal-header">
                 <h2>Edit Animal</h2>
-                <button class="close-edit-btn action-btn">
-                    <i class="fa-solid fa-xmark"></i> Cancel
-                </button>
+                <div class="modal-actions">
+                    <button type="submit" form="edit-animal-form" class="action-btn update-btn">
+                        <i class="fa-solid fa-save"></i> Save Changes
+                    </button>
+                    <button type="button" class="close-edit-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
             </div>
             <form id="edit-animal-form">
                 <input type="hidden" id="edit-animal-id">
@@ -259,14 +264,7 @@
                         <input type="text" id="edit-pic" name="pic">
                     </div>
                 </div>
-                <div class="modal-actions">
-                    <button type="submit" class="action-btn update-btn">
-                        <i class="fa-solid fa-save"></i> Save Changes
-                    </button>
-                    <button type="button" class="close-edit-btn action-btn">
-                        <i class="fa-solid fa-xmark"></i> Cancel
-                    </button>
-                </div>
+
             </form>
         </div>
     </div>
@@ -277,6 +275,14 @@
             <span class="close-modal close-top-left">&times;</span>
             <div class="modal-header">
                 <h2>Add New Asset</h2>
+                <div class="modal-actions">
+                    <button type="submit" form="add-asset-form" class="action-btn add-btn">
+                        <i class="fa-solid fa-plus"></i> Add Asset
+                    </button>
+                    <button type="button" class="close-add-asset-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
             </div>
             <form id="add-asset-form">
                 <!-- Basic Information -->
@@ -439,14 +445,7 @@
                     <textarea id="add-asset-notes" name="notes" rows="3" placeholder="Any additional notes about this asset"></textarea>
                 </div>
 
-                <div class="modal-actions">
-                    <button type="submit" class="action-btn add-btn">
-                        <i class="fa-solid fa-plus"></i> Add Asset
-                    </button>
-                    <button type="button" class="close-add-asset-btn action-btn">
-                        <i class="fa-solid fa-xmark"></i> Cancel
-                    </button>
-                </div>
+
             </form>
         </div>
     </div>
@@ -487,9 +486,14 @@
             <span class="close-modal close-top-left">&times;</span>
             <div class="modal-header">
                 <h2>Edit Asset</h2>
-                <button class="close-edit-asset-btn action-btn">
-                    <i class="fa-solid fa-xmark"></i> Cancel
-                </button>
+                <div class="modal-actions">
+                    <button type="submit" form="edit-asset-form" class="action-btn update-btn">
+                        <i class="fa-solid fa-save"></i> Save Changes
+                    </button>
+                    <button type="button" class="close-edit-asset-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
             </div>
             <form id="edit-asset-form">
                 <input type="hidden" id="edit-asset-id">
@@ -654,14 +658,7 @@
                     <textarea id="edit-asset-notes" name="notes" rows="3" placeholder="Any additional notes about this asset"></textarea>
                 </div>
 
-                <div class="modal-actions">
-                    <button type="submit" class="action-btn update-btn">
-                        <i class="fa-solid fa-save"></i> Save Changes
-                    </button>
-                    <button type="button" class="close-edit-asset-btn action-btn">
-                        <i class="fa-solid fa-xmark"></i> Cancel
-                    </button>
-                </div>
+
             </form>
         </div>
     </div>
@@ -672,9 +669,17 @@
             <span class="close-modal close-top-left">&times;</span>
             <div class="modal-header">
                 <h2>Maintenance Schedule</h2>
-                <button class="close-maintenance-schedule-btn action-btn">
-                    <i class="fa-solid fa-xmark"></i> Cancel
-                </button>
+                <div class="modal-actions">
+                    <button type="submit" form="maintenance-schedule-form" class="action-btn add-btn">
+                        <i class="fa-solid fa-save"></i> Save Schedule
+                    </button>
+                    <button id="delete-maintenance-schedule-btn" class="action-btn delete-btn" style="display: none;">
+                        <i class="fa-solid fa-trash-can"></i> Delete
+                    </button>
+                    <button type="button" class="close-maintenance-schedule-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
             </div>
             <form id="maintenance-schedule-form">
                 <input type="hidden" id="maintenance-schedule-asset-id" name="asset_id">
@@ -791,14 +796,7 @@
                     <textarea id="maintenance-schedule-notes" name="notes" rows="3" placeholder="Additional notes about this maintenance task"></textarea>
                 </div>
 
-                <div class="modal-actions">
-                    <button type="submit" class="action-btn add-btn">
-                        <i class="fa-solid fa-save"></i> Save Schedule
-                    </button>
-                    <button type="button" class="close-maintenance-schedule-btn action-btn">
-                        <i class="fa-solid fa-xmark"></i> Cancel
-                    </button>
-                </div>
+
             </form>
         </div>
     </div>
@@ -900,9 +898,14 @@
             <span class="close-modal close-top-left">&times;</span>
             <div class="modal-header">
                 <h2>Add Event</h2>
-                <button class="close-add-event-btn action-btn">
-                    <i class="fa-solid fa-xmark"></i> Cancel
-                </button>
+                <div class="modal-actions">
+                    <button type="submit" form="add-event-form" class="action-btn add-btn">
+                        <i class="fa-solid fa-save"></i> Save Event
+                    </button>
+                    <button type="button" class="close-add-event-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
             </div>
             <form id="add-event-form">
                 <input type="hidden" id="event-date">
@@ -970,14 +973,7 @@
                     </div>
                 </div>
                 
-                <div class="modal-actions">
-                    <button type="submit" class="action-btn add-btn">
-                        <i class="fa-solid fa-save"></i> Save Event
-                    </button>
-                    <button type="button" class="close-add-event-btn action-btn">
-                        <i class="fa-solid fa-xmark"></i> Cancel
-                    </button>
-                </div>
+
             </form>
         </div>
     </div>
@@ -988,22 +984,19 @@
             <span class="close-modal close-top-left">&times;</span>
             <div class="modal-header">
                 <h2>Event Details</h2>
-                <button class="close-event-details-btn action-btn">
-                    <i class="fa-solid fa-xmark"></i> Close
-                </button>
+                <div class="modal-actions">
+                    <button id="delete-event-btn" class="action-btn delete-btn" style="display: none;">
+                        <i class="fa-solid fa-trash"></i> Delete Event
+                    </button>
+                    <button class="close-event-details-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Close
+                    </button>
+                </div>
             </div>
             <div class="form-section">
                 <div id="event-details-content">
                     <!-- Event details will be populated here -->
                 </div>
-            </div>
-            <div class="modal-actions">
-                <button id="delete-event-btn" class="action-btn delete-btn" style="display: none;">
-                    <i class="fa-solid fa-trash"></i> Delete Event
-                </button>
-                <button class="close-event-details-btn action-btn">
-                    <i class="fa-solid fa-xmark"></i> Close
-                </button>
             </div>
         </div>
     </div>
