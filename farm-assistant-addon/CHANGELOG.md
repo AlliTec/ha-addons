@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.54 - 2025-11-13
+
+### Fixed
+- **GET Event Database Query**: Fixed query to only select existing columns from calendar_entries table
+- **Missing Column Error**: Removed references to non-existent `priority` and `status` columns in calendar_entries
+- **Default Values**: Added default values for `status` and `priority` fields in GET event response
+- **Server Startup Error**: Resolved database column mismatch that prevented server from starting
+
+### Technical
+- **Database Schema Alignment**: GET endpoint now matches actual calendar_entries table structure
+- **Backward Compatibility**: Maintains API contract by providing default values for missing fields
+- **Error Resolution**: Fixed UndefinedColumnError that caused server startup failure
+
 ## 1.10.53 - 2025-11-13
 
 ### Added

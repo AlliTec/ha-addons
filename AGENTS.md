@@ -1,41 +1,36 @@
 # Agent Guidelines for ha-addons
 
-This repository contains multiple Home Assistant addons. Each addon has its own directory and specific guidelines.
-
 ## Build/Lint/Test Commands
 
 ### rain-predictor-addon
-- **Install**: `pip3 install -r rain-predictor-addon/requirements.txt`
-- **Syntax Check**: `python3 -m py_compile rain_predictor.py web_ui.py`
-- **Local Dev**: `cd rain-predictor-addon && ./run_local.sh`
-- **Test**: No test framework configured - use `pytest` for new tests
+- Install: `pip3 install -r rain-predictor-addon/requirements.txt`
+- Syntax: `python3 -m py_compile rain_predictor.py web_ui.py`
+- Test: Use `pytest` for new tests
+- Local Dev: `cd rain-predictor-addon && ./run_local.sh`
 
-### farm-assistant-addon  
-- **Install**: Dependencies in Dockerfile - `fastapi uvicorn asyncpg jinja2`
-- **Syntax Check**: `python3 -m py_compile main.py`
-- **Local Dev**: `cd farm-assistant-addon && uvicorn main:app --host 0.0.0.0 --port 8000`
-- **Test**: No test framework configured - use `pytest` for new tests
+### farm-assistant-addon
+- Install: `pip3 install fastapi uvicorn asyncpg jinja2`
+- Syntax: `python3 -m py_compile main.py`
+- Test: Use `pytest` for new tests
+- Local Dev: `cd farm-assistant-addon && uvicorn main:app --host 0.0.0.0 --port 8000`
 
 ## Code Style Guidelines
 
 ### Python (Both Addons)
-- **Style**: PEP 8 compliance
-- **Naming**: snake_case for variables/functions, PascalCase for classes, UPPER_CASE for constants
-- **Type Hints**: Required for all function signatures and class attributes
-- **Docstrings**: Use triple quotes for all classes and public functions
-- **Imports**: Group standard library, third-party, and local imports separately
-- **Error Handling**: Use try/except with specific exceptions, log errors appropriately
+- Style: PEP 8 compliance, snake_case variables, PascalCase classes
+- Type hints required for all function signatures and class attributes
+- Docstrings with triple quotes for all classes and public functions
+- Imports: standard library → third-party → local imports
+- Error handling: try/except with specific exceptions, log appropriately
 
 ### JavaScript (rain-predictor-addon)
-- **Style**: ES6+, camelCase for variables/functions, PascalCase for classes
-- **Functions**: Use arrow functions for callbacks, regular functions for methods
-- **Async**: Use async/await over Promise chains
-- **DOM**: Use event delegation for dynamic content
+- Style: ES6+, camelCase variables/functions, PascalCase classes
+- Use arrow functions for callbacks, async/await over Promises
+- Event delegation for dynamic DOM content
 
 ### Database (farm-assistant-addon)
-- **Queries**: Use parameterized queries with asyncpg
-- **Connections**: Always close connections in try/finally blocks
-- **Models**: Use Pydantic for request/response validation
+- Use parameterized queries with asyncpg, close connections in try/finally
+- Use Pydantic for request/response validation
 
 ## The Six Coding Commandments (MANDATORY)
 

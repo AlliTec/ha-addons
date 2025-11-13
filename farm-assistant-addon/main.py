@@ -448,7 +448,7 @@ async def get_event(event_id: int):
         event = await conn.fetchrow("""
             SELECT id, entry_date as date, event_time as time, duration_hours as duration,
                    category, title, description as notes, related_id as item_id,
-                   entry_type, priority, status
+                   entry_type
             FROM calendar_entries 
             WHERE id = $1
         """, event_id)
@@ -460,6 +460,10 @@ async def get_event(event_id: int):
         event_dict = dict(event)
         if event_dict['time']:
             event_dict['time'] = event_dict['time'].strftime('%H:%M')
+        
+        # Add default values for fields that don't exist in calendar_entries
+        event_dict['status'] = 'scheduled'
+        event_dict['priority'] = 'medium'
         
         logging.info(f"Event {event_id} retrieved successfully")
         return event_dict
