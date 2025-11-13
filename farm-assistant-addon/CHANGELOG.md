@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.10.44 - 2025-11-13
+
+### Fixed
+- **Event Creation API URLs**: Fixed missing leading slash in all fetch API calls
+- **Event Deletion API URLs**: Corrected fetch URL for event deletion functionality
+- **Form Validation**: Added required attribute to duration field in event creation form
+- **API Call Consistency**: Updated all API endpoints to use proper absolute paths
+
+### Resolved Issues
+- **Event Creation Error**: Users can now successfully create events without errors
+- **Event Deletion Error**: Delete functionality now works correctly from browser interface
+- **Fetch API Failures**: All JavaScript API calls now use correct endpoint paths
+- **Form Submission**: Event creation form properly validates and submits required fields
+
+### Tested Functionality
+- ✅ Event creation via browser interface works correctly
+- ✅ Event deletion via browser interface works correctly  
+- ✅ Events appear properly in calendar after creation
+- ✅ Events are removed from calendar after deletion
+- ✅ All API endpoints tested and working as expected
+
 ## 1.10.43 - 2025-11-13
 
 ### Enhanced

@@ -449,7 +449,7 @@ async function populateAnimalList(filter = "All") {
 async function populateParentDropdowns() {
     console.log("populateParentDropdowns called");
     try {
-        const response = await fetch('api/animals');
+        const response = await fetch('/api/animals');
         console.log("Animals response status:", response.status);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -1072,9 +1072,9 @@ async function populateEventItemDropdown(category) {
         
         let response;
         if (category === 'livestock') {
-            response = await fetch('api/animals');
+            response = await fetch('/api/animals');
         } else if (category === 'asset') {
-            response = await fetch('api/assets');
+            response = await fetch('/api/assets');
         }
         
         if (!response.ok) {
@@ -1100,7 +1100,7 @@ async function populateEventItemDropdown(category) {
 // Function to save event
 async function saveEvent(eventData) {
     try {
-        const response = await fetch('api/events', {
+        const response = await fetch('/api/events', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1224,7 +1224,7 @@ async function deleteEvent(eventId) {
     }
     
     try {
-        const response = await fetch(`api/events/${eventId}`, {
+        const response = await fetch(`/api/events/${eventId}`, {
             method: 'DELETE'
         });
         
@@ -2339,7 +2339,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             };
             
             try {
-                const response = await fetch('api/asset', {
+                const response = await fetch('/api/asset', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
