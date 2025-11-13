@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.10.60 - 2025-11-14
+
+### Fixed
+- **Calendar Theme**: Fixed weekday headers to match livestock/asset register styling
+- **Grid Alignment**: Corrected month day cells alignment using responsive grid (1fr instead of fixed 120px)
+- **Visual Consistency**: Applied table header background and text colors to calendar headers
+- **Border Styling**: Fixed empty day cell borders to match table theme
+- **Future Events**: Added test events to verify future month functionality
+
+### Technical
+- **CSS Grid**: Changed from fixed pixel widths to fractional units for better responsiveness
+- **Theme Variables**: Applied consistent CSS variables (--table-header-bg, --text-color, --table-border)
+- **Cell Styling**: Removed fixed widths, improved responsive layout
+- **Event Verification**: Confirmed February and March 2026 events display correctly when present
+
+### User Experience
+- **Visual Harmony**: Calendar now matches overall application theme
+- **Better Alignment**: Day numbers properly align with weekday columns
+- **Future Navigation**: Users can navigate to future months and see events when they exist
+
 ## 1.10.59 - 2025-11-14
 
 ### Investigated

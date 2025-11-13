@@ -1227,9 +1227,25 @@ th {
 
 .weekday-headers {
     display: grid;
-    grid-template-columns: repeat(7, 120px);
-    background: var(--header-bg);
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1px;
     border: 1px solid var(--table-border);
+    border-bottom: none;
+    background-color: var(--table-header-bg);
+}
+
+.weekday-headers div {
+    padding: 10px 6px;
+    text-align: center;
+    font-weight: bold;
+    border-right: 1px solid var(--table-border);
+    background-color: var(--table-header-bg);
+    color: var(--text-color);
+    white-space: nowrap;
+}
+
+.weekday-headers div:last-child {
+    border-right: none;
 }
 
 .weekday-headers div {
@@ -1245,22 +1261,21 @@ th {
 
 .month-days {
     display: grid;
-    grid-template-columns: repeat(7, 120px);
+    grid-template-columns: repeat(7, 1fr);
     gap: 1px;
     border: 1px solid var(--table-border);
     border-top: none;
 }
 
 .empty-day {
-    background: #e0e0e0;
+    background: var(--cell-bg);
     height: 100px;
-    width: 120px;
+    border-right: 1px solid var(--table-border);
 }
 
 .month-day {
     background: var(--cell-bg);
     height: 100px;
-    width: 120px;
     padding: 4px;
     border-right: 1px solid var(--table-border);
     position: relative;
