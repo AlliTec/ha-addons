@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.10.46 - 2025-11-13
+
+### Fixed
+- **Home Assistant Proxy URLs**: Removed leading slashes from all API fetch calls
+- **Event Deletion Error**: Fixed 405 Method Not Allowed error in browser interface
+- **URL Resolution**: Changed from absolute to relative URLs for proper proxy routing
+- **API Consistency**: All fetch calls now use relative URLs consistently
+
+### Root Cause
+- **Port Mismatch**: Browser accesses addon through Home Assistant proxy (port 8123)
+- **Absolute URLs**: Leading slashes caused requests to bypass proxy and hit wrong port
+- **Method Not Allowed**: Proxy couldn't route DELETE requests to correct endpoint
+
+### Technical
+- **Relative URLs**: Changed `/api/events` to `api/events` throughout codebase
+- **Proxy Compatibility**: All API calls now work through Home Assistant's proxy system
+- **Event Operations**: Both creation and deletion now work in browser interface
+
 ## 1.10.45 - 2025-11-13
 
 ### Fixed
