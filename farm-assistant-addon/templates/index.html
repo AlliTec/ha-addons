@@ -718,7 +718,8 @@
                     <div class="form-grid">
                         <div>
                             <label for="maintenance-schedule-due-date">Due Date:</label>
-                            <input type="date" id="maintenance-schedule-due-date" name="due_date">
+                            <input type="date" id="maintenance-schedule-due-date" name="due_date" required>
+                            <small>Automatically calculated from interval and meter reading</small>
                         </div>
                         <div>
                             <label for="maintenance-schedule-completed-date">Completed Date:</label>
@@ -726,8 +727,8 @@
                         </div>
                         <div>
                             <label for="maintenance-schedule-interval-type">Interval Type:</label>
-                            <select id="maintenance-schedule-interval-type" name="interval_type">
-                                <option value="">No Interval</option>
+                            <select id="maintenance-schedule-interval-type" name="interval_type" required>
+                                <option value="">Select Interval Type</option>
                                 <option value="hours">Hours</option>
                                 <option value="km">Kilometers</option>
                                 <option value="days">Days</option>
@@ -738,7 +739,7 @@
                         </div>
                         <div>
                             <label for="maintenance-schedule-interval-value">Interval Value:</label>
-                            <input type="number" id="maintenance-schedule-interval-value" name="interval_value" min="1">
+                            <input type="number" id="maintenance-schedule-interval-value" name="interval_value" min="1" required>
                         </div>
                     </div>
                 </div>

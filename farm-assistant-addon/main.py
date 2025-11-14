@@ -533,7 +533,7 @@ async def update_event(event_id: int, event: Event):
 class MaintenanceScheduleCreate(BaseModel):
     asset_id: int
     task_description: str
-    due_date: Optional[str] = None
+    due_date: str  # Mandatory field
     completed_date: Optional[str] = None
     status: Optional[str] = "pending"
     is_unscheduled: Optional[bool] = False
@@ -541,8 +541,8 @@ class MaintenanceScheduleCreate(BaseModel):
     maintenance_trigger_value: Optional[int] = None
     last_maintenance_usage: Optional[float] = None
     meter_reading: Optional[int] = None
-    interval_type: Optional[str] = None
-    interval_value: Optional[int] = None
+    interval_type: str  # Mandatory field
+    interval_value: int  # Mandatory field
     cost: Optional[float] = None
     supplier: Optional[str] = None
     invoice_number: Optional[str] = None
@@ -554,18 +554,17 @@ async def create_maintenance_schedule(schedule: MaintenanceScheduleCreate):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
         # Convert date strings to date objects for asyncpg
-        due_date_obj = None
+        # due_date is now mandatory
+        due_date_obj = datetime.strptime(schedule.due_date, '%Y-%m-%d').date()
         completed_date_obj = None
-        
-        if schedule.due_date:
-            due_date_obj = datetime.strptime(schedule.due_date, '%Y-%m-%d').date()
         
         if schedule.completed_date:
             completed_date_obj = datetime.strptime(schedule.completed_date, '%Y-%m-%d').date()
         
         # Convert empty strings to None for database constraints
         maintenance_trigger_type = schedule.maintenance_trigger_type.strip() if schedule.maintenance_trigger_type and schedule.maintenance_trigger_type.strip() else None
-        interval_type = schedule.interval_type.strip() if schedule.interval_type and schedule.interval_type.strip() else None
+        # interval_type is now mandatory
+        interval_type = schedule.interval_type.strip()
         supplier = schedule.supplier.strip() if schedule.supplier and schedule.supplier.strip() else None
         invoice_number = schedule.invoice_number.strip() if schedule.invoice_number and schedule.invoice_number.strip() else None
         notes = schedule.notes.strip() if schedule.notes and schedule.notes.strip() else None
@@ -1147,18 +1146,17 @@ async def update_maintenance_schedule(schedule_id: int, schedule: MaintenanceSch
     conn = await asyncpg.connect(DATABASE_URL)
     try:
         # Convert date strings to date objects for asyncpg
-        due_date_obj = None
+        # due_date is now mandatory
+        due_date_obj = datetime.strptime(schedule.due_date, '%Y-%m-%d').date()
         completed_date_obj = None
-        
-        if schedule.due_date:
-            due_date_obj = datetime.strptime(schedule.due_date, '%Y-%m-%d').date()
         
         if schedule.completed_date:
             completed_date_obj = datetime.strptime(schedule.completed_date, '%Y-%m-%d').date()
         
         # Convert empty strings to None for database constraints
         maintenance_trigger_type = schedule.maintenance_trigger_type.strip() if schedule.maintenance_trigger_type and schedule.maintenance_trigger_type.strip() else None
-        interval_type = schedule.interval_type.strip() if schedule.interval_type and schedule.interval_type.strip() else None
+        # interval_type is now mandatory
+        interval_type = schedule.interval_type.strip()
         supplier = schedule.supplier.strip() if schedule.supplier and schedule.supplier.strip() else None
         invoice_number = schedule.invoice_number.strip() if schedule.invoice_number and schedule.invoice_number.strip() else None
         notes = schedule.notes.strip() if schedule.notes and schedule.notes.strip() else None

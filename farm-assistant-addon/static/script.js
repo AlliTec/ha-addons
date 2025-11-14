@@ -2813,9 +2813,70 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    // Function to calculate due date based on interval and meter readings
+    function calculateDueDate() {
+        const intervalType = document.getElementById('maintenance-schedule-interval-type').value;
+        const intervalValue = parseInt(document.getElementById('maintenance-schedule-interval-value').value);
+        const meterReading = parseFloat(document.getElementById('maintenance-schedule-meter-reading').value);
+        const lastMaintenanceUsage = parseFloat(document.getElementById('maintenance-schedule-last-usage').value) || 0;
+        const dueDateField = document.getElementById('maintenance-schedule-due-date');
+        
+        if (!intervalType || !intervalValue || !meterReading) {
+            return; // Don't calculate if required fields are missing
+        }
+        
+        let dueDate = new Date();
+        
+        if (intervalType === 'hours' || intervalType === 'km') {
+            // Calculate based on meter reading using modulo
+            const usageSinceLastMaintenance = meterReading - lastMaintenanceUsage;
+            const remainingInterval = intervalValue - (usageSinceLastMaintenance % intervalValue);
+            
+            // Estimate when next maintenance is due based on average usage
+            // For simplicity, estimate 30 days from now if usage-based
+            dueDate.setDate(dueDate.getDate() + 30);
+            
+            console.log(`Usage-based calculation: ${usageSinceLastMaintenance} ${intervalType} used, ${remainingInterval} ${intervalType} remaining`);
+        } else {
+            // Calculate based on time intervals
+            switch (intervalType) {
+                case 'days':
+                    dueDate.setDate(dueDate.getDate() + intervalValue);
+                    break;
+                case 'weeks':
+                    dueDate.setDate(dueDate.getDate() + (intervalValue * 7));
+                    break;
+                case 'months':
+                    dueDate.setMonth(dueDate.getMonth() + intervalValue);
+                    break;
+                case 'years':
+                    dueDate.setFullYear(dueDate.getFullYear() + intervalValue);
+                    break;
+            }
+        }
+        
+        // Format date as YYYY-MM-DD for input field
+        const formattedDate = dueDate.toISOString().split('T')[0];
+        dueDateField.value = formattedDate;
+        
+        console.log(`Calculated due date: ${formattedDate} for ${intervalType} interval of ${intervalValue}`);
+    }
+
     // Maintenance Schedule Form Handler
     const maintenanceScheduleForm = document.getElementById('maintenance-schedule-form');
     if (maintenanceScheduleForm) {
+        // Add event listeners for automatic due date calculation
+        const intervalTypeField = document.getElementById('maintenance-schedule-interval-type');
+        const intervalValueField = document.getElementById('maintenance-schedule-interval-value');
+        const meterReadingField = document.getElementById('maintenance-schedule-meter-reading');
+        const lastUsageField = document.getElementById('maintenance-schedule-last-usage');
+        
+        if (intervalTypeField) intervalTypeField.addEventListener('change', calculateDueDate);
+        if (intervalValueField) intervalValueField.addEventListener('input', calculateDueDate);
+        if (meterReadingField) meterReadingField.addEventListener('input', calculateDueDate);
+        if (lastUsageField) lastUsageField.addEventListener('input', calculateDueDate);
+        
+        if (maintenanceScheduleForm) {
         maintenanceScheduleForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             

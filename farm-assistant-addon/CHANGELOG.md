@@ -1,5 +1,30 @@
 # Changelog
 
+## 1.10.63 - 2025-11-14
+
+### Enhanced
+- **Mandatory Interval Fields**: Made interval type and interval value mandatory for scheduled maintenance
+- **Automatic Due Date Calculation**: Implemented smart due date calculation based on interval and meter readings
+- **Usage-Based Scheduling**: Calculates next service due using modulo operation on odometer/hour meter readings
+- **Time-Based Scheduling**: Supports days, weeks, months, and years intervals with automatic date calculation
+
+### Technical
+- **Frontend Validation**: Added required attribute to interval and due date fields in maintenance form
+- **JavaScript Calculation**: New calculateDueDate() function automatically updates due date when interval/meter values change
+- **Real-Time Updates**: Due date recalculates instantly when interval type, value, or meter reading changes
+- **Backend Validation**: Updated MaintenanceScheduleCreate model to enforce mandatory interval and due date fields
+
+### User Experience
+- **Smart Scheduling**: System automatically calculates when next maintenance is due based on usage patterns
+- **Flexible Intervals**: Supports both usage-based (hours/km) and time-based (days/weeks/months/years) scheduling
+- **Visual Feedback**: Due date field shows calculated date with helpful description
+- **Data Integrity**: Mandatory fields ensure complete maintenance scheduling information
+
+### Calculation Logic
+- **Usage-Based**: For hours/km intervals, estimates 30 days from now when maintenance is approaching
+- **Time-Based**: Adds interval directly to current date (days, weeks = days*7, months, years)
+- **Modulo Logic**: Tracks usage since last maintenance to calculate remaining interval
+
 ## 1.10.62 - 2025-11-14
 
 ### Fixed
