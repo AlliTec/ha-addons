@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.10.67 - 2025-11-14
+
+### Fixed
+- **JavaScript Errors**: Fixed null reference errors in modal handling functions
+- **Cancel Button**: Added proper null checks to prevent crashes when closing maintenance schedule modal
+- **Event Editing**: Fixed null reference errors in loadEventForEdit function
+- **Form Reset**: Enhanced resetMaintenanceScheduleForm with proper error handling
+- **Modal Safety**: Added null checks in cancel button event handler to prevent crashes
+
 ## 1.10.66 - 2025-11-14
 
 ### Fixed

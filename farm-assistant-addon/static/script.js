@@ -1468,11 +1468,24 @@ async function loadEventForEdit(eventId) {
         
         // Change modal to edit mode
         const modal = document.getElementById('add-event-modal');
+        if (!modal) {
+            console.error('Add event modal not found');
+            return;
+        }
+        
         const modalTitle = modal.querySelector('h2');
+        if (!modalTitle) {
+            console.error('Modal title not found in add event modal');
+            return;
+        }
         modalTitle.textContent = 'Edit Event';
         
         // Change submit button text and add update mode flag
         const submitBtn = document.querySelector('#add-event-form button[type="submit"]');
+        if (!submitBtn) {
+            console.error('Submit button not found in add event form');
+            return;
+        }
         submitBtn.textContent = 'Update Event';
         submitBtn.dataset.mode = 'edit';
         submitBtn.dataset.eventId = eventId;
@@ -2203,8 +2216,19 @@ document.addEventListener("DOMContentLoaded", async () => {
     function resetMaintenanceScheduleForm() {
         const form = document.getElementById('maintenance-schedule-form');
         const modal = document.getElementById('maintenance-schedule-modal');
+        
+        if (!form || !modal) {
+            console.error('Maintenance schedule form or modal not found');
+            return;
+        }
+        
         const modalTitle = modal.querySelector('h2');
         const submitBtn = form.querySelector('button[type="submit"]');
+        
+        if (!modalTitle || !submitBtn) {
+            console.error('Modal title or submit button not found');
+            return;
+        }
         
         // Reset form
         form.reset();
@@ -2624,6 +2648,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             target.closest('.close-animal-history-btn')) {
             
             const modal = target.closest('.modal');
+            if (!modal) {
+                console.error('Modal not found for close button');
+                return;
+            }
             
             // Reset maintenance schedule form to create mode when closing
             if (modal.id === 'maintenance-schedule-modal') {
