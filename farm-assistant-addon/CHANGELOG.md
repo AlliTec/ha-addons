@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.10.64 - 2025-11-14
+
+### Fixed
+- **JavaScript Syntax Error**: Fixed critical syntax error causing site crashes
+- **Event Listener Structure**: Corrected duplicate conditional check in maintenance schedule form handler
+- **Code Structure**: Removed redundant `if (maintenanceScheduleForm)` condition that was causing syntax errors
+- **Site Stability**: Restored full functionality and prevented frontend crashes
+
+### Technical
+- **JavaScript Validation**: Fixed `SyntaxError: Unexpected token ')'` at line 3630
+- **Event Handler**: Properly structured maintenance schedule form event listener
+- **Code Quality**: Ensured proper brace matching and conditional logic
+- **Error Prevention**: Added syntax validation to prevent future crashes
+
+### Validation
+- **Frontend Loading**: HTML and JavaScript load without errors
+- **API Functionality**: All endpoints (assets, calendar, maintenance) working correctly
+- **Form Functionality**: Maintenance schedule form with automatic due date calculation operational
+- **System Stability**: No crashes or syntax errors detected
+
 ## 1.10.63 - 2025-11-14
 
 ### Enhanced

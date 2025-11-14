@@ -2876,7 +2876,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (meterReadingField) meterReadingField.addEventListener('input', calculateDueDate);
         if (lastUsageField) lastUsageField.addEventListener('input', calculateDueDate);
         
-        if (maintenanceScheduleForm) {
         maintenanceScheduleForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             
