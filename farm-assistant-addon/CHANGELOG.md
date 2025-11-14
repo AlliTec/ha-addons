@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.10.68 - 2025-11-14
+
+### Fixed
+- **Event Editing**: Fixed event editing functionality when clicking events in maintenance history
+- **Modal Timing**: Added delay to ensure DOM elements are available before loading event data
+- **Null Reference**: Enhanced error handling in loadEventForEdit function
+- **History Interaction**: Scheduled events in maintenance history can now be edited properly
+- **Modal Display**: Fixed event editing modal display and population
+
 ## 1.10.67 - 2025-11-14
 
 ### Fixed

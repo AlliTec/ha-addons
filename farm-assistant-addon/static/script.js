@@ -2602,7 +2602,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
             
             // Load the event for editing
-            loadEventForEdit(eventId);
+            setTimeout(() => {
+                loadEventForEdit(eventId);
+            }, 100);
             return;
         }
 
