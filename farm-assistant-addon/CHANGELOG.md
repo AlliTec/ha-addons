@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.10.62 - 2025-11-14
+
+### Fixed
+- **Future Events Display**: Fixed critical bug preventing February and March 2026 events from showing in calendar
+- **Date Variable Scope**: Removed local `currentDate` declaration that was shadowing global navigation date
+- **Calendar Navigation**: Events now properly display when users navigate to future months
+- **API Integration**: Backend correctly returns future events, frontend now properly displays them
+
+### Technical
+- **JavaScript Scope Fix**: Removed conflicting `const currentDate` declaration in loadCalendarEvents function
+- **Global Date State**: Calendar now uses global `currentDate` variable that updates during navigation
+- **Event Loading**: Calendar events load correctly for any viewed month, not just current month
+
+### User Experience
+- **Future Planning**: Users can now see and plan for future events (registration due dates, scheduled maintenance)
+- **Navigation Reliability**: Calendar navigation works correctly for all months, present and future
+- **Event Visibility**: All events display properly regardless of selected time period
+
 ## 1.10.61 - 2025-11-14
 
 ### Enhanced

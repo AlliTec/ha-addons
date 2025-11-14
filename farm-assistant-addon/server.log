@@ -32,3 +32,7 @@ Parsed dates: start_date_obj=2025-11-14, end_date_obj=2025-11-14
 INFO:     127.0.0.1:38926 - "GET /api/calendar?start_date=2025-11-14&end_date=2025-11-14 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:38928 - "GET /api/animals HTTP/1.1" 200 OK
 INFO:     127.0.0.1:55908 - "GET / HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [215579]

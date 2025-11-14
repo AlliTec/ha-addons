@@ -2987,7 +2987,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         
         // Calculate date range based on current date and filter type
         const today = new Date();
-        const currentDate = new Date(); // Fix: Add missing currentDate variable
         let startDate, endDate;
         
         // Helper function to format date as YYYY-MM-DD without timezone conversion
