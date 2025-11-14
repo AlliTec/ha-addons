@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.10.66 - 2025-11-14
+
+### Fixed
+- **Cancel Button**: Verified and confirmed cancel button functionality in maintenance schedule modal
+- **Form Reset**: Ensured maintenance schedule form properly resets to create mode when cancelled
+- **Modal Closing**: Confirmed modal closes correctly when cancel button is clicked
+- **Code Quality**: Removed debug logging and cleaned up test code
+
 ## 1.10.65 - 2025-11-14
 
 ### Fixed
