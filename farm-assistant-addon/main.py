@@ -564,7 +564,7 @@ async def create_maintenance_schedule(schedule: MaintenanceScheduleCreate):
         # Convert empty strings to None for database constraints
         maintenance_trigger_type = schedule.maintenance_trigger_type.strip() if schedule.maintenance_trigger_type and schedule.maintenance_trigger_type.strip() else None
         # interval_type is now mandatory
-        interval_type = schedule.interval_type.strip()
+        interval_type = schedule.interval_type.strip() if schedule.interval_type else None
         supplier = schedule.supplier.strip() if schedule.supplier and schedule.supplier.strip() else None
         invoice_number = schedule.invoice_number.strip() if schedule.invoice_number and schedule.invoice_number.strip() else None
         notes = schedule.notes.strip() if schedule.notes and schedule.notes.strip() else None
@@ -600,10 +600,6 @@ async def create_maintenance_schedule(schedule: MaintenanceScheduleCreate):
             invoice_number,
             notes
         )
-        
-        # If this is an interval-based schedule, immediately check if maintenance is due
-        if interval_type and schedule.interval_value:
-            await check_and_schedule_maintenance()
         
         return {"message": "Maintenance schedule created successfully", "id": result['id']}
     finally:
@@ -1156,7 +1152,7 @@ async def update_maintenance_schedule(schedule_id: int, schedule: MaintenanceSch
         # Convert empty strings to None for database constraints
         maintenance_trigger_type = schedule.maintenance_trigger_type.strip() if schedule.maintenance_trigger_type and schedule.maintenance_trigger_type.strip() else None
         # interval_type is now mandatory
-        interval_type = schedule.interval_type.strip()
+        interval_type = schedule.interval_type.strip() if schedule.interval_type else None
         supplier = schedule.supplier.strip() if schedule.supplier and schedule.supplier.strip() else None
         invoice_number = schedule.invoice_number.strip() if schedule.invoice_number and schedule.invoice_number.strip() else None
         notes = schedule.notes.strip() if schedule.notes and schedule.notes.strip() else None

@@ -2821,8 +2821,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         const lastMaintenanceUsage = parseFloat(document.getElementById('maintenance-schedule-last-usage').value) || 0;
         const dueDateField = document.getElementById('maintenance-schedule-due-date');
         
-        if (!intervalType || !intervalValue || !meterReading) {
-            return; // Don't calculate if required fields are missing
+        if (!intervalType || !intervalValue) {
+            return; // Don't calculate if interval fields are missing
+        }
+        
+        // If meter reading is not provided, use time-based calculation
+        if (!meterReading || isNaN(meterReading)) {
+            console.log('Meter reading not provided, using time-based calculation');
         }
         
         let dueDate = new Date();
@@ -2879,6 +2884,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         maintenanceScheduleForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             
+            // Trigger automatic due date calculation before submission
+            calculateDueDate();
+            
             const formData = new FormData(event.target);
             const submitBtn = event.target.querySelector('button[type="submit"]');
             const isEditMode = submitBtn.dataset.mode === 'edit';
@@ -2887,10 +2895,21 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log('Maintenance schedule form submitted. Form data:', Object.fromEntries(formData));
             console.log('Edit mode:', isEditMode, 'Schedule ID:', scheduleId);
             
+            // Get form values and validate mandatory fields
+            const dueDate = formData.get('due_date');
+            const intervalType = formData.get('interval_type');
+            const intervalValue = formData.get('interval_value');
+            
+            // Validate mandatory fields
+            if (!dueDate || !intervalType || !intervalValue) {
+                alert('Due date, interval type, and interval value are required fields for scheduled maintenance.');
+                return;
+            }
+            
             const maintenanceData = {
                 asset_id: parseInt(formData.get('asset_id')),
                 task_description: formData.get('task_description'),
-                due_date: formData.get('due_date') || null,
+                due_date: dueDate, // Now mandatory
                 completed_date: formData.get('completed_date') || null,
                 status: formData.get('status') || 'pending',
                 is_unscheduled: formData.get('is_unscheduled') === 'true',
@@ -2898,8 +2917,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 maintenance_trigger_value: formData.get('maintenance_trigger_value') ? parseInt(formData.get('maintenance_trigger_value')) : null,
                 last_maintenance_usage: formData.get('last_maintenance_usage') ? parseFloat(formData.get('last_maintenance_usage')) : null,
                 meter_reading: formData.get('meter_reading') ? parseInt(formData.get('meter_reading')) : null,
-                interval_type: formData.get('interval_type'),
-                interval_value: formData.get('interval_value') ? parseInt(formData.get('interval_value')) : null,
+                interval_type: intervalType, // Now mandatory
+                interval_value: parseInt(intervalValue), // Now mandatory
                 cost: formData.get('cost') ? parseFloat(formData.get('cost')) : null,
                 supplier: formData.get('supplier'),
                 invoice_number: formData.get('invoice_number'),
