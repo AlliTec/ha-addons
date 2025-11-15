@@ -2607,6 +2607,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             }, 100);
             return;
         }
+        
+        // Handle maintenance record row clicks (show alert that these cannot be edited)
+        if (target.closest('.maintenance-record-row')) {
+            console.log('Maintenance record row clicked!');
+            const row = target.closest('.maintenance-record-row');
+            const historyId = row.dataset.historyId;
+            console.log('History ID:', historyId);
+            
+            alert('Historical records cannot be edited. Only scheduled events can be edited.');
+            return;
+        }
 
         // Handle asset delete button
         if (target.closest('#delete-asset-btn')) {

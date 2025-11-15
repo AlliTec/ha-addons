@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.10.69 - 2025-11-15
+
+### Fixed
+- **Animal History Event Clicking**: Fixed error when clicking events in animal register history
+- **Event Type Handling**: Added proper handling for both scheduled events and historical records
+- **User Feedback**: Added alert message when clicking historical records that cannot be edited
+- **Click Distinction**: Scheduled events can now be edited, historical records show appropriate message
+
 ## 1.10.68 - 2025-11-14
 
 ### Fixed
