@@ -191,7 +191,7 @@ async def read_item(request: Request):
             animal['animal_type'] = get_animal_type(animal['gender'])
     except Exception as e:
         animals = []
-    return templates.TemplateResponse("index.html", {"request": request, "addon_version": addon_version, "animals": animals, "timestamp": int(datetime.now().timestamp())})
+    return templates.TemplateResponse("index.html", {"request": request, "addon_version": addon_version, "animals": animals, "timestamp": int(datetime.now().timestamp() * 1000)})
 
 
 

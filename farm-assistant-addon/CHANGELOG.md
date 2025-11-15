@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.10.77 - 2025-11-16
+
+### Fixed
+- **Cache-Busting Mechanism**: Enhanced version parameter to force browser cache invalidation
+- **Script Loading**: Modified timestamp generation to prevent cached JavaScript loading
+- **Browser Cache Issues**: Implemented aggressive cache-busting for script.js
+
+### Enhanced
+- **Version Control**: Increased timestamp precision to ensure immediate cache invalidation
+- **Script Updates**: Ensured latest JavaScript changes are loaded immediately
+
 ## 1.10.76 - 2025-11-16
 
 ### Fixed
