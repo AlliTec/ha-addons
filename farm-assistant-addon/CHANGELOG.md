@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.80 - 2025-11-16
+
+### Fixed
+- **Cache-Busting Version Resolution**: Fixed addon_version template variable showing "unknown" instead of actual version
+- **Config.yaml Path Resolution**: Enhanced version reading with multiple fallback paths for different deployment scenarios
+- **JavaScript Modal Element Access**: Resolved null element errors in loadEventForEdit and resetMaintenanceScheduleForm functions
+- **DOM Timing Issues**: Implemented Promise-based modal element waiting instead of setTimeout delays
+
+### Enhanced
+- **Version Detection**: Added robust config.yaml path detection for Home Assistant and local environments
+- **Modal Reliability**: Improved modal operations with proper element availability checks
+- **Cache Invalidation**: Ensured proper version parameter generation for JavaScript cache-busting
+
 ## 1.10.79 - 2025-11-16
 
 ### Fixed

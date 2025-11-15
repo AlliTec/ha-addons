@@ -151,28 +151,29 @@ def get_animal_type(gender):
 
 @app.get("/", response_class=HTMLResponse)
 async def read_item(request: Request):
-    # Read version from config.yaml
-    try:
-        # Try relative path first (for when running in HA)
-        with open('config.yaml', 'r') as f:
-            for line in f:
-                if line.startswith('version:'):
-                    addon_version = line.split(':')[1].strip().strip('"')
-                    break
-            else:
-                addon_version = "unknown"
-    except:
+    # Read version from config.yaml for cache-busting
+    import os
+    addon_version = "unknown"
+    
+    # Try multiple possible paths for config.yaml
+    config_paths = [
+        'config.yaml',  # Relative path
+        '/data/config.yaml',  # Home Assistant data path
+        os.path.join(os.path.dirname(__file__), 'config.yaml'),  # Script directory
+        '/home/sog/ai-projects/ha-addons/farm-assistant-addon/config.yaml'  # Absolute fallback
+    ]
+    
+    for config_path in config_paths:
         try:
-            # Fallback to absolute path (for local testing)
-            with open('/home/sog/ai-projects/ha-addons/farm-assistant-addon/config.yaml', 'r') as f:
+            with open(config_path, 'r') as f:
                 for line in f:
                     if line.startswith('version:'):
                         addon_version = line.split(':')[1].strip().strip('"')
                         break
-                else:
-                    addon_version = "unknown"
+                if addon_version != "unknown":
+                    break
         except:
-            addon_version = "unknown"
+            continue
     try:
         conn = await asyncpg.connect(DATABASE_URL)
         records = await conn.fetch("""
