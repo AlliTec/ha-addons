@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.10.73 - 2025-11-16
+
+### Added
+- **Badge/Trim Level Support**: Complete vehicle badge and trim level system for precise vehicle identification
+- **VIN Lookup Integration**: Full VIN decoding system with automatic form population and validation
+- **Cascading Badge Dropdowns**: Dynamic badge selection based on make, model, year, and body type
+- **Database Badge Column**: Added badge field to both vehicle_data and asset_inventory tables
+- **Popular Model Badges**: Pre-populated badges for Ford Falcon (XR6 Turbo, XR8, G6E), Holden Commodore (SS, SSV, Calais), Toyota Hilux (SR5, Rogue), Ford Ranger (XLT, Wildtrak, Raptor), Nissan Navara (ST-X), Mitsubishi Triton (GLS, GLX)
+
+### Enhanced
+- **Vehicle Selection Workflow**: Enhanced cascading dropdowns now include badge selection as final step
+- **Form Integration**: Both add and edit asset forms now support badge selection and VIN lookup
+- **API Endpoints**: New endpoints for vehicle badges, VIN decoding, specifications, and validation
+- **VIN Decoder Service**: Comprehensive VIN decoding with manufacturer codes and validation
+- **Asset Model Updates**: AssetCreate model now includes badge field with full API support
+
+### Fixed
+- **Form Field Clearing**: Badge fields now properly cleared when dependent selections change
+- **Edit Form Population**: Badge field now properly populated when editing existing assets
+- **Vehicle Selection Handlers**: Added body type change handlers to trigger badge population
+- **Database Schema**: Added proper indexes and constraints for badge field
+
 ## 1.10.72 - 2025-11-16
 
 ### Fixed

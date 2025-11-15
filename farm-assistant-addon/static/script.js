@@ -1938,6 +1938,172 @@ async function populateVehicleBodyTypes(make, model, year) {
     }
 }
 
+async function populateVehicleBadges(make, model, year, bodyType) {
+    try {
+        const url = `api/vehicle/badges?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`;
+        if (year) {
+            url += `&year=${year}`;
+        }
+        if (bodyType) {
+            url += `&body_type=${encodeURIComponent(bodyType)}`;
+        }
+        
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to fetch vehicle badges');
+        
+        const badges = await response.json();
+        
+        // Populate add form
+        const addBadgeSelect = document.getElementById('add-asset-badge');
+        if (addBadgeSelect) {
+            addBadgeSelect.innerHTML = '<option value="">Select Badge/Trim</option>';
+            badges.forEach(badge => {
+                addBadgeSelect.innerHTML += `<option value="${badge}">${badge}</option>`;
+            });
+        }
+        
+        // Populate edit form
+        const editBadgeSelect = document.getElementById('edit-asset-badge');
+        if (editBadgeSelect) {
+            editBadgeSelect.innerHTML = '<option value="">Select Badge/Trim</option>';
+            badges.forEach(badge => {
+                editBadgeSelect.innerHTML += `<option value="${badge}">${badge}</option>`;
+            });
+        }
+    } catch (error) {
+        console.error('Error populating vehicle badges:', error);
+    }
+}
+
+// VIN lookup functions
+async function lookupVIN(vin) {
+    try {
+        const response = await fetch(`api/vin/specifications/${encodeURIComponent(vin)}`);
+        if (!response.ok) throw new Error('Failed to lookup VIN');
+        
+        const specs = await response.json();
+        return specs;
+    } catch (error) {
+        console.error('Error looking up VIN:', error);
+        return null;
+    }
+}
+
+async function validateVIN(vin) {
+    try {
+        const response = await fetch('api/vin/validate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ vin: vin })
+        });
+        
+        if (!response.ok) throw new Error('Failed to validate VIN');
+        
+        const result = await response.json();
+        return result.valid;
+    } catch (error) {
+        console.error('Error validating VIN:', error);
+        return false;
+    }
+}
+
+async function populateFromVIN(vin, formType = 'add') {
+    if (!vin || vin.length < 17) {
+        alert('Please enter a valid 17-character VIN');
+        return;
+    }
+    
+    // Show loading state
+    const lookupBtn = document.getElementById(`${formType}-asset-vin-lookup`);
+    if (lookupBtn) {
+        lookupBtn.disabled = true;
+        lookupBtn.textContent = 'Looking up...';
+    }
+    
+    try {
+        const specs = await lookupVIN(vin);
+        if (specs && specs.valid) {
+            // Populate form fields with VIN data
+            const makeSelect = document.getElementById(`${formType}-asset-make`);
+            const modelSelect = document.getElementById(`${formType}-asset-model`);
+            const yearSelect = document.getElementById(`${formType}-asset-year`);
+            const bodySelect = document.getElementById(`${formType}-asset-body-feature`);
+            const badgeSelect = document.getElementById(`${formType}-asset-badge`);
+            
+            // Set make if found
+            if (specs.manufacturer && makeSelect) {
+                // Extract manufacturer name from full string
+                const makeName = specs.manufacturer.split(' ')[0];
+                const makeOption = Array.from(makeSelect.options).find(option => 
+                    option.value.includes(makeName)
+                );
+                if (makeOption) {
+                    makeSelect.value = makeOption.value;
+                    await populateVehicleModels(makeOption.value);
+                    
+                    // Set model if found
+                    if (specs.model_info && specs.model_info.model && modelSelect) {
+                        const modelOption = Array.from(modelSelect.options).find(option => 
+                            option.value === specs.model_info.model
+                        );
+                        if (modelOption) {
+                            modelSelect.value = modelOption.value;
+                            await populateVehicleYears(makeOption.value, modelOption.value);
+                            
+                            // Set year if found
+                            if (specs.year && yearSelect) {
+                                const yearOption = Array.from(yearSelect.options).find(option => 
+                                    option.value === specs.year.toString()
+                                );
+                                if (yearOption) {
+                                    yearSelect.value = yearOption.value;
+                                    await populateVehicleBodyTypes(makeOption.value, modelOption.value, specs.year);
+                                    
+                                    // Set body type if found
+                                    if (specs.model_info && specs.model_info.body_type && bodySelect) {
+                                        const bodyOption = Array.from(bodySelect.options).find(option => 
+                                            option.value === specs.model_info.body_type
+                                        );
+                                        if (bodyOption) {
+                                            bodySelect.value = bodyOption.value;
+                                            await populateVehicleBadges(makeOption.value, modelOption.value, specs.year, specs.model_info.body_type);
+                                            
+                                            // Set badge if found
+                                            if (specs.model_info && specs.model_info.trim && badgeSelect) {
+                                                const badgeOption = Array.from(badgeSelect.options).find(option => 
+                                                    option.value === specs.model_info.trim
+                                                );
+                                                if (badgeOption) {
+                                                    badgeSelect.value = badgeOption.value;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            alert('VIN lookup completed! Vehicle details have been populated.');
+        } else {
+            alert('Invalid VIN or vehicle not found in database');
+        }
+    } catch (error) {
+        console.error('Error in VIN lookup:', error);
+        alert('Error looking up VIN. Please check the VIN and try again.');
+    } finally {
+        // Reset button state
+        if (lookupBtn) {
+            lookupBtn.disabled = false;
+            lookupBtn.textContent = 'Lookup VIN';
+        }
+    }
+}
+
 // Vehicle selection event handlers
 function setupVehicleSelectionHandlers() {
     // Add form handlers
@@ -1953,11 +2119,13 @@ function setupVehicleSelectionHandlers() {
             addModelSelect.value = '';
             addYearSelect.value = '';
             document.getElementById('add-asset-body-feature').value = '';
+            document.getElementById('add-asset-badge').value = '';
         } else {
             // Clear all dependent fields
             addModelSelect.innerHTML = '<option value="">Select Model</option>';
             addYearSelect.innerHTML = '<option value="">Select Year</option>';
             document.getElementById('add-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+            document.getElementById('add-asset-badge').innerHTML = '<option value="">Select Badge/Trim</option>';
         }
     });
     
@@ -1969,10 +2137,12 @@ function setupVehicleSelectionHandlers() {
             // Clear dependent fields
             addYearSelect.value = '';
             document.getElementById('add-asset-body-feature').value = '';
+            document.getElementById('add-asset-badge').value = '';
         } else {
             // Clear dependent fields
             addYearSelect.innerHTML = '<option value="">Select Year</option>';
             document.getElementById('add-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+            document.getElementById('add-asset-badge').innerHTML = '<option value="">Select Badge/Trim</option>';
         }
     });
     
@@ -1984,6 +2154,20 @@ function setupVehicleSelectionHandlers() {
             await populateVehicleBodyTypes(make, model, year);
         } else {
             document.getElementById('add-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+        }
+    });
+    
+    // Add body type change handler for badges
+    const addBodySelect = document.getElementById('add-asset-body-feature');
+    addBodySelect.addEventListener('change', async function() {
+        const make = addMakeSelect.value;
+        const model = addModelSelect.value;
+        const year = addYearSelect.value;
+        const bodyType = this.value;
+        if (make && model && bodyType) {
+            await populateVehicleBadges(make, model, year, bodyType);
+        } else {
+            document.getElementById('add-asset-badge').innerHTML = '<option value="">Select Badge/Trim</option>';
         }
     });
     
@@ -2000,11 +2184,13 @@ function setupVehicleSelectionHandlers() {
             editModelSelect.value = '';
             editYearSelect.value = '';
             document.getElementById('edit-asset-body-feature').value = '';
+            document.getElementById('edit-asset-badge').value = '';
         } else {
             // Clear all dependent fields
             editModelSelect.innerHTML = '<option value="">Select Model</option>';
             editYearSelect.innerHTML = '<option value="">Select Year</option>';
             document.getElementById('edit-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+            document.getElementById('edit-asset-badge').innerHTML = '<option value="">Select Badge/Trim</option>';
         }
     });
     
@@ -2016,10 +2202,12 @@ function setupVehicleSelectionHandlers() {
             // Clear dependent fields
             editYearSelect.value = '';
             document.getElementById('edit-asset-body-feature').value = '';
+            document.getElementById('edit-asset-badge').value = '';
         } else {
             // Clear dependent fields
             editYearSelect.innerHTML = '<option value="">Select Year</option>';
             document.getElementById('edit-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+            document.getElementById('edit-asset-badge').innerHTML = '<option value="">Select Badge/Trim</option>';
         }
     });
     
@@ -2031,6 +2219,20 @@ function setupVehicleSelectionHandlers() {
             await populateVehicleBodyTypes(make, model, year);
         } else {
             document.getElementById('edit-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+        }
+    });
+    
+    // Edit body type change handler for badges
+    const editBodySelect = document.getElementById('edit-asset-body-feature');
+    editBodySelect.addEventListener('change', async function() {
+        const make = editMakeSelect.value;
+        const model = editModelSelect.value;
+        const year = editYearSelect.value;
+        const bodyType = this.value;
+        if (make && model && bodyType) {
+            await populateVehicleBadges(make, model, year, bodyType);
+        } else {
+            document.getElementById('edit-asset-badge').innerHTML = '<option value="">Select Badge/Trim</option>';
         }
     });
 }
@@ -2078,6 +2280,7 @@ function setupVehicleSelectionHandlers() {
             document.getElementById('edit-asset-model').value = asset.model || '';
             document.getElementById('edit-asset-year').value = asset.year || '';
             document.getElementById('edit-asset-body-feature').value = asset.body_feature || '';
+            document.getElementById('edit-asset-badge').value = asset.badge || '';
             document.getElementById('edit-asset-serial').value = asset.serial_number || '';
             
             // Populate vehicle dependent dropdowns if make is selected
@@ -2089,6 +2292,10 @@ function setupVehicleSelectionHandlers() {
                     
                     if (asset.year) {
                         await populateVehicleBodyTypes(asset.make, asset.model, asset.year);
+                        
+                        if (asset.body_feature) {
+                            await populateVehicleBadges(asset.make, asset.model, asset.year, asset.body_feature);
+                        }
                     }
                 }
             }
@@ -3029,6 +3236,7 @@ function setupVehicleSelectionHandlers() {
                 model: formData.get('model'),
                 year: formData.get('year') ? parseInt(formData.get('year')) : null,
                 body_feature: formData.get('body_feature'),
+                badge: formData.get('badge'),
                 serial_number: formData.get('serial_number'),
                 
                 // Status & Location
@@ -3258,6 +3466,7 @@ console.log('Edit asset form submitted. Asset ID:', assetId, 'Form data:', Objec
                 model: formData.get('model'),
                 year: formData.get('year') ? parseInt(formData.get('year')) : null,
                 body_feature: formData.get('body_feature'),
+                badge: formData.get('badge'),
                 serial_number: formData.get('serial_number'),
                 
                 // Status & Location

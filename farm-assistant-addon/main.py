@@ -691,6 +691,25 @@ async def migrate_vehicle_data():
     finally:
         await conn.close()
 
+@app.post("/api/migrate/badge-feature")
+async def migrate_badge_feature():
+    """Add badge/trim level support to vehicle_data table"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Read and execute the badge migration script
+        with open('add_badge_feature_to_vehicle_data.sql', 'r') as f:
+            migration_sql = f.read()
+        
+        await conn.execute(migration_sql)
+        
+        logging.info("Badge feature migration completed successfully")
+        return {"message": "Badge feature added to vehicle data successfully"}
+    except Exception as e:
+        logging.error(f"Error running badge feature migration: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
 @app.post("/api/migrate/all")
 async def migrate_all():
     """Run all pending migrations"""
@@ -729,6 +748,9 @@ async def migrate_all():
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         await conn.close()
+
+# --- VIN Decoder Service ---
+from vin_decoder import decode_vin, lookup_vehicle_specifications, validate_vin
 
 # --- Vehicle Data Endpoints ---
 
@@ -824,12 +846,12 @@ async def get_vehicle_body_types(make: str = None, model: str = None, year: int 
     finally:
         await conn.close()
 
-@app.get("/api/vehicle/search")
-async def search_vehicles(make: str = None, model: str = None, year: int = None, body_type: str = None):
-    """Search vehicles with multiple filters"""
+@app.get("/api/vehicle/badges")
+async def get_vehicle_badges(make: str = None, model: str = None, year: int = None, body_type: str = None):
+    """Get vehicle badges/trim levels, optionally filtered by make, model, year, and body type"""
     conn = await asyncpg.connect(DATABASE_URL)
     try:
-        query = "SELECT make, model, year_start, year_end, body_type, category FROM vehicle_data WHERE 1=1"
+        query = "SELECT DISTINCT badge FROM vehicle_data WHERE badge IS NOT NULL AND badge != ''"
         params = []
         param_count = 0
         
@@ -845,13 +867,85 @@ async def search_vehicles(make: str = None, model: str = None, year: int = None,
         
         if year:
             param_count += 1
-            query += f" AND ($${param_count} BETWEEN year_start AND COALESCE(year_end, 9999))"
+            query += f" AND (${param_count} BETWEEN year_start AND COALESCE(year_end, 9999))"
             params.append(year)
         
         if body_type:
             param_count += 1
             query += f" AND body_type = ${param_count}"
             params.append(body_type)
+        
+        query += " ORDER BY badge"
+        
+        badges = await conn.fetch(query, *params)
+        return [badge['badge'] for badge in badges]
+    finally:
+        await conn.close()
+
+@app.get("/api/vin/decode/{vin}")
+async def decode_vin_endpoint(vin: str):
+    """Decode VIN and return basic vehicle information"""
+    try:
+        decoded = decode_vin(vin)
+        return decoded
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error decoding VIN: {str(e)}")
+
+@app.get("/api/vin/specifications/{vin}")
+async def get_vehicle_specifications(vin: str):
+    """Get detailed vehicle specifications from VIN"""
+    try:
+        specs = lookup_vehicle_specifications(vin)
+        return specs
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error getting specifications: {str(e)}")
+
+@app.post("/api/vin/validate")
+async def validate_vin_endpoint(request: dict):
+    """Validate VIN format and checksum"""
+    vin = request.get("vin", "")
+    if not vin:
+        raise HTTPException(status_code=400, detail="VIN is required")
+    
+    try:
+        is_valid = validate_vin(vin)
+        return {"vin": vin, "valid": is_valid}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Error validating VIN: {str(e)}")
+
+@app.get("/api/vehicle/search")
+async def search_vehicles(make: str = None, model: str = None, year: int = None, body_type: str = None, badge: str = None):
+    """Search vehicles with multiple filters"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        query = "SELECT make, model, year_start, year_end, body_type, badge, category FROM vehicle_data WHERE 1=1"
+        params = []
+        param_count = 0
+        
+        if make:
+            param_count += 1
+            query += f" AND make = ${param_count}"
+            params.append(make)
+        
+        if model:
+            param_count += 1
+            query += f" AND model = ${param_count}"
+            params.append(model)
+        
+        if year:
+            param_count += 1
+            query += f" AND (${param_count} BETWEEN year_start AND COALESCE(year_end, 9999))"
+            params.append(year)
+        
+        if body_type:
+            param_count += 1
+            query += f" AND body_type = ${param_count}"
+            params.append(body_type)
+        
+        if badge:
+            param_count += 1
+            query += f" AND badge = ${param_count}"
+            params.append(badge)
         
         query += " ORDER BY make, model, year_start"
         
@@ -863,6 +957,7 @@ async def search_vehicles(make: str = None, model: str = None, year: int = None,
                 "year_start": v['year_start'],
                 "year_end": v['year_end'],
                 "body_type": v['body_type'],
+                "badge": v['badge'],
                 "category": v['category']
             }
             for v in vehicles
@@ -880,6 +975,7 @@ class AssetCreate(BaseModel):
     model: Optional[str] = None
     year: Optional[int] = None
     body_feature: Optional[str] = None
+    badge: Optional[str] = None
     serial_number: Optional[str] = None
     quantity: Optional[int] = 1
     
@@ -1027,7 +1123,7 @@ async def get_assets(parent_id: Optional[int] = None):
                        serial_number, purchase_date, registration_no, registration_due,
                        permit_info, insurance_info, insurance_due, warranty_provider,
                        warranty_expiry_date, purchase_price, purchase_location,
-                       manual_or_doc_path, notes, parent_asset_id, created_at
+                       manual_or_doc_path, notes, parent_asset_id, badge, created_at
                 FROM asset_inventory 
                 WHERE parent_asset_id = $1
                 ORDER BY name
@@ -1039,7 +1135,7 @@ async def get_assets(parent_id: Optional[int] = None):
                        serial_number, purchase_date, registration_no, registration_due,
                        permit_info, insurance_info, insurance_due, warranty_provider,
                        warranty_expiry_date, purchase_price, purchase_location,
-                       manual_or_doc_path, notes, parent_asset_id, created_at
+                       manual_or_doc_path, notes, parent_asset_id, badge, created_at
                 FROM asset_inventory 
                 ORDER BY name
             """)
@@ -1195,16 +1291,16 @@ async def add_asset(asset: AssetCreate):
             # Insert asset with all fields
             result = await conn.fetchrow("""
                 INSERT INTO asset_inventory 
-                (name, category, make, model, year, body_feature, serial_number, purchase_date, status,
+                (name, category, make, model, year, body_feature, badge, serial_number, purchase_date, status,
                  parent_asset_id, location, quantity, registration_no, registration_due,
                  permit_info, insurance_info, insurance_due, warranty_provider,
                  warranty_expiry_date, purchase_price, purchase_location,
                  manual_or_doc_path, notes, created_at)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
-                        $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, NOW())
+                        $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, NOW())
                 RETURNING id
             """, asset.name, asset.category, asset.make, asset.model, asset.year, asset.body_feature, 
-                serial_number, purchase_date, asset.status, asset.parent_asset_id, asset.location,
+                asset.badge, serial_number, purchase_date, asset.status, asset.parent_asset_id, asset.location,
                 asset.quantity, registration_no, registration_due, asset.permit_info,
                 asset.insurance_info, insurance_due, asset.warranty_provider,
                 warranty_expiry_date, asset.purchase_price, asset.purchase_location,
@@ -1243,14 +1339,14 @@ async def update_asset(asset_id: int, asset: AssetCreate):
             await conn.execute("""
                 UPDATE asset_inventory 
                 SET name = $1, category = $2, make = $3, model = $4, year = $5, body_feature = $6,
-                    serial_number = $7, purchase_date = $8, status = $9, parent_asset_id = $10, location = $11,
-                    quantity = $12, registration_no = $13, registration_due = $14,
-                    permit_info = $15, insurance_info = $16, insurance_due = $17,
-                    warranty_provider = $18, warranty_expiry_date = $19, purchase_price = $20,
-                    purchase_location = $21, manual_or_doc_path = $22, notes = $23
-                WHERE id = $24
+                    badge = $7, serial_number = $8, purchase_date = $9, status = $10, parent_asset_id = $11, location = $12,
+                    quantity = $13, registration_no = $14, registration_due = $15,
+                    permit_info = $16, insurance_info = $17, insurance_due = $18,
+                    warranty_provider = $19, warranty_expiry_date = $20, purchase_price = $21,
+                    purchase_location = $22, manual_or_doc_path = $23, notes = $24
+                WHERE id = $25
             """, asset.name, asset.category, asset.make, asset.model, asset.year, asset.body_feature,
-                serial_number, purchase_date, asset.status, asset.parent_asset_id, asset.location,
+                asset.badge, serial_number, purchase_date, asset.status, asset.parent_asset_id, asset.location,
                 asset.quantity, registration_no, registration_due, asset.permit_info,
                 asset.insurance_info, insurance_due, asset.warranty_provider,
                 warranty_expiry_date, asset.purchase_price, asset.purchase_location,
