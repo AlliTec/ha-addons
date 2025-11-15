@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.10.72 - 2025-11-16
+
+### Fixed
+- **Critical Vehicle Data Accuracy**: Corrected major inaccuracies in vehicle production years and body types
+- **Ford Falcon Production**: Fixed from 2016-only to correct 1960-2016 (56 years) with complete body types
+- **Complete Body Type Support**: Added Ute, Wagon, Panel Van, Coupe, Hardtop for Ford Falcon
+- **Manufacturer Year Corrections**: Fixed all major manufacturers with research-based production years
+- **Toyota Corolla**: Corrected from 2018-2024 to accurate 1966-2024 (58 years)
+- **Holden Commodore**: Extended from 2017-2020 to correct 1978-2017 (39 years)
+- **Mitsubishi Lancer**: Fixed from 2017-only to accurate 1973-2017 (44 years)
+- **Ford Territory**: Corrected from 2016-only to accurate 2004-2016 (12 years)
+
+### Enhanced
+- **Research-Based Data**: All production years now based on authoritative manufacturer sources
+- **Comprehensive Coverage**: Added missing models and expanded machinery section
+- **Body Type Completeness**: Every model now has appropriate body type options
+- **Database Accuracy**: Vehicle selection now reflects real production histories
+
 ## 1.10.71 - 2025-11-16
 
 ### Fixed
