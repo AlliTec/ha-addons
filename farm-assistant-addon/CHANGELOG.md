@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.10.71 - 2025-11-16
+
+### Fixed
+- **Vehicle Year Ranges**: Fixed incomplete year data in vehicle database
+- **Comprehensive Year Coverage**: Updated popular models with full production histories
+- **Ford Falcon**: Extended from 2016 only to 1990-2016 (27 years)
+- **Toyota Corolla**: Extended from 2018-2024 to 1966-2024 (59 years) 
+- **Holden Commodore**: Extended from 2017-2020 to 1978-2020 (43 years)
+- **Mitsubishi Lancer**: Extended from 2017 only to 1995-2017
+- **Ford Territory**: Extended from 2016 only to 2008-2016
+
+### Enhanced
+- **Vehicle Selection Accuracy**: Year dropdowns now show complete model availability
+- **Production History**: Users can select from entire production run of each model
+- **Data Completeness**: Improved vehicle database with realistic year ranges
+
 ## 1.10.70 - 2025-11-16
 
 ### Added
