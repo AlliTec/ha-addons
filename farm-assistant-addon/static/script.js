@@ -1426,101 +1426,79 @@ async function deleteMaintenanceSchedule(scheduleId) {
 }
 
 // Function to load event for editing
-async function loadEventForEdit(eventId) {
-    try {
-        // Ensure DOM is ready
-        if (document.readyState !== 'complete') {
-            console.error('DOM not fully loaded');
-            return;
-        }
-        
-        console.log('loadEventForEdit called with eventId:', eventId);
-        const response = await fetch(`api/events/${eventId}`);
-        if (!response.ok) {
-            throw new Error('Failed to fetch event');
-        }
-        
-        const event = await response.json();
-        console.log('Event loaded for editing:', event);
-        
-        // Set date and time in form fields
-        document.getElementById('event-date').value = event.date || '';
-        document.getElementById('event-time').value = event.time ? event.time.substring(0, 5) : '';
-        
-        // Set category and populate item dropdown
-        document.getElementById('event-category').value = event.category || '';
-        await populateEventItemDropdown(event.category);
-        
-        // Wait for dropdown to populate, then select the item
-        setTimeout(() => {
-            const itemDropdown = document.getElementById('event-item-name');
-            if (itemDropdown && event.related_id) {
-                // Find and select the specific item
-                for (let option of itemDropdown.options) {
-                    if (option.value == event.related_id) {
-                        option.selected = true;
-                        break;
-                    }
-                }
+    async function loadEventForEdit(eventId) {
+        try {
+            console.log('loadEventForEdit called with eventId:', eventId);
+            
+            // Fetch event data
+            const response = await fetch(`/api/calendar/events/${eventId}`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch event: ${response.status}`);
             }
-        }, 500);
-        
-        // Set other form fields
-        document.getElementById('event-title').value = event.title || '';
-        document.getElementById('event-duration').value = event.duration || 1;
-        document.getElementById('event-notes').value = event.description || '';
-        document.getElementById('event-status').value = event.status || 'scheduled';
-        document.getElementById('event-priority').value = event.priority || 'medium';
-        
-        // Change modal to edit mode
-        const modal = document.getElementById('add-event-modal');
-        if (!modal) {
-            console.error('Add event modal not found');
-            return;
+            
+            const event = await response.json();
+            console.log('Event loaded for editing:', event);
+            
+            // Change modal to edit mode first
+            const modal = document.getElementById('add-event-modal');
+            if (!modal) {
+                console.error('Add event modal not found');
+                return;
+            }
+            
+            // Show modal first to ensure elements are accessible
+            modal.style.display = 'block';
+            modal.style.visibility = 'visible';
+            
+            // Wait for modal to be fully visible before accessing elements
+            const waitForModal = () => {
+                return new Promise((resolve) => {
+                    const checkModal = () => {
+                        const modalTitle = modal.querySelector('.modal-header h2');
+                        const submitBtn = document.querySelector('#submit-event-btn');
+                        
+                        if (modalTitle && submitBtn) {
+                            resolve({ modalTitle, submitBtn });
+                        } else {
+                            setTimeout(checkModal, 50);
+                        }
+                    };
+                    checkModal();
+                });
+            };
+            
+            const { modalTitle, submitBtn } = await waitForModal();
+            
+            // Now populate form fields
+            document.getElementById('event-category').value = event.category || '';
+            document.getElementById('event-item-name').value = event.related_name || '';
+            document.getElementById('event-description').value = event.title || '';
+            document.getElementById('event-date').value = event.date || '';
+            document.getElementById('event-time').value = event.time || '';
+            document.getElementById('event-duration').value = event.duration || 1;
+            document.getElementById('event-notes').value = event.description || '';
+            document.getElementById('event-status').value = event.status || 'scheduled';
+            document.getElementById('event-priority').value = event.priority || 'medium';
+            
+            // Update modal title
+            modalTitle.textContent = 'Edit Event';
+            
+            // Update submit button
+            submitBtn.textContent = 'Update Event';
+            submitBtn.dataset.mode = 'edit';
+            submitBtn.dataset.eventId = eventId;
+            
+            // Show delete button for existing events
+            const deleteBtn = document.getElementById('delete-event-btn');
+            if (deleteBtn) {
+                deleteBtn.style.display = 'inline-flex';
+                deleteBtn.onclick = () => deleteEvent(eventId);
+            }
+            
+        } catch (error) {
+            console.error('Error loading event for editing:', error);
         }
-        
-        // Show modal first to ensure elements are accessible
-        modal.style.display = 'block';
-        
-        // Debug: Log modal structure
-        console.log('Modal found:', modal);
-        console.log('Modal innerHTML:', modal.innerHTML.substring(0, 200) + '...');
-        
-        const modalTitle = modal.querySelector('.modal-header h2');
-        console.log('Modal title element found:', modalTitle);
-        
-        if (!modalTitle) {
-            console.error('Modal title not found in add event modal');
-            console.log('Available h2 elements:', modal.querySelectorAll('h2'));
-            return;
-        }
-        modalTitle.textContent = 'Edit Event';
-        
-        // Change submit button text and add update mode flag
-        const submitBtn = document.querySelector('#submit-event-btn');
-        if (!submitBtn) {
-            console.error('Submit button not found in add event form');
-            return;
-        }
-        submitBtn.textContent = 'Update Event';
-        submitBtn.dataset.mode = 'edit';
-        submitBtn.dataset.eventId = eventId;
-        
-        // Show delete button for existing events
-        const deleteBtn = document.getElementById('delete-event-btn');
-        if (deleteBtn) {
-            deleteBtn.style.display = 'inline-block';
-            deleteBtn.dataset.eventId = eventId;
-        }
-        
-        // Show modal
-        modal.style.display = 'block';
-        
-    } catch (error) {
-        console.error('Error loading event for editing:', error);
-        alert('Error loading event for editing. Please try again.');
     }
-}
 
 // Main initialization
 document.addEventListener("DOMContentLoaded", async () => {
@@ -2675,55 +2653,63 @@ function setupVehicleSelectionHandlers() {
     }
 
     // Function to reset maintenance schedule form to create mode
-    function resetMaintenanceScheduleForm() {
-        // Ensure DOM is ready
-        if (document.readyState !== 'complete') {
-            console.error('DOM not fully loaded');
-            return;
-        }
-        
+    function resetMaintenanceScheduleForm(resetAssetId = true) {
         const form = document.getElementById('maintenance-schedule-form');
         const modal = document.getElementById('maintenance-schedule-modal');
         
         if (!form || !modal) {
             console.error('Maintenance schedule form or modal not found');
-            console.log('Form found:', form);
-            console.log('Modal found:', modal);
             return;
         }
         
         // Show modal first to ensure elements are accessible
         modal.style.display = 'block';
+        modal.style.visibility = 'visible';
         
-        // Debug: Log modal structure
-        console.log('Maintenance modal found:', modal);
-        console.log('Maintenance modal innerHTML:', modal.innerHTML.substring(0, 200) + '...');
+        // Wait for modal to be fully visible before accessing elements
+        const waitForModal = () => {
+            return new Promise((resolve) => {
+                const checkModal = () => {
+                    const modalTitle = modal.querySelector('.modal-header h2');
+                    const submitBtn = document.querySelector('#maintenance-schedule-form button[type="submit"]');
+                    
+                    if (modalTitle && submitBtn) {
+                        resolve({ modalTitle, submitBtn });
+                    } else {
+                        setTimeout(checkModal, 50);
+                    }
+                };
+                checkModal();
+            });
+        };
         
-        const modalTitle = modal.querySelector('.modal-header h2');
-        const submitBtn = document.querySelector('#maintenance-schedule-form button[type="submit"]');
-        
-        console.log('Maintenance modal title element found:', modalTitle);
-        console.log('Maintenance submit button element found:', submitBtn);
-        
-        if (!modalTitle || !submitBtn) {
-            console.error('Modal title or submit button not found');
-            console.log('Modal title:', modalTitle);
-            console.log('Submit button:', submitBtn);
-            console.log('Available h2 elements:', modal.querySelectorAll('h2'));
-            console.log('Available submit buttons:', modal.querySelectorAll('button[type="submit"]'));
-            return;
-        }
-        
-        // Reset form
-        form.reset();
-        
-        // Reset modal title
-        modalTitle.textContent = 'Schedule Maintenance';
-        
-        // Reset submit button
-        submitBtn.textContent = 'Schedule Maintenance';
-        delete submitBtn.dataset.mode;
-        delete submitBtn.dataset.scheduleId;
+        waitForModal().then(({ modalTitle, submitBtn }) => {
+            // Reset form
+            form.reset();
+            
+            // Reset modal title
+            modalTitle.textContent = 'Schedule Maintenance';
+            
+            // Reset submit button
+            submitBtn.textContent = 'Schedule Maintenance';
+            submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Schedule Maintenance';
+            
+            // Remove edit mode flags
+            delete submitBtn.dataset.mode;
+            delete submitBtn.dataset.scheduleId;
+            
+            // Hide delete button
+            const deleteBtn = document.getElementById('delete-maintenance-schedule-btn');
+            if (deleteBtn) {
+                deleteBtn.style.display = 'none';
+            }
+            
+            // Reset asset ID if provided
+            const assetIdInput = document.getElementById('maintenance-schedule-asset-id');
+            if (assetIdInput && resetAssetId) {
+                assetIdInput.value = '';
+            }
+        });
     }
 
     // Function to update gender options based on category

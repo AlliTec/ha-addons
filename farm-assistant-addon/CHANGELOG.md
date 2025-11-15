@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.79 - 2025-11-16
+
+### Fixed
+- **JavaScript Modal Element Access**: Resolved null element errors in loadEventForEdit and resetMaintenanceScheduleForm functions
+- **DOM Timing Issues**: Implemented Promise-based modal element waiting instead of setTimeout delays
+- **Duplicate Code Cleanup**: Removed duplicate function code causing syntax errors
+- **Element Access Validation**: Added robust modal element detection before DOM manipulation
+
+### Enhanced
+- **Modal Reliability**: Improved modal operations with proper element availability checks
+- **Error Prevention**: Eliminated "Cannot set properties of null" JavaScript errors
+- **Code Quality**: Cleaned up duplicate code blocks and improved function structure
+
 ## 1.10.77 - 2025-11-16
 
 ### Fixed
