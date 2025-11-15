@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.10.81 - 2025-11-16
+
+### Fixed
+- **Animal History Click Events**: Removed duplicate event handlers for maintenance-record-row clicks that caused conflicting behavior
+- **Historical Records Editing**: Ensured historical maintenance records show alert that they cannot be edited while scheduled events remain editable
+- **Event Handler Conflicts**: Fixed JavaScript event delegation conflicts in animal history modal
+
 ## 1.10.80 - 2025-11-16
 
 ### Fixed
