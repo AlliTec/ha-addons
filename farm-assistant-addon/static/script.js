@@ -1431,7 +1431,7 @@ async function deleteMaintenanceSchedule(scheduleId) {
             console.log('loadEventForEdit called with eventId:', eventId);
             
             // Fetch event data
-            const response = await fetch(`/api/calendar/events/${eventId}`);
+            const response = await fetch(`/api/events/${eventId}`);
             if (!response.ok) {
                 throw new Error(`Failed to fetch event: ${response.status}`);
             }
