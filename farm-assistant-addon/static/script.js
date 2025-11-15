@@ -1428,6 +1428,12 @@ async function deleteMaintenanceSchedule(scheduleId) {
 // Function to load event for editing
 async function loadEventForEdit(eventId) {
     try {
+        // Ensure DOM is ready
+        if (document.readyState !== 'complete') {
+            console.error('DOM not fully loaded');
+            return;
+        }
+        
         console.log('loadEventForEdit called with eventId:', eventId);
         const response = await fetch(`api/events/${eventId}`);
         if (!response.ok) {
@@ -1476,9 +1482,16 @@ async function loadEventForEdit(eventId) {
         // Show modal first to ensure elements are accessible
         modal.style.display = 'block';
         
+        // Debug: Log modal structure
+        console.log('Modal found:', modal);
+        console.log('Modal innerHTML:', modal.innerHTML.substring(0, 200) + '...');
+        
         const modalTitle = modal.querySelector('.modal-header h2');
+        console.log('Modal title element found:', modalTitle);
+        
         if (!modalTitle) {
             console.error('Modal title not found in add event modal');
+            console.log('Available h2 elements:', modal.querySelectorAll('h2'));
             return;
         }
         modalTitle.textContent = 'Edit Event';
@@ -2663,24 +2676,41 @@ function setupVehicleSelectionHandlers() {
 
     // Function to reset maintenance schedule form to create mode
     function resetMaintenanceScheduleForm() {
+        // Ensure DOM is ready
+        if (document.readyState !== 'complete') {
+            console.error('DOM not fully loaded');
+            return;
+        }
+        
         const form = document.getElementById('maintenance-schedule-form');
         const modal = document.getElementById('maintenance-schedule-modal');
         
         if (!form || !modal) {
             console.error('Maintenance schedule form or modal not found');
+            console.log('Form found:', form);
+            console.log('Modal found:', modal);
             return;
         }
         
         // Show modal first to ensure elements are accessible
         modal.style.display = 'block';
         
+        // Debug: Log modal structure
+        console.log('Maintenance modal found:', modal);
+        console.log('Maintenance modal innerHTML:', modal.innerHTML.substring(0, 200) + '...');
+        
         const modalTitle = modal.querySelector('.modal-header h2');
         const submitBtn = document.querySelector('#maintenance-schedule-form button[type="submit"]');
+        
+        console.log('Maintenance modal title element found:', modalTitle);
+        console.log('Maintenance submit button element found:', submitBtn);
         
         if (!modalTitle || !submitBtn) {
             console.error('Modal title or submit button not found');
             console.log('Modal title:', modalTitle);
             console.log('Submit button:', submitBtn);
+            console.log('Available h2 elements:', modal.querySelectorAll('h2'));
+            console.log('Available submit buttons:', modal.querySelectorAll('button[type="submit"]'));
             return;
         }
         
