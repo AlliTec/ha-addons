@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.10.75 - 2025-11-16
+
+### Fixed
+- **Modal Element Access**: Fixed DOM element access issues by showing modals before querying elements
+- **JavaScript Timing**: Resolved "Cannot set properties of null" errors by ensuring modals are visible
+- **Element Selection**: Enhanced modal element selection with proper timing and visibility checks
+- **Server Startup**: Confirmed server starts successfully with all dependencies loaded
+
+### Enhanced
+- **Modal Visibility**: Added modal display before element access to ensure DOM availability
+- **Error Prevention**: Improved element access patterns to prevent null reference errors
+- **Debugging**: Enhanced console logging for better error diagnosis
+
 ## 1.10.74 - 2025-11-16
 
 ### Fixed

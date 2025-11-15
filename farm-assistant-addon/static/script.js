@@ -1473,6 +1473,9 @@ async function loadEventForEdit(eventId) {
             return;
         }
         
+        // Show modal first to ensure elements are accessible
+        modal.style.display = 'block';
+        
         const modalTitle = modal.querySelector('.modal-header h2');
         if (!modalTitle) {
             console.error('Modal title not found in add event modal');
@@ -2667,6 +2670,9 @@ function setupVehicleSelectionHandlers() {
             console.error('Maintenance schedule form or modal not found');
             return;
         }
+        
+        // Show modal first to ensure elements are accessible
+        modal.style.display = 'block';
         
         const modalTitle = modal.querySelector('.modal-header h2');
         const submitBtn = document.querySelector('#maintenance-schedule-form button[type="submit"]');
