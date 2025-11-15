@@ -1473,7 +1473,7 @@ async function loadEventForEdit(eventId) {
             return;
         }
         
-        const modalTitle = modal.querySelector('h2');
+        const modalTitle = modal.querySelector('.modal-header h2');
         if (!modalTitle) {
             console.error('Modal title not found in add event modal');
             return;
@@ -1481,7 +1481,7 @@ async function loadEventForEdit(eventId) {
         modalTitle.textContent = 'Edit Event';
         
         // Change submit button text and add update mode flag
-        const submitBtn = document.querySelector('#add-event-form button[type="submit"]');
+        const submitBtn = document.querySelector('#submit-event-btn');
         if (!submitBtn) {
             console.error('Submit button not found in add event form');
             return;
@@ -2668,11 +2668,13 @@ function setupVehicleSelectionHandlers() {
             return;
         }
         
-        const modalTitle = modal.querySelector('h2');
-        const submitBtn = form.querySelector('button[type="submit"]');
+        const modalTitle = modal.querySelector('.modal-header h2');
+        const submitBtn = document.querySelector('#maintenance-schedule-form button[type="submit"]');
         
         if (!modalTitle || !submitBtn) {
             console.error('Modal title or submit button not found');
+            console.log('Modal title:', modalTitle);
+            console.log('Submit button:', submitBtn);
             return;
         }
         

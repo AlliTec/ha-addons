@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.10.74 - 2025-11-16
+
+### Fixed
+- **JavaScript DOM Errors**: Fixed "Cannot set properties of null" errors in modal title handling
+- **Modal Selector Issues**: Updated selectors to use specific IDs and more robust element queries
+- **Event Form Loading**: Fixed loadEventForEdit function to properly find modal elements
+- **Maintenance Schedule Form**: Fixed resetMaintenanceScheduleForm function with better error handling
+- **Submit Button Selection**: Updated submit button selectors to use specific IDs instead of generic queries
+
+### Enhanced
+- **Error Handling**: Added better console logging for debugging modal element issues
+- **Element Validation**: Improved null checks before accessing element properties
+- **Selector Specificity**: Used more specific CSS selectors to avoid element conflicts
+
 ## 1.10.73 - 2025-11-16
 
 ### Added
