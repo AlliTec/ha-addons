@@ -648,6 +648,49 @@ async def migrate_calendar_entries():
     finally:
         await conn.close()
 
+@app.post("/api/migrate/asset_year_body")
+async def migrate_asset_year_body():
+    """Add year and body_feature fields to asset_inventory table"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Read and execute migration script
+        with open('add_year_body_feature_to_assets.sql', 'r') as f:
+            migration_sql = f.read()
+        
+        await conn.execute(migration_sql)
+        logging.info("Asset year and body_feature migration completed successfully")
+        return {"message": "Asset year and body_feature fields added successfully"}
+        
+    except Exception as e:
+        logging.error(f"Error running asset year/body migration: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
+@app.post("/api/migrate/vehicle_data")
+async def migrate_vehicle_data():
+    """Create vehicle_data table and populate with data"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Create vehicle_data table
+        with open('create_vehicle_data_table.sql', 'r') as f:
+            migration_sql = f.read()
+        await conn.execute(migration_sql)
+        
+        # Populate vehicle_data table
+        with open('populate_vehicle_data.sql', 'r') as f:
+            migration_sql = f.read()
+        await conn.execute(migration_sql)
+        
+        logging.info("Vehicle data table migration completed successfully")
+        return {"message": "Vehicle data table created and populated successfully"}
+        
+    except Exception as e:
+        logging.error(f"Error running vehicle data migration: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
 @app.post("/api/migrate/all")
 async def migrate_all():
     """Run all pending migrations"""
@@ -663,12 +706,167 @@ async def migrate_all():
             migration_sql = f.read()
         await conn.execute(migration_sql)
         
+        # Run asset year/body migration
+        with open('add_year_body_feature_to_assets.sql', 'r') as f:
+            migration_sql = f.read()
+        await conn.execute(migration_sql)
+        
+        # Create vehicle_data table
+        with open('create_vehicle_data_table.sql', 'r') as f:
+            migration_sql = f.read()
+        await conn.execute(migration_sql)
+        
+        # Populate vehicle_data table
+        with open('populate_vehicle_data.sql', 'r') as f:
+            migration_sql = f.read()
+        await conn.execute(migration_sql)
+        
         logging.info("All migrations completed successfully")
         return {"message": "All migrations completed successfully"}
         
     except Exception as e:
         logging.error(f"Error running migrations: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
+# --- Vehicle Data Endpoints ---
+
+@app.get("/api/vehicle/makes")
+async def get_vehicle_makes():
+    """Get all vehicle makes"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        makes = await conn.fetch(
+            "SELECT DISTINCT make FROM vehicle_data ORDER BY make"
+        )
+        return [make['make'] for make in makes]
+    finally:
+        await conn.close()
+
+@app.get("/api/vehicle/models")
+async def get_vehicle_models(make: str = None):
+    """Get vehicle models, optionally filtered by make"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        if make:
+            models = await conn.fetch(
+                "SELECT DISTINCT model FROM vehicle_data WHERE make = $1 ORDER BY model",
+                make
+            )
+        else:
+            models = await conn.fetch(
+                "SELECT DISTINCT model FROM vehicle_data ORDER BY model"
+            )
+        return [model['model'] for model in models]
+    finally:
+        await conn.close()
+
+@app.get("/api/vehicle/years")
+async def get_vehicle_years(make: str = None, model: str = None):
+    """Get vehicle years, optionally filtered by make and model"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        if make and model:
+            years = await conn.fetch(
+                """SELECT DISTINCT year_start, year_end 
+                   FROM vehicle_data 
+                   WHERE make = $1 AND model = $2 
+                   ORDER BY year_start""",
+                make, model
+            )
+        elif make:
+            years = await conn.fetch(
+                """SELECT DISTINCT year_start, year_end 
+                   FROM vehicle_data 
+                   WHERE make = $1 
+                   ORDER BY year_start""",
+                make
+            )
+        else:
+            years = await conn.fetch(
+                """SELECT DISTINCT year_start, year_end 
+                   FROM vehicle_data 
+                   ORDER BY year_start"""
+            )
+        return [{"year_start": year['year_start'], "year_end": year['year_end']} for year in years]
+    finally:
+        await conn.close()
+
+@app.get("/api/vehicle/body-types")
+async def get_vehicle_body_types(make: str = None, model: str = None, year: int = None):
+    """Get vehicle body types, optionally filtered by make, model, and year"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        query = "SELECT DISTINCT body_type FROM vehicle_data WHERE 1=1"
+        params = []
+        param_count = 0
+        
+        if make:
+            param_count += 1
+            query += f" AND make = ${param_count}"
+            params.append(make)
+        
+        if model:
+            param_count += 1
+            query += f" AND model = ${param_count}"
+            params.append(model)
+        
+        if year:
+            param_count += 1
+            query += f" AND (${param_count} BETWEEN year_start AND COALESCE(year_end, 9999))"
+            params.append(year)
+        
+        query += " ORDER BY body_type"
+        
+        body_types = await conn.fetch(query, *params)
+        return [body_type['body_type'] for body_type in body_types]
+    finally:
+        await conn.close()
+
+@app.get("/api/vehicle/search")
+async def search_vehicles(make: str = None, model: str = None, year: int = None, body_type: str = None):
+    """Search vehicles with multiple filters"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        query = "SELECT make, model, year_start, year_end, body_type, category FROM vehicle_data WHERE 1=1"
+        params = []
+        param_count = 0
+        
+        if make:
+            param_count += 1
+            query += f" AND make = ${param_count}"
+            params.append(make)
+        
+        if model:
+            param_count += 1
+            query += f" AND model = ${param_count}"
+            params.append(model)
+        
+        if year:
+            param_count += 1
+            query += f" AND ($${param_count} BETWEEN year_start AND COALESCE(year_end, 9999))"
+            params.append(year)
+        
+        if body_type:
+            param_count += 1
+            query += f" AND body_type = ${param_count}"
+            params.append(body_type)
+        
+        query += " ORDER BY make, model, year_start"
+        
+        vehicles = await conn.fetch(query, *params)
+        return [
+            {
+                "make": v['make'],
+                "model": v['model'],
+                "year_start": v['year_start'],
+                "year_end": v['year_end'],
+                "body_type": v['body_type'],
+                "category": v['category']
+            }
+            for v in vehicles
+        ]
     finally:
         await conn.close()
 
@@ -680,6 +878,8 @@ class AssetCreate(BaseModel):
     category: Optional[str] = None
     make: Optional[str] = None
     model: Optional[str] = None
+    year: Optional[int] = None
+    body_feature: Optional[str] = None
     serial_number: Optional[str] = None
     quantity: Optional[int] = 1
     
@@ -995,16 +1195,16 @@ async def add_asset(asset: AssetCreate):
             # Insert asset with all fields
             result = await conn.fetchrow("""
                 INSERT INTO asset_inventory 
-                (name, category, make, model, serial_number, purchase_date, status,
+                (name, category, make, model, year, body_feature, serial_number, purchase_date, status,
                  parent_asset_id, location, quantity, registration_no, registration_due,
                  permit_info, insurance_info, insurance_due, warranty_provider,
                  warranty_expiry_date, purchase_price, purchase_location,
                  manual_or_doc_path, notes, created_at)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
-                        $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, NOW())
+                        $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, NOW())
                 RETURNING id
-            """, asset.name, asset.category, asset.make, asset.model, serial_number,
-                purchase_date, asset.status, asset.parent_asset_id, asset.location,
+            """, asset.name, asset.category, asset.make, asset.model, asset.year, asset.body_feature, 
+                serial_number, purchase_date, asset.status, asset.parent_asset_id, asset.location,
                 asset.quantity, registration_no, registration_due, asset.permit_info,
                 asset.insurance_info, insurance_due, asset.warranty_provider,
                 warranty_expiry_date, asset.purchase_price, asset.purchase_location,
@@ -1042,15 +1242,15 @@ async def update_asset(asset_id: int, asset: AssetCreate):
             # Update asset with all fields
             await conn.execute("""
                 UPDATE asset_inventory 
-                SET name = $1, category = $2, make = $3, model = $4, serial_number = $5,
-                    purchase_date = $6, status = $7, parent_asset_id = $8, location = $9,
-                    quantity = $10, registration_no = $11, registration_due = $12,
-                    permit_info = $13, insurance_info = $14, insurance_due = $15,
-                    warranty_provider = $16, warranty_expiry_date = $17, purchase_price = $18,
-                    purchase_location = $19, manual_or_doc_path = $20, notes = $21
-                WHERE id = $22
-            """, asset.name, asset.category, asset.make, asset.model, serial_number,
-                purchase_date, asset.status, asset.parent_asset_id, asset.location,
+                SET name = $1, category = $2, make = $3, model = $4, year = $5, body_feature = $6,
+                    serial_number = $7, purchase_date = $8, status = $9, parent_asset_id = $10, location = $11,
+                    quantity = $12, registration_no = $13, registration_due = $14,
+                    permit_info = $15, insurance_info = $16, insurance_due = $17,
+                    warranty_provider = $18, warranty_expiry_date = $19, purchase_price = $20,
+                    purchase_location = $21, manual_or_doc_path = $22, notes = $23
+                WHERE id = $24
+            """, asset.name, asset.category, asset.make, asset.model, asset.year, asset.body_feature,
+                serial_number, purchase_date, asset.status, asset.parent_asset_id, asset.location,
                 asset.quantity, registration_no, registration_due, asset.permit_info,
                 asset.insurance_info, insurance_due, asset.warranty_provider,
                 warranty_expiry_date, asset.purchase_price, asset.purchase_location,

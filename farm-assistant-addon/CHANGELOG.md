@@ -1,5 +1,37 @@
 # Changelog
 
+## 1.10.70 - 2025-11-16
+
+### Added
+- **Vehicle Data Management**: Complete vehicle selection system with local database
+- **Vehicle Data Table**: New `vehicle_data` table with 200+ vehicle/machinery specifications
+- **Enhanced Asset Forms**: Added year and body_feature fields to asset add/edit forms
+- **Cascading Dropdowns**: Smart vehicle selection (make → model → year → body type)
+- **Comprehensive Vehicle Database**: Major manufacturers (Toyota, Ford, Holden, Mazda, etc.) and machinery brands (Caterpillar, John Deere, etc.)
+
+### Enhanced
+- **Asset Form Interface**: Replaced text inputs with dropdown selects for make/model
+- **Vehicle Selection API**: 5 new endpoints for vehicle data retrieval
+- **Database Migrations**: Added year and body_feature columns to asset_inventory table
+- **Form Validation**: Enhanced validation for vehicle-specific fields
+
+### Technical
+- **API Endpoints**: 
+  - `/api/vehicle/makes` - Get all vehicle makes
+  - `/api/vehicle/models?make=X` - Get models for specific make
+  - `/api/vehicle/years?make=X&model=Y` - Get year ranges for make/model
+  - `/api/vehicle/body-types?make=X&model=Y&year=Z` - Get body types for specific vehicle
+  - `/api/vehicle/search` - Search with multiple filters
+- **Database Schema**: Extended asset_inventory with year (INTEGER) and body_feature (VARCHAR(100)) fields
+- **Frontend JavaScript**: Added vehicle selection system with cascading dropdown functionality
+- **Data Population**: Comprehensive vehicle data covering cars, trucks, and farm machinery
+
+### User Experience
+- **Smart Selection**: Users can select vehicles from comprehensive local database
+- **Cascading Logic**: Model selection depends on make, year selection depends on model, etc.
+- **Professional Interface**: Dropdown selects provide better UX than text inputs
+- **Complete Coverage**: Database includes both passenger vehicles and farm machinery
+
 ## 1.10.69 - 2025-11-15
 
 ### Fixed

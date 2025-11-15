@@ -1819,6 +1819,222 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
+    // Vehicle selection functions
+async function populateVehicleMakes() {
+    try {
+        const response = await fetch('api/vehicle/makes');
+        if (!response.ok) throw new Error('Failed to fetch vehicle makes');
+        
+        const makes = await response.json();
+        
+        // Populate add form
+        const addMakeSelect = document.getElementById('add-asset-make');
+        addMakeSelect.innerHTML = '<option value="">Select Make</option>';
+        makes.forEach(make => {
+            addMakeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+        });
+        
+        // Populate edit form
+        const editMakeSelect = document.getElementById('edit-asset-make');
+        editMakeSelect.innerHTML = '<option value="">Select Make</option>';
+        makes.forEach(make => {
+            editMakeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+        });
+    } catch (error) {
+        console.error('Error populating vehicle makes:', error);
+    }
+}
+
+async function populateVehicleModels(make) {
+    try {
+        const response = await fetch(`api/vehicle/models?make=${encodeURIComponent(make)}`);
+        if (!response.ok) throw new Error('Failed to fetch vehicle models');
+        
+        const models = await response.json();
+        
+        // Populate add form
+        const addModelSelect = document.getElementById('add-asset-model');
+        addModelSelect.innerHTML = '<option value="">Select Model</option>';
+        models.forEach(model => {
+            addModelSelect.innerHTML += `<option value="${model}">${model}</option>`;
+        });
+        
+        // Populate edit form
+        const editModelSelect = document.getElementById('edit-asset-model');
+        editModelSelect.innerHTML = '<option value="">Select Model</option>';
+        models.forEach(model => {
+            editModelSelect.innerHTML += `<option value="${model}">${model}</option>`;
+        });
+    } catch (error) {
+        console.error('Error populating vehicle models:', error);
+    }
+}
+
+async function populateVehicleYears(make, model) {
+    try {
+        const response = await fetch(`api/vehicle/years?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`);
+        if (!response.ok) throw new Error('Failed to fetch vehicle years');
+        
+        const years = await response.json();
+        
+        // Generate year options
+        const yearOptions = [];
+        years.forEach(yearRange => {
+            const startYear = yearRange.year_start;
+            const endYear = yearRange.year_end || new Date().getFullYear();
+            
+            for (let year = endYear; year >= startYear; year--) {
+                if (!yearOptions.includes(year)) {
+                    yearOptions.push(year);
+                }
+            }
+        });
+        
+        // Populate add form
+        const addYearSelect = document.getElementById('add-asset-year');
+        addYearSelect.innerHTML = '<option value="">Select Year</option>';
+        yearOptions.forEach(year => {
+            addYearSelect.innerHTML += `<option value="${year}">${year}</option>`;
+        });
+        
+        // Populate edit form
+        const editYearSelect = document.getElementById('edit-asset-year');
+        editYearSelect.innerHTML = '<option value="">Select Year</option>';
+        yearOptions.forEach(year => {
+            editYearSelect.innerHTML += `<option value="${year}">${year}</option>`;
+        });
+    } catch (error) {
+        console.error('Error populating vehicle years:', error);
+    }
+}
+
+async function populateVehicleBodyTypes(make, model, year) {
+    try {
+        const url = `api/vehicle/body-types?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`;
+        if (year) {
+            url += `&year=${year}`;
+        }
+        
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to fetch vehicle body types');
+        
+        const bodyTypes = await response.json();
+        
+        // Populate add form
+        const addBodySelect = document.getElementById('add-asset-body-feature');
+        addBodySelect.innerHTML = '<option value="">Select Body Type</option>';
+        bodyTypes.forEach(bodyType => {
+            addBodySelect.innerHTML += `<option value="${bodyType}">${bodyType}</option>`;
+        });
+        
+        // Populate edit form
+        const editBodySelect = document.getElementById('edit-asset-body-feature');
+        editBodySelect.innerHTML = '<option value="">Select Body Type</option>';
+        bodyTypes.forEach(bodyType => {
+            editBodySelect.innerHTML += `<option value="${bodyType}">${bodyType}</option>`;
+        });
+    } catch (error) {
+        console.error('Error populating vehicle body types:', error);
+    }
+}
+
+// Vehicle selection event handlers
+function setupVehicleSelectionHandlers() {
+    // Add form handlers
+    const addMakeSelect = document.getElementById('add-asset-make');
+    const addModelSelect = document.getElementById('add-asset-model');
+    const addYearSelect = document.getElementById('add-asset-year');
+    
+    addMakeSelect.addEventListener('change', async function() {
+        const make = this.value;
+        if (make) {
+            await populateVehicleModels(make);
+            // Clear dependent fields
+            addModelSelect.value = '';
+            addYearSelect.value = '';
+            document.getElementById('add-asset-body-feature').value = '';
+        } else {
+            // Clear all dependent fields
+            addModelSelect.innerHTML = '<option value="">Select Model</option>';
+            addYearSelect.innerHTML = '<option value="">Select Year</option>';
+            document.getElementById('add-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+        }
+    });
+    
+    addModelSelect.addEventListener('change', async function() {
+        const make = addMakeSelect.value;
+        const model = this.value;
+        if (make && model) {
+            await populateVehicleYears(make, model);
+            // Clear dependent fields
+            addYearSelect.value = '';
+            document.getElementById('add-asset-body-feature').value = '';
+        } else {
+            // Clear dependent fields
+            addYearSelect.innerHTML = '<option value="">Select Year</option>';
+            document.getElementById('add-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+        }
+    });
+    
+    addYearSelect.addEventListener('change', async function() {
+        const make = addMakeSelect.value;
+        const model = addModelSelect.value;
+        const year = this.value;
+        if (make && model && year) {
+            await populateVehicleBodyTypes(make, model, year);
+        } else {
+            document.getElementById('add-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+        }
+    });
+    
+    // Edit form handlers
+    const editMakeSelect = document.getElementById('edit-asset-make');
+    const editModelSelect = document.getElementById('edit-asset-model');
+    const editYearSelect = document.getElementById('edit-asset-year');
+    
+    editMakeSelect.addEventListener('change', async function() {
+        const make = this.value;
+        if (make) {
+            await populateVehicleModels(make);
+            // Clear dependent fields
+            editModelSelect.value = '';
+            editYearSelect.value = '';
+            document.getElementById('edit-asset-body-feature').value = '';
+        } else {
+            // Clear all dependent fields
+            editModelSelect.innerHTML = '<option value="">Select Model</option>';
+            editYearSelect.innerHTML = '<option value="">Select Year</option>';
+            document.getElementById('edit-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+        }
+    });
+    
+    editModelSelect.addEventListener('change', async function() {
+        const make = editMakeSelect.value;
+        const model = this.value;
+        if (make && model) {
+            await populateVehicleYears(make, model);
+            // Clear dependent fields
+            editYearSelect.value = '';
+            document.getElementById('edit-asset-body-feature').value = '';
+        } else {
+            // Clear dependent fields
+            editYearSelect.innerHTML = '<option value="">Select Year</option>';
+            document.getElementById('edit-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+        }
+    });
+    
+    editYearSelect.addEventListener('change', async function() {
+        const make = editMakeSelect.value;
+        const model = editModelSelect.value;
+        const year = this.value;
+        if (make && model && year) {
+            await populateVehicleBodyTypes(make, model, year);
+        } else {
+            document.getElementById('edit-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+        }
+    });
+}
+
     async function openAddAssetForm() {
         // Reset form
         document.getElementById('add-asset-form').reset();
@@ -1827,6 +2043,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById('add-asset-quantity').value = 1;
         document.getElementById('add-asset-status').value = 'operational';
         document.getElementById('add-asset-usage-type').value = 'hours';
+        
+        // Populate vehicle makes and setup handlers
+        await populateVehicleMakes();
+        setupVehicleSelectionHandlers();
         
         // Populate parent asset dropdown
         await populateParentAssetDropdowns();
@@ -1841,7 +2061,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             const asset = await response.json();
             
-            // Populate parent asset dropdown first
+            // Populate vehicle makes and setup handlers first
+            await populateVehicleMakes();
+            setupVehicleSelectionHandlers();
+            
+            // Populate parent asset dropdown
             await populateParentAssetDropdowns();
             
             // Populate form fields
@@ -1852,7 +2076,22 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById('edit-asset-category').value = asset.category || '';
             document.getElementById('edit-asset-make').value = asset.make || '';
             document.getElementById('edit-asset-model').value = asset.model || '';
+            document.getElementById('edit-asset-year').value = asset.year || '';
+            document.getElementById('edit-asset-body-feature').value = asset.body_feature || '';
             document.getElementById('edit-asset-serial').value = asset.serial_number || '';
+            
+            // Populate vehicle dependent dropdowns if make is selected
+            if (asset.make) {
+                await populateVehicleModels(asset.make);
+                
+                if (asset.model) {
+                    await populateVehicleYears(asset.make, asset.model);
+                    
+                    if (asset.year) {
+                        await populateVehicleBodyTypes(asset.make, asset.model, asset.year);
+                    }
+                }
+            }
             
             // Status & Location
             document.getElementById('edit-asset-location').value = asset.location || '';
@@ -2788,6 +3027,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 category: formData.get('category'),
                 make: formData.get('make'),
                 model: formData.get('model'),
+                year: formData.get('year') ? parseInt(formData.get('year')) : null,
+                body_feature: formData.get('body_feature'),
                 serial_number: formData.get('serial_number'),
                 
                 // Status & Location
@@ -3007,7 +3248,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             const assetId = document.getElementById('edit-asset-id').value;
             const formData = new FormData(event.target);
-            console.log('Edit asset form submitted. Asset ID:', assetId, 'Form data:', Object.fromEntries(formData));
+console.log('Edit asset form submitted. Asset ID:', assetId, 'Form data:', Object.fromEntries(formData));
             
             const assetData = {
                 // Basic Information
@@ -3015,6 +3256,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 category: formData.get('category'),
                 make: formData.get('make'),
                 model: formData.get('model'),
+                year: formData.get('year') ? parseInt(formData.get('year')) : null,
+                body_feature: formData.get('body_feature'),
                 serial_number: formData.get('serial_number'),
                 
                 // Status & Location
