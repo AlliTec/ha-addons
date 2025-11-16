@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.10.98 - 2025-11-17
+
+### Fixed Database Schema and VIN Lookup
+- **Badge Column Separation**: Fixed database queries to include both `body_feature` and `badge` columns separately
+- **Asset Queries**: Updated get_assets and get_asset functions to return both body_feature and badge fields
+- **Syntax Error**: Fixed indentation error in main.py that was causing syntax compilation failure
+- **Database Migration**: Prepared badge column addition to asset_inventory table for proper VIN lookup functionality
+
 ## 1.10.97 - 2025-11-16
 
 ### Fixed Additional JavaScript Errors

@@ -1123,10 +1123,10 @@ async def get_assets(parent_id: Optional[int] = None):
             try:
                 records = await conn.fetch("""
                 SELECT id, name, make, model, location, status, quantity, category,
-                       serial_number, purchase_date, registration_no, registration_due,
-                       permit_info, insurance_info, insurance_due, warranty_provider,
-                       warranty_expiry_date, purchase_price, purchase_location,
-                       manual_or_doc_path, notes, parent_asset_id, badge, created_at
+                        serial_number, purchase_date, registration_no, registration_due,
+                        permit_info, insurance_info, insurance_due, warranty_provider,
+                        warranty_expiry_date, purchase_price, purchase_location,
+                        manual_or_doc_path, notes, parent_asset_id, body_feature, badge, created_at
                 FROM asset_inventory 
                 WHERE parent_asset_id = $1
                  ORDER BY name
@@ -1138,13 +1138,13 @@ async def get_assets(parent_id: Optional[int] = None):
         else:
             # Return all assets
             records = await conn.fetch("""
-                SELECT id, name, make, model, location, status, quantity, category,
-                       serial_number, purchase_date, registration_no, registration_due,
-                       permit_info, insurance_info, insurance_due, warranty_provider,
-                       warranty_expiry_date, purchase_price, purchase_location,
-                       manual_or_doc_path, notes, parent_asset_id, created_at
-                FROM asset_inventory 
-                ORDER BY name
+                 SELECT id, name, make, model, location, status, quantity, category,
+                        serial_number, purchase_date, registration_no, registration_due,
+                        permit_info, insurance_info, insurance_due, warranty_provider,
+                        warranty_expiry_date, purchase_price, purchase_location,
+                        manual_or_doc_path, notes, parent_asset_id, body_feature, badge, created_at
+                 FROM asset_inventory 
+                 ORDER BY name
             """)
         assets = [dict(record) for record in records]
         return assets
@@ -1155,7 +1155,16 @@ async def get_assets(parent_id: Optional[int] = None):
 async def get_asset(asset_id: int):
     conn = await asyncpg.connect(DATABASE_URL)
     try:
-        record = await conn.fetchrow("SELECT * FROM asset_inventory WHERE id = $1", asset_id)
+        record = await conn.fetchrow("""
+            SELECT id, name, make, model, location, status, quantity, category,
+                   serial_number, purchase_date, registration_no, registration_due,
+                   permit_info, insurance_info, insurance_due, warranty_provider,
+                   warranty_expiry_date, purchase_price, purchase_location,
+                   manual_or_doc_path, notes, parent_asset_id, body_feature, badge, created_at,
+                   year
+            FROM asset_inventory 
+            WHERE id = $1
+        """, asset_id)
         if not record:
             raise HTTPException(status_code=404, detail="Asset not found")
         
