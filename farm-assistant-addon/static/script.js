@@ -517,23 +517,26 @@ async function populateParentAssetDropdowns() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const events = await response.json();
-        console.log("Calendar events received:", events.length, "events");
+        const assets = await response.json();
+        console.log("Assets received:", assets.length, "assets");
         
-        // Group events by date
-        const eventsByDate = {};
-        events.forEach(event => {
-            const eventDate = event.date; // Use the date directly from the backend
-            console.log(`Processing event: ${event.title} on ${eventDate} (raw date: ${event.date})`);
-            if (!eventsByDate[eventDate]) {
-                eventsByDate[eventDate] = [];
-            }
-            eventsByDate[eventDate].push(event);
-        });
+        // Populate parent asset dropdowns
+        const addParentSelect = document.getElementById('add-asset-parent-id');
+        const editParentSelect = document.getElementById('edit-asset-parent-id');
         
-        console.log("Events grouped by date:", eventsByDate);
-        console.log("Current view type:", filterType);
-        console.log("Current date:", currentDate.toISOString().split('T')[0]);
+        if (addParentSelect) {
+            addParentSelect.innerHTML = '<option value="">No Parent</option>';
+            assets.filter(asset => asset.category !== 'Building').forEach(asset => {
+                addParentSelect.innerHTML += `<option value="${asset.id}">${asset.name} (${asset.category})</option>`;
+            });
+        }
+        
+        if (editParentSelect) {
+            editParentSelect.innerHTML = '<option value="">No Parent</option>';
+            assets.filter(asset => asset.category !== 'Building').forEach(asset => {
+                editParentSelect.innerHTML += `<option value="${asset.id}">${asset.name} (${asset.category})</option>`;
+            });
+        }
         
         console.log("Parent asset dropdowns populated successfully");
         
@@ -1924,7 +1927,7 @@ async function populateVehicleYears(make, model) {
 
 async function populateVehicleBodyTypes(make, model, year) {
     try {
-        const url = `api/vehicle/body-types?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`;
+        let url = `api/vehicle/body-types?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`;
         if (year) {
             url += `&year=${year}`;
         }

@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.10.96 - 2025-11-16
+
+### Fixed JavaScript Errors
+- **populateParentAssetDropdowns**: Fixed function that was incorrectly fetching assets but treating them as calendar events
+- **Vehicle Body Types**: Fixed "Assignment to constant variable" error by changing `const url` to `let url`
+- **Calendar Events**: Fixed undefined date processing by correcting asset/event handling confusion
+- **Reference Errors**: Removed undefined `filterType` variable reference that was causing errors
+
 ## 1.10.95 - 2025-11-16
 
 ### Analysis

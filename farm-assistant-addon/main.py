@@ -1119,6 +1119,7 @@ async def get_assets(parent_id: Optional[int] = None):
     try:
         if parent_id is not None:
             # Return only child assets of the specified parent
+            print(f"Fetching assets with parent_id: {parent_id}")
             records = await conn.fetch("""
                 SELECT id, name, make, model, location, status, quantity, category,
                        serial_number, purchase_date, registration_no, registration_due,
