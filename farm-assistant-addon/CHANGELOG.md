@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.10.90 - 2025-11-16
+
+### Fixed
+- **Badge Support Implementation**: Added missing badge column and populated badge data for popular models
+- **Vehicle Badge Data**: Added XR6 Turbo, XR8, G6E, SS, Calais and other trim levels to vehicle_data table
+- **API Badge Endpoints**: Fixed badge API endpoints to return proper trim level options
+- **Complete Vehicle Selection**: Full cascading dropdown functionality now working (make → model → year → body type → badge)
+- **Ford Falcon Badges**: Added XR6 Turbo, XR8, G6E, G6E Turbo badges for appropriate years and body types
+- **Holden Commodore Badges**: Added SS and Calais badges for Commodore models
+
 ## 1.10.89 - 2025-11-16
 
 ### Fixed
