@@ -1481,10 +1481,14 @@ async function deleteMaintenanceSchedule(scheduleId) {
             document.getElementById('event-priority').value = event.priority || 'medium';
             
             // Update modal title
-            modalTitle.textContent = 'Edit Event';
+            if (modalTitle) {
+                modalTitle.textContent = 'Edit Event';
+            }
             
             // Update submit button
-            submitBtn.textContent = 'Update Event';
+            if (submitBtn) {
+                submitBtn.textContent = 'Update Event';
+            }
             submitBtn.dataset.mode = 'edit';
             submitBtn.dataset.eventId = eventId;
             
@@ -2688,11 +2692,15 @@ function setupVehicleSelectionHandlers() {
             form.reset();
             
             // Reset modal title
-            modalTitle.textContent = 'Schedule Maintenance';
+            if (modalTitle) {
+                modalTitle.textContent = 'Schedule Maintenance';
+            }
             
             // Reset submit button
-            submitBtn.textContent = 'Schedule Maintenance';
-            submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Schedule Maintenance';
+            if (submitBtn) {
+                submitBtn.textContent = 'Schedule Maintenance';
+                submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Schedule Maintenance';
+            }
             
             // Remove edit mode flags
             delete submitBtn.dataset.mode;

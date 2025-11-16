@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.10.85 - 2025-11-16
+
+### Fixed
+- **JavaScript Null Reference Errors**: Added null checks in loadEventForEdit and resetMaintenanceScheduleForm functions
+- **DOM Element Access**: Fixed "Cannot set properties of null (setting 'textContent')" errors when accessing modal elements
+- **Event Edit Modal**: Ensured modalTitle and submitBtn elements exist before modifying their properties
+- **Maintenance Schedule Form**: Added defensive programming to prevent errors when DOM elements are not ready
+- **Assets API Regression**: Removed reference to non-existent "badge" column in asset_inventory query
+- **Database Schema Compatibility**: Fixed UndefinedColumnError by adjusting SELECT query to match existing database schema
+- **Event Edit API Endpoint**: Corrected JavaScript API call from `/api/calendar/events/{eventId}` to `/api/events/{eventId}` 
+- **Animal History Click Events**: Removed duplicate event handlers for maintenance-record-row clicks that caused conflicting behavior
+- **Historical Records Editing**: Ensured historical maintenance records show alert that they cannot be edited while scheduled events remain editable
+- **Event Handler Conflicts**: Fixed JavaScript event delegation conflicts in animal history modal
+
 ## 1.10.84 - 2025-11-16
 
 ### Fixed
