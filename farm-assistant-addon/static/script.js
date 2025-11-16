@@ -1995,7 +1995,7 @@ async function populateVehicleBadges(make, model, year, bodyType) {
 // VIN lookup functions
 async function lookupVIN(vin) {
     try {
-        const response = await fetch(`api/vin/specifications/${encodeURIComponent(vin)}`);
+        const response = await fetch(`api/vin/vehicle-data/${encodeURIComponent(vin)}`);
         if (!response.ok) throw new Error('Failed to lookup VIN');
         
         const specs = await response.json();
@@ -2063,14 +2063,12 @@ window.populateFromVIN = async function populateFromVIN(vin, formType = 'add') {
             });
             
             // Set make if found
-            if (specs.manufacturer && makeSelect) {
-                // Extract manufacturer name from full string
-                const makeName = specs.manufacturer.split(' ')[0];
-                console.log('🏭 Looking for make:', makeName);
+            if (specs.make && makeSelect) {
+                console.log('🏭 Looking for make:', specs.make);
                 console.log('📋 Available makes:', Array.from(makeSelect.options).map(o => o.value));
                 
                 const makeOption = Array.from(makeSelect.options).find(option => 
-                    option.value.includes(makeName)
+                    option.value === specs.make
                 );
                 console.log('🎯 Make option found:', makeOption);
                 
@@ -2080,12 +2078,12 @@ window.populateFromVIN = async function populateFromVIN(vin, formType = 'add') {
                     await populateVehicleModels(makeOption.value);
                     
                     // Set model if found
-                    if (specs.model_info && specs.model_info.model && modelSelect) {
-                        console.log('🚗 Looking for model:', specs.model_info.model);
+                    if (specs.model && modelSelect) {
+                        console.log('🚗 Looking for model:', specs.model);
                         console.log('📋 Available models:', Array.from(modelSelect.options).map(o => o.value));
                         
                         const modelOption = Array.from(modelSelect.options).find(option => 
-                            option.value === specs.model_info.model
+                            option.value === specs.model
                         );
                         console.log('🎯 Model option found:', modelOption);
                         
@@ -2110,23 +2108,23 @@ window.populateFromVIN = async function populateFromVIN(vin, formType = 'add') {
                                     await populateVehicleBodyTypes(makeOption.value, modelOption.value, specs.year);
                                     
                                     // Set body type if found
-                                    if (specs.model_info && specs.model_info.body_type && bodySelect) {
-                                        console.log('🚙 Looking for body type:', specs.model_info.body_type);
+                                    if (specs.body_type && bodySelect) {
+                                        console.log('🚙 Looking for body type:', specs.body_type);
                                         console.log('📋 Available body types:', Array.from(bodySelect.options).map(o => o.value));
                                         
                                         const bodyOption = Array.from(bodySelect.options).find(option => 
-                                            option.value === specs.model_info.body_type
+                                            option.value === specs.body_type
                                         );
                                         console.log('🎯 Body type option found:', bodyOption);
                                         
                                         if (bodyOption) {
                                             bodySelect.value = bodyOption.value;
                                             console.log('✅ Body type set to:', bodyOption.value);
-                                            await populateVehicleBadges(makeOption.value, modelOption.value, specs.year, specs.model_info.body_type);
+                                            await populateVehicleBadges(makeOption.value, modelOption.value, specs.year, specs.body_type);
                                             
                                             // Set badge if found
-                                            if (specs.model_info && specs.model_info.trim && badgeSelect) {
-                                                console.log('🏷️ Looking for badge:', specs.model_info.trim);
+                                            if (specs.badge && badgeSelect) {
+                                                console.log('🏷️ Looking for badge:', specs.badge);
                                                 console.log('📋 Available badges:', Array.from(badgeSelect.options).map(o => o.value));
                                                 
                                                 const badgeOption = Array.from(badgeSelect.options).find(option => 

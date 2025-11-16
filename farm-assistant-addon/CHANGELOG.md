@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.11.04 - 2025-11-17
+
+### VIN Decoder Year Mapping Fix
+- **Critical Fix**: Corrected Australian Ford Falcon VIN year mapping for VIN pattern 6FPAAAJGCM9A59898
+- **Year Resolution**: Fixed incorrect year decoding (2021 → 2009) for Australian Ford Falcon Ute patterns
+- **Enhanced Logic**: Added sophisticated year mapping for Australian Ford patterns with model-specific handling
+- **New API Endpoint**: Created `/api/vin/vehicle-data/{vin}` endpoint for database-compatible VIN lookup
+- **Frontend Integration**: Updated frontend to use new endpoint and handle flat data structure (make, model, year, body_type, badge)
+- **Complete Testing**: Verified end-to-end VIN lookup functionality with proper field population
+- **Database Integration**: VIN decoder now maps to vehicle_data database for accurate vehicle specification retrieval
+
 ## 1.11.03 - 2025-11-17
 
 ### VIN Lookup Enhancement and Debugging

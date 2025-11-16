@@ -12,7 +12,7 @@
 ---
 
 ## II. FILE PATH PROTOCOL - ABSOLUTE PATHS ONLY
-**RULE:** ALL file operations MUST use absolute paths starting from these locations:
+**RULE 1:** ALL file operations MUST use absolute paths starting from these locations:
 - `/home/sog/ai-projects/ha-addons/farm-assistant-addon/`
 - Shorthand acceptable: `/farm-assistant-addon/` (if within project context)
 
@@ -29,6 +29,21 @@
 - ❌ WRONG: `python3 -m py_compile main.py`
 - ✅ CORRECT: `cd /home/sog/ai-projects/ha-addons/farm-assistant-addon && python3 -m py_compile main.py`
 - ✅ ALSO CORRECT: `python3 -m py_compile /home/sog/ai-projects/ha-addons/farm-assistant-addon/main.py`
+
+**RULE 2:** If ANY command is repeated more than TWICE with the same error, you are in an infinite loop.
+
+**MANDATORY ACTIONS when loop detected:**
+1. STOP immediately
+2. Identify the failing command
+3. Execute: `cd /home/sog/ai-projects/ha-addons/farm-assistant-addon`
+4. Rewrite the command with absolute path
+5. If still failing, examine the root cause (missing file, wrong path, syntax error)
+6. FIX the root cause before retrying
+
+**EXAMPLE FIX:**
+- ❌ LOOPING: `python3 -c "import json; json.load(open('data/options.json'))"`
+- ✅ FIXED: `cd /home/sog/ai-projects/ha-addons/farm-assistant-addon && python3 -c "import json; json.load(open('data/options.json'))"`
+- ✅ OR: `python3 -c "import json; json.load(open('/home/sog/ai-projects/ha-addons/farm-assistant-addon/data/options.json'))"`
 
 ---
 
@@ -81,25 +96,7 @@ cd /home/sog/ai-projects/ha-addons/farm-assistant-addon && python3 -c "import js
 
 ---
 
-## VI. INFINITE LOOP BREAKING PROTOCOL
-**RULE:** If ANY command is repeated more than TWICE with the same error, you are in an infinite loop.
-
-**MANDATORY ACTIONS when loop detected:**
-1. STOP immediately
-2. Identify the failing command
-3. Execute: `cd /home/sog/ai-projects/ha-addons/farm-assistant-addon`
-4. Rewrite the command with absolute path
-5. If still failing, examine the root cause (missing file, wrong path, syntax error)
-6. FIX the root cause before retrying
-
-**EXAMPLE FIX:**
-- ❌ LOOPING: `python3 -c "import json; json.load(open('data/options.json'))"`
-- ✅ FIXED: `cd /home/sog/ai-projects/ha-addons/farm-assistant-addon && python3 -c "import json; json.load(open('data/options.json'))"`
-- ✅ OR: `python3 -c "import json; json.load(open('/home/sog/ai-projects/ha-addons/farm-assistant-addon/data/options.json'))"`
-
----
-
-## VII. VERSION CONTROL PROTOCOL - MANDATORY SEQUENCE
+## VI. VERSION CONTROL PROTOCOL - MANDATORY SEQUENCE
 **RULE:** These steps MUST be executed in EXACT order after all testing passes.
 
 **MANDATORY SEQUENCE:**
@@ -113,7 +110,7 @@ cd /home/sog/ai-projects/ha-addons/farm-assistant-addon && python3 -c "import js
 
 ---
 
-## VIII. COMPLETION REPORT - MANDATORY OUTPUT
+## VII. COMPLETION REPORT - MANDATORY OUTPUT
 **RULE:** At task completion, provide this exact format:
 
 **COMMANDMENTS COMPLIANCE CHECKLIST:**

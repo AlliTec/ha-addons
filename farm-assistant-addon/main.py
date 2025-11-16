@@ -933,6 +933,104 @@ async def validate_vin_endpoint(request: dict):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Error validating VIN: {str(e)}")
 
+@app.get("/api/vin/vehicle-data/{vin}")
+async def get_vehicle_data_from_vin(vin: str):
+    """Decode VIN and return vehicle data in database-compatible format"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # First decode the VIN
+        decoded = decode_vin(vin)
+        
+        if not decoded or not decoded.get('valid'):
+            raise HTTPException(status_code=400, detail="Invalid VIN")
+        
+        # Extract vehicle information from decoded VIN
+        manufacturer = decoded.get('manufacturer', '')
+        year = decoded.get('year')
+        model_info = decoded.get('model_info', {})
+        
+        # Extract make from manufacturer (e.g., "Ford (Australia)" -> "Ford")
+        make = manufacturer.split(' ')[0] if manufacturer else ''
+        model = model_info.get('model', '')
+        body_type = model_info.get('body_type', '')
+        badge = model_info.get('trim', '')
+        
+        # Look up matching vehicle in database
+        query = """
+            SELECT make, model, year_start, year_end, body_type, badge, category 
+            FROM vehicle_data 
+            WHERE make = $1 
+            AND model = $2 
+            AND ($3 BETWEEN year_start AND COALESCE(year_end, 9999))
+            AND body_type = $4
+        """
+        params = [make, model, year, body_type]
+        
+        # Add badge filter if available
+        if badge:
+            query += " AND badge = $5"
+            params.append(badge)
+        
+        query += " LIMIT 1"
+        
+        result = await conn.fetchrow(query, *params)
+        
+        if result:
+            # Return database record
+            return {
+                "make": result['make'],
+                "model": result['model'],
+                "year": year,
+                "body_type": result['body_type'],
+                "badge": result['badge'],
+                "category": result['category'],
+                "vin": vin,
+                "valid": True,
+                "source": "database"
+            }
+        else:
+            # Try to find closest match without badge
+            query_no_badge = """
+                SELECT make, model, year_start, year_end, body_type, badge, category 
+                FROM vehicle_data 
+                WHERE make = $1 
+                AND model = $2 
+                AND ($3 BETWEEN year_start AND COALESCE(year_end, 9999))
+                AND body_type = $4
+                LIMIT 1
+            """
+            result_no_badge = await conn.fetchrow(query_no_badge, make, model, year, body_type)
+            
+            if result_no_badge:
+                return {
+                    "make": result_no_badge['make'],
+                    "model": result_no_badge['model'],
+                    "year": year,
+                    "body_type": result_no_badge['body_type'],
+                    "badge": result_no_badge['badge'],
+                    "category": result_no_badge['category'],
+                    "vin": vin,
+                    "valid": True,
+                    "source": "database_closest_match"
+                }
+            else:
+                # Return decoded VIN data even if not found in database
+                return {
+                    "make": make,
+                    "model": model,
+                    "year": year,
+                    "body_type": body_type,
+                    "badge": badge,
+                    "vin": vin,
+                    "valid": True,
+                    "source": "vin_decoder_only"
+                }
+                
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error looking up vehicle data from VIN: {str(e)}")
+    finally:
+        await conn.close()
+
 @app.get("/api/vehicle/search")
 async def search_vehicles(make: str = None, model: str = None, year: int = None, body_type: str = None, badge: str = None):
     """Search vehicles with multiple filters"""

@@ -1,100 +1,25 @@
-INFO:     172.30.32.2:40964 - "GET /get_animals HTTP/1.1" 200 OK
-INFO:     172.30.32.2:40964 - "GET /api/vehicle/makes HTTP/1.1" 200 OK
-INFO:     172.30.32.2:40964 - "GET /api/assets HTTP/1.1" 200 OK
-INFO:     172.30.32.2:40964 - "GET /api/assets HTTP/1.1" 200 OK
-INFO:     172.30.32.2:40964 - "GET /api/asset/4 HTTP/1.1" 200 OK
-Fetching assets with parent_id: 4
-Database query error: column "badge" does not exist
-INFO:     172.30.32.2:40964 - "GET /api/assets?parent_id=4 HTTP/1.1" 500 Internal Server Error
-ERROR:    Exception in ASGI application
-Traceback (most recent call last):
-  File "/usr/lib/python3.12/site-packages/uvicorn/protocols/http/h11_impl.py", line 403, in run_asgi
-    result = await app(  # type: ignore[func-returns-value]
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
-    return await self.app(scope, receive, send)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/fastapi/applications.py", line 1134, in __call__
-    await super().__call__(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/starlette/applications.py", line 113, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/starlette/middleware/errors.py", line 186, in __call__
-    raise exc
-  File "/usr/lib/python3.12/site-packages/starlette/middleware/errors.py", line 164, in __call__
-    await self.app(scope, receive, _send)
-  File "/usr/lib/python3.12/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
-    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "/usr/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "/usr/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
-    await self.app(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/starlette/routing.py", line 716, in __call__
-    await self.middleware_stack(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/starlette/routing.py", line 736, in app
-    await route.handle(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/starlette/routing.py", line 290, in handle
-    await self.app(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/fastapi/routing.py", line 125, in app
-    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
-  File "/usr/lib/python3.12/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
-    raise exc
-  File "/usr/lib/python3.12/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
-    await app(scope, receive, sender)
-  File "/usr/lib/python3.12/site-packages/fastapi/routing.py", line 111, in app
-    response = await f(request)
-               ^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/fastapi/routing.py", line 391, in app
-    raw_response = await run_endpoint_function(
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/fastapi/routing.py", line 290, in run_endpoint_function
-    return await dependant.call(**values)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/app/main.py", line 1124, in get_assets
-    records = await conn.fetch("""
-              ^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/asyncpg/connection.py", line 690, in fetch
-    return await self._execute(
-           ^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/asyncpg/connection.py", line 1864, in _execute
-    result, _ = await self.__execute(
-                ^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/asyncpg/connection.py", line 1961, in __execute
-    result, stmt = await self._do_execute(
-                   ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/asyncpg/connection.py", line 2004, in _do_execute
-    stmt = await self._get_statement(
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/usr/lib/python3.12/site-packages/asyncpg/connection.py", line 432, in _get_statement
-    statement = await self._protocol.prepare(
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "asyncpg/protocol/protocol.pyx", line 165, in prepare
-asyncpg.exceptions.UndefinedColumnError: column "badge" does not exist
-INFO:     172.30.32.2:51436 - "GET /api/asset/4 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:51436 - "GET /api/vehicle/makes HTTP/1.1" 200 OK
-INFO:     172.30.32.2:51436 - "GET /api/assets HTTP/1.1" 200 OK
-INFO:     172.30.32.2:51436 - "GET /api/vehicle/models?make=Ford HTTP/1.1" 200 OK
-INFO:     172.30.32.2:51436 - "GET /api/vehicle/years?make=Ford&model=2009+FG+Falcon+XR6+Turbo+Ute HTTP/1.1" 200 OK
-INFO:     172.30.32.2:49398 - "GET /api/vehicle/years?make=Ford&model=Falcon HTTP/1.1" 200 OK
-INFO:     172.30.32.2:49398 - "GET /api/vehicle/years?make=Ford&model=Falcon HTTP/1.1" 200 OK
-INFO:     172.30.32.2:49398 - "GET /api/vehicle/body-types?make=Ford&model=Falcon&year=2009 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:49398 - "GET /api/vehicle/body-types?make=Ford&model=Falcon&year=2009 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:49398 - "GET /api/vehicle/badges?make=Ford&model=Falcon&year=2009&body_type=Ute HTTP/1.1" 200 OK
-INFO:     172.30.32.2:49398 - "GET /api/vehicle/badges?make=Ford&model=Falcon&year=2009&body_type=Ute HTTP/1.1" 200 OK
-INFO:     172.30.32.2:49540 - "GET /api/vin/specifications/6FPAAAJGCM9A59898 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:49540 - "GET /api/vehicle/models?make=Ford HTTP/1.1" 200 OK
-INFO:     172.30.32.2:51532 - "GET /api/vehicle/years?make=Ford&model=Falcon HTTP/1.1" 200 OK
-INFO:     172.30.32.2:51532 - "GET /api/vehicle/years?make=Ford&model=Falcon HTTP/1.1" 200 OK
-INFO:     172.30.32.2:51532 - "GET /api/vehicle/body-types?make=Ford&model=Falcon&year=2005 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:51532 - "GET /api/vehicle/body-types?make=Ford&model=Falcon&year=2005 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:51532 - "GET /api/vin/specifications/6FPAAAJGCM9A59898 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:51532 - "GET /api/vehicle/models?make=Ford HTTP/1.1" 200 OK
-INFO:     172.30.32.2:38008 - "GET /api/vin/specifications/6FPAAAJGCM9A59898 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:38008 - "GET /api/vehicle/models?make=Ford HTTP/1.1" 200 OK
-INFO:     172.30.32.2:35370 - "GET /api/vehicle/years?make=Ford&model=Falcon HTTP/1.1" 200 OK
-INFO:     172.30.32.2:35370 - "GET /api/vehicle/years?make=Ford&model=Falcon HTTP/1.1" 200 OK
-INFO:     172.30.32.2:35370 - "GET /api/vehicle/body-types?make=Ford&model=Falcon&year=2009 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:35370 - "GET /api/vehicle/body-types?make=Ford&model=Falcon&year=2009 HTTP/1.1" 200 OK
-INFO:     172.30.32.2:35370 - "GET /api/vehicle/badges?make=Ford&model=Falcon&year=2009&body_type=Ute HTTP/1.1" 200 OK
-INFO:     172.30.32.2:35370 - "GET /api/vehicle/badges?make=Ford&model=Falcon&year=2009&body_type=Ute HTTP/1.1" 200 OK
+script.js?v=unknown&t=1763334800411:512 populateParentAssetDropdowns called
+script.js?v=unknown&t=1763334800411:515 Assets response status: 200
+script.js?v=unknown&t=1763334800411:521 Assets received: 25 assets
+script.js?v=unknown&t=1763334800411:541 Parent asset dropdowns populated successfully
+script.js?v=unknown&t=1763334800411:2043 🔍 Starting VIN lookup for: 6FPAAAJGCM9A59898
+script.js?v=unknown&t=1763334800411:2045 📋 VIN specs received: {vin: '6FPAAAJGCM9A59898', manufacturer: 'Ford (Australia)', year: 2021, plant: 'Assembly Plant 9', serial_number: 'A59898', …}
+script.js?v=unknown&t=1763334800411:2048 ✅ VIN is valid, populating form fields...
+script.js?v=unknown&t=1763334800411:2057 🎯 Form elements found: {makeSelect: true, modelSelect: true, yearSelect: true, bodySelect: true, badgeSelect: true}
+script.js?v=unknown&t=1763334800411:2069 🏭 Looking for make: Ford
+script.js?v=unknown&t=1763334800411:2070 📋 Available makes: (15) ['', 'BMW', 'Ford', 'Great Wall', 'Holden', 'Honda', 'Isuzu', 'LDV', 'Mazda', 'Mercedes-Benz', 'Mitsubishi', 'Nissan', 'Subaru', 'Toyota', 'Volkswagen']
+script.js?v=unknown&t=1763334800411:2075 🎯 Make option found: <option value=​"Ford">​Ford​</option>​slot
+script.js?v=unknown&t=1763334800411:2079 ✅ Make set to: Ford
+script.js?v=unknown&t=1763334800411:2084 🚗 Looking for model: Falcon
+script.js?v=unknown&t=1763334800411:2085 📋 Available models: (6) ['', 'F-150', 'Falcon', 'Focus', 'Mustang', 'Ranger']
+script.js?v=unknown&t=1763334800411:2090 🎯 Model option found: <option value=​"Falcon">​Falcon​</option>​slot
+script.js?v=unknown&t=1763334800411:2094 ✅ Model set to: Falcon
+script.js?v=unknown&t=1763334800411:2099 📅 Looking for year: 2021
+script.js?v=unknown&t=1763334800411:2100 📋 Available years: (19) ['', '2010', '2009', '2008', '2007', '2006', '2005', '2004', '2003', '2002', '2001', '2000', '1999', '2016', '2015', '2014', '2013', '2012', '2011']
+script.js?v=unknown&t=1763334800411:2105 🎯 Year option found: undefined
+script.js?v=unknown&t=1763334800411:2154 ❌ Year not found in options
+populateFromVIN @ script.js?v=unknown&t=1763334800411:2154
+await in populateFromVIN
+onclick @ E-cW3ksrmsjgl9U53YJMYeHxTZ5U1YAyZBGWznjqqM4/:576
+script.js?v=unknown&t=1763334800411:2172 🏁 VIN lookup process completed
+script.js?v=unknown&t=1763334800411:2183 🎯 Final form values: {make: 'Ford', model: 'Falcon', year: '', bodyType: '', badge: ''}
