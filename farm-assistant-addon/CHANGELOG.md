@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.10.84 - 2025-11-16
+
+### Fixed
+- **Assets API Regression**: Removed reference to non-existent "badge" column in asset_inventory query
+- **Database Schema Compatibility**: Fixed UndefinedColumnError by adjusting SELECT query to match existing database schema
+- **Event Edit API Endpoint**: Corrected JavaScript API call from `/api/calendar/events/{eventId}` to `/api/events/{eventId}` 
+- **Animal History Click Events**: Removed duplicate event handlers for maintenance-record-row clicks that caused conflicting behavior
+- **Historical Records Editing**: Ensured historical maintenance records show alert that they cannot be edited while scheduled events remain editable
+- **Event Handler Conflicts**: Fixed JavaScript event delegation conflicts in animal history modal
+
 ## 1.10.83 - 2025-11-16
 
 ### Fixed
