@@ -1524,6 +1524,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupSectionTabs();
     setupCalendarListeners();
     
+    // Initialize vehicle data for asset forms (delay to ensure DOM is ready)
+    setTimeout(async () => {
+        await populateVehicleMakes();
+        setupVehicleSelectionHandlers();
+    }, 100);
+    
     // Set initial table width after data is loaded
     setTimeout(() => {
         setTableMinWidth('livestock');

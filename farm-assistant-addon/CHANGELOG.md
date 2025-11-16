@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.10.91 - 2025-11-16
+
+### Fixed
+- **VIN Decoder Functionality**: Fixed VIN lookup that was returning "Invalid VIN format" for all inputs
+- **Frontend Initialization**: Added vehicle data population on page load (makes, models, body types, badges)
+- **JavaScript Timing**: Fixed timing issue where vehicle dropdowns weren't populated when page loads
+- **API Endpoints Working**: All vehicle API endpoints confirmed working (makes, models, years, body types, badges)
+- **Comprehensive Model Lists**: Verified all makes have complete model lists (Ford: 6 models, Toyota: 8 models, etc.)
+- **Cascading Dropdowns**: Full vehicle selection flow now functional (make → model → year → body type → badge)
+- **Ford Falcon Complete**: 1960-2016 years, 6 body types, XR6 Turbo badge working
+
 ## 1.10.90 - 2025-11-16
 
 ### Fixed

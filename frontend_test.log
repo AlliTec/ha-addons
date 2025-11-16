@@ -1,0 +1,8 @@
+2025-11-16 12:18:27,312 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [64576]
+INFO:     Waiting for application startup.
+2025-11-16 12:18:27,602 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-16 12:18:27,727 - INFO - Database connection successful.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8004 (Press CTRL+C to quit)
+INFO:     127.0.0.1:37770 - "GET / HTTP/1.1" 200 OK
