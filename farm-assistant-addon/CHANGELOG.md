@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.10.95 - 2025-11-16
+
+### Analysis
+- **Log Review**: Comprehensive analysis of all addon logs shows no errors or issues
+- **Port Behavior**: Confirmed port 8001 in HA environment vs 8000 in manual testing is normal ingress behavior
+- **API Performance**: All endpoints responding correctly (animals, assets, vehicle data, events, calendar)
+- **Database**: Consistent successful connections to PostgreSQL at 192.168.1.130:5432
+- **No Issues Found**: All logs show clean operation with successful API calls and proper shutdowns
+
 ## 1.10.94 - 2025-11-16
 
 ### Fixed
