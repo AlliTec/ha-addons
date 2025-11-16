@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.11.01 - 2025-11-17
+
+### Enhanced Australian Ford Falcon VIN Decoding
+- **Improved Pattern Recognition**: Enhanced VIN decoder for Australian Ford Falcon vehicles (WMI 6FP)
+- **Model Code Detection**: Added support for AAA/AAG (Ute) and FG (Sedan) model codes
+- **Trim Level Identification**: Enhanced detection for XR6, XR6 Turbo, XR8, and G6E trims
+- **Body Type Classification**: Improved classification between Ute and Sedan body types
+- **Legacy Compatibility**: Maintained backward compatibility with existing VIN patterns
+
 ## 1.11.00 - 2025-11-17
 
 ### Fixed Asset Register Database Schema

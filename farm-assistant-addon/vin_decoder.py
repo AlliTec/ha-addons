@@ -192,7 +192,33 @@ class VINDecoder:
         
         # Ford patterns
         if wmi in ['1FA', '2FA', '3FA', '6FP']:
-            if 'FALCON' in vin or 'FPV' in vin:
+            # Australian Ford patterns (6FP = Ford Australia)
+            if wmi == '6FP':
+                model_info["model"] = "Falcon"
+                # Check VIN position 4-6 for model identifier
+                if len(vin) >= 6:
+                    model_code = vin[3:6]
+                    if model_code in ['AAA', 'AAG']:
+                        model_info["model"] = "Falcon"
+                        model_info["body_type"] = "Ute"
+                        # Check for XR6 Turbo in positions 7-8
+                        if len(vin) >= 8 and vin[6:8] == 'JG':
+                            model_info["trim"] = "XR6 Turbo"
+                        elif len(vin) >= 8 and vin[6:8] == 'JC':
+                            model_info["trim"] = "XR6 Turbo"
+                        elif len(vin) >= 8 and vin[6:8] == 'GC':
+                            model_info["trim"] = "XR6"
+                        elif len(vin) >= 8 and vin[6:8] == 'JH':
+                            model_info["trim"] = "XR8"
+                        else:
+                            model_info["trim"] = "XR6 Turbo"  # Default assumption
+                    elif model_code == 'FG':
+                        model_info["model"] = "Falcon"
+                        model_info["body_type"] = "Sedan"
+                        model_info["trim"] = "G6E"
+            
+            # Legacy pattern matching
+            elif 'FALCON' in vin or 'FPV' in vin:
                 model_info["model"] = "Falcon"
                 if 'XR6' in vin:
                     model_info["trim"] = "XR6"
