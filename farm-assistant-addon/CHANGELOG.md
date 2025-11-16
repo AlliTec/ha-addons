@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.11.05 - 2025-11-17
+
+### VIN Badge/Trim Population Fix
+- **Frontend Fix**: Corrected JavaScript badge field access from `specs.model_info.trim` to `specs.badge`
+- **Complete Population**: VIN lookup now populates all fields correctly (make, model, year, body_type, badge)
+- **Error Resolution**: Fixed `TypeError: Cannot read properties of undefined (reading 'trim')` 
+- **End-to-End Success**: VIN 6FPAAAJGCM9A59898 now fully populates form including XR6 Turbo badge
+- **Verified Functionality**: All vehicle selection dropdowns work correctly with VIN lookup data
+
 ## 1.11.04 - 2025-11-17
 
 ### VIN Decoder Year Mapping Fix

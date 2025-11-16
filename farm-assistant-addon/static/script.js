@@ -2128,7 +2128,7 @@ window.populateFromVIN = async function populateFromVIN(vin, formType = 'add') {
                                                 console.log('📋 Available badges:', Array.from(badgeSelect.options).map(o => o.value));
                                                 
                                                 const badgeOption = Array.from(badgeSelect.options).find(option => 
-                                                    option.value === specs.model_info.trim
+                                                    option.value === specs.badge
                                                 );
                                                 console.log('🎯 Badge option found:', badgeOption);
                                                 

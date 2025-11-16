@@ -116,15 +116,15 @@ cd /home/sog/ai-projects/ha-addons/farm-assistant-addon && python3 -c "import js
 **COMMANDMENTS COMPLIANCE CHECKLIST:**
 - [ ] I. No assumptions made (except code is faulty until proven)
 - [ ] II. Used absolute paths for all file operations
+- [ ]   - No infinite loops encountered (or broke free if detected)
 - [ ] III. Syntax validation passed: `python3 -m py_compile main.py`
 - [ ] IV. Config validation passed: JSON validation command
 - [ ] V. All 7 testing requirements passed
-- [ ] VI. No infinite loops encountered (or broke free if detected)
-- [ ] VII. Version control sequence completed
-- [ ] VIII. This report provided
+- [ ] VI. Version control sequence completed
+- [ ] VII. This report provided
 
 **SUMMARY OF ACTIONS:**
-[Concise bullet-point list of what was done]
+[Concise bullet-point list of what was done on separate lines]
 
 **FILES MODIFIED:**
 [List with absolute paths]
