@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIN Lookup Browser Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; }
+        .error { background-color: #f8d7da; }
+        .info { background-color: #d1ecf1; }
+        select, input, button { margin: 5px; padding: 8px; }
+        pre { background: #f8f9fa; padding: 10px; overflow-x: auto; }
+        .log { font-family: monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <h1>VIN Lookup Browser Test</h1>
+    
+    <div class="test-section info">
+        <h3>Test Case: Ford Falcon XR6 Turbo Ute 2003</h3>
+        <p>VIN: 6FPAAAJG33333</p>
+        <p>Expected: Make=Ford, Model=Falcon, Year=2003, Body=Ute, Badge=XR6 Turbo</p>
+    </div>
+
+    <div class="test-section">
+        <h3>VIN Input Test</h3>
+        <input type="text" id="vin-input" value="6FPAAAJG33333" placeholder="Enter VIN">
+        <button onclick="testVINLookup()">Test VIN Lookup</button>
+        <button onclick="clearLog()">Clear Log</button>
+    </div>
+
+    <div class="test-section">
+        <h3>Form Fields (Real Application Structure)</h3>
+        <div>
+            <label>Make:</label>
+            <select id="add-asset-make">
+                <option value="">Select Make</option>
+            </select>
+        </div>
+        <div>
+            <label>Model:</label>
+            <select id="add-asset-model">
+                <option value="">Select Model</option>
+            </select>
+        </div>
+        <div>
+            <label>Year:</label>
+            <select id="add-asset-year">
+                <option value="">Select Year</option>
+            </select>
+        </div>
+        <div>
+            <label>Body Type:</label>
+            <select id="add-asset-body-feature">
+                <option value="">Select Body Type</option>
+            </select>
+        </div>
+        <div>
+            <label>Badge:</label>
+            <select id="add-asset-badge">
+                <option value="">Select Badge</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h3>Test Log</h3>
+        <div id="test-log" class="log"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('test-log');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = type;
+            entry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            logDiv.appendChild(entry);
+            console.log(`[${timestamp}] ${message}`);
+            
+            // Auto-scroll to bottom
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('test-log').innerHTML = '';
+        }
+
+        async function testVINLookup() {
+            const vin = document.getElementById('vin-input').value.trim();
+            if (!vin) {
+                log('❌ Please enter a VIN', 'error');
+                return;
+            }
+
+            log(`🔍 Starting VIN lookup test for: ${vin}`, 'info');
+            
+            try {
+                // Test 1: Direct API call
+                log('Test 1: Direct VIN API call...', 'info');
+                const apiResponse = await fetch(`/api/vin/specifications/${encodeURIComponent(vin)}`);
+                
+                if (!apiResponse.ok) {
+                    log(`❌ VIN API failed: ${apiResponse.status} ${apiResponse.statusText}`, 'error');
+                    return;
+                }
+                
+                const specs = await apiResponse.json();
+                log(`✅ VIN API response received:`, 'success');
+                log(`<pre>${JSON.stringify(specs, null, 2)}</pre>`, 'info');
+                
+                if (!specs.valid) {
+                    log(`❌ VIN marked as invalid by API`, 'error');
+                    return;
+                }
+
+                // Test 2: Simulate exact frontend logic from script.js
+                log('Test 2: Simulating frontend population logic...', 'info');
+                
+                const makeSelect = document.getElementById('add-asset-make');
+                const modelSelect = document.getElementById('add-asset-model');
+                const yearSelect = document.getElementById('add-asset-year');
+                const bodySelect = document.getElementById('add-asset-body-feature');
+                const badgeSelect = document.getElementById('add-asset-badge');
+                
+                // Reset form
+                [makeSelect, modelSelect, yearSelect, bodySelect, badgeSelect].forEach(select => {
+                    select.value = '';
+                });
+                
+                // Step 1: Set make (as done in populateFromVIN)
+                if (specs.manufacturer && makeSelect) {
+                    const makeName = specs.manufacturer.split(' ')[0];
+                    log(`Looking for make containing: "${makeName}"`, 'info');
+                    
+                    // First populate makes (simulate populateVehicleMakes)
+                    await populateMakes();
+                    
+                    const makeOption = Array.from(makeSelect.options).find(option => 
+                        option.value.includes(makeName)
+                    );
+                    
+                    if (makeOption) {
+                        makeSelect.value = makeOption.value;
+                        log(`✅ Make set to: "${makeOption.value}"`, 'success');
+                        
+                        // Step 2: Populate models and set model
+                        await populateVehicleModels(makeOption.value);
+                        
+                        if (specs.model_info && specs.model_info.model && modelSelect) {
+                            const modelOption = Array.from(modelSelect.options).find(option => 
+                                option.value === specs.model_info.model
+                            );
+                            
+                            if (modelOption) {
+                                modelSelect.value = modelOption.value;
+                                log(`✅ Model set to: "${modelOption.value}"`, 'success');
+                                
+                                // Step 3: Populate years and set year
+                                await populateVehicleYears(makeOption.value, modelOption.value);
+                                
+                                if (specs.year && yearSelect) {
+                                    const yearOption = Array.from(yearSelect.options).find(option => 
+                                        option.value === specs.year.toString()
+                                    );
+                                    
+                                    if (yearOption) {
+                                        yearSelect.value = yearOption.value;
+                                        log(`✅ Year set to: "${yearOption.value}"`, 'success');
+                                        
+                                        // Step 4: Populate body types and set body type
+                                        await populateVehicleBodyTypes(makeOption.value, modelOption.value, specs.year);
+                                        
+                                        if (specs.model_info && specs.model_info.body_type && bodySelect) {
+                                            const bodyOption = Array.from(bodySelect.options).find(option => 
+                                                option.value === specs.model_info.body_type
+                                            );
+                                            
+                                            if (bodyOption) {
+                                                bodySelect.value = bodyOption.value;
+                                                log(`✅ Body type set to: "${bodyOption.value}"`, 'success');
+                                                
+                                                // Step 5: Populate badges and set badge
+                                                await populateVehicleBadges(makeOption.value, modelOption.value, specs.year, specs.model_info.body_type);
+                                                
+                                                if (specs.model_info && specs.model_info.trim && badgeSelect) {
+                                                    const badgeOption = Array.from(badgeSelect.options).find(option => 
+                                                        option.value === specs.model_info.trim
+                                                    );
+                                                    
+                                                    if (badgeOption) {
+                                                        badgeSelect.value = badgeOption.value;
+                                                        log(`✅ Badge set to: "${badgeOption.value}"`, 'success');
+                                                        log(`🎉 COMPLETE SUCCESS! All fields populated correctly`, 'success');
+                                                    } else {
+                                                        log(`❌ Badge "${specs.model_info.trim}" not found in options`, 'error');
+                                                        log(`Available badges: ${Array.from(badgeSelect.options).map(o => o.value).filter(v => v).join(', ')}`, 'info');
+                                                    }
+                                                } else {
+                                                    log(`❌ No trim info in VIN data`, 'error');
+                                                }
+                                            } else {
+                                                log(`❌ Body type "${specs.model_info.body_type}" not found in options`, 'error');
+                                                log(`Available body types: ${Array.from(bodySelect.options).map(o => o.value).filter(v => v).join(', ')}`, 'info');
+                                            }
+                                        } else {
+                                            log(`❌ No body_type info in VIN data`, 'error');
+                                        }
+                                    } else {
+                                        log(`❌ Year "${specs.year}" not found in options`, 'error');
+                                        log(`Available years: ${Array.from(yearSelect.options).map(o => o.value).filter(v => v).join(', ')}`, 'info');
+                                    }
+                                } else {
+                                    log(`❌ No year info in VIN data`, 'error');
+                                }
+                            } else {
+                                log(`❌ Model "${specs.model_info.model}" not found in options`, 'error');
+                                log(`Available models: ${Array.from(modelSelect.options).map(o => o.value).filter(v => v).join(', ')}`, 'info');
+                            }
+                        } else {
+                            log(`❌ No model info in VIN data`, 'error');
+                        }
+                    } else {
+                        log(`❌ Make "${makeName}" not found in options`, 'error');
+                        log(`Available makes: ${Array.from(makeSelect.options).map(o => o.value).filter(v => v).join(', ')}`, 'info');
+                    }
+                } else {
+                    log(`❌ No manufacturer info in VIN data`, 'error');
+                }
+                
+            } catch (error) {
+                log(`❌ Error during VIN lookup test: ${error.message}`, 'error');
+                console.error('VIN lookup test error:', error);
+            }
+        }
+
+        // Replicate the exact functions from script.js
+        async function populateMakes() {
+            try {
+                const response = await fetch('/api/vehicle/makes');
+                const makes = await response.json();
+                
+                const makeSelect = document.getElementById('add-asset-make');
+                makeSelect.innerHTML = '<option value="">Select Make</option>';
+                makes.forEach(make => {
+                    makeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+                });
+                
+                log(`✅ Populated ${makes.length} makes`, 'success');
+            } catch (error) {
+                log(`❌ Error populating makes: ${error.message}`, 'error');
+            }
+        }
+
+        async function populateVehicleModels(make) {
+            try {
+                const response = await fetch(`/api/vehicle/models?make=${encodeURIComponent(make)}`);
+                const models = await response.json();
+                
+                const modelSelect = document.getElementById('add-asset-model');
+                modelSelect.innerHTML = '<option value="">Select Model</option>';
+                models.forEach(model => {
+                    modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
+                });
+                
+                log(`✅ Populated ${models.length} models for ${make}`, 'success');
+            } catch (error) {
+                log(`❌ Error populating models: ${error.message}`, 'error');
+            }
+        }
+
+        async function populateVehicleYears(make, model) {
+            try {
+                const response = await fetch(`/api/vehicle/years?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`);
+                const years = await response.json();
+                
+                const yearSelect = document.getElementById('add-asset-year');
+                yearSelect.innerHTML = '<option value="">Select Year</option>';
+                years.forEach(year => {
+                    yearSelect.innerHTML += `<option value="${year}">${year}</option>`;
+                });
+                
+                log(`✅ Populated ${years.length} years for ${make} ${model}`, 'success');
+            } catch (error) {
+                log(`❌ Error populating years: ${error.message}`, 'error');
+            }
+        }
+
+        async function populateVehicleBodyTypes(make, model, year) {
+            try {
+                let url = `/api/vehicle/body-types?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`;
+                if (year) {
+                    url += `&year=${year}`;
+                }
+                
+                const response = await fetch(url);
+                const bodyTypes = await response.json();
+                
+                const bodySelect = document.getElementById('add-asset-body-feature');
+                bodySelect.innerHTML = '<option value="">Select Body Type</option>';
+                bodyTypes.forEach(bodyType => {
+                    bodySelect.innerHTML += `<option value="${bodyType}">${bodyType}</option>`;
+                });
+                
+                log(`✅ Populated ${bodyTypes.length} body types for ${make} ${model} ${year}`, 'success');
+                log(`Available body types: ${bodyTypes.join(', ')}`, 'info');
+            } catch (error) {
+                log(`❌ Error populating body types: ${error.message}`, 'error');
+            }
+        }
+
+        async function populateVehicleBadges(make, model, year, bodyType) {
+            try {
+                let url = `/api/vehicle/badges?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`;
+                if (year) url += `&year=${year}`;
+                if (bodyType) url += `&body_type=${encodeURIComponent(bodyType)}`;
+                
+                const response = await fetch(url);
+                const badges = await response.json();
+                
+                const badgeSelect = document.getElementById('add-asset-badge');
+                badgeSelect.innerHTML = '<option value="">Select Badge</option>';
+                badges.forEach(badge => {
+                    badgeSelect.innerHTML += `<option value="${badge}">${badge}</option>`;
+                });
+                
+                log(`✅ Populated ${badges.length} badges for ${make} ${model} ${year} ${bodyType}`, 'success');
+                log(`Available badges: ${badges.join(', ')}`, 'info');
+            } catch (error) {
+                log(`❌ Error populating badges: ${error.message}`, 'error');
+            }
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            log('VIN Lookup Browser Test loaded. Click "Test VIN Lookup" to begin.', 'info');
+        };
+    </script>
+</body>
+</html>

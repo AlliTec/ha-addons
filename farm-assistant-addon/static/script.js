@@ -2040,8 +2040,13 @@ window.populateFromVIN = async function populateFromVIN(vin, formType = 'add') {
     }
     
     try {
+        console.log('🔍 Starting VIN lookup for:', vin);
         const specs = await lookupVIN(vin);
+        console.log('📋 VIN specs received:', specs);
+        
         if (specs && specs.valid) {
+            console.log('✅ VIN is valid, populating form fields...');
+            
             // Populate form fields with VIN data
             const makeSelect = document.getElementById(`${formType}-asset-make`);
             const modelSelect = document.getElementById(`${formType}-asset-model`);
@@ -2049,64 +2054,142 @@ window.populateFromVIN = async function populateFromVIN(vin, formType = 'add') {
             const bodySelect = document.getElementById(`${formType}-asset-body-feature`);
             const badgeSelect = document.getElementById(`${formType}-asset-badge`);
             
+            console.log('🎯 Form elements found:', {
+                makeSelect: !!makeSelect,
+                modelSelect: !!modelSelect,
+                yearSelect: !!yearSelect,
+                bodySelect: !!bodySelect,
+                badgeSelect: !!badgeSelect
+            });
+            
             // Set make if found
             if (specs.manufacturer && makeSelect) {
                 // Extract manufacturer name from full string
                 const makeName = specs.manufacturer.split(' ')[0];
+                console.log('🏭 Looking for make:', makeName);
+                console.log('📋 Available makes:', Array.from(makeSelect.options).map(o => o.value));
+                
                 const makeOption = Array.from(makeSelect.options).find(option => 
                     option.value.includes(makeName)
                 );
+                console.log('🎯 Make option found:', makeOption);
+                
                 if (makeOption) {
                     makeSelect.value = makeOption.value;
+                    console.log('✅ Make set to:', makeOption.value);
                     await populateVehicleModels(makeOption.value);
                     
                     // Set model if found
                     if (specs.model_info && specs.model_info.model && modelSelect) {
+                        console.log('🚗 Looking for model:', specs.model_info.model);
+                        console.log('📋 Available models:', Array.from(modelSelect.options).map(o => o.value));
+                        
                         const modelOption = Array.from(modelSelect.options).find(option => 
                             option.value === specs.model_info.model
                         );
+                        console.log('🎯 Model option found:', modelOption);
+                        
                         if (modelOption) {
                             modelSelect.value = modelOption.value;
+                            console.log('✅ Model set to:', modelOption.value);
                             await populateVehicleYears(makeOption.value, modelOption.value);
                             
                             // Set year if found
                             if (specs.year && yearSelect) {
+                                console.log('📅 Looking for year:', specs.year);
+                                console.log('📋 Available years:', Array.from(yearSelect.options).map(o => o.value));
+                                
                                 const yearOption = Array.from(yearSelect.options).find(option => 
                                     option.value === specs.year.toString()
                                 );
+                                console.log('🎯 Year option found:', yearOption);
+                                
                                 if (yearOption) {
                                     yearSelect.value = yearOption.value;
+                                    console.log('✅ Year set to:', yearOption.value);
                                     await populateVehicleBodyTypes(makeOption.value, modelOption.value, specs.year);
                                     
                                     // Set body type if found
                                     if (specs.model_info && specs.model_info.body_type && bodySelect) {
+                                        console.log('🚙 Looking for body type:', specs.model_info.body_type);
+                                        console.log('📋 Available body types:', Array.from(bodySelect.options).map(o => o.value));
+                                        
                                         const bodyOption = Array.from(bodySelect.options).find(option => 
                                             option.value === specs.model_info.body_type
                                         );
+                                        console.log('🎯 Body type option found:', bodyOption);
+                                        
                                         if (bodyOption) {
                                             bodySelect.value = bodyOption.value;
+                                            console.log('✅ Body type set to:', bodyOption.value);
                                             await populateVehicleBadges(makeOption.value, modelOption.value, specs.year, specs.model_info.body_type);
                                             
                                             // Set badge if found
                                             if (specs.model_info && specs.model_info.trim && badgeSelect) {
+                                                console.log('🏷️ Looking for badge:', specs.model_info.trim);
+                                                console.log('📋 Available badges:', Array.from(badgeSelect.options).map(o => o.value));
+                                                
                                                 const badgeOption = Array.from(badgeSelect.options).find(option => 
                                                     option.value === specs.model_info.trim
                                                 );
+                                                console.log('🎯 Badge option found:', badgeOption);
+                                                
                                                 if (badgeOption) {
                                                     badgeSelect.value = badgeOption.value;
+                                                    console.log('✅ Badge set to:', badgeOption.value);
+                                                    console.log('🎉 ALL FIELDS POPULATED SUCCESSFULLY!');
+                                                } else {
+                                                    console.warn('❌ Badge not found in options');
                                                 }
+                                            } else {
+                                                console.warn('❌ No trim info in VIN data or badge select not found');
                                             }
+                                        } else {
+                                            console.warn('❌ Body type not found in options');
                                         }
+                                    } else {
+                                        console.warn('❌ No body_type info in VIN data or body select not found');
                                     }
+                                } else {
+                                    console.warn('❌ Year not found in options');
                                 }
+                            } else {
+                                console.warn('❌ No year info in VIN data or year select not found');
                             }
+                        } else {
+                            console.warn('❌ Model not found in options');
                         }
+                    } else {
+                        console.warn('❌ No model info in VIN data or model select not found');
                     }
+                } else {
+                    console.warn('❌ Make not found in options');
                 }
+            } else {
+                console.warn('❌ No manufacturer info in VIN data or make select not found');
             }
             
-            alert('VIN lookup completed! Vehicle details have been populated.');
+            console.log('🏁 VIN lookup process completed');
+            
+            // Force UI update and provide detailed feedback
+            setTimeout(() => {
+                const finalValues = {
+                    make: makeSelect?.value,
+                    model: modelSelect?.value,
+                    year: yearSelect?.value,
+                    bodyType: bodySelect?.value,
+                    badge: badgeSelect?.value
+                };
+                console.log('🎯 Final form values:', finalValues);
+                
+                if (finalValues.make && finalValues.model && finalValues.year && finalValues.bodyType && finalValues.badge) {
+                    alert(`✅ VIN lookup completed successfully!\n\nVehicle populated:\n• Make: ${finalValues.make}\n• Model: ${finalValues.model}\n• Year: ${finalValues.year}\n• Body Type: ${finalValues.bodyType}\n• Badge: ${finalValues.badge}`);
+                } else {
+                    alert('⚠️ VIN lookup completed but some fields may not have populated. Check console for details.');
+                }
+            }, 100);
         } else {
+            console.warn('❌ Invalid VIN or vehicle not found in database');
             alert('Invalid VIN or vehicle not found in database');
         }
     } catch (error) {
