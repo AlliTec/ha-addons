@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.10.97 - 2025-11-16
+
+### Fixed Additional JavaScript Errors
+- **Vehicle Badges**: Fixed "Assignment to constant variable" error in populateVehicleBadges function
+- **VIN Lookup**: Fixed populateFromVIN function not accessible by attaching to window object
+- **Asset Parent Query**: Added debug logging and error handling for assets with parent_id parameter
+- **Global Scope**: Ensured all functions are accessible from HTML onclick handlers
+
 ## 1.10.96 - 2025-11-16
 
 ### Fixed JavaScript Errors

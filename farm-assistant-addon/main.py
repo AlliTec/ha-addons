@@ -1120,7 +1120,8 @@ async def get_assets(parent_id: Optional[int] = None):
         if parent_id is not None:
             # Return only child assets of the specified parent
             print(f"Fetching assets with parent_id: {parent_id}")
-            records = await conn.fetch("""
+            try:
+                records = await conn.fetch("""
                 SELECT id, name, make, model, location, status, quantity, category,
                        serial_number, purchase_date, registration_no, registration_due,
                        permit_info, insurance_info, insurance_due, warranty_provider,
@@ -1128,8 +1129,12 @@ async def get_assets(parent_id: Optional[int] = None):
                        manual_or_doc_path, notes, parent_asset_id, badge, created_at
                 FROM asset_inventory 
                 WHERE parent_asset_id = $1
-                ORDER BY name
+                 ORDER BY name
             """, parent_id)
+                print(f"Query executed successfully, found {len(records)} records")
+            except Exception as e:
+                print(f"Database query error: {e}")
+                raise
         else:
             # Return all assets
             records = await conn.fetch("""

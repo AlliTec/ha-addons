@@ -1957,7 +1957,7 @@ async function populateVehicleBodyTypes(make, model, year) {
 
 async function populateVehicleBadges(make, model, year, bodyType) {
     try {
-        const url = `api/vehicle/badges?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`;
+        let url = `api/vehicle/badges?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`;
         if (year) {
             url += `&year=${year}`;
         }
@@ -2026,7 +2026,7 @@ async function validateVIN(vin) {
     }
 }
 
-async function populateFromVIN(vin, formType = 'add') {
+window.populateFromVIN = async function populateFromVIN(vin, formType = 'add') {
     if (!vin || vin.length < 17) {
         alert('Please enter a valid 17-character VIN');
         return;
