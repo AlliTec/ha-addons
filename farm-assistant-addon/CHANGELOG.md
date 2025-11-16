@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.10.89 - 2025-11-16
+
+### Fixed
+- **Complete Vehicle Dataset Restoration**: Restored full vehicle dataset with 135 records across 16 makes after accidental data loss
+- **Ford Falcon Years Fix**: Maintained correct Ford Falcon years (1960-2016, 56 years) while restoring complete model list
+- **All Vehicle Makes**: Restored Toyota, Holden, Mazda, Nissan, Mitsubishi, Subaru, Honda, Hyundai, Kia, Volkswagen, BMW, Mercedes-Benz, Audi, Land Rover, and Jeep models
+- **Body Type Completeness**: Ensured all vehicle models have complete body type variants (Sedan, Wagon, Ute, SUV, etc.)
+
 ## 1.10.88 - 2025-11-16
 
 ### Fixed
