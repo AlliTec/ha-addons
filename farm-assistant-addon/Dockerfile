@@ -14,6 +14,7 @@ RUN mkdir -p /app/templates /app/static
 # Copy addon files
 COPY run.sh /
 COPY main.py /app/
+COPY vin_decoder.py /app/
 COPY templates/ /app/templates/
 COPY static/ /app/static/
 

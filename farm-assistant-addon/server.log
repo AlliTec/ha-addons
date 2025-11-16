@@ -7,3 +7,5 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
 INFO:     127.0.0.1:53262 - "GET /health HTTP/1.1" 404 Not Found
 INFO:     127.0.0.1:53272 - "GET /api/animals HTTP/1.1" 200 OK
+INFO:     127.0.0.1:32958 - "GET /api/animals HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50072 - "GET / HTTP/1.1" 200 OK

@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.10.87 - 2025-11-16
+
+### Fixed
+- **Addon Startup Failure**: Fixed ModuleNotFoundError for vin_decoder module in Home Assistant addon container
+- **Dockerfile Missing File**: Added vin_decoder.py to Dockerfile COPY command to ensure module availability
+- **Container Import Error**: Resolved addon crash on startup due to missing Python module
+
 ## 1.10.86 - 2025-11-16
 
 ### Fixed
