@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.10.99 - 2025-11-17
+
+### Added Badge Column Migration
+- **Migration Endpoint**: Added `/api/migrate/asset_badge` endpoint to create badge column
+- **Database Schema**: Prepared asset_inventory table for separate badge field from body_feature  
+- **Asset Queries**: Reverted to using both body_feature and badge columns separately
+- **Error Fix**: Resolved "column badge does not exist" error with proper migration path
+
 ## 1.10.98 - 2025-11-17
 
 ### Fixed Database Schema and VIN Lookup

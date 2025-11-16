@@ -649,6 +649,25 @@ async def migrate_calendar_entries():
     finally:
         await conn.close()
 
+@app.post("/api/migrate/asset_badge")
+async def migrate_asset_badge():
+    """Add badge field to asset_inventory table"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Read and execute migration script
+        with open('add_badge_to_assets.sql', 'r') as f:
+            migration_sql = f.read()
+        
+        await conn.execute(migration_sql)
+        logging.info("Asset badge migration completed successfully")
+        return {"message": "Asset badge field added successfully"}
+        
+    except Exception as e:
+        logging.error(f"Error running asset badge migration: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
 @app.post("/api/migrate/asset_year_body")
 async def migrate_asset_year_body():
     """Add year and body_feature fields to asset_inventory table"""
