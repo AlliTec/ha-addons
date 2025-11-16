@@ -1136,7 +1136,7 @@ async def get_assets(parent_id: Optional[int] = None):
                        serial_number, purchase_date, registration_no, registration_due,
                        permit_info, insurance_info, insurance_due, warranty_provider,
                        warranty_expiry_date, purchase_price, purchase_location,
-                       manual_or_doc_path, notes, parent_asset_id, badge, created_at
+                       manual_or_doc_path, notes, parent_asset_id, created_at
                 FROM asset_inventory 
                 ORDER BY name
             """)
