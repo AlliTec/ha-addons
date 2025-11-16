@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.11.02 - 2025-11-17
+
+### Comprehensive Global Vehicle Badge/Trim Database
+- **Global Coverage**: Added comprehensive badge/trim data for 15+ major automotive manufacturers worldwide
+- **Enhanced Ford Range**: Complete Falcon trim levels (XT, GXL, XR6, XR6 Turbo, XR8, GT, G6, G6E, Fairmont, FPV variants)
+- **Holden Commodore**: Full range including Executive, Acclaim, Berlina, Calais, SS, SV6, HSV variants
+- **Toyota Complete Line**: Camry, Hilux, Land Cruiser, Corolla, RAV4 with all regional trim levels
+- **European Luxury**: BMW, Mercedes-Benz, Volkswagen with comprehensive model variants
+- **Asian Manufacturers**: Honda, Nissan, Mitsubishi, Mazda, Subaru with full trim hierarchies
+- **Commercial Vehicles**: Isuzu D-Max, Great Wall Cannon, LDV T60 with work-ready variants
+- **API Enhancement**: Fixed badge API to return all available trims for make/model/body_type combinations
+- **Database Structure**: Optimized unique constraints to support multiple badge entries per vehicle
+- **581 Badge Records**: Populated database with extensive trim level data covering decades of automotive production
+
 ## 1.11.01 - 2025-11-17
 
 ### Enhanced Australian Ford Falcon VIN Decoding
