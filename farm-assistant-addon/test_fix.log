@@ -1,0 +1,15 @@
+2025-11-16 10:45:32,844 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [50844]
+INFO:     Waiting for application startup.
+2025-11-16 10:45:32,917 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-16 10:45:33,012 - INFO - Database connection successful.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:38548 - "GET / HTTP/1.1" 200 OK
+2025-11-16 10:45:43,276 - INFO - Fetching event with ID: 32
+2025-11-16 10:45:43,292 - INFO - Event 32 retrieved successfully
+INFO:     127.0.0.1:38556 - "GET /api/events/32 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [50844]

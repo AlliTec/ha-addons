@@ -329,8 +329,15 @@
                             </select>
                         </div>
                         <div>
-                            <label for="add-asset-serial">Serial Number:</label>
-                            <input type="text" id="add-asset-serial" name="serial_number">
+                            <label for="add-asset-badge">Badge/Trim:</label>
+                            <select id="add-asset-badge" name="badge">
+                                <option value="">Select Badge/Trim</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="add-asset-serial">Serial Number/VIN:</label>
+                            <input type="text" id="add-asset-serial" name="serial_number" placeholder="Enter VIN or serial number">
+                            <button type="button" id="add-asset-vin-lookup" onclick="populateFromVIN(document.getElementById('add-asset-serial').value, 'add')" style="margin-top: 5px; padding: 5px 10px; background: var(--accent-color); color: white; border: none; border-radius: 3px; cursor: pointer;">Lookup VIN</button>
                         </div>
                         <div>
                             <label for="add-asset-quantity">Quantity:</label>
@@ -558,8 +565,15 @@
                             </select>
                         </div>
                         <div>
-                            <label for="edit-asset-serial">Serial Number:</label>
-                            <input type="text" id="edit-asset-serial" name="serial_number">
+                            <label for="edit-asset-badge">Badge/Trim:</label>
+                            <select id="edit-asset-badge" name="badge">
+                                <option value="">Select Badge/Trim</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="edit-asset-serial">Serial Number/VIN:</label>
+                            <input type="text" id="edit-asset-serial" name="serial_number" placeholder="Enter VIN or serial number">
+                            <button type="button" id="edit-asset-vin-lookup" onclick="populateFromVIN(document.getElementById('edit-asset-serial').value, 'edit')" style="margin-top: 5px; padding: 5px 10px; background: var(--accent-color); color: white; border: none; border-radius: 3px; cursor: pointer;">Lookup VIN</button>
                         </div>
                         <div>
                             <label for="edit-asset-quantity">Quantity:</label>

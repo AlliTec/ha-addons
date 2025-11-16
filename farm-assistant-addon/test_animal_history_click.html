@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Animal History Click Fix</title>
+    <style>
+        .scheduled-event-row { background-color: #e8f5e8; cursor: pointer; }
+        .maintenance-record-row { background-color: #fff3cd; cursor: pointer; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Test Animal History Click Events</h1>
+    
+    <h2>Scheduled Events (Should open edit modal)</h2>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Event</th>
+            <th>Type</th>
+            <th>Status</th>
+        </tr>
+        <tr class="scheduled-event-row" data-scheduled-id="123">
+            <td>2025-11-20</td>
+            <td>Vaccination Due (10:00)</td>
+            <td>Medical</td>
+            <td>scheduled</td>
+        </tr>
+        <tr class="scheduled-event-row" data-scheduled-id="124">
+            <td>2025-11-25</td>
+            <td>Health Check (14:00)</td>
+            <td>Medical</td>
+            <td>scheduled</td>
+        </tr>
+    </table>
+    
+    <h2>Historical Records (Should show alert)</h2>
+    <table>
+        <tr>
+            <th>Date</th>
+            <th>Event</th>
+            <th>Type</th>
+            <th>Status</th>
+        </tr>
+        <tr class="maintenance-record-row" data-history-id="456">
+            <td>2025-10-15</td>
+            <td>Annual Vaccination</td>
+            <td>Medical</td>
+            <td>completed</td>
+        </tr>
+        <tr class="maintenance-record-row" data-history-id="457">
+            <td>2025-09-20</td>
+            <td>Deworming</td>
+            <td>Medical</td>
+            <td>completed</td>
+        </tr>
+    </table>
+    
+    <div id="test-results">
+        <h3>Test Results:</h3>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        // Mock the functions from the main script
+        function loadEventForEdit(eventId) {
+            document.getElementById('results').innerHTML += 
+                `<p style="color: green;">✓ loadEventForEdit called with event ID: ${eventId}</p>`;
+        }
+        
+        // Simulate the click handlers from the main script
+        document.addEventListener('click', function(event) {
+            const target = event.target;
+            
+            // Handle scheduled event row clicks for editing
+            if (target.closest('.scheduled-event-row')) {
+                console.log('Scheduled event row clicked!');
+                const row = target.closest('.scheduled-event-row');
+                const eventId = row.dataset.scheduledId;
+                console.log('Event ID:', eventId);
+                
+                // Load the event for editing
+                setTimeout(() => {
+                    loadEventForEdit(eventId);
+                }, 100);
+                return;
+            }
+            
+            // Handle maintenance record row clicks (show alert that these cannot be edited)
+            if (target.closest('.maintenance-record-row')) {
+                console.log('Maintenance record row clicked!');
+                const row = target.closest('.maintenance-record-row');
+                const historyId = row.dataset.historyId;
+                console.log('History ID:', historyId);
+                
+                document.getElementById('results').innerHTML += 
+                    `<p style="color: orange;">⚠ Historical record clicked (ID: ${historyId}) - cannot be edited</p>`;
+                return;
+            }
+        });
+        
+        document.getElementById('results').innerHTML = '<p>Click on the rows above to test the functionality.</p>';
+    </script>
+</body>
+</html>

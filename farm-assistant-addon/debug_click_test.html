@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Click Test</title>
+    <style>
+        .scheduled-event-row { background-color: #e8f5e8; cursor: pointer; }
+        .maintenance-record-row { background-color: #fff3cd; cursor: pointer; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Debug Click Events</h1>
+    <div id="debug-output"></div>
+    
+    <h2>Scheduled Events</h2>
+    <table>
+        <tr class="scheduled-event-row" data-scheduled-id="123">
+            <td>2025-11-20</td>
+            <td>Vaccination Due</td>
+        </tr>
+    </table>
+    
+    <h2>Historical Records</h2>
+    <table>
+        <tr class="maintenance-record-row" data-history-id="456">
+            <td>2025-10-15</td>
+            <td>Annual Vaccination</td>
+        </tr>
+    </table>
+
+    <script>
+        const debugOutput = document.getElementById('debug-output');
+        
+        function log(message) {
+            console.log(message);
+            debugOutput.innerHTML += `<p>${message}</p>`;
+        }
+        
+        document.addEventListener('click', function(event) {
+            const target = event.target;
+            log(`Click detected on: ${target.tagName} - ${target.textContent}`);
+            
+            // Check for scheduled event row clicks
+            if (target.closest('.scheduled-event-row')) {
+                const row = target.closest('.scheduled-event-row');
+                const eventId = row.dataset.scheduledId;
+                log(`✓ Scheduled event clicked - ID: ${eventId}`);
+                return;
+            }
+            
+            // Check for maintenance record row clicks
+            if (target.closest('.maintenance-record-row')) {
+                const row = target.closest('.maintenance-record-row');
+                const historyId = row.dataset.historyId;
+                log(`✓ Maintenance record clicked - ID: ${historyId}`);
+                alert('Historical records cannot be edited. Only scheduled events can be edited.');
+                return;
+            }
+        });
+        
+        log('Debug test loaded. Click on the rows above.');
+    </script>
+</body>
+</html>

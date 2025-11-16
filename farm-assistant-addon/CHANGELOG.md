@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.10.86 - 2025-11-16
+
+### Fixed
+- **JavaScript Dataset Access**: Fixed null reference errors when accessing submitBtn.dataset without null checks
+- **Event Edit Function**: Moved dataset operations inside submitBtn null check in loadEventForEdit function
+- **Maintenance Schedule Reset**: Protected dataset.mode and dataset.scheduleId deletion with null checks
+- **DOM Element Safety**: Ensured all dataset operations follow same defensive programming as textContent assignments
+
 ## 1.10.85 - 2025-11-16
 
 ### Fixed

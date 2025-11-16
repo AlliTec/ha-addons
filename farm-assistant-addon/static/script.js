@@ -1469,16 +1469,26 @@ async function deleteMaintenanceSchedule(scheduleId) {
             
             const { modalTitle, submitBtn } = await waitForModal();
             
-            // Now populate form fields
-            document.getElementById('event-category').value = event.category || '';
-            document.getElementById('event-item-name').value = event.related_name || '';
-            document.getElementById('event-description').value = event.title || '';
-            document.getElementById('event-date').value = event.date || '';
-            document.getElementById('event-time').value = event.time || '';
-            document.getElementById('event-duration').value = event.duration || 1;
-            document.getElementById('event-notes').value = event.description || '';
-            document.getElementById('event-status').value = event.status || 'scheduled';
-            document.getElementById('event-priority').value = event.priority || 'medium';
+            // Now populate form fields with null checks
+            const eventCategory = document.getElementById('event-category');
+            const eventItemName = document.getElementById('event-item-name');
+            const eventDescription = document.getElementById('event-description');
+            const eventDate = document.getElementById('event-date');
+            const eventTime = document.getElementById('event-time');
+            const eventDuration = document.getElementById('event-duration');
+            const eventNotes = document.getElementById('event-notes');
+            const eventStatus = document.getElementById('event-status');
+            const eventPriority = document.getElementById('event-priority');
+            
+            if (eventCategory) eventCategory.value = event.category || '';
+            if (eventItemName) eventItemName.value = event.related_name || '';
+            if (eventDescription) eventDescription.value = event.title || '';
+            if (eventDate) eventDate.value = event.date || '';
+            if (eventTime) eventTime.value = event.time || '';
+            if (eventDuration) eventDuration.value = event.duration || 1;
+            if (eventNotes) eventNotes.value = event.description || '';
+            if (eventStatus) eventStatus.value = event.status || 'scheduled';
+            if (eventPriority) eventPriority.value = event.priority || 'medium';
             
             // Update modal title
             if (modalTitle) {
@@ -1488,9 +1498,9 @@ async function deleteMaintenanceSchedule(scheduleId) {
             // Update submit button
             if (submitBtn) {
                 submitBtn.textContent = 'Update Event';
+                submitBtn.dataset.mode = 'edit';
+                submitBtn.dataset.eventId = eventId;
             }
-            submitBtn.dataset.mode = 'edit';
-            submitBtn.dataset.eventId = eventId;
             
             // Show delete button for existing events
             const deleteBtn = document.getElementById('delete-event-btn');
@@ -2700,11 +2710,11 @@ function setupVehicleSelectionHandlers() {
             if (submitBtn) {
                 submitBtn.textContent = 'Schedule Maintenance';
                 submitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Schedule Maintenance';
+                
+                // Remove edit mode flags
+                delete submitBtn.dataset.mode;
+                delete submitBtn.dataset.scheduleId;
             }
-            
-            // Remove edit mode flags
-            delete submitBtn.dataset.mode;
-            delete submitBtn.dataset.scheduleId;
             
             // Hide delete button
             const deleteBtn = document.getElementById('delete-maintenance-schedule-btn');

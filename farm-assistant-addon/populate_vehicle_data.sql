@@ -240,6 +240,7 @@ INSERT INTO vehicle_data (make, model, year_start, year_end, body_type, category
 
 -- MASSEY FERGUSON MACHINERY
 INSERT INTO vehicle_data (make, model, year_start, year_end, body_type, category) VALUES
+('Massey Ferguson', '35', 1960, 1975, 'Tractor', 'Machinery'),
 ('Massey Ferguson', '6712', 2018, 2024, 'Tractor', 'Machinery'),
 ('Massey Ferguson', '6713', 2019, 2024, 'Tractor', 'Machinery'),
 ('Massey Ferguson', '5713', 2019, 2024, 'Tractor', 'Machinery'),
