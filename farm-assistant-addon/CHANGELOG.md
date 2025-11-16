@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.00 - 2025-11-17
+
+### Fixed Asset Register Database Schema
+- **Database Migration**: Successfully executed badge column creation in asset_inventory table
+- **Asset Register Fixed**: Resolved "column badge does not exist" error by adding proper badge field
+- **Schema Verification**: Confirmed both body_feature and badge columns exist separately in database
+- **API Testing**: Verified asset register endpoints working correctly with both fields
+
 ## 1.10.99 - 2025-11-17
 
 ### Added Badge Column Migration
