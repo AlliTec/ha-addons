@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.10.94 - 2025-11-16
+
+### Fixed
+- **Port Investigation**: Identified Home Assistant ingress behavior - port 8001 in logs is normal when ingress: true is enabled
+- **Functionality Verification**: All core APIs tested and working (animals: 29 records, assets: 25 records, calendar: 3 events)
+- **Server Testing**: Confirmed server starts correctly on port 8000 when run manually from correct directory
+
 ## 1.10.93 - 2025-11-16
 
 ### Verified
