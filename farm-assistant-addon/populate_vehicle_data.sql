@@ -201,7 +201,7 @@ INSERT INTO vehicle_data (make, model, year_start, year_end, body_type, category
 ('John Deere', '640', 2012, 2024, 'Tractor', 'Machinery'),
 ('John Deere', '824', 2020, 2024, 'Tractor', 'Machinery'),
 ('John Deere', '830', 2020, 2024, 'Tractor', 'Machinery'),
-('John Deere', '950', 2020, 2024, 'Tractor', 'Machinery'),
+('John Deere', '950', 2020, 2024, 'Tractor', 'Machinery');
 
 -- CATERPILLAR MACHINERY
 INSERT INTO vehicle_data (make, model, year_start, year_end, body_type, category) VALUES

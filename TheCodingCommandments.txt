@@ -1,16 +1,22 @@
-I. The Path of Righteous Files
+I. Thou Shalt not ASSUME
+
+Assumption is the mother of all mistakes.  Ensure thee make no assumption with the exception of this:  Assume the code is faulty until you prove otherwise through following the commandments to the letter and at all times.  Let this be the only assumption allowed.
+
+**CRITICAL**: NEVER commit code with errors. ALWAYS test thoroughly and ensure addon starts without errors before committing.
+
+II. The Path of Righteous Files
 
 Thou shalt tread the divine paths when seeking files. Specifically, employ these locations: /farm-assistant-addon/ or /home/sog/ai-projects/ha-addons/farm-assistant-addon/. Let no error of "No such file or directory" plague thy code, nor any lament of "...did not match any file." Should a file prove elusive, add /farm-assistant-addon/ to its address, and guide it onto the righteous path. Shouldst thou find thyself ensnared in a ceaseless search, then cd /home/sog/ai-projects/ha-addons/farm-assistant-addon and begin anew.
 
-II. Purity of Syntax
+III. Purity of Syntax
 
 Thy code must be syntactically pure. The command python3 -m py_compile main.py shall execute without fault. Should any path error or like imperfection be discovered, examine and correct all such instances within the addon.
 
-III. Validation of Configuration
+IV. Validation of Configuration
 
 The configuration must be validated. The command python3 -c "import json; json.load(open('data/options.json'))" shall complete successfully, without raising exceptions.
 
-IV. Diligence in Testing
+V. Diligence in Testing
 
 Test thy work with diligence, for errors are the bane of progress.
 
@@ -19,15 +25,27 @@ Existing features must remain functional, free from regressions.
 New or modified features shall address the user's needs precisely.
 Test the feature in progress as the user would see it, through the user interface, ensuring it aligns with the requested functionality.
 The feature in progress shall not generate console or API errors.
-Shouldst thou discover errors within thy code, remedy them with care, and ensure the error is addressed appropriately. Once remedied, repeat step IV to confirm thy success. All of the above must be tested and rectified before proceeding further.
+Shouldst thou discover errors within thy code, remedy them with care, and ensure the error is addressed appropriately. Once remedied, repeat step V to confirm thy success. All of the above must be tested and rectified before proceeding further.
 
-V. Breaking the Chains of Loops
+**MANDATORY TESTING CHECKLIST**:
+- Server starts without errors
+- Main page loads without JavaScript errors
+- All API endpoints return proper responses
+- No console errors in browser
+- No startup errors in logs
+- Existing functionality remains intact
+
+VI. Breaking the Chains of Loops
 
 Shouldst thou find thyself trapped in an endless loop, break free and address the root cause, guided by these commandments. First, traverse the divine path – cd to the addon's directory – before executing any command which brought forth the blasphemous loop.
 
 The divine path is the absolute path to the file.  Thou shalt use the absolute path inplace of simply the filename in any command thou hath issued bringing forth the loop of blasphemy.
 
-VI. The Sacred Process
+Append cd <addon directory> && <looping command>  For example, cd farm-assistant-addon && Python3 -c "import json; json.load(open)'data/options.json'))"
+
+If the above does not work. Specify the absolute path of the file in the command.
+
+VII. The Sacred Process
 
 Follow this process diligently:
 
@@ -36,6 +54,8 @@ Record the changes made within the changelog.
 Commit thy changes using git add and git commit.
 Push thy changes using ./run_gitpush.sh.
 
-VII. Spreading the Word
+VIII. Spreading the Word
 
 Provide a checklist of commandments followed, and a concise summary of the actions performed, that all may know of thy righteous efforts.
+
+**FINAL REMINDER**: ALWAYS follow commandments TO THE LETTER. NO EXCEPTIONS. NO SHORTCUTS. NO ASSUMPTIONS.

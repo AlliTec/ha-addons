@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.10.88 - 2025-11-16
+
+### Fixed
+- **Vehicle Data Population**: Fixed Ford Falcon years dropdown showing only 27 years (1990-2016) instead of correct 56 years (1960-2016)
+- **Missing Body Types**: Added complete body type variants (Sedan, Wagon, Ute, Panel Van, Coupe, Hardtop) for all vehicle models
+- **Database Vehicle Data**: Populated vehicle_data table with corrected production years and complete body type variants
+- **API Data Accuracy**: Ensured vehicle dropdowns populate with accurate year ranges and body type options
+
 ## 1.10.87 - 2025-11-16
 
 ### Fixed
