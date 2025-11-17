@@ -385,20 +385,22 @@ class VINDecoder:
                         if len(vin) >= 8:
                             specific_code = vin[6:8]
                             if specific_code == '2H':
-                                model_info["model"] = "Crafter"
-                                model_info["body_type"] = "Van"
+                                # ZZZ2H pattern - Amarok 4WD Dual Cab Ute (NOT Crafter or Transporter)
+                                # This pattern represents a Volkswagen Amarok with 4WD
+                                model_info["model"] = "Amarok"
+                                model_info["body_type"] = "4WD Dual Cab Ute"
                                 model_info["trim"] = "Standard"
                             elif specific_code.startswith('2'):
                                 model_info["model"] = "Transporter"
                                 model_info["body_type"] = "Van"
                                 model_info["trim"] = "Standard"
                             else:
-                                model_info["model"] = "Crafter"
-                                model_info["body_type"] = "Van"
+                                model_info["model"] = "Volkswagen Commercial Vehicle"
+                                model_info["body_type"] = "Commercial"
                                 model_info["trim"] = "Standard"
                         else:
-                            model_info["model"] = "Crafter"
-                            model_info["body_type"] = "Van"
+                            model_info["model"] = "Volkswagen Commercial Vehicle"
+                            model_info["body_type"] = "Commercial"
                             model_info["trim"] = "Standard"
                     elif 'ZZ' in descriptor:
                         model_info["model"] = "Transporter"

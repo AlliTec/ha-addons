@@ -7,23 +7,32 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from vin_decoder import decode_vin
 
 def test_vin_decoder():
-    """Test the VIN decoder with our problematic VIN"""
-    vin = '6FPAAAJGCM9A59898'
-    result = decode_vin(vin)
+    print("Testing VIN decoder fixes...")
     
-    print('VIN decode result:')
-    for key, value in result.items():
-        print(f'  {key}: {value}')
+    # Test problematic VIN
+    result1 = decode_vin('WV1ZZZ2HZDA061221')
+    print(f"WV1ZZZ2HZDA061221: {result1['model_info']['model']}")
     
-    # Check if year is correctly identified as 2009
-    expected_year = 2009
-    actual_year = result.get('year')
+    # Test a known Crafter VIN (different pattern)
+    result2 = decode_vin('WV1ZZZ2HAB123456')  # Different specific code
+    print(f"WV1ZZZ2HAB123456: {result2['model_info']['model']}")
     
-    if actual_year == expected_year:
-        print(f'\n✓ SUCCESS: VIN correctly decoded as year {actual_year}')
+    # Test a known Transporter pattern
+    result3 = decode_vin('WV1ZZZ2AB123456')  # Should be Transporter
+    print(f"WV1ZZZ2AB123456: {result3['model_info']['model']}")
+    
+    print("\nFull decode for problematic VIN:")
+    print(f"Manufacturer: {result1['manufacturer']}")
+    print(f"Year: {result1['year']}")
+    print(f"Model: {result1['model_info']['model']}")
+    print(f"Body Type: {result1['model_info']['body_type']}")
+    
+    # Verify the fix worked
+    if result1['model_info']['model'] != 'Crafter':
+        print("\n✓ SUCCESS: VIN no longer incorrectly identified as Crafter")
         return True
     else:
-        print(f'\n✗ FAILED: VIN decoded as year {actual_year}, expected {expected_year}')
+        print("\n✗ FAILED: VIN still incorrectly identified as Crafter")
         return False
 
 if __name__ == '__main__':

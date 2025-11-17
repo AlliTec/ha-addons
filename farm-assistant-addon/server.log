@@ -1,1 +1,8 @@
-2025-11-17 14:14:14,205 - ERROR - Configuration file not found at /data/options.json. Please configure the addon and start it again.
+2025-11-17 15:37:26,517 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+/home/sog/ai-projects/ha-addons/farm-assistant-addon/main.py:73: DeprecationWarning: 
+        on_event is deprecated, use lifespan event handlers instead.
+
+        Read more about it in the
+        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+        
+  @app.on_event("startup")

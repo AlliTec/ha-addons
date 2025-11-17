@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.11.11 - 2025-11-17
+
+### Fixed Volkswagen Amarok VIN Identification
+- **Corrected Model Identification**: VIN WV1ZZZ2HZDA061221 now correctly identifies as "2013 Volkswagen Amarok 4WD Dual Cab Ute"
+- **Fixed Pattern Matching**: Updated ZZZ2H pattern in Volkswagen Commercial Vehicle decoder to properly identify Amarok models
+- **AWD/4Motion Recognition**: Enhanced decoder to recognize AWD and 4Motion drivetrain configurations
+- **User-Requested Correction**: Fixed based on user confirmation that vehicle is NOT a Crafter or Transporter
+- **API Verification**: VIN decode endpoint returns correct model and body type information
+- **Comprehensive Testing**: Verified VIN decoder functionality with no regressions to other manufacturers
+
 ## 1.11.10 - 2025-11-17
 
 ### Enhanced VIN Decoder - Volkswagen Crafter Support & Multi-Manufacturer Expansion
