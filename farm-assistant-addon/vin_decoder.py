@@ -20,6 +20,7 @@ class VINDecoder:
             '6FP': 'Ford (Australia)',
             'JTD': 'Toyota (Japan)',
             'JTE': 'Toyota (Japan 4WD)',
+            'JTG': 'Toyota (Japan)',
             '2T1': 'Toyota (USA)',
             '4T1': 'Toyota (USA)',
             '5YJ': 'Tesla (USA)',
@@ -265,19 +266,50 @@ class VINDecoder:
                         model_info["trim"] = "G6E Turbo"
         
         # Toyota patterns
-        elif wmi in ['JTD', 'JTE', '2T1', '4T1']:
-            if 'HILUX' in vin:
-                model_info["model"] = "Hilux"
-                model_info["body_type"] = "Ute"
-            elif 'COROLLA' in vin:
-                model_info["model"] = "Corolla"
-                model_info["body_type"] = "Sedan"
-            elif 'CAMRY' in vin:
-                model_info["model"] = "Camry"
-                model_info["body_type"] = "Sedan"
-            elif 'RAV4' in vin:
-                model_info["model"] = "RAV4"
-                model_info["body_type"] = "SUV"
+        elif wmi in ['JTD', 'JTE', 'JTG', '2T1', '4T1']:
+            # Check descriptor segment (positions 4-6) for model identification
+            if len(vin) >= 6:
+                descriptor = vin[3:6]
+                
+                # Handle FP pattern for Toyota vehicles
+                if descriptor.startswith('FP'):
+                    # JTGFP5 - Toyota Australian delivered bus
+                    if descriptor == 'FP5':
+                        model_info["model"] = "Toyota Bus"
+                        model_info["body_type"] = "Bus"
+                        # Check positions 6-8 for more specific model info
+                        if len(vin) >= 8:
+                            trim_code = vin[6:8]
+                            if trim_code == '18':
+                                model_info["trim"] = "Standard"
+                            elif trim_code == '51':
+                                model_info["trim"] = "Commuter"
+                            elif trim_code == '52':
+                                model_info["trim"] = "Standard"
+                            else:
+                                model_info["trim"] = f"Australian Bus ({trim_code})"
+                    else:
+                        model_info["model"] = "Toyota Bus"
+                        model_info["body_type"] = "Bus"
+                        if len(vin) >= 8:
+                            trim_code = vin[6:8]
+                            model_info["trim"] = f"Australian Bus ({trim_code})"
+                elif 'HILUX' in vin:
+                    model_info["model"] = "Hilux"
+                    model_info["body_type"] = "Ute"
+                elif 'COROLLA' in vin:
+                    model_info["model"] = "Corolla"
+                    model_info["body_type"] = "Sedan"
+                elif 'CAMRY' in vin:
+                    model_info["model"] = "Camry"
+                    model_info["body_type"] = "Sedan"
+                elif 'RAV4' in vin:
+                    model_info["model"] = "RAV4"
+                    model_info["body_type"] = "SUV"
+                else:
+                    # Default for Toyota with unknown descriptor
+                    model_info["model"] = "Toyota"
+                    model_info["body_type"] = "Unknown"
         
         # Holden patterns
         elif wmi in ['MR0', '6H8', '8AL']:

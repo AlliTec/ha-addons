@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.06 - 2025-11-17
+
+### Updated Coding Commandments
+- **Commandments Update**: Replaced old Six Coding Commandments with comprehensive Seven Coding Commandments
+- **Enhanced Process**: Added detailed file path protocols, infinite loop detection, and comprehensive testing requirements
+- **Mandatory Compliance**: All code changes must follow TheCodingCommandments.txt without exception
+- **Process Documentation**: Updated AGENTS.md with complete commandment details and enforcement rules
+
 ## 1.11.05 - 2025-11-17
 
 ### VIN Badge/Trim Population Fix
