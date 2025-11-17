@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.11.08 - 2025-11-17
+
+### Comprehensive Toyota Vehicle Database Update
+- **Added 16 New Toyota Models**: Expanded Toyota vehicle database from 5 to 21 models
+- **Fixed VIN Population**: Added "Toyota Bus" model to resolve VIN JTGFP518704500675 population issue
+- **New Models Added**: 4Runner, 86, Avalon, Celica, Coaster, Crown, Hiace, Highlander, MR2, Prius, Sienna, Supra, Tacoma, Toyota Bus, Tundra, Yaris
+- **Complete Coverage**: Now includes Toyota's full range - compact cars, sedans, SUVs, trucks, vans, buses, sports cars
+- **VIN Lookup Success**: JTGFP518704500675 now correctly populates make: Toyota, model: Toyota Bus, year: 2000, body_type: Bus, badge: Standard
+- **API Verification**: Confirmed Toyota models API now returns all 21 models correctly
+
 ## 1.11.07 - 2025-11-17
 
 ### Toyota Model Population Fix
