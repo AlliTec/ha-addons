@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VIN Lookup Debug Test</title>
+</head>
+<body>
+    <h1>VIN Lookup Debug Test</h1>
+    
+    <h2>Test JTGFP518704500675 (should work)</h2>
+    <input type="text" id="vin1" value="JTGFP518704500675">
+    <button onclick="testVIN('vin1', 'result1')">Test VIN 1</button>
+    <div id="result1"></div>
+    
+    <h2>Test WV1ZZZ2HZDA061221 (from logs - returns Unknown)</h2>
+    <input type="text" id="vin2" value="WV1ZZZ2HZDA061221">
+    <button onclick="testVIN('vin2', 'result2')">Test VIN 2</button>
+    <div id="result2"></div>
+
+    <script>
+    async function testVIN(inputId, resultId) {
+        const vin = document.getElementById(inputId).value;
+        const resultDiv = document.getElementById(resultId);
+        
+        resultDiv.innerHTML = '<p>🔍 Looking up VIN...</p>';
+        
+        try {
+            console.log('Testing VIN:', vin);
+            const response = await fetch(`/api/vin/vehicle-data/${vin}`);
+            const data = await response.json();
+            
+            console.log('VIN data received:', data);
+            
+            resultDiv.innerHTML = `
+                <h3>VIN: ${vin}</h3>
+                <p><strong>Make:</strong> ${data.make}</p>
+                <p><strong>Model:</strong> ${data.model}</p>
+                <p><strong>Year:</strong> ${data.year}</p>
+                <p><strong>Body Type:</strong> ${data.body_type}</p>
+                <p><strong>Badge:</strong> ${data.badge}</p>
+                <p><strong>Valid:</strong> ${data.valid}</p>
+                <p><strong>Source:</strong> ${data.source}</p>
+                <p><strong>Category:</strong> ${data.category || 'N/A'}</p>
+            `;
+            
+            // Test if make would be found in dropdown
+            const makes = ['', 'BMW', 'Ford', 'Great Wall', 'Holden', 'Honda', 'Isuzu', 'LDV', 'Mazda', 'Mercedes-Benz', 'Mitsubishi', 'Nissan', 'Subaru', 'Toyota', 'Volkswagen'];
+            const makeFound = makes.includes(data.make);
+            
+            resultDiv.innerHTML += `<p><strong>Make in dropdown:</strong> ${makeFound ? '✅ Yes' : '❌ No'}</p>`;
+            
+            if (makeFound) {
+                resultDiv.innerHTML += `<p style="color: green;">✅ This VIN should populate the form correctly!</p>`;
+            } else {
+                resultDiv.innerHTML += `<p style="color: red;">❌ This VIN will NOT populate the form because make "${data.make}" is not in the dropdown!</p>`;
+            }
+            
+        } catch (error) {
+            resultDiv.innerHTML = `<p style="color: red;">❌ Error: ${error.message}</p>`;
+            console.error('VIN lookup error:', error);
+        }
+    }
+    </script>
+</body>
+</html>

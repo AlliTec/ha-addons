@@ -58,6 +58,9 @@ class VINDecoder:
             'MR0': 'Holden (Australia)',
             '6H8': 'Holden (Australia)',
             '8AL': 'Holden (Australia)',
+            'WV1': 'Volkswagen (Germany Commercial)',
+            'WV2': 'Volkswagen (Germany Commercial)',
+            'WVW': 'Volkswagen (Germany Passenger)',
         }
         
         # Year codes (10th character of VIN)
@@ -241,7 +244,7 @@ class VINDecoder:
         model_info = {"model": "Unknown", "trim": "Unknown", "body_type": "Unknown"}
         
         # Ford patterns
-        if wmi in ['1FA', '2FA', '3FA', '6FP']:
+        if wmi in ['1FA', '2FA', '3FA', '6FP', '1FT']:
             # Australian Ford patterns (6FP = Ford Australia)
             if wmi == '6FP':
                 model_info["model"] = "Falcon"
@@ -266,6 +269,40 @@ class VINDecoder:
                         model_info["model"] = "Falcon"
                         model_info["body_type"] = "Sedan"
                         model_info["trim"] = "G6E"
+            
+            # Ford USA Truck patterns (1FT)
+            elif wmi == '1FT':
+                if len(vin) >= 6:
+                    model_code = vin[3:6]
+                    if 'F1' in model_code:
+                        model_info["model"] = "F-150"
+                        model_info["body_type"] = "Pickup"
+                        model_info["trim"] = "Standard"
+                    elif 'F2' in model_code:
+                        model_info["model"] = "F-250"
+                        model_info["body_type"] = "Pickup"
+                        model_info["trim"] = "Standard"
+                    elif 'F3' in model_code:
+                        model_info["model"] = "F-350"
+                        model_info["body_type"] = "Pickup"
+                        model_info["trim"] = "Standard"
+                    else:
+                        model_info["model"] = "F-Series"
+                        model_info["body_type"] = "Pickup"
+                        model_info["trim"] = "Standard"
+            
+            # Ford USA Passenger patterns (1FA, 2FA, 3FA)
+            elif wmi in ['1FA', '2FA', '3FA']:
+                if len(vin) >= 6:
+                    model_code = vin[3:6]
+                    if 'P8' in model_code:
+                        model_info["model"] = "Mustang"
+                        model_info["body_type"] = "Coupe"
+                        model_info["trim"] = "Standard"
+                    else:
+                        model_info["model"] = "Ford"
+                        model_info["body_type"] = "Unknown"
+                        model_info["trim"] = "Standard"
             
             # Legacy pattern matching
             elif 'FALCON' in vin or 'FPV' in vin:
@@ -310,6 +347,14 @@ class VINDecoder:
                         if len(vin) >= 8:
                             trim_code = vin[6:8]
                             model_info["trim"] = f"Australian Bus ({trim_code})"
+                elif 'KB' in descriptor:
+                    model_info["model"] = "Prius"
+                    model_info["body_type"] = "Hybrid"
+                    model_info["trim"] = "Standard"
+                elif 'B2' in descriptor:
+                    model_info["model"] = "Camry"
+                    model_info["body_type"] = "Sedan"
+                    model_info["trim"] = "Standard"
                 elif 'HILUX' in vin:
                     model_info["model"] = "Hilux"
                     model_info["body_type"] = "Ute"
@@ -326,6 +371,109 @@ class VINDecoder:
                     # Default for Toyota with unknown descriptor
                     model_info["model"] = "Toyota"
                     model_info["body_type"] = "Unknown"
+        
+        # Volkswagen patterns
+        elif wmi in ['WV1', 'WV2', 'WVW']:
+            # Check descriptor segment (positions 4-6) for model identification
+            if len(vin) >= 6:
+                descriptor = vin[3:6]
+                
+                # Volkswagen Commercial Vehicles (WV1, WV2)
+                if wmi in ['WV1', 'WV2']:
+                    if descriptor.startswith('ZZZ'):
+                        # Check positions 6-8 for more specific model info
+                        if len(vin) >= 8:
+                            specific_code = vin[6:8]
+                            if specific_code == '2H':
+                                model_info["model"] = "Crafter"
+                                model_info["body_type"] = "Van"
+                                model_info["trim"] = "Standard"
+                            elif specific_code.startswith('2'):
+                                model_info["model"] = "Transporter"
+                                model_info["body_type"] = "Van"
+                                model_info["trim"] = "Standard"
+                            else:
+                                model_info["model"] = "Crafter"
+                                model_info["body_type"] = "Van"
+                                model_info["trim"] = "Standard"
+                        else:
+                            model_info["model"] = "Crafter"
+                            model_info["body_type"] = "Van"
+                            model_info["trim"] = "Standard"
+                    elif 'ZZ' in descriptor:
+                        model_info["model"] = "Transporter"
+                        model_info["body_type"] = "Van"
+                        model_info["trim"] = "Standard"
+                    else:
+                        model_info["model"] = "Volkswagen Commercial"
+                        model_info["body_type"] = "Van"
+                        model_info["trim"] = "Standard"
+                
+                # Volkswagen Passenger Vehicles (WVW)
+                else:
+                    if descriptor.startswith('ZZ'):
+                        model_info["model"] = "Golf"
+                        model_info["body_type"] = "Hatchback"
+                        model_info["trim"] = "Standard"
+                    else:
+                        model_info["model"] = "Volkswagen"
+                        model_info["body_type"] = "Unknown"
+                        model_info["trim"] = "Standard"
+        
+        # Tesla patterns
+        elif wmi == '5YJ':
+            if len(vin) >= 6:
+                descriptor = vin[3:6]
+                if '3E1' in descriptor:
+                    model_info["model"] = "Model 3"
+                    model_info["body_type"] = "Sedan"
+                    model_info["trim"] = "Standard"
+                elif 'E7' in descriptor:
+                    model_info["model"] = "Model S"
+                    model_info["body_type"] = "Sedan"
+                    model_info["trim"] = "Standard"
+                elif 'YJ' in descriptor:
+                    model_info["model"] = "Model X"
+                    model_info["body_type"] = "SUV"
+                    model_info["trim"] = "Standard"
+                else:
+                    model_info["model"] = "Tesla"
+                    model_info["body_type"] = "Electric"
+                    model_info["trim"] = "Standard"
+        
+        # Honda patterns
+        elif wmi in ['1HG', '2HG', 'JHM', 'JH4']:
+            if len(vin) >= 6:
+                descriptor = vin[3:6]
+                if 'CM8' in descriptor:
+                    model_info["model"] = "Accord"
+                    model_info["body_type"] = "Sedan"
+                    model_info["trim"] = "Standard"
+                elif 'FK' in descriptor:
+                    model_info["model"] = "Civic"
+                    model_info["body_type"] = "Sedan"
+                    model_info["trim"] = "Standard"
+                else:
+                    model_info["model"] = "Honda"
+                    model_info["body_type"] = "Unknown"
+                    model_info["trim"] = "Standard"
+        
+        # Chevrolet patterns
+        elif wmi in ['1G1', '1G2', '1G3', '1G4', '1G8', '1GC']:
+            if len(vin) >= 6:
+                descriptor = vin[3:6]
+                if 'ZE5' in descriptor:
+                    model_info["model"] = "Volt"
+                    model_info["body_type"] = "Hybrid"
+                    model_info["trim"] = "Standard"
+                elif 'YY' in descriptor:
+                    model_info["model"] = "Corvette"
+                    model_info["body_type"] = "Coupe"
+                    model_info["trim"] = "Standard"
+                else:
+                    model_info["model"] = "Chevrolet"
+                    model_info["body_type"] = "Unknown"
+                    model_info["trim"] = "Standard"
         
         # Holden patterns
         elif wmi in ['MR0', '6H8', '8AL']:
@@ -379,13 +527,14 @@ class VINDecoder:
         """Determine fuel type based on vehicle information"""
         manufacturer = decoded.get("manufacturer", "")
         model = decoded.get("model_info", {}).get("model", "")
+        body_type = decoded.get("model_info", {}).get("body_type", "")
         
         # Electric vehicles
         if "Tesla" in manufacturer:
             return "Electric"
         
         # Hybrid vehicles
-        if "Prius" in model:
+        if "Prius" in model or "Volt" in model or "Hybrid" in body_type:
             return "Hybrid"
         
         # Default to petrol for most vehicles
@@ -393,9 +542,20 @@ class VINDecoder:
     
     def _determine_engine_type(self, decoded: Dict[str, Any]) -> str:
         """Determine engine type based on vehicle information"""
+        manufacturer = decoded.get("manufacturer", "")
         model_info = decoded.get("model_info", {})
         trim = model_info.get("trim", "")
+        fuel_type = self._determine_fuel_type(decoded)
         
+        # Electric vehicles
+        if fuel_type == "Electric":
+            return "Electric Motor"
+        
+        # Hybrid vehicles
+        if fuel_type == "Hybrid":
+            return "Hybrid"
+        
+        # Performance models
         if "Turbo" in trim:
             return "Turbocharged"
         elif "XR8" in trim:

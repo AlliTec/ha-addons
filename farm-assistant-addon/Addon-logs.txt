@@ -1,43 +1,28 @@
-script.js?v=unknown&t=1763342888602:512 populateParentAssetDropdowns called
-script.js?v=unknown&t=1763342888602:515 Assets response status: 200
-script.js?v=unknown&t=1763342888602:521 Assets received: 25 assets
-script.js?v=unknown&t=1763342888602:541 Parent asset dropdowns populated successfully
-script.js?v=unknown&t=1763342888602:1868 🚗 populateVehicleModels called for make: Toyota
-script.js?v=unknown&t=1763342888602:1870 🔍 Fetching URL: api/vehicle/models?make=Toyota
-script.js?v=unknown&t=1763342888602:1873 📡 Response status: 200
-script.js?v=unknown&t=1763342888602:1874 📡 Response headers: {content-length: '49', content-type: 'application/json', date: 'Mon, 17 Nov 2025 01:28:18 GMT', referrer-policy: 'no-referrer', server: '', …}
-script.js?v=unknown&t=1763342888602:1883 📋 Models received: (5) ['Camry', 'Corolla', 'Hilux', 'Land Cruiser', 'RAV4']
-script.js?v=unknown&t=1763342888602:1884 📊 Models count: 5
-script.js?v=unknown&t=1763342888602:1888 🎯 addModelSelect element found: true
-script.js?v=unknown&t=1763342888602:1894 ✅ Add form populated with models
-script.js?v=unknown&t=1763342888602:1901 🎯 editModelSelect element found: true
-script.js?v=unknown&t=1763342888602:1907 ✅ Edit form populated with models
-script.js?v=unknown&t=1763342888602:1912 ✅ Successfully populated 5 models for Toyota: Camry, Corolla, Hilux, Land Cruiser, RAV4
-script.js?v=unknown&t=1763342888602:2079 🔍 Starting VIN lookup for: JTGFP518704500675
-script.js?v=unknown&t=1763342888602:2081 📋 VIN specs received: {make: 'Toyota', model: 'Toyota Bus', year: 2000, body_type: 'Bus', badge: 'Standard', …}
-script.js?v=unknown&t=1763342888602:2084 ✅ VIN is valid, populating form fields...
-script.js?v=unknown&t=1763342888602:2093 🎯 Form elements found: {makeSelect: true, modelSelect: true, yearSelect: true, bodySelect: true, badgeSelect: true}
-script.js?v=unknown&t=1763342888602:2103 🏭 Looking for make: Toyota
-script.js?v=unknown&t=1763342888602:2104 📋 Available makes: (15) ['', 'BMW', 'Ford', 'Great Wall', 'Holden', 'Honda', 'Isuzu', 'LDV', 'Mazda', 'Mercedes-Benz', 'Mitsubishi', 'Nissan', 'Subaru', 'Toyota', 'Volkswagen']
-script.js?v=unknown&t=1763342888602:2109 🎯 Make option found: <option value=​"Toyota">​Toyota​</option>​slot
-script.js?v=unknown&t=1763342888602:2113 ✅ Make set to: Toyota
-script.js?v=unknown&t=1763342888602:1868 🚗 populateVehicleModels called for make: Toyota
-script.js?v=unknown&t=1763342888602:1870 🔍 Fetching URL: api/vehicle/models?make=Toyota
-script.js?v=unknown&t=1763342888602:1873 📡 Response status: 200
-script.js?v=unknown&t=1763342888602:1874 📡 Response headers: {content-length: '49', content-type: 'application/json', date: 'Mon, 17 Nov 2025 01:28:21 GMT', referrer-policy: 'no-referrer', server: '', …}
-script.js?v=unknown&t=1763342888602:1883 📋 Models received: (5) ['Camry', 'Corolla', 'Hilux', 'Land Cruiser', 'RAV4']
-script.js?v=unknown&t=1763342888602:1884 📊 Models count: 5
-script.js?v=unknown&t=1763342888602:1888 🎯 addModelSelect element found: true
-script.js?v=unknown&t=1763342888602:1894 ✅ Add form populated with models
-script.js?v=unknown&t=1763342888602:1901 🎯 editModelSelect element found: true
-script.js?v=unknown&t=1763342888602:1907 ✅ Edit form populated with models
-script.js?v=unknown&t=1763342888602:1912 ✅ Successfully populated 5 models for Toyota: Camry, Corolla, Hilux, Land Cruiser, RAV4
-script.js?v=unknown&t=1763342888602:2118 🚗 Looking for model: Toyota Bus
-script.js?v=unknown&t=1763342888602:2119 📋 Available models: (6) ['', 'Camry', 'Corolla', 'Hilux', 'Land Cruiser', 'RAV4']
-script.js?v=unknown&t=1763342888602:2124 🎯 Model option found: undefined
-script.js?v=unknown&t=1763342888602:2194 ❌ Model not found in options
-populateFromVIN @ script.js?v=unknown&t=1763342888602:2194
+script.js?v=unknown&t=1763351635640:512 populateParentAssetDropdowns called
+script.js?v=unknown&t=1763351635640:515 Assets response status: 200
+script.js?v=unknown&t=1763351635640:521 Assets received: 25 assets
+script.js?v=unknown&t=1763351635640:541 Parent asset dropdowns populated successfully
+script.js?v=unknown&t=1763351635640:1868 🚗 populateVehicleModels called for make: VolksWagen
+script.js?v=unknown&t=1763351635640:1870 🔍 Fetching URL: api/vehicle/models?make=VolksWagen
+script.js?v=unknown&t=1763351635640:1873 📡 Response status: 200
+script.js?v=unknown&t=1763351635640:1874 📡 Response headers: {content-length: '2', content-type: 'application/json', date: 'Mon, 17 Nov 2025 03:54:05 GMT', referrer-policy: 'no-referrer', server: '', …}
+script.js?v=unknown&t=1763351635640:1883 📋 Models received: []
+script.js?v=unknown&t=1763351635640:1884 📊 Models count: 0
+script.js?v=unknown&t=1763351635640:1888 🎯 addModelSelect element found: true
+script.js?v=unknown&t=1763351635640:1894 ✅ Add form populated with models
+script.js?v=unknown&t=1763351635640:1901 🎯 editModelSelect element found: true
+script.js?v=unknown&t=1763351635640:1907 ✅ Edit form populated with models
+script.js?v=unknown&t=1763351635640:1912 ✅ Successfully populated 0 models for VolksWagen: 
+script.js?v=unknown&t=1763351635640:2079 🔍 Starting VIN lookup for: WV1ZZZ2HZDA061221
+script.js?v=unknown&t=1763351635640:2081 📋 VIN specs received: {make: 'Unknown', model: 'Unknown', year: 2013, body_type: 'Unknown', badge: 'Unknown', …}
+script.js?v=unknown&t=1763351635640:2084 ✅ VIN is valid, populating form fields...
+script.js?v=unknown&t=1763351635640:2093 🎯 Form elements found: {makeSelect: true, modelSelect: true, yearSelect: true, bodySelect: true, badgeSelect: true}
+script.js?v=unknown&t=1763351635640:2103 🏭 Looking for make: Unknown
+script.js?v=unknown&t=1763351635640:2104 📋 Available makes: (15) ['', 'BMW', 'Ford', 'Great Wall', 'Holden', 'Honda', 'Isuzu', 'LDV', 'Mazda', 'Mercedes-Benz', 'Mitsubishi', 'Nissan', 'Subaru', 'Toyota', 'Volkswagen']
+script.js?v=unknown&t=1763351635640:2109 🎯 Make option found: undefined
+script.js?v=unknown&t=1763351635640:2200 ❌ Make not found in options
+populateFromVIN @ script.js?v=unknown&t=1763351635640:2200
 await in populateFromVIN
 onclick @ E-cW3ksrmsjgl9U53YJMYeHxTZ5U1YAyZBGWznjqqM4/:576
-script.js?v=unknown&t=1763342888602:2206 🏁 VIN lookup process completed
-script.js?v=unknown&t=1763342888602:2217 🎯 Final form values: {make: 'Toyota', model: '', year: '', bodyType: '', badge: ''}
+script.js?v=unknown&t=1763351635640:2206 🏁 VIN lookup process completed
+script.js?v=unknown&t=1763351635640:2217 🎯 Final form values: {make: '', model: '', year: '', bodyType: '', badge: ''}

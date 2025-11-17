@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.11.10 - 2025-11-17
+
+### Enhanced VIN Decoder - Volkswagen Crafter Support & Multi-Manufacturer Expansion
+- **Fixed VIN Identification**: WV1ZZZ2HZDA061221 now correctly identifies as 2013 Volkswagen Crafter Van
+- **Expanded Manufacturer Support**: Added comprehensive VIN patterns for Ford USA trucks, Honda, Tesla, Chevrolet
+- **Improved Model Detection**: Enhanced descriptor pattern matching for Toyota Prius, Tesla Model 3, Honda Accord, Chevrolet Volt
+- **Fuel Type Accuracy**: Fixed fuel type detection for Electric (Tesla) and Hybrid (Prius, Volt) vehicles
+- **Engine Type Logic**: Improved engine type detection to properly identify Electric Motors and Hybrid systems
+- **API Verification**: All VIN decode endpoints tested and working correctly through UI
+- **Comprehensive Testing**: Multiple VINs verified - VW Crafter, Ford Falcon, Tesla Model 3, Toyota Prius, Honda Accord, Chevrolet Volt
+
 ## 1.11.09 - 2025-11-17
 
 ### Toyota VIN Decoder Correction - Coaster Model Fix

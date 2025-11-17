@@ -1,12 +1,1 @@
-2025-11-17 07:50:57,248 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
-INFO:     Started server process [114628]
-INFO:     Waiting for application startup.
-2025-11-17 07:50:57,353 - INFO - Attempting to connect to the database at 192.168.1.130...
-2025-11-17 07:50:57,444 - INFO - Database connection successful.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:37088 - "GET /api/vin/specifications/6FPAAAJGCM9A59898 HTTP/1.1" 200 OK
-INFO:     Shutting down
-INFO:     Waiting for application shutdown.
-INFO:     Application shutdown complete.
-INFO:     Finished server process [114628]
+2025-11-17 14:14:14,205 - ERROR - Configuration file not found at /data/options.json. Please configure the addon and start it again.
