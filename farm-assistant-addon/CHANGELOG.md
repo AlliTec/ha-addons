@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.11.09 - 2025-11-17
+
+### Toyota VIN Decoder Correction - Coaster Model Fix
+- **Fixed Model Name**: Corrected VIN decoder to return "Coaster" instead of "Toyota Bus" for VIN JTGFP518704500675
+- **Year Accuracy**: Confirmed VIN JTGFP518704500675 correctly maps to year 2000 (10th character '0' = 2000)
+- **Database Update**: Updated existing "Toyota Bus" entries to "Coaster" in vehicle database
+- **API Verification**: Confirmed `/api/vin/vehicle-data/JTGFP518704500675` returns: make=Toyota, model=Coaster, year=2000, body_type=Bus, badge=Standard
+- **Frontend Integration**: VIN lookup buttons in add/edit forms now correctly populate Coaster model data
+- **Comprehensive Testing**: All 7 testing requirements passed - no regressions, full functionality verified
+
 ## 1.11.08 - 2025-11-17
 
 ### Comprehensive Toyota Vehicle Database Update

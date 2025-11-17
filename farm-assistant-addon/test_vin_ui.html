@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VIN Lookup Test</title>
+</head>
+<body>
+    <h1>VIN Lookup Test</h1>
+    <input type="text" id="vin-input" value="JTGFP518704500675" placeholder="Enter VIN">
+    <button onclick="testVINLookup()">Lookup VIN</button>
+    <div id="results"></div>
+
+    <script>
+    async function testVINLookup() {
+        const vin = document.getElementById('vin-input').value;
+        const resultsDiv = document.getElementById('results');
+        
+        try {
+            const response = await fetch(`/api/vin/decode/${vin}`);
+            const data = await response.json();
+            
+            resultsDiv.innerHTML = `
+                <h3>VIN Lookup Results:</h3>
+                <p><strong>VIN:</strong> ${data.vin}</p>
+                <p><strong>Manufacturer:</strong> ${data.manufacturer}</p>
+                <p><strong>Model:</strong> ${data.model_info.model}</p>
+                <p><strong>Year:</strong> ${data.year}</p>
+                <p><strong>Plant:</strong> ${data.plant}</p>
+                <p><strong>Body Type:</strong> ${data.model_info.body_type}</p>
+                <p><strong>Valid:</strong> ${data.valid}</p>
+            `;
+            
+            console.log('✅ VIN Lookup successful:', data);
+        } catch (error) {
+            resultsDiv.innerHTML = `<p style="color: red;">❌ Error: ${error.message}</p>`;
+            console.error('❌ VIN Lookup failed:', error);
+        }
+    }
+    
+    // Auto-test on page load
+    window.onload = () => testVINLookup();
+    </script>
+</body>
+</html>
