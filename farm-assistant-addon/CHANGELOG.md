@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.11.07 - 2025-11-17
+
+### Toyota Model Population Fix
+- **Event Listener Timing**: Fixed issue where Toyota models weren't populating due to event listeners being attached before modal was visible
+- **Enhanced Debugging**: Added comprehensive console logging to track vehicle model population flow
+- **Modal Display Fix**: Modified openAddAssetForm to show modal first, then attach event listeners after DOM is ready
+- **Error Handling**: Enhanced error handling in populateVehicleModels with detailed logging and user feedback
+- **Duplicate Prevention**: Added mechanism to prevent duplicate event listener attachments
+- **API Verification**: Confirmed Toyota models API endpoint working correctly (returns Camry, Corolla, Hilux, Land Cruiser, RAV4)
+
 ## 1.11.06 - 2025-11-17
 
 ### Updated Coding Commandments

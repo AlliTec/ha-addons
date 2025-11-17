@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Toyota Models</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        select { margin: 10px; padding: 5px; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        .error { background: #ffe6e6; color: red; }
+        .success { background: #e6ffe6; color: green; }
+    </style>
+</head>
+<body>
+    <h1>Debug Toyota Models Population</h1>
+    
+    <div class="debug">
+        <label for="make-select">Make:</label>
+        <select id="make-select">
+            <option value="">Select Make</option>
+        </select>
+        
+        <label for="model-select">Model:</label>
+        <select id="model-select">
+            <option value="">Select Model</option>
+        </select>
+        
+        <button onclick="testToyotaDirectly()">Test Toyota Directly</button>
+    </div>
+    
+    <div id="debug-output" class="debug"></div>
+    
+    <script>
+        let debugOutput = document.getElementById('debug-output');
+        
+        function log(message, isError = false) {
+            console.log(message);
+            debugOutput.innerHTML += `<div class="${isError ? 'error' : 'success'}">${new Date().toLocaleTimeString()}: ${message}</div>`;
+        }
+        
+        async function populateMakes() {
+            try {
+                log('Fetching makes...');
+                const response = await fetch('api/vehicle/makes');
+                log(`Response status: ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const makes = await response.json();
+                log(`Makes loaded: ${makes.length} makes`);
+                log(`Makes: ${JSON.stringify(makes)}`);
+                
+                const select = document.getElementById('make-select');
+                makes.forEach(make => {
+                    select.innerHTML += `<option value="${make}">${make}</option>`;
+                });
+                
+                log('Makes populated in dropdown');
+                
+            } catch (error) {
+                log(`Error loading makes: ${error.message}`, true);
+            }
+        }
+        
+        async function testModels(make) {
+            const modelSelect = document.getElementById('model-select');
+            
+            log(`Testing models for make: ${make}`);
+            
+            try {
+                const url = `api/vehicle/models?make=${encodeURIComponent(make)}`;
+                log(`Fetching URL: ${url}`);
+                
+                const response = await fetch(url);
+                log(`Response status: ${response.status}`);
+                log(`Response headers: ${JSON.stringify(Object.fromEntries(response.headers))}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const models = await response.json();
+                log(`Models received: ${JSON.stringify(models)}`);
+                
+                modelSelect.innerHTML = '<option value="">Select Model</option>';
+                models.forEach(model => {
+                    modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
+                });
+                
+                log(`Successfully loaded ${models.length} models for ${make}`);
+                
+            } catch (error) {
+                log(`Error loading models for ${make}: ${error.message}`, true);
+            }
+        }
+        
+        async function testToyotaDirectly() {
+            await testModels('Toyota');
+        }
+        
+        // Make change handler
+        document.getElementById('make-select').addEventListener('change', async function() {
+            const make = this.value;
+            if (make) {
+                await testModels(make);
+            } else {
+                document.getElementById('model-select').innerHTML = '<option value="">Select Model</option>';
+                log('Model select cleared');
+            }
+        });
+        
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            log('Page loaded, initializing...');
+            populateMakes();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Test Asset Form</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .form-grid div { display: flex; flex-direction: column; }
+        label { margin-bottom: 5px; font-weight: bold; }
+        select, input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        .debug { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .error { background: #ffe6e6; color: red; }
+        .success { background: #e6ffe6; color: green; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Test Asset Form - Toyota Models</h1>
+    
+    <div class="form-grid">
+        <div>
+            <label for="add-asset-make">Make:</label>
+            <select id="add-asset-make" name="make">
+                <option value="">Select Make</option>
+            </select>
+        </div>
+        <div>
+            <label for="add-asset-model">Model:</label>
+            <select id="add-asset-model" name="model">
+                <option value="">Select Model</option>
+            </select>
+        </div>
+        <div>
+            <label for="add-asset-year">Year:</label>
+            <select id="add-asset-year" name="year">
+                <option value="">Select Year</option>
+            </select>
+        </div>
+        <div>
+            <label for="add-asset-body-feature">Body Type:</label>
+            <select id="add-asset-body-feature" name="body_feature">
+                <option value="">Select Body Type</option>
+            </select>
+        </div>
+    </div>
+    
+    <button onclick="testToyotaDirectly()">Test Toyota Directly</button>
+    <button onclick="resetForm()">Reset Form</button>
+    
+    <div id="debug-output" class="debug"></div>
+    
+    <script>
+        let debugOutput = document.getElementById('debug-output');
+        
+        function log(message, isError = false) {
+            console.log(message);
+            debugOutput.innerHTML += `<div class="${isError ? 'error' : 'success'}">${new Date().toLocaleTimeString()}: ${message}</div>`;
+            debugOutput.scrollTop = debugOutput.scrollHeight;
+        }
+        
+        async function populateVehicleMakes() {
+            try {
+                log('🚗 Fetching vehicle makes...');
+                const response = await fetch('api/vehicle/makes');
+                log(`📡 Response status: ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const makes = await response.json();
+                log(`✅ Loaded ${makes.length} makes: ${makes.join(', ')}`);
+                
+                const select = document.getElementById('add-asset-make');
+                makes.forEach(make => {
+                    select.innerHTML += `<option value="${make}">${make}</option>`;
+                });
+                
+                log('✅ Makes populated in dropdown');
+                
+            } catch (error) {
+                log(`❌ Error loading makes: ${error.message}`, true);
+            }
+        }
+        
+        async function populateVehicleModels(make) {
+            try {
+                log(`🚗 populateVehicleModels called for make: ${make}`);
+                const url = `api/vehicle/models?make=${encodeURIComponent(make)}`;
+                log(`🔍 Fetching URL: ${url}`);
+                
+                const response = await fetch(url);
+                log(`📡 Response status: ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const models = await response.json();
+                log(`📋 Models received: ${JSON.stringify(models)}`);
+                
+                const modelSelect = document.getElementById('add-asset-model');
+                modelSelect.innerHTML = '<option value="">Select Model</option>';
+                models.forEach(model => {
+                    modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
+                });
+                
+                log(`✅ Successfully loaded ${models.length} models for ${make}`);
+                
+            } catch (error) {
+                log(`❌ Error loading models for ${make}: ${error.message}`, true);
+            }
+        }
+        
+        function setupVehicleSelectionHandlers() {
+            log('⚙️ Setting up vehicle selection handlers...');
+            
+            const addMakeSelect = document.getElementById('add-asset-make');
+            const addModelSelect = document.getElementById('add-asset-model');
+            
+            if (addMakeSelect.dataset.listenersAttached === 'true') {
+                log('⚠️ Listeners already attached, skipping...');
+                return;
+            }
+            
+            addMakeSelect.addEventListener('change', async function() {
+                const make = this.value;
+                log(`🚗 Make changed to: ${make}`);
+                if (make) {
+                    await populateVehicleModels(make);
+                    addModelSelect.value = '';
+                } else {
+                    addModelSelect.innerHTML = '<option value="">Select Model</option>';
+                    log('🗑️ Model select cleared');
+                }
+            });
+            
+            addMakeSelect.dataset.listenersAttached = 'true';
+            log('✅ Vehicle selection handlers attached');
+        }
+        
+        async function testToyotaDirectly() {
+            log('🎯 Testing Toyota directly...');
+            await populateVehicleModels('Toyota');
+        }
+        
+        function resetForm() {
+            document.getElementById('add-asset-make').value = '';
+            document.getElementById('add-asset-model').innerHTML = '<option value="">Select Model</option>';
+            document.getElementById('add-asset-year').innerHTML = '<option value="">Select Year</option>';
+            document.getElementById('add-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
+            debugOutput.innerHTML = '';
+            log('🔄 Form reset');
+        }
+        
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', async function() {
+            log('🚀 Page loaded, initializing...');
+            await populateVehicleMakes();
+            setupVehicleSelectionHandlers();
+            log('✅ Initialization complete');
+        });
+    </script>
+</body>
+</html>

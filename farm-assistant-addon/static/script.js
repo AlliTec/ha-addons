@@ -1530,7 +1530,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Initialize vehicle data for asset forms (delay to ensure DOM is ready)
     setTimeout(async () => {
         await populateVehicleMakes();
-        setupVehicleSelectionHandlers();
+        // Don't setup handlers here - they'll be setup when modal opens
+        console.log('🚗 Vehicle makes populated, handlers will be setup when modal opens');
     }, 100);
     
     // Set initial table width after data is loaded
@@ -1864,26 +1865,61 @@ async function populateVehicleMakes() {
 
 async function populateVehicleModels(make) {
     try {
-        const response = await fetch(`api/vehicle/models?make=${encodeURIComponent(make)}`);
-        if (!response.ok) throw new Error('Failed to fetch vehicle models');
+        console.log('🚗 populateVehicleModels called for make:', make);
+        const url = `api/vehicle/models?make=${encodeURIComponent(make)}`;
+        console.log('🔍 Fetching URL:', url);
+        
+        const response = await fetch(url);
+        console.log('📡 Response status:', response.status);
+        console.log('📡 Response headers:', Object.fromEntries(response.headers));
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('❌ Response error text:', errorText);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
         
         const models = await response.json();
+        console.log('📋 Models received:', models);
+        console.log('📊 Models count:', models.length);
         
         // Populate add form
         const addModelSelect = document.getElementById('add-asset-model');
-        addModelSelect.innerHTML = '<option value="">Select Model</option>';
-        models.forEach(model => {
-            addModelSelect.innerHTML += `<option value="${model}">${model}</option>`;
-        });
+        console.log('🎯 addModelSelect element found:', !!addModelSelect);
+        if (addModelSelect) {
+            addModelSelect.innerHTML = '<option value="">Select Model</option>';
+            models.forEach(model => {
+                addModelSelect.innerHTML += `<option value="${model}">${model}</option>`;
+            });
+            console.log('✅ Add form populated with models');
+        } else {
+            console.error('❌ addModelSelect element not found!');
+        }
         
         // Populate edit form
         const editModelSelect = document.getElementById('edit-asset-model');
-        editModelSelect.innerHTML = '<option value="">Select Model</option>';
-        models.forEach(model => {
-            editModelSelect.innerHTML += `<option value="${model}">${model}</option>`;
-        });
+        console.log('🎯 editModelSelect element found:', !!editModelSelect);
+        if (editModelSelect) {
+            editModelSelect.innerHTML = '<option value="">Select Model</option>';
+            models.forEach(model => {
+                editModelSelect.innerHTML += `<option value="${model}">${model}</option>`;
+            });
+            console.log('✅ Edit form populated with models');
+        } else {
+            console.error('❌ editModelSelect element not found!');
+        }
+        
+        console.log(`✅ Successfully populated ${models.length} models for ${make}: ${models.join(', ')}`);
+        
     } catch (error) {
-        console.error('Error populating vehicle models:', error);
+        console.error('❌ Error populating vehicle models:', error);
+        console.error('❌ Error stack:', error.stack);
+        
+        // Show user-friendly error
+        const addModelSelect = document.getElementById('add-asset-model');
+        if (addModelSelect) {
+            addModelSelect.innerHTML = '<option value="">Error loading models</option>';
+        }
     }
 }
 
@@ -2209,21 +2245,40 @@ function setupVehicleSelectionHandlers() {
     const addModelSelect = document.getElementById('add-asset-model');
     const addYearSelect = document.getElementById('add-asset-year');
     
+    // Remove existing event listeners to prevent duplicates
+    if (addMakeSelect.dataset.listenersAttached === 'true') {
+        return; // Already attached
+    }
+    
     addMakeSelect.addEventListener('change', async function() {
         const make = this.value;
+        console.log('🚗 Make changed to:', make);
+        console.log('🎯 addMakeSelect element:', !!addMakeSelect);
+        console.log('🎯 addModelSelect element:', !!addModelSelect);
+        
         if (make) {
-            await populateVehicleModels(make);
-            // Clear dependent fields
-            addModelSelect.value = '';
-            addYearSelect.value = '';
-            document.getElementById('add-asset-body-feature').value = '';
-            document.getElementById('add-asset-badge').value = '';
+            try {
+                console.log('🔄 Calling populateVehicleModels for:', make);
+                await populateVehicleModels(make);
+                console.log('✅ populateVehicleModels completed');
+                
+                // Clear dependent fields
+                addModelSelect.value = '';
+                addYearSelect.value = '';
+                document.getElementById('add-asset-body-feature').value = '';
+                document.getElementById('add-asset-badge').value = '';
+                console.log('🗑️ Dependent fields cleared');
+            } catch (error) {
+                console.error('❌ Error in make change handler:', error);
+                alert(`Error loading models for ${make}: ${error.message}`);
+            }
         } else {
             // Clear all dependent fields
             addModelSelect.innerHTML = '<option value="">Select Model</option>';
             addYearSelect.innerHTML = '<option value="">Select Year</option>';
             document.getElementById('add-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
             document.getElementById('add-asset-badge').innerHTML = '<option value="">Select Badge/Trim</option>';
+            console.log('🗑️ All fields cleared (no make selected)');
         }
     });
     
@@ -2333,9 +2388,14 @@ function setupVehicleSelectionHandlers() {
             document.getElementById('edit-asset-badge').innerHTML = '<option value="">Select Badge/Trim</option>';
         }
     });
+    
+    // Mark listeners as attached
+    addMakeSelect.dataset.listenersAttached = 'true';
 }
 
     async function openAddAssetForm() {
+        console.log('🚪 Opening add asset form...');
+        
         // Reset form
         document.getElementById('add-asset-form').reset();
         
@@ -2344,14 +2404,29 @@ function setupVehicleSelectionHandlers() {
         document.getElementById('add-asset-status').value = 'operational';
         document.getElementById('add-asset-usage-type').value = 'hours';
         
-        // Populate vehicle makes and setup handlers
-        await populateVehicleMakes();
-        setupVehicleSelectionHandlers();
-        
-        // Populate parent asset dropdown
-        await populateParentAssetDropdowns();
-        
+        // Show modal first
         document.getElementById('add-asset-modal').style.display = 'block';
+        console.log('📋 Modal displayed');
+        
+        // Wait a bit for DOM to be ready, then populate
+        setTimeout(async () => {
+            try {
+                // Populate vehicle makes
+                await populateVehicleMakes();
+                console.log('🚗 Vehicle makes populated');
+                
+                // Setup handlers AFTER modal is visible
+                setupVehicleSelectionHandlers();
+                console.log('⚙️ Vehicle selection handlers setup complete');
+                
+                // Populate parent asset dropdown
+                await populateParentAssetDropdowns();
+                console.log('👥 Parent asset dropdown populated');
+            } catch (error) {
+                console.error('❌ Error in openAddAssetForm:', error);
+                alert(`Error opening asset form: ${error.message}`);
+            }
+        }, 100);
     }
 
     async function enableAssetEditMode(assetId) {

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Toyota Models</title>
+</head>
+<body>
+    <h1>Test Toyota Models Population</h1>
+    
+    <label for="make-select">Make:</label>
+    <select id="make-select" onchange="testModels()">
+        <option value="">Select Make</option>
+    </select>
+    
+    <label for="model-select">Model:</label>
+    <select id="model-select">
+        <option value="">Select Model</option>
+    </select>
+    
+    <div id="debug-output"></div>
+    
+    <script>
+        async function populateMakes() {
+            try {
+                const response = await fetch('api/vehicle/makes');
+                const makes = await response.json();
+                const select = document.getElementById('make-select');
+                
+                makes.forEach(make => {
+                    select.innerHTML += `<option value="${make}">${make}</option>`;
+                });
+                
+                console.log('Makes loaded:', makes);
+            } catch (error) {
+                console.error('Error loading makes:', error);
+                document.getElementById('debug-output').innerHTML = `Error: ${error.message}`;
+            }
+        }
+        
+        async function testModels() {
+            const make = document.getElementById('make-select').value;
+            const modelSelect = document.getElementById('model-select');
+            const debugOutput = document.getElementById('debug-output');
+            
+            if (!make) {
+                modelSelect.innerHTML = '<option value="">Select Model</option>';
+                debugOutput.innerHTML = 'Please select a make first';
+                return;
+            }
+            
+            debugOutput.innerHTML = `Loading models for ${make}...`;
+            
+            try {
+                console.log(`Fetching models for make: ${make}`);
+                const response = await fetch(`api/vehicle/models?make=${encodeURIComponent(make)}`);
+                console.log(`Response status: ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const models = await response.json();
+                console.log(`Models received:`, models);
+                
+                modelSelect.innerHTML = '<option value="">Select Model</option>';
+                models.forEach(model => {
+                    modelSelect.innerHTML += `<option value="${model}">${model}</option>`;
+                });
+                
+                debugOutput.innerHTML = `Loaded ${models.length} models for ${make}: ${models.join(', ')}`;
+                
+            } catch (error) {
+                console.error('Error loading models:', error);
+                debugOutput.innerHTML = `Error loading models for ${make}: ${error.message}`;
+            }
+        }
+        
+        // Initialize makes on page load
+        populateMakes();
+    </script>
+</body>
+</html>

@@ -1,1 +1,9 @@
-ERROR:    Error loading ASGI app. Could not import module "main".
+2025-11-17 11:01:38,089 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [159050]
+INFO:     Waiting for application startup.
+2025-11-17 11:01:38,131 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-17 11:01:38,189 - INFO - Database connection successful.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:48974 - "GET /api/vehicle/models?make=Toyota HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46376 - "GET /api/vehicle/models?make=Toyota HTTP/1.1" 200 OK
