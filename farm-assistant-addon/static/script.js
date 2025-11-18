@@ -1791,6 +1791,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <tr><td class="property-cell">Category:</td><td>${formatCell(asset.category)}</td></tr>
                     <tr><td class="property-cell">Make:</td><td>${formatCell(asset.make)}</td></tr>
                     <tr><td class="property-cell">Model:</td><td>${formatCell(asset.model)}</td></tr>
+                    <tr><td class="property-cell">Year:</td><td>${formatCell(asset.year)}</td></tr>
                     <tr><td class="property-cell">Serial Number:</td><td>${formatCell(asset.serial_number)}</td></tr>
                     <tr><td class="property-cell">Location:</td><td>${formatCell(asset.location)}</td></tr>
                     <tr><td class="property-cell">Status:</td><td>${getAssetStatusIcon(asset.status)}</td></tr>

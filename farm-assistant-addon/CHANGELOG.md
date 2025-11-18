@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.12 - 2025-11-18
+
+### Enhanced Asset Details Modal
+- **Added Year Field**: Year now displays below Make and Model in asset details modal
+- **Improved Information Layout**: Asset manufacturing year is now prominently displayed for better vehicle identification
+- **User Experience Enhancement**: Year field provides complete vehicle specification overview in details view
+- **Modal Structure Update**: Added year row to details table in correct position after Model field
+
 ## 1.11.11 - 2025-11-17
 
 ### Fixed Volkswagen Amarok VIN Identification
