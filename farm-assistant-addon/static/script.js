@@ -3816,6 +3816,8 @@ function setupVehicleSelectionHandlers() {
                     } else {
                         console.log('Refreshing asset list and current asset details');
                         await populateAssetList();
+                        // Add small delay to ensure database changes are committed
+                        await new Promise(resolve => setTimeout(resolve, 100));
                         await showAssetDetails(assetId);
                         console.log('Asset list and details refreshed');
                     }

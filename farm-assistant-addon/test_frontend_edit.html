@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Edit Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        #results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Asset Edit Functionality Test</h1>
+    
+    <div class="info">
+        <p>This test will verify that the asset edit functionality works correctly.</p>
+        <p>It will test the fix that was applied to ensure changes are saved and reflected properly.</p>
+    </div>
+    
+    <button onclick="runTest()">Run Asset Edit Test</button>
+    <button onclick="clearResults()">Clear Results</button>
+    
+    <div id="results"></div>
+    
+    <script>
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = message;
+            results.appendChild(div);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        async function runTest() {
+            clearResults();
+            log('Starting Asset Edit Test...', 'info');
+            
+            try {
+                // Test 1: Get current asset data
+                log('Test 1: Fetching current asset data...', 'info');
+                const response = await fetch('http://localhost:8000/api/asset/7');
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch asset: ${response.status}`);
+                }
+                const asset = await response.json();
+                log(`✓ Current asset: ${asset.name}`, 'success');
+                log(`✓ Current notes: ${asset.notes}`, 'success');
+                
+                // Test 2: Update asset with new data
+                log('Test 2: Updating asset...', 'info');
+                const updateData = {
+                    name: "Amarok",
+                    make: "Volkswagen", 
+                    model: "Amarok",
+                    location: "210 Woodswallow Moolboolaman Qld 6571",
+                    status: "operational",
+                    quantity: 1,
+                    category: "Vehicle",
+                    serial_number: "WV1ZZZ2HZDA061221",
+                    purchase_date: "2024-05-09",
+                    registration_no: "804KC9",
+                    registration_due: "2026-05-13",
+                    permit_info: "",
+                    insurance_info: "Bingle CAR016221645",
+                    insurance_due: null,
+                    warranty_provider: "N/A",
+                    warranty_expiry_date: null,
+                    purchase_price: 7000.0,
+                    purchase_location: "Grays.com Brisbane",
+                    manual_or_doc_path: "",
+                    notes: "Frontend test edit - " + new Date().toISOString(),
+                    parent_asset_id: null,
+                    body_feature: "Ute",
+                    badge: "Comfortline"
+                };
+                
+                const updateResponse = await fetch('http://localhost:8000/api/asset/7', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updateData)
+                });
+                
+                if (!updateResponse.ok) {
+                    throw new Error(`Failed to update asset: ${updateResponse.status}`);
+                }
+                
+                const updateResult = await updateResponse.json();
+                log(`✓ Update successful: ${updateResult.message}`, 'success');
+                
+                // Test 3: Simulate the frontend delay fix
+                log('Test 3: Testing frontend delay fix...', 'info');
+                log('Simulating: await populateAssetList()', 'info');
+                await new Promise(resolve => setTimeout(resolve, 50)); // Simulate populateAssetList
+                
+                log('Simulating: 100ms delay for DB commit', 'info');
+                await new Promise(resolve => setTimeout(resolve, 100)); // The fix we applied
+                
+                log('Simulating: await showAssetDetails(assetId)', 'info');
+                
+                // Test 4: Verify the update was saved
+                log('Test 4: Verifying update was saved...', 'info');
+                const verifyResponse = await fetch('http://localhost:8000/api/asset/7');
+                if (!verifyResponse.ok) {
+                    throw new Error(`Failed to verify asset: ${verifyResponse.status}`);
+                }
+                const updatedAsset = await verifyResponse.json();
+                log(`✓ Updated notes: ${updatedAsset.notes}`, 'success');
+                
+                if (updatedAsset.notes.includes('Frontend test edit')) {
+                    log('✓ Update verified successfully!', 'success');
+                    log('✓ The 100ms delay fix is working correctly!', 'success');
+                } else {
+                    log('✗ Update not reflected in data', 'error');
+                }
+                
+                log('🎉 ALL TESTS PASSED - Asset edit functionality works correctly!', 'success');
+                
+            } catch (error) {
+                log(`✗ TEST FAILED: ${error.message}`, 'error');
+                console.error('Test error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

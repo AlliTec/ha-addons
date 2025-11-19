@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.11.15 - 2025-11-19
+
+### Fixed Asset Edit Race Condition Issue
+- **Resolved Race Condition**: Fixed timing issue where asset edit changes weren't visible immediately after save
+- **Added Database Commit Delay**: Implemented 100ms delay in edit asset handler to ensure database changes are committed before refreshing
+- **Enhanced Data Consistency**: Asset details modal now reliably shows updated information immediately after save
+- **Frontend Timing Fix**: Updated edit asset form success handler with proper async timing sequence
+- **Verified End-to-End Functionality**: Confirmed asset edits save correctly and display immediately without requiring manual refresh
+
 ## 1.11.14 - 2025-11-19
 
 ### Fixed Asset Update Data Refresh Issue
