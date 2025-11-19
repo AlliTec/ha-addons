@@ -1738,6 +1738,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function showAssetDetails(assetId, returnToParentId = null) {
+        console.log(`showAssetDetails called with assetId: ${assetId}, returnToParentId: ${returnToParentId}`);
         try {
             const response = await fetch(`api/asset/${assetId}`);
             if (!response.ok) throw new Error('Failed to fetch asset details');
@@ -1835,6 +1836,81 @@ document.addEventListener("DOMContentLoaded", async () => {
             
         } catch (error) {
             console.error('Error showing asset details:', error);
+        }
+    }
+
+    // Asset class selection functions
+    function handleAssetClassChange(formType) {
+        const classSelect = document.getElementById(`${formType}-asset-class`);
+        const makeSelect = document.getElementById(`${formType}-asset-make`);
+        const modelSelect = document.getElementById(`${formType}-asset-model`);
+        const yearSelect = document.getElementById(`${formType}-asset-year`);
+        const bodySelect = document.getElementById(`${formType}-asset-body-feature`);
+        const badgeSelect = document.getElementById(`${formType}-asset-badge`);
+        const vinField = document.getElementById(`${formType}-asset-serial`);
+        const vinButton = document.getElementById(`${formType}-asset-vin-lookup`);
+        
+        const selectedClass = classSelect.value;
+        
+        // Show/hide vehicle-specific fields based on asset class
+        if (selectedClass === 'Vehicle') {
+            // Show vehicle-specific fields
+            makeSelect.style.display = 'block';
+            modelSelect.style.display = 'block';
+            yearSelect.style.display = 'block';
+            bodySelect.style.display = 'block';
+            badgeSelect.style.display = 'block';
+            vinField.placeholder = 'Enter VIN or serial number';
+            if (vinButton) vinButton.style.display = 'inline-block';
+            
+            // Populate with vehicle data
+            populateVehicleMakes();
+        } else if (selectedClass === 'Machinery') {
+            // Show machinery-specific fields
+            makeSelect.style.display = 'block';
+            modelSelect.style.display = 'block';
+            yearSelect.style.display = 'block';
+            bodySelect.style.display = 'block';
+            badgeSelect.style.display = 'block';
+            vinField.placeholder = 'Enter serial number';
+            if (vinButton) vinButton.style.display = 'none';
+            
+            // Populate with machinery data
+            populateMachineryMakes();
+        } else {
+            // Hide vehicle-specific fields for other classes
+            makeSelect.style.display = 'none';
+            modelSelect.style.display = 'none';
+            yearSelect.style.display = 'none';
+            bodySelect.style.display = 'none';
+            badgeSelect.style.display = 'none';
+            vinField.placeholder = 'Enter serial number';
+            if (vinButton) vinButton.style.display = 'none';
+        }
+    }
+    
+    async function populateMachineryMakes() {
+        try {
+            const response = await fetch('api/vehicle/makes?category=Machinery');
+            if (!response.ok) throw new Error('Failed to fetch machinery makes');
+            
+            const makes = await response.json();
+            
+            // Populate add form
+            const addMakeSelect = document.getElementById('add-asset-make');
+            addMakeSelect.innerHTML = '<option value="">Select Make</option>';
+            makes.forEach(make => {
+                addMakeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+            });
+            
+            // Populate edit form
+            const editMakeSelect = document.getElementById('edit-asset-make');
+            editMakeSelect.innerHTML = '<option value="">Select Make</option>';
+            makes.forEach(make => {
+                editMakeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+            });
+        } catch (error) {
+            console.error('Error populating machinery makes:', error);
         }
     }
 
@@ -2412,6 +2488,10 @@ function setupVehicleSelectionHandlers() {
         // Wait a bit for DOM to be ready, then populate
         setTimeout(async () => {
             try {
+                // Setup asset class change handler
+                const addClassSelect = document.getElementById('add-asset-class');
+                addClassSelect.addEventListener('change', () => handleAssetClassChange('add'));
+                
                 // Populate vehicle makes
                 await populateVehicleMakes();
                 console.log('🚗 Vehicle makes populated');
@@ -2437,6 +2517,10 @@ function setupVehicleSelectionHandlers() {
             
             const asset = await response.json();
             
+            // Setup asset class change handler
+            const editClassSelect = document.getElementById('edit-asset-class');
+            editClassSelect.addEventListener('change', () => handleAssetClassChange('edit'));
+            
             // Populate vehicle makes and setup handlers first
             await populateVehicleMakes();
             setupVehicleSelectionHandlers();
@@ -2448,6 +2532,7 @@ function setupVehicleSelectionHandlers() {
             document.getElementById('edit-asset-id').value = asset.id;
             
             // Basic Information
+            document.getElementById('edit-asset-class').value = asset.asset_class || 'Vehicle';
             document.getElementById('edit-asset-name').value = asset.name || '';
             document.getElementById('edit-asset-category').value = asset.category || '';
             document.getElementById('edit-asset-make').value = asset.make || '';
@@ -2456,6 +2541,9 @@ function setupVehicleSelectionHandlers() {
             document.getElementById('edit-asset-body-feature').value = asset.body_feature || '';
             document.getElementById('edit-asset-badge').value = asset.badge || '';
             document.getElementById('edit-asset-serial').value = asset.serial_number || '';
+            
+            // Handle asset class change to show/hide appropriate fields
+            await handleAssetClassChange('edit');
             
             // Populate vehicle dependent dropdowns if make is selected
             if (asset.make) {
@@ -3425,6 +3513,7 @@ function setupVehicleSelectionHandlers() {
             
             const assetData = {
                 // Basic Information
+                asset_class: formData.get('asset_class'),
                 name: formData.get('name'),
                 category: formData.get('category'),
                 make: formData.get('make'),
@@ -3651,10 +3740,12 @@ function setupVehicleSelectionHandlers() {
             
             const assetId = document.getElementById('edit-asset-id').value;
             const formData = new FormData(event.target);
-console.log('Edit asset form submitted. Asset ID:', assetId, 'Form data:', Object.fromEntries(formData));
+            console.log('Edit asset form submitted. Asset ID:', assetId, 'Form data:', Object.fromEntries(formData));
+            console.log('About to send PUT request to api/asset/' + assetId);
             
             const assetData = {
                 // Basic Information
+                asset_class: formData.get('asset_class'),
                 name: formData.get('name'),
                 category: formData.get('category'),
                 make: formData.get('make'),
@@ -3699,6 +3790,7 @@ console.log('Edit asset form submitted. Asset ID:', assetId, 'Form data:', Objec
             };
             
             try {
+                console.log('Sending PUT request to api/asset/' + assetId);
                 const response = await fetch(`api/asset/${assetId}`, {
                     method: 'PUT',
                     headers: {
@@ -3707,7 +3799,10 @@ console.log('Edit asset form submitted. Asset ID:', assetId, 'Form data:', Objec
                     body: JSON.stringify(assetData),
                 });
                 
+                console.log('Response status:', response.status, 'Response ok:', response.ok);
                 if (response.ok) {
+                    const responseText = await response.text();
+                    console.log('Update successful, response:', responseText);
                     alert('Asset updated successfully!');
                     document.getElementById('edit-asset-modal').style.display = 'none';
                     
@@ -3716,9 +3811,13 @@ console.log('Edit asset form submitted. Asset ID:', assetId, 'Form data:', Objec
                     if (detailsModal.dataset.returnToParent) {
                         const returnToParentId = detailsModal.dataset.returnToParent;
                         delete detailsModal.dataset.returnToParent;
+                        console.log('Returning to parent asset:', returnToParentId);
                         showAssetDetails(returnToParentId);
                     } else {
-                        populateAssetList();
+                        console.log('Refreshing asset list and current asset details');
+                        await populateAssetList();
+                        await showAssetDetails(assetId);
+                        console.log('Asset list and details refreshed');
                     }
                 } else {
                     const errorText = await response.text();

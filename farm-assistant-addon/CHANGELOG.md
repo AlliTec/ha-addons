@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.11.14 - 2025-11-19
+
+### Fixed Asset Update Data Refresh Issue
+- **Resolved Asset Update Problem**: Fixed issue where asset changes appeared to save but weren't visible when reopening asset details
+- **Enhanced Data Refresh**: Asset details modal now refreshes automatically after successful updates
+- **Improved User Experience**: Users can now immediately see their changes after saving asset modifications
+- **Frontend Logic Fix**: Updated asset update handler to refresh both asset list and current asset details
+- **Verified Functionality**: Confirmed asset updates persist correctly and display immediately after save
+
+## 1.11.13 - 2025-11-19
+
+### Asset Update Debugging Enhancement
+- **Added Comprehensive Logging**: Enhanced debugging for asset update functionality with detailed console logs
+- **Backend Request Tracking**: Added logging for asset ID, received data, update success, and error conditions
+- **Frontend Debug Support**: Added console logging for form submission, request sending, and response handling
+- **Version Bump for Cache Refresh**: Updated version to force browser cache refresh for debugging
+- **Troubleshooting Preparation**: Enhanced logging system to identify asset update issues quickly
+
 ## 1.11.12 - 2025-11-18
 
 ### Enhanced Asset Details Modal

@@ -168,6 +168,9 @@ class VINDecoder:
         # Extract year - position 10
         year_char = vin[9]
         
+        # Initialize year variable
+        year = None
+        
         # Special handling for Australian Fords (6FP) and Toyota (JTG)
         if wmi == '6FP':
             # Australian Fords have different year coding than standard
