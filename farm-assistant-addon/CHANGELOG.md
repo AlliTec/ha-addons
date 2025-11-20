@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.11.17 - 2025-11-20
+
+### Emergency Fix: Restored Broken Edit Asset Functionality
+- **CRITICAL FIX**: Restored edit asset functionality that was broken during asset class removal
+- **Root Cause**: JavaScript function calls to removed asset class elements caused edit failures
+- **Solution Implemented**: Replaced handleAssetClassChange with handleCategoryChange function
+- **Updated Event Listeners**: Modified add and edit form event listeners to use category field
+- **Function Refactoring**: Updated field visibility logic to work with category instead of asset class
+- **Verified Functionality**: Confirmed edit asset functionality works correctly via end-to-end testing
+- **No Regressions**: All other features continue to work as expected
+
 ## 1.11.16 - 2025-11-20
 
 ### Removed Redundant Asset Class Field

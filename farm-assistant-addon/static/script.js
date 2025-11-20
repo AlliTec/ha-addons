@@ -1839,9 +1839,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // Asset class selection functions
-    function handleAssetClassChange(formType) {
-        const classSelect = document.getElementById(`${formType}-asset-class`);
+    // Asset category selection functions
+    function handleCategoryChange(formType) {
+        const categorySelect = document.getElementById(`${formType}-asset-category`);
         const makeSelect = document.getElementById(`${formType}-asset-make`);
         const modelSelect = document.getElementById(`${formType}-asset-model`);
         const yearSelect = document.getElementById(`${formType}-asset-year`);
@@ -1850,10 +1850,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const vinField = document.getElementById(`${formType}-asset-serial`);
         const vinButton = document.getElementById(`${formType}-asset-vin-lookup`);
         
-        const selectedClass = classSelect.value;
+        const selectedCategory = categorySelect.value;
         
-        // Show/hide vehicle-specific fields based on asset class
-        if (selectedClass === 'Vehicle') {
+        // Show/hide vehicle-specific fields based on asset category
+        if (selectedCategory === 'Vehicle') {
             // Show vehicle-specific fields
             makeSelect.style.display = 'block';
             modelSelect.style.display = 'block';
@@ -2488,9 +2488,9 @@ function setupVehicleSelectionHandlers() {
         // Wait a bit for DOM to be ready, then populate
         setTimeout(async () => {
             try {
-                // Setup asset class change handler
-                const addClassSelect = document.getElementById('add-asset-class');
-                addClassSelect.addEventListener('change', () => handleAssetClassChange('add'));
+                // Setup asset category change handler
+                const addCategorySelect = document.getElementById('add-asset-category');
+                addCategorySelect.addEventListener('change', () => handleCategoryChange('add'));
                 
                 // Populate vehicle makes
                 await populateVehicleMakes();
@@ -2518,8 +2518,8 @@ function setupVehicleSelectionHandlers() {
             const asset = await response.json();
             
             // Setup asset class change handler
-            const editClassSelect = document.getElementById('edit-asset-class');
-            editClassSelect.addEventListener('change', () => handleAssetClassChange('edit'));
+            const editCategorySelect = document.getElementById('edit-asset-category');
+            editCategorySelect.addEventListener('change', () => handleCategoryChange('edit'));
             
             // Populate vehicle makes and setup handlers first
             await populateVehicleMakes();
@@ -2542,8 +2542,8 @@ function setupVehicleSelectionHandlers() {
             document.getElementById('edit-asset-badge').value = asset.badge || '';
             document.getElementById('edit-asset-serial').value = asset.serial_number || '';
             
-            // Handle asset class change to show/hide appropriate fields
-            await handleAssetClassChange('edit');
+            // Handle category change to show/hide appropriate fields
+            await handleCategoryChange('edit');
             
             // Populate vehicle dependent dropdowns if make is selected
             if (asset.make) {
