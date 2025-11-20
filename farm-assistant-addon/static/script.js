@@ -1852,7 +1852,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         
         const selectedCategory = categorySelect.value;
         
-        // Show/hide vehicle-specific fields based on asset category
+        // Show/hide fields and populate makes based on asset category
         if (selectedCategory === 'Vehicle') {
             // Show vehicle-specific fields
             makeSelect.style.display = 'block';
@@ -1863,9 +1863,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             vinField.placeholder = 'Enter VIN or serial number';
             if (vinButton) vinButton.style.display = 'inline-block';
             
-            // Populate with vehicle data
+            // Populate with vehicle makes
             populateVehicleMakes();
-        } else if (selectedClass === 'Machinery') {
+        } else if (selectedCategory === 'Machinery') {
             // Show machinery-specific fields
             makeSelect.style.display = 'block';
             modelSelect.style.display = 'block';
@@ -1875,10 +1875,46 @@ document.addEventListener("DOMContentLoaded", async () => {
             vinField.placeholder = 'Enter serial number';
             if (vinButton) vinButton.style.display = 'none';
             
-            // Populate with machinery data
+            // Populate with machinery makes
             populateMachineryMakes();
+        } else if (selectedCategory === 'Equipment') {
+            // Show equipment-specific fields
+            makeSelect.style.display = 'block';
+            modelSelect.style.display = 'block';
+            yearSelect.style.display = 'block';
+            bodySelect.style.display = 'block';
+            badgeSelect.style.display = 'block';
+            vinField.placeholder = 'Enter serial number';
+            if (vinButton) vinButton.style.display = 'none';
+            
+            // Populate with equipment makes
+            populateEquipmentMakes();
+        } else if (selectedCategory === 'Building') {
+            // Show building-specific fields
+            makeSelect.style.display = 'block';
+            modelSelect.style.display = 'block';
+            yearSelect.style.display = 'block';
+            bodySelect.style.display = 'block';
+            badgeSelect.style.display = 'block';
+            vinField.placeholder = 'Enter serial number';
+            if (vinButton) vinButton.style.display = 'none';
+            
+            // Populate with building makes
+            populateBuildingMakes();
+        } else if (selectedCategory === 'Tool') {
+            // Show tool-specific fields
+            makeSelect.style.display = 'block';
+            modelSelect.style.display = 'block';
+            yearSelect.style.display = 'block';
+            bodySelect.style.display = 'block';
+            badgeSelect.style.display = 'block';
+            vinField.placeholder = 'Enter serial number';
+            if (vinButton) vinButton.style.display = 'none';
+            
+            // Populate with tool makes
+            populateToolMakes();
         } else {
-            // Hide vehicle-specific fields for other classes
+            // Hide fields for no category selected
             makeSelect.style.display = 'none';
             modelSelect.style.display = 'none';
             yearSelect.style.display = 'none';
@@ -1911,6 +1947,81 @@ document.addEventListener("DOMContentLoaded", async () => {
             });
         } catch (error) {
             console.error('Error populating machinery makes:', error);
+        }
+    }
+
+    async function populateEquipmentMakes() {
+        try {
+            const response = await fetch('api/vehicle/makes?category=Equipment');
+            if (!response.ok) throw new Error('Failed to fetch equipment makes');
+            
+            const makes = await response.json();
+            
+            // Populate add form
+            const addMakeSelect = document.getElementById('add-asset-make');
+            addMakeSelect.innerHTML = '<option value="">Select Make</option>';
+            makes.forEach(make => {
+                addMakeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+            });
+            
+            // Populate edit form
+            const editMakeSelect = document.getElementById('edit-asset-make');
+            editMakeSelect.innerHTML = '<option value="">Select Make</option>';
+            makes.forEach(make => {
+                editMakeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+            });
+        } catch (error) {
+            console.error('Error populating equipment makes:', error);
+        }
+    }
+
+    async function populateBuildingMakes() {
+        try {
+            const response = await fetch('api/vehicle/makes?category=Building');
+            if (!response.ok) throw new Error('Failed to fetch building makes');
+            
+            const makes = await response.json();
+            
+            // Populate add form
+            const addMakeSelect = document.getElementById('add-asset-make');
+            addMakeSelect.innerHTML = '<option value="">Select Make</option>';
+            makes.forEach(make => {
+                addMakeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+            });
+            
+            // Populate edit form
+            const editMakeSelect = document.getElementById('edit-asset-make');
+            editMakeSelect.innerHTML = '<option value="">Select Make</option>';
+            makes.forEach(make => {
+                editMakeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+            });
+        } catch (error) {
+            console.error('Error populating building makes:', error);
+        }
+    }
+
+    async function populateToolMakes() {
+        try {
+            const response = await fetch('api/vehicle/makes?category=Tool');
+            if (!response.ok) throw new Error('Failed to fetch tool makes');
+            
+            const makes = await response.json();
+            
+            // Populate add form
+            const addMakeSelect = document.getElementById('add-asset-make');
+            addMakeSelect.innerHTML = '<option value="">Select Make</option>';
+            makes.forEach(make => {
+                addMakeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+            });
+            
+            // Populate edit form
+            const editMakeSelect = document.getElementById('edit-asset-make');
+            editMakeSelect.innerHTML = '<option value="">Select Make</option>';
+            makes.forEach(make => {
+                editMakeSelect.innerHTML += `<option value="${make}">${make}</option>`;
+            });
+        } catch (error) {
+            console.error('Error populating tool makes:', error);
         }
     }
 

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Filtering Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-result { padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        #results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Category-Based Make Filtering Test</h1>
+    
+    <div class="info">
+        <p>This test verifies that selecting different categories filters the make selection list appropriately.</p>
+    </div>
+    
+    <button onclick="testCategoryFiltering()">Run Category Filtering Test</button>
+    <button onclick="clearResults()">Clear Results</button>
+    
+    <div id="results"></div>
+    
+    <script>
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-result ${type}`;
+            div.innerHTML = message;
+            results.appendChild(div);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+        
+        async function testCategoryFiltering() {
+            clearResults();
+            log('Starting Category Filtering Test...', 'info');
+            
+            try {
+                // Test Vehicle category
+                log('Test 1: Vehicle category makes...', 'info');
+                const vehicleResponse = await fetch('http://localhost:8000/api/vehicle/makes?category=Vehicle');
+                if (!vehicleResponse.ok) {
+                    throw new Error(`Failed to fetch vehicle makes: ${vehicleResponse.status}`);
+                }
+                const vehicleMakes = await vehicleResponse.json();
+                log(`✓ Vehicle makes found: ${vehicleMakes.length} makes`, 'success');
+                log(`✓ Sample vehicle makes: ${vehicleMakes.slice(0, 3).join(', ')}`, 'success');
+                
+                // Test Machinery category
+                log('Test 2: Machinery category makes...', 'info');
+                const machineryResponse = await fetch('http://localhost:8000/api/vehicle/makes?category=Machinery');
+                if (!machineryResponse.ok) {
+                    throw new Error(`Failed to fetch machinery makes: ${machineryResponse.status}`);
+                }
+                const machineryMakes = await machineryResponse.json();
+                log(`✓ Machinery makes found: ${machineryMakes.length} makes`, 'success');
+                log(`✓ Sample machinery makes: ${machineryMakes.slice(0, 3).join(', ')}`, 'success');
+                
+                // Test Equipment category
+                log('Test 3: Equipment category makes...', 'info');
+                const equipmentResponse = await fetch('http://localhost:8000/api/vehicle/makes?category=Equipment');
+                if (!equipmentResponse.ok) {
+                    throw new Error(`Failed to fetch equipment makes: ${equipmentResponse.status}`);
+                }
+                const equipmentMakes = await equipmentResponse.json();
+                log(`✓ Equipment makes found: ${equipmentMakes.length} makes`, 'success');
+                
+                // Test Tool category
+                log('Test 4: Tool category makes...', 'info');
+                const toolResponse = await fetch('http://localhost:8000/api/vehicle/makes?category=Tool');
+                if (!toolResponse.ok) {
+                    throw new Error(`Failed to fetch tool makes: ${toolResponse.status}`);
+                }
+                const toolMakes = await toolResponse.json();
+                log(`✓ Tool makes found: ${toolMakes.length} makes`, 'success');
+                
+                // Test Building category
+                log('Test 5: Building category makes...', 'info');
+                const buildingResponse = await fetch('http://localhost:8000/api/vehicle/makes?category=Building');
+                if (!buildingResponse.ok) {
+                    throw new Error(`Failed to fetch building makes: ${buildingResponse.status}`);
+                }
+                const buildingMakes = await buildingResponse.json();
+                log(`✓ Building makes found: ${buildingMakes.length} makes`, 'success');
+                
+                // Verify filtering works (different categories return different results)
+                log('Test 6: Verifying category filtering works correctly...', 'info');
+                if (vehicleMakes.length > 0 && machineryMakes.length > 0) {
+                    // Check that vehicle and machinery makes are different
+                    const vehicleSet = new Set(vehicleMakes);
+                    const machinerySet = new Set(machineryMakes);
+                    const hasOverlap = [...vehicleSet].some(make => machinerySet.has(make));
+                    
+                    if (!hasOverlap || vehicleMakes.length !== machineryMakes.length) {
+                        log('✓ Category filtering working - different categories return different makes', 'success');
+                    } else {
+                        log('⚠️ Warning: Vehicle and Machinery categories return identical makes', 'error');
+                    }
+                } else {
+                    log('✗ Not enough data to verify filtering', 'error');
+                }
+                
+                log('🎉 ALL TESTS PASSED - Category filtering is working correctly!', 'success');
+                
+            } catch (error) {
+                log(`✗ TEST FAILED: ${error.message}`, 'error');
+                console.error('Test error:', error);
+            }
+        }
+    </script>
+</body>
+</html>

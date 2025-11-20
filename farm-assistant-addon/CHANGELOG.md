@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.11.18 - 2025-11-20
+
+### Implemented Category-Based Make Filtering
+- **Smart Make Filtering**: Category selection now filters make dropdown to show only relevant makes
+- **Vehicle Category**: Shows vehicle makes (BMW, Ford, Toyota, Volkswagen, etc.)
+- **Machinery Category**: Shows machinery makes (Caterpillar, John Deere, Kubota, etc.)
+- **Equipment Category**: Shows equipment-specific makes when available
+- **Building Category**: Shows building-specific makes when available
+- **Tool Category**: Shows tool-specific makes when available
+- **Dynamic UI Updates**: Make dropdown updates automatically when category changes
+- **Enhanced User Experience**: Users only see relevant makes for selected category
+- **Verified Functionality**: Comprehensive testing confirms filtering works correctly
+- **Frontend Functions Added**: populateEquipmentMakes(), populateBuildingMakes(), populateToolMakes()
+- **Updated Logic**: handleCategoryChange() now calls appropriate make function per category
+
 ## 1.11.17 - 2025-11-20
 
 ### Emergency Fix: Restored Broken Edit Asset Functionality

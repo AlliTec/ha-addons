@@ -1,13 +1,18 @@
-2025-11-20 12:22:35,814 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
-INFO:     Started server process [338673]
+2025-11-20 12:32:50,176 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [339460]
 INFO:     Waiting for application startup.
-2025-11-20 12:22:35,895 - INFO - Attempting to connect to the database at 192.168.1.130...
-2025-11-20 12:22:35,984 - INFO - Database connection successful.
+2025-11-20 12:32:50,238 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-20 12:32:50,293 - INFO - Database connection successful.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:33006 - "GET /api/assets HTTP/1.1" 200 OK
-INFO:     127.0.0.1:38432 - "GET /api/asset/7 HTTP/1.1" 200 OK
-2025-11-20 12:22:56,283 - INFO - Updating asset 7 with data: name='Amarok' category='Vehicle' make='Volkswagen' model='Amarok' year=None body_feature='Ute' badge='Comfortline' serial_number='WV1ZZZ2HZDA061221' quantity=1 status='operational' location='210 Woodswallow Moolboolaman Qld 6571' parent_asset_id=None purchase_date='2024-05-09' purchase_price=7000.0 purchase_location='Grays.com Brisbane' warranty_provider='N/A' warranty_expiry_date=None registration_no='804KC9' registration_due='2026-05-13' insurance_info='Bingle CAR016221645' insurance_due=None permit_info='' manual_or_doc_path='' notes='Emergency fix test - edit functionality working' usage_type=None usage_value=None usage_notes=None
-2025-11-20 12:22:56,376 - INFO - Successfully updated asset 7 in database
-INFO:     127.0.0.1:39324 - "PUT /api/asset/7 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:39328 - "GET /api/asset/7 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44124 - "GET /api/vehicle/makes?category=Vehicle HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44126 - "GET /api/vehicle/makes?category=Equipment HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46226 - "GET /api/vehicle/makes?category=Machinery HTTP/1.1" 200 OK
+INFO:     127.0.0.1:46238 - "GET /api/vehicle/makes?category=Tool HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41204 - "GET /api/vehicle/makes?category=Building HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35814 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59736 - "GET /api/vehicle/makes?category=Vehicle HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59736 - "GET /api/vehicle/makes?category=Machinery HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59736 - "GET /api/vehicle/makes?category=Equipment HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59736 - "GET /api/vehicle/makes?category=Tool HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59736 - "GET /api/vehicle/makes?category=Building HTTP/1.1" 200 OK
