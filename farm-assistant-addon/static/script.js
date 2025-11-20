@@ -2028,7 +2028,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Vehicle selection functions
 async function populateVehicleMakes() {
     try {
-        const response = await fetch('api/vehicle/makes');
+        const response = await fetch('api/vehicle/makes?category=Vehicle');
         if (!response.ok) throw new Error('Failed to fetch vehicle makes');
         
         const makes = await response.json();

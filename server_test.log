@@ -1,1 +1,1 @@
-ERROR:    Error loading ASGI app. Could not import module "main".
+2025-11-20 13:05:40,002 - ERROR - Configuration file not found at /data/options.json. Please configure the addon and start it again.

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VIN Lookup Integration Test</title>
+</head>
+<body>
+    <h2>VIN Lookup Integration Test</h2>
+    
+    <div>
+        <label for="category">Category:</label>
+        <select id="category">
+            <option value="">Select Category</option>
+            <option value="Vehicle">Vehicle</option>
+            <option value="Machinery">Machinery</option>
+        </select>
+        <button onclick="testCategoryChange()">Test Category Change</button>
+    </div>
+    
+    <div>
+        <label for="make">Make:</label>
+        <select id="make">
+            <option value="">Select Make</option>
+        </select>
+    </div>
+    
+    <div>
+        <label for="vin">VIN:</label>
+        <input type="text" id="vin" value="1HGCM82633A004352" placeholder="Enter VIN">
+        <button onclick="testVINLookup()">Test VIN Lookup</button>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script>
+        async function testCategoryChange() {
+            const category = document.getElementById('category').value;
+            const makeSelect = document.getElementById('make');
+            const results = document.getElementById('results');
+            
+            if (!category) {
+                results.innerHTML = '<p style="color: gray;">Please select a category</p>';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:8000/api/vehicle/makes?category=${category}`);
+                if (!response.ok) throw new Error(`Failed to fetch makes: ${response.status}`);
+                
+                const makes = await response.json();
+                
+                // Clear and populate makes dropdown
+                makeSelect.innerHTML = '<option value="">Select Make</option>';
+                makes.forEach(make => {
+                    const option = document.createElement('option');
+                    option.value = make;
+                    option.textContent = make;
+                    makeSelect.appendChild(option);
+                });
+                
+                results.innerHTML = `<p style="color: green;">✅ Category ${category} loaded with ${makes.length} makes</p>`;
+                
+            } catch (error) {
+                results.innerHTML = `<p style="color: red;">❌ Category change failed: ${error.message}</p>`;
+            }
+        }
+        
+        async function testVINLookup() {
+            const vin = document.getElementById('vin').value;
+            const category = document.getElementById('category').value;
+            const results = document.getElementById('results');
+            
+            if (!category || category !== 'Vehicle') {
+                results.innerHTML = '<p style="color: red;">❌ VIN lookup only works with Vehicle category</p>';
+                return;
+            }
+            
+            if (!vin || vin.length < 17) {
+                results.innerHTML = '<p style="color: red;">❌ Please enter a valid 17-character VIN</p>';
+                return;
+            }
+            
+            try {
+                results.innerHTML = '<p style="color: blue;">🔍 Testing VIN lookup...</p>';
+                
+                // Test VIN decode
+                const decodeResponse = await fetch(`http://localhost:8000/api/vin/decode/${vin}`);
+                if (!decodeResponse.ok) throw new Error(`VIN decode failed: ${decodeResponse.status}`);
+                const decodeData = await decodeResponse.json();
+                
+                // Test vehicle data
+                const vehicleResponse = await fetch(`http://localhost:8000/api/vin/vehicle-data/${vin}`);
+                if (!vehicleResponse.ok) throw new Error(`Vehicle data failed: ${vehicleResponse.status}`);
+                const vehicleData = await vehicleResponse.json();
+                
+                // Check if make exists in current makes list
+                const makesResponse = await fetch(`http://localhost:8000/api/vehicle/makes?category=Vehicle`);
+                const makes = await makesResponse.json();
+                const makeExists = makes.includes(vehicleData.make);
+                
+                results.innerHTML = `
+                    <h3 style="color: green;">✅ VIN Lookup Test Results</h3>
+                    <p><strong>VIN:</strong> ${decodeData.vin}</p>
+                    <p><strong>Valid:</strong> ${decodeData.valid}</p>
+                    <p><strong>Manufacturer:</strong> ${decodeData.manufacturer}</p>
+                    <p><strong>Year:</strong> ${decodeData.year}</p>
+                    <p><strong>Model:</strong> ${decodeData.model_info?.model || 'N/A'}</p>
+                    <p><strong>Vehicle Data Make:</strong> ${vehicleData.make}</p>
+                    <p><strong>Make Available in Vehicle Category:</strong> ${makeExists ? '✅ Yes' : '❌ No'}</p>
+                    <p><strong>Total Vehicle Makes Available:</strong> ${makes.length}</p>
+                    <h4>Available Vehicle Makes:</h4>
+                    <p>${makes.slice(0, 10).join(', ')}${makes.length > 10 ? '...' : ''}</p>
+                `;
+                
+                if (!makeExists) {
+                    results.innerHTML += `<p style="color: red; font-weight: bold;">❌ CRITICAL: VIN make "${vehicleData.make}" not found in Vehicle category makes!</p>`;
+                }
+                
+            } catch (error) {
+                results.innerHTML = `<p style="color: red;">❌ VIN lookup failed: ${error.message}</p>`;
+            }
+        }
+        
+        // Auto-test on page load
+        window.onload = function() {
+            document.getElementById('category').value = 'Vehicle';
+            testCategoryChange();
+            setTimeout(testVINLookup, 1000);
+        };
+    </script>
+</body>
+</html>

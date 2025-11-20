@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.20 - 2025-11-20
+
+### Fixed VIN Lookup Integration with Category Filtering
+- **Critical Fix**: Fixed populateVehicleMakes() function to use category parameter
+- **VIN Lookup Restored**: VIN lookup now works correctly with Vehicle category selection
+- **Clean Integration**: Category filtering and VIN lookup work together without conflicts
+- **No Regressions**: All existing functionality verified and working correctly
+
 ## 1.11.19 - 2025-11-20
 
 ### Fixed Category-Based Make Filtering

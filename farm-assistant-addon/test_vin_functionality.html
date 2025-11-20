@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>VIN Lookup Test</title>
+</head>
+<body>
+    <h2>VIN Lookup Functionality Test</h2>
+    
+    <div>
+        <label for="vin-input">VIN:</label>
+        <input type="text" id="vin-input" value="1HGCM82633A004352" placeholder="Enter 17-character VIN">
+        <button type="button" onclick="testVINLookup()">Test VIN Lookup</button>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script>
+        async function testVINLookup() {
+            const vin = document.getElementById('vin-input').value;
+            const results = document.getElementById('results');
+            
+            if (!vin || vin.length < 17) {
+                results.innerHTML = '<p style="color: red;">Please enter a valid 17-character VIN</p>';
+                return;
+            }
+            
+            try {
+                results.innerHTML = '<p style="color: blue;">Testing VIN lookup...</p>';
+                
+                // Test VIN decode API
+                const decodeResponse = await fetch(`http://localhost:8000/api/vin/decode/${vin}`);
+                if (!decodeResponse.ok) {
+                    throw new Error(`VIN decode API failed: ${decodeResponse.status}`);
+                }
+                const decodeData = await decodeResponse.json();
+                
+                // Test VIN specifications API
+                const specsResponse = await fetch(`http://localhost:8000/api/vin/specifications/${vin}`);
+                if (!specsResponse.ok) {
+                    throw new Error(`VIN specs API failed: ${specsResponse.status}`);
+                }
+                const specsData = await specsResponse.json();
+                
+                // Test vehicle data API
+                const vehicleResponse = await fetch(`http://localhost:8000/api/vin/vehicle-data/${vin}`);
+                if (!vehicleResponse.ok) {
+                    throw new Error(`VIN vehicle data API failed: ${vehicleResponse.status}`);
+                }
+                const vehicleData = await vehicleResponse.json();
+                
+                results.innerHTML = `
+                    <h3 style="color: green;">✅ VIN Lookup Successful</h3>
+                    <p><strong>VIN:</strong> ${decodeData.vin}</p>
+                    <p><strong>Valid:</strong> ${decodeData.valid}</p>
+                    <p><strong>Manufacturer:</strong> ${decodeData.manufacturer}</p>
+                    <p><strong>Year:</strong> ${decodeData.year}</p>
+                    <p><strong>Model:</strong> ${decodeData.model_info?.model || 'N/A'}</p>
+                    <p><strong>Body Type:</strong> ${decodeData.model_info?.body_type || 'N/A'}</p>
+                    <h4>Specifications:</h4>
+                    <pre>${JSON.stringify(specsData, null, 2)}</pre>
+                    <h4>Vehicle Data:</h4>
+                    <pre>${JSON.stringify(vehicleData, null, 2)}</pre>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `<p style="color: red;">❌ VIN Lookup Failed: ${error.message}</p>`;
+            }
+        }
+        
+        // Auto-test on page load
+        window.onload = function() {
+            testVINLookup();
+        };
+    </script>
+</body>
+</html>
