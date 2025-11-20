@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.11.22 - 2025-11-20
+
+### Added Event Edit and Completion Functionality
+- **Edit Button**: Added edit button to event details modal for user-created events
+- **Edit Mode**: Implemented full event editing with form pre-population from database
+- **Completion Status**: Users can now mark events as completed through the edit interface
+- **Status Management**: Full status control (scheduled, in_progress, completed, cancelled)
+- **Priority Updates**: Event priority can be modified during editing
+- **UI Integration**: Seamless transition from view mode to edit mode
+- **Data Persistence**: All event changes are properly saved to database
+- **Modal Management**: Proper modal state handling and button text updates
+
 ## 1.11.21 - 2025-11-20
 
 ### Fixed Asset Edit Field Population

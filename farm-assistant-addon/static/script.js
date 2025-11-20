@@ -1215,11 +1215,114 @@ async function updateEvent(eventId, eventData) {
     }
 }
 
+// Function to enable event edit mode
+async function enableEventEditMode(eventId) {
+    try {
+        console.log('Enabling edit mode for event ID:', eventId);
+        
+        // Fetch the current event data
+        const response = await fetch(`api/events/${eventId}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch event data');
+        }
+        
+        const eventData = await response.json();
+        console.log('Fetched event data:', eventData);
+        
+        // Close the details modal
+        document.getElementById('event-details-modal').style.display = 'none';
+        
+        // Open the add event modal in edit mode
+        await openAddEventModal(eventData.date, eventData.time || '09:00');
+        
+        // Populate form with existing data
+        document.getElementById('event-category').value = eventData.category || '';
+        
+        // Populate item dropdown based on category
+        if (eventData.category) {
+            await populateEventItemDropdown(eventData.category);
+            document.getElementById('event-item-name').value = eventData.related_id || '';
+        }
+        
+        document.getElementById('event-title').value = eventData.title || '';
+        document.getElementById('event-duration').value = eventData.duration || '';
+        document.getElementById('event-notes').value = eventData.notes || '';
+        document.getElementById('event-status').value = eventData.status || 'scheduled';
+        document.getElementById('event-priority').value = eventData.priority || 'medium';
+        
+        // Change form submission to update instead of create
+        const form = document.getElementById('add-event-form');
+        const submitBtn = document.getElementById('submit-event-btn');
+        
+        // Remove existing event listeners
+        const newSubmitBtn = submitBtn.cloneNode(true);
+        submitBtn.parentNode.replaceChild(newSubmitBtn, submitBtn);
+        
+        // Add update event listener
+        newSubmitBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            try {
+                const formData = new FormData(form);
+                const eventData = {
+                    category: formData.get('category'),
+                    item_id: formData.get('item_name'),
+                    title: formData.get('title'),
+                    duration: parseFloat(formData.get('duration')),
+                    notes: formData.get('notes'),
+                    status: formData.get('status'),
+                    priority: formData.get('priority'),
+                    date: document.getElementById('event-date').value,
+                    time: document.getElementById('event-time').value
+                };
+                
+                await updateEvent(eventId, eventData);
+            } catch (error) {
+                console.error('Error updating event:', error);
+            }
+        });
+        
+        // Update modal title and button text
+        document.querySelector('#add-event-modal h2').textContent = 'Edit Event';
+        newSubmitBtn.innerHTML = '<i class="fa-solid fa-save"></i> Update Event';
+        newSubmitBtn.className = 'action-btn edit-btn';
+        
+        // Add a cancel edit button
+        const modalActions = document.querySelector('#add-event-modal .modal-actions');
+        const cancelEditBtn = document.createElement('button');
+        cancelEditBtn.type = 'button';
+        cancelEditBtn.className = 'action-btn';
+        cancelEditBtn.innerHTML = '<i class="fa-solid fa-xmark"></i> Cancel Edit';
+        cancelEditBtn.addEventListener('click', () => {
+            document.getElementById('add-event-modal').style.display = 'none';
+            // Reset modal title and button
+            document.querySelector('#add-event-modal h2').textContent = 'Add Event';
+            const originalBtn = document.getElementById('submit-event-btn');
+            originalBtn.innerHTML = '<i class="fa-solid fa-save"></i> Save Event';
+            originalBtn.className = 'action-btn add-btn';
+        });
+        
+        // Replace existing cancel button or add new one
+        const existingCancelBtn = modalActions.querySelector('.close-add-event-btn');
+        if (existingCancelBtn) {
+            existingCancelBtn.replaceWith(cancelEditBtn);
+        } else {
+            modalActions.appendChild(cancelEditBtn);
+        }
+        
+    } catch (error) {
+        console.error('Error enabling event edit mode:', error);
+        alert('Error loading event data for editing. Please try again.');
+    }
+}
+
 // Function to show event details modal
 function showEventDetailsModal(eventData) {
     const modal = document.getElementById('event-details-modal');
     const content = document.getElementById('event-details-content');
     const deleteBtn = document.getElementById('delete-event-btn');
+    const editBtn = document.getElementById('edit-event-btn');
     
     // Format event details
     const eventDate = new Date(eventData.date + 'T00:00:00');
@@ -1298,11 +1401,29 @@ function showEventDetailsModal(eventData) {
                 console.error('Delete button error:', error);
             }
         });
+        
+        console.log('✅ SHOWING EDIT BUTTON');
+        editBtn.style.display = 'inline-block';
+        // Remove all existing event listeners
+        const newEditBtn = editBtn.cloneNode(true);
+        editBtn.parentNode.replaceChild(newEditBtn, editBtn);
+        // Add new event listener
+        newEditBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            try {
+                await enableEventEditMode(eventData.id);
+            } catch (error) {
+                console.error('Edit button error:', error);
+            }
+        });
     } else {
         console.log('❌ HIDING DELETE BUTTON');
         deleteBtn.style.display = 'none';
-        // Add debug info to help understand why delete button is hidden
-        console.log('Delete button hidden for event:', {
+        console.log('❌ HIDING EDIT BUTTON');
+        editBtn.style.display = 'none';
+        // Add debug info to help understand why buttons are hidden
+        console.log('Buttons hidden for event:', {
             id: eventData.id,
             entry_type: eventData.entry_type,
             title: eventData.title,
