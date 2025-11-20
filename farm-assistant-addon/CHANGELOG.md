@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.11.21 - 2025-11-20
+
+### Fixed Asset Edit Field Population
+- **Critical Fix**: Fixed asset edit modal not populating vehicle fields from database
+- **Root Cause**: Field values were being set before dependent dropdowns were populated
+- **Solution Implemented**: Moved field value assignments to after dropdown population
+- **VIN Lookup Integration**: VIN lookup data now persists correctly when editing assets
+- **Database Values**: All vehicle fields (make, model, year, body_feature, badge) now display correctly
+- **No Regressions**: All existing functionality verified and working correctly
+
 ## 1.11.20 - 2025-11-20
 
 ### Fixed VIN Lookup Integration with Category Filtering

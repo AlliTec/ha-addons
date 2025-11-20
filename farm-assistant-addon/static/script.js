@@ -212,7 +212,7 @@ async function populateFilterTabs() {
     try {
         console.log("Populating filter tabs...");
         
-        // Get animals first - we'll derive types from the actual data
+        // Get animals first - we will derive types from the actual data
         console.log("Fetching animals for dynamic type extraction...");
         const animalsResponse = await fetch("get_animals");
         console.log("Animals response status:", animalsResponse.status);
@@ -243,7 +243,7 @@ async function populateFilterTabs() {
             return;
         }
         
-        // Clear existing tabs (except Add button which we'll add back)
+        // Clear existing tabs (except Add button which we will add back)
         filterBar.innerHTML = '';
         
         // Count animals by type using same function as filter tabs (only active animals)
@@ -1073,7 +1073,7 @@ async function openAddEventModalForAnimal(animalId, animalName) {
     try {
         console.log(`Opening add event modal for animal ${animalId} (${animalName})`);
         
-        // Set today's date and default time
+        // Set todays date and default time
         const today = new Date().toISOString().split('T')[0];
         const defaultTime = '09:00';
         
@@ -2097,7 +2097,7 @@ async function populateVehicleModels(make) {
             console.error('❌ editModelSelect element not found!');
         }
         
-        console.log(`✅ Successfully populated ${models.length} models for ${make}: ${models.join(', ')}`);
+        console.log(`Successfully populated ${models.length} models for ${make}: ${models.join(', ')}`);
         
     } catch (error) {
         console.error('❌ Error populating vehicle models:', error);
@@ -2405,7 +2405,7 @@ window.populateFromVIN = async function populateFromVIN(vin, formType = 'add') {
                 console.log('🎯 Final form values:', finalValues);
                 
                 if (finalValues.make && finalValues.model && finalValues.year && finalValues.bodyType && finalValues.badge) {
-                    alert(`✅ VIN lookup completed successfully!\n\nVehicle populated:\n• Make: ${finalValues.make}\n• Model: ${finalValues.model}\n• Year: ${finalValues.year}\n• Body Type: ${finalValues.bodyType}\n• Badge: ${finalValues.badge}`);
+                    alert(`VIN lookup completed successfully!\n\nVehicle populated:\n• Make: ${finalValues.make}\n• Model: ${finalValues.model}\n• Year: ${finalValues.year}\n• Body Type: ${finalValues.bodyType}\n• Badge: ${finalValues.badge}`);
                 } else {
                     alert('⚠️ VIN lookup completed but some fields may not have populated. Check console for details.');
                 }
@@ -2643,14 +2643,8 @@ function setupVehicleSelectionHandlers() {
             document.getElementById('edit-asset-id').value = asset.id;
             
             // Basic Information
-
             document.getElementById('edit-asset-name').value = asset.name || '';
             document.getElementById('edit-asset-category').value = asset.category || '';
-            document.getElementById('edit-asset-make').value = asset.make || '';
-            document.getElementById('edit-asset-model').value = asset.model || '';
-            document.getElementById('edit-asset-year').value = asset.year || '';
-            document.getElementById('edit-asset-body-feature').value = asset.body_feature || '';
-            document.getElementById('edit-asset-badge').value = asset.badge || '';
             document.getElementById('edit-asset-serial').value = asset.serial_number || '';
             
             // Handle category change to show/hide appropriate fields
@@ -2671,6 +2665,13 @@ function setupVehicleSelectionHandlers() {
                         }
                     }
                 }
+                
+                // Now set the values after dropdowns are populated
+                document.getElementById('edit-asset-make').value = asset.make || '';
+                document.getElementById('edit-asset-model').value = asset.model || '';
+                document.getElementById('edit-asset-year').value = asset.year || '';
+                document.getElementById('edit-asset-body-feature').value = asset.body_feature || '';
+                document.getElementById('edit-asset-badge').value = asset.badge || '';
             }
             
             // Status & Location
