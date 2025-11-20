@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.11.16 - 2025-11-20
+
+### Removed Redundant Asset Class Field
+- **Eliminated Asset Class Redundancy**: Removed asset class selection list as category field already serves this purpose
+- **Frontend Cleanup**: Removed asset class dropdowns from both add and edit asset forms
+- **Backend Simplification**: Removed asset_class from AssetCreate model and all database queries
+- **Database Query Updates**: Updated INSERT, UPDATE, and SELECT statements to exclude asset_class field
+- **Verified Functionality**: Confirmed asset category field continues to work correctly for asset classification
+- **Cleaner UI**: Streamlined asset forms by removing duplicate classification functionality
+
 ## 1.11.15 - 2025-11-19
 
 ### Fixed Asset Edit Race Condition Issue

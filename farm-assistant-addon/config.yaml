@@ -1,5 +1,5 @@
 name: Farm Assistant
-version: "1.11.15"
+version: "1.11.16"
 slug: farm_assistant
 description: "An addon to manage your farm's livestock data."
 arch:

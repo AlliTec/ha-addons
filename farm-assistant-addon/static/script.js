@@ -2532,7 +2532,7 @@ function setupVehicleSelectionHandlers() {
             document.getElementById('edit-asset-id').value = asset.id;
             
             // Basic Information
-            document.getElementById('edit-asset-class').value = asset.asset_class || 'Vehicle';
+
             document.getElementById('edit-asset-name').value = asset.name || '';
             document.getElementById('edit-asset-category').value = asset.category || '';
             document.getElementById('edit-asset-make').value = asset.make || '';
@@ -3513,7 +3513,6 @@ function setupVehicleSelectionHandlers() {
             
             const assetData = {
                 // Basic Information
-                asset_class: formData.get('asset_class'),
                 name: formData.get('name'),
                 category: formData.get('category'),
                 make: formData.get('make'),
@@ -3745,7 +3744,6 @@ function setupVehicleSelectionHandlers() {
             
             const assetData = {
                 // Basic Information
-                asset_class: formData.get('asset_class'),
                 name: formData.get('name'),
                 category: formData.get('category'),
                 make: formData.get('make'),

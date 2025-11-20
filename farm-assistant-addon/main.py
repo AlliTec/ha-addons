@@ -1095,7 +1095,6 @@ class AssetCreate(BaseModel):
     # Basic Information
     name: str
     category: Optional[str] = None
-    asset_class: Optional[str] = None
     make: Optional[str] = None
     model: Optional[str] = None
     year: Optional[int] = None
@@ -1250,7 +1249,7 @@ async def get_assets(parent_id: Optional[int] = None):
                          serial_number, purchase_date, registration_no, registration_due,
                          permit_info, insurance_info, insurance_due, warranty_provider,
                          warranty_expiry_date, purchase_price, purchase_location,
-                         manual_or_doc_path, notes, parent_asset_id, body_feature, badge, created_at, asset_class
+                         manual_or_doc_path, notes, parent_asset_id, body_feature, badge, created_at
                  FROM asset_inventory 
                  WHERE parent_asset_id = $1
                   ORDER BY name
@@ -1266,7 +1265,7 @@ async def get_assets(parent_id: Optional[int] = None):
                          serial_number, purchase_date, registration_no, registration_due,
                          permit_info, insurance_info, insurance_due, warranty_provider,
                          warranty_expiry_date, purchase_price, purchase_location,
-                         manual_or_doc_path, notes, parent_asset_id, body_feature, badge, created_at, asset_class
+                         manual_or_doc_path, notes, parent_asset_id, body_feature, badge, created_at
                  FROM asset_inventory 
                  ORDER BY name
                 """)
@@ -1284,8 +1283,8 @@ async def get_asset(asset_id: int):
                    serial_number, purchase_date, registration_no, registration_due,
                    permit_info, insurance_info, insurance_due, warranty_provider,
                    warranty_expiry_date, purchase_price, purchase_location,
-                   manual_or_doc_path, notes, parent_asset_id, body_feature, badge, created_at,
-                   year, asset_class
+                    manual_or_doc_path, notes, parent_asset_id, body_feature, badge, created_at,
+                    year
             FROM asset_inventory 
             WHERE id = $1
         """, asset_id)
@@ -1431,15 +1430,15 @@ async def add_asset(asset: AssetCreate):
             # Insert asset with all fields
             result = await conn.fetchrow("""
                 INSERT INTO asset_inventory 
-                (name, category, asset_class, make, model, year, body_feature, badge, serial_number, purchase_date, status,
+                (name, category, make, model, year, body_feature, badge, serial_number, purchase_date, status,
                  parent_asset_id, location, quantity, registration_no, registration_due,
                  permit_info, insurance_info, insurance_due, warranty_provider,
                  warranty_expiry_date, purchase_price, purchase_location,
                  manual_or_doc_path, notes, created_at)
                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11,
-                        $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, NOW())
+                        $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, NOW())
                 RETURNING id
-            """, asset.name, asset.category, asset.asset_class, asset.make, asset.model, asset.year, asset.body_feature, 
+            """, asset.name, asset.category, asset.make, asset.model, asset.year, asset.body_feature, 
                 asset.badge, serial_number, purchase_date, asset.status, asset.parent_asset_id, asset.location,
                 asset.quantity, registration_no, registration_due, asset.permit_info,
                 asset.insurance_info, insurance_due, asset.warranty_provider,
@@ -1479,14 +1478,14 @@ async def update_asset(asset_id: int, asset: AssetCreate):
             # Update asset with all fields
             await conn.execute("""
                 UPDATE asset_inventory 
-                SET name = $1, category = $2, asset_class = $3, make = $4, model = $5, year = $6, body_feature = $7,
-                    badge = $8, serial_number = $9, purchase_date = $10, status = $11, parent_asset_id = $12, location = $13,
-                    quantity = $14, registration_no = $15, registration_due = $16,
-                    permit_info = $17, insurance_info = $18, insurance_due = $19,
-                    warranty_provider = $20, warranty_expiry_date = $21, purchase_price = $22,
-                    purchase_location = $23, manual_or_doc_path = $24, notes = $25
-                WHERE id = $26
-            """, asset.name, asset.category, asset.asset_class, asset.make, asset.model, asset.year, asset.body_feature,
+                SET name = $1, category = $2, make = $3, model = $4, year = $5, body_feature = $6,
+                    badge = $7, serial_number = $8, purchase_date = $9, status = $10, parent_asset_id = $11, location = $12,
+                    quantity = $13, registration_no = $14, registration_due = $15,
+                    permit_info = $16, insurance_info = $17, insurance_due = $18,
+                    warranty_provider = $19, warranty_expiry_date = $20, purchase_price = $21,
+                    purchase_location = $22, manual_or_doc_path = $23, notes = $24
+                WHERE id = $25
+            """, asset.name, asset.category, asset.make, asset.model, asset.year, asset.body_feature,
                 asset.badge, serial_number, purchase_date, asset.status, asset.parent_asset_id, asset.location,
                 asset.quantity, registration_no, registration_due, asset.permit_info,
                 asset.insurance_info, insurance_due, asset.warranty_provider,

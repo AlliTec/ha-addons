@@ -1,14 +1,14 @@
-2025-11-19 13:49:53,702 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
-INFO:     Started server process [314309]
+2025-11-20 10:29:25,052 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [336100]
 INFO:     Waiting for application startup.
-2025-11-19 13:49:53,745 - INFO - Attempting to connect to the database at 192.168.1.130...
-2025-11-19 13:49:53,793 - INFO - Database connection successful.
+2025-11-20 10:29:25,142 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-20 10:29:25,220 - INFO - Database connection successful.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:38378 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58348 - "GET /api/asset/7 HTTP/1.1" 200 OK
-2025-11-19 13:50:30,411 - INFO - Updating asset 7 with data: name='Amarok' category='Vehicle' asset_class=None make='Volkswagen' model='Amarok' year=None body_feature='Ute' badge='Comfortline' serial_number='WV1ZZZ2HZDA061221' quantity=1 status='operational' location='210 Woodswallow Moolboolaman Qld 6571' parent_asset_id=None purchase_date='2024-05-09' purchase_price=7000.0 purchase_location='Grays.com Brisbane' warranty_provider='N/A' warranty_expiry_date=None registration_no='804KC9' registration_due='2026-05-13' insurance_info='Bingle CAR016221645' insurance_due=None permit_info='' manual_or_doc_path='' notes='Frontend simulation test - 2025-11-19 13:50:30' usage_type=None usage_value=None usage_notes=None
-2025-11-19 13:50:30,474 - INFO - Successfully updated asset 7 in database
-INFO:     127.0.0.1:58348 - "PUT /api/asset/7 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:58348 - "GET /api/asset/7 HTTP/1.1" 200 OK
-INFO:     127.0.0.1:47474 - "GET /api/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43602 - "GET /api/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:43608 - "POST /api/asset HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57254 - "GET /api/asset/27 HTTP/1.1" 200 OK
+2025-11-20 10:29:45,515 - INFO - Updating asset 27 with data: name='Test Asset Removal Updated' category='Tool' make='Test Make' model='Test Model' year=None body_feature='' badge='' serial_number='TEST123' quantity=1 status='operational' location='Test Location' parent_asset_id=None purchase_date='2025-01-01' purchase_price=100.0 purchase_location='Test Store' warranty_provider='' warranty_expiry_date=None registration_no='' registration_due=None insurance_info='' insurance_due=None permit_info='' manual_or_doc_path='' notes='Test asset updated - category changed from Equipment to Tool' usage_type=None usage_value=None usage_notes=None
+2025-11-20 10:29:45,602 - INFO - Successfully updated asset 27 in database
+INFO:     127.0.0.1:37272 - "PUT /api/asset/27 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37284 - "GET /api/asset/27 HTTP/1.1" 200 OK
