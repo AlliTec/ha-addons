@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.11.23 - 2025-11-20
+
+### Added Event Completion Fields
+- **Date Completed Field**: Added date picker for actual completion date
+- **Actual Duration Field**: Added input for actual time spent on event
+- **Conditional Display**: Completion fields only show when status is "completed"
+- **Database Migration**: Added completion fields to all event tables
+- **Backend Integration**: Updated API endpoints to handle new fields
+- **Form Validation**: Proper field population and validation in edit mode
+- **Auto-Population**: Date completed defaults to today when status changes to completed
+- **Field Clearing**: Completion fields cleared when status changes from completed
+
 ## 1.11.22 - 2025-11-20
 
 ### Added Event Edit and Completion Functionality

@@ -1249,6 +1249,11 @@ async function enableEventEditMode(eventId) {
         document.getElementById('event-notes').value = eventData.notes || '';
         document.getElementById('event-status').value = eventData.status || 'scheduled';
         document.getElementById('event-priority').value = eventData.priority || 'medium';
+        document.getElementById('event-date-completed').value = eventData.date_completed || '';
+        document.getElementById('event-actual-duration').value = eventData.actual_duration || '';
+        
+        // Show/hide completion fields based on status
+        toggleCompletionFields(eventData.status || 'scheduled');
         
         // Change form submission to update instead of create
         const form = document.getElementById('add-event-form');
@@ -1273,6 +1278,8 @@ async function enableEventEditMode(eventId) {
                     notes: formData.get('notes'),
                     status: formData.get('status'),
                     priority: formData.get('priority'),
+                    date_completed: formData.get('date_completed'),
+                    actual_duration: formData.get('actual_duration') ? parseFloat(formData.get('actual_duration')) : null,
                     date: document.getElementById('event-date').value,
                     time: document.getElementById('event-time').value
                 };
@@ -1314,6 +1321,24 @@ async function enableEventEditMode(eventId) {
     } catch (error) {
         console.error('Error enabling event edit mode:', error);
         alert('Error loading event data for editing. Please try again.');
+    }
+}
+
+// Function to toggle completion fields based on status
+function toggleCompletionFields(status) {
+    const completionFields = document.getElementById('completion-fields');
+    if (status === 'completed') {
+        completionFields.style.display = 'block';
+        // Set default date completed to today if empty
+        const dateCompletedField = document.getElementById('event-date-completed');
+        if (!dateCompletedField.value) {
+            dateCompletedField.value = new Date().toISOString().split('T')[0];
+        }
+    } else {
+        completionFields.style.display = 'none';
+        // Clear completion fields when status is not completed
+        document.getElementById('event-date-completed').value = '';
+        document.getElementById('event-actual-duration').value = '';
     }
 }
 
@@ -3283,6 +3308,14 @@ function setupVehicleSelectionHandlers() {
         });
     }
 
+    // Add status change listener to toggle completion fields
+    const eventStatusSelect = document.getElementById('event-status');
+    if (eventStatusSelect) {
+        eventStatusSelect.addEventListener('change', (e) => {
+            toggleCompletionFields(e.target.value);
+        });
+    }
+
     const addEventForm = document.getElementById('add-event-form');
     if (addEventForm) {
         addEventForm.addEventListener('submit', async (e) => {
@@ -3302,7 +3335,9 @@ function setupVehicleSelectionHandlers() {
                 duration: parseFloat(formData.get('duration')) || 1,
                 notes: formData.get('notes'),
                 status: formData.get('status'),
-                priority: formData.get('priority')
+                priority: formData.get('priority'),
+                date_completed: formData.get('date_completed'),
+                actual_duration: formData.get('actual_duration') ? parseFloat(formData.get('actual_duration')) : null
             };
             
             try {

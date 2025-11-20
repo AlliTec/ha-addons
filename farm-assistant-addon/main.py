@@ -110,6 +110,8 @@ class Event(BaseModel):
     notes: Optional[str] = None
     status: str = 'scheduled'  # scheduled, in_progress, completed, cancelled
     priority: str = 'medium'  # low, medium, high, urgent
+    date_completed: Optional[str] = None
+    actual_duration: Optional[float] = None
 
 def get_animal_type(gender):
     if gender in ["Cow", "Bull", "Steer", "Heifer"]:
@@ -449,7 +451,7 @@ async def get_event(event_id: int):
         event = await conn.fetchrow("""
             SELECT id, entry_date as date, event_time as time, duration_hours as duration,
                    category, title, description as notes, related_id as item_id,
-                   entry_type
+                   entry_type, date_completed, actual_duration_hours as actual_duration
             FROM calendar_entries 
             WHERE id = $1
         """, event_id)
@@ -465,6 +467,10 @@ async def get_event(event_id: int):
         # Add default values for fields that don't exist in calendar_entries
         event_dict['status'] = 'scheduled'
         event_dict['priority'] = 'medium'
+        
+        # Format date_completed if it exists
+        if event_dict['date_completed']:
+            event_dict['date_completed'] = event_dict['date_completed'].strftime('%Y-%m-%d')
         
         logging.info(f"Event {event_id} retrieved successfully")
         return event_dict
@@ -490,37 +496,46 @@ async def update_event(event_id: int, event: Event):
         # Update calendar_entries table
         event_date = datetime.strptime(event.date, '%Y-%m-%d').date()
         event_time = datetime.strptime(event.time, '%H:%M').time() if event.time else None
+        date_completed = datetime.strptime(event.date_completed, '%Y-%m-%d').date() if event.date_completed else None
         await conn.execute("""
             UPDATE calendar_entries 
             SET entry_date = $1, event_time = $2, duration_hours = $3, category = $4, 
-                title = $5, description = $6, related_id = $7, updated_at = NOW()
-            WHERE id = $8
+                title = $5, description = $6, related_id = $7, date_completed = $8, 
+                actual_duration_hours = $9, updated_at = NOW()
+            WHERE id = $10
         """, event_date, event_time, event.duration, 
-              event.category, event.title, event.notes, event.item_id, event_id)
+              event.category, event.title, event.notes, event.item_id, date_completed, 
+              event.actual_duration, event_id)
         
         # Update animal_history if it's a livestock event
         if event.category == 'livestock':
             event_date = datetime.strptime(event.date, '%Y-%m-%d').date()
             event_time = datetime.strptime(event.time, '%H:%M').time()
+            date_completed = datetime.strptime(event.date_completed, '%Y-%m-%d').date() if event.date_completed else None
             await conn.execute("""
                 UPDATE animal_history 
                 SET event_date = $1, event_time = $2, title = $3, duration_hours = $4, 
-                    notes = $5, status = $6, priority = $7, updated_at = NOW()
-                WHERE id = $8
+                    notes = $5, status = $6, priority = $7, date_completed = $8, 
+                    actual_duration_hours = $9, updated_at = NOW()
+                WHERE id = $10
             """, event_date, event_time, event.title, event.duration, 
-                  event.notes, event.status, event.priority, event_id)
+                  event.notes, event.status, event.priority, date_completed, 
+                  event.actual_duration, event_id)
         
         # Update maintenance_history if it's an asset event
         elif event.category == 'asset':
             event_date = datetime.strptime(event.date, '%Y-%m-%d').date()
+            date_completed = datetime.strptime(event.date_completed, '%Y-%m-%d').date() if event.date_completed else None
             await conn.execute("""
                 UPDATE maintenance_history 
                 SET maintenance_type = $1, start_date = $2, completion_date = $3, 
-                    duration_hours = $4, notes = $5, status = $6, priority = $7, updated_at = NOW()
-                WHERE id = $8
+                    duration_hours = $4, notes = $5, status = $6, priority = $7, 
+                    date_completed = $8, actual_duration_hours = $9, updated_at = NOW()
+                WHERE id = $10
             """, event.title, event_date, 
-                  event_date if event.status == 'completed' else None, 
-                  event.duration, event.notes, event.status, event.priority, event_id)
+                  date_completed if event.status == 'completed' else None, 
+                  event.duration, event.notes, event.status, event.priority, 
+                  date_completed, event.actual_duration, event_id)
         
         logging.info(f"Event {event_id} updated successfully")
         return {"message": "Event updated successfully"}
