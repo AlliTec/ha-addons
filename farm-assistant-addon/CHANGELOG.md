@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.19 - 2025-11-20
+
+### Fixed Category-Based Make Filtering
+- **Database Cleanup**: Fixed Honda entries incorrectly categorized as Machinery instead of Vehicle
+- **Clean Separation**: Vehicle category now returns only vehicle makes, no cross-contamination
+- **Verified Functionality**: All category filtering working correctly with proper make separation
+- **UI Integration**: Frontend category change handlers working with backend API endpoints
+
 ## 1.11.18 - 2025-11-20
 
 ### Implemented Category-Based Make Filtering

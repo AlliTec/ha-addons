@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Category Filtering Test</title>
+</head>
+<body>
+    <h2>Testing Category-Based Make Filtering</h2>
+    
+    <div>
+        <label for="category">Category:</label>
+        <select id="category" onchange="testCategoryFiltering()">
+            <option value="">Select Category</option>
+            <option value="Vehicle">Vehicle</option>
+            <option value="Machinery">Machinery</option>
+            <option value="Equipment">Equipment</option>
+            <option value="Tool">Tool</option>
+            <option value="Building">Building</option>
+        </select>
+    </div>
+    
+    <div>
+        <label for="make">Make:</label>
+        <select id="make">
+            <option value="">Select Category First</option>
+        </select>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script>
+        async function testCategoryFiltering() {
+            const category = document.getElementById('category').value;
+            const makeSelect = document.getElementById('make');
+            const results = document.getElementById('results');
+            
+            // Clear makes dropdown
+            makeSelect.innerHTML = '<option value="">Select Make</option>';
+            
+            if (!category) {
+                results.innerHTML = '<p style="color: gray;">Please select a category</p>';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`http://localhost:8000/api/vehicle/makes?category=${category}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const makes = await response.json();
+                
+                // Populate makes dropdown
+                makes.forEach(make => {
+                    const option = document.createElement('option');
+                    option.value = make;
+                    option.textContent = make;
+                    makeSelect.appendChild(option);
+                });
+                
+                results.innerHTML = `<p style="color: green;">✓ Found ${makes.length} makes for ${category}: ${makes.slice(0, 3).join(', ')}${makes.length > 3 ? '...' : ''}</p>`;
+                
+            } catch (error) {
+                results.innerHTML = `<p style="color: red;">✗ Error: ${error.message}</p>`;
+            }
+        }
+        
+        // Test on page load
+        window.onload = function() {
+            console.log('Testing category filtering functionality...');
+            results.innerHTML = '<p style="color: blue;">Ready to test category filtering</p>';
+        };
+    </script>
+</body>
+</html>

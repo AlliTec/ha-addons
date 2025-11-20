@@ -1,18 +1,13 @@
-2025-11-20 12:32:50,176 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
-INFO:     Started server process [339460]
+2025-11-20 12:52:58,341 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [343451]
 INFO:     Waiting for application startup.
-2025-11-20 12:32:50,238 - INFO - Attempting to connect to the database at 192.168.1.130...
-2025-11-20 12:32:50,293 - INFO - Database connection successful.
+2025-11-20 12:52:58,383 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-20 12:52:58,448 - INFO - Database connection successful.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     127.0.0.1:44124 - "GET /api/vehicle/makes?category=Vehicle HTTP/1.1" 200 OK
-INFO:     127.0.0.1:44126 - "GET /api/vehicle/makes?category=Equipment HTTP/1.1" 200 OK
-INFO:     127.0.0.1:46226 - "GET /api/vehicle/makes?category=Machinery HTTP/1.1" 200 OK
-INFO:     127.0.0.1:46238 - "GET /api/vehicle/makes?category=Tool HTTP/1.1" 200 OK
-INFO:     127.0.0.1:41204 - "GET /api/vehicle/makes?category=Building HTTP/1.1" 200 OK
-INFO:     127.0.0.1:35814 - "GET / HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59736 - "GET /api/vehicle/makes?category=Vehicle HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59736 - "GET /api/vehicle/makes?category=Machinery HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59736 - "GET /api/vehicle/makes?category=Equipment HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59736 - "GET /api/vehicle/makes?category=Tool HTTP/1.1" 200 OK
-INFO:     127.0.0.1:59736 - "GET /api/vehicle/makes?category=Building HTTP/1.1" 200 OK
+INFO:     127.0.0.1:40248 - "GET /api/vehicle/makes?category=Vehicle HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34140 - "GET /api/vehicle/makes?category=Vehicle HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34146 - "GET /api/vehicle/makes?category=Machinery HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34152 - "GET /api/vehicle/makes?category=Equipment HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34168 - "GET /api/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:34182 - "GET /api/animals HTTP/1.1" 200 OK
