@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Weight Tracking</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        button { padding: 10px 15px; margin: 5px; background: #007cba; color: white; border: none; cursor: pointer; }
+        .result { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>Test Weight Tracking</h1>
+    
+    <div class="test-section">
+        <h2>Test Weight Update</h2>
+        <button onclick="testWeightUpdate()">Update Animal 9 with Weight</button>
+        <div id="update-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Weight History</h2>
+        <button onclick="testWeightHistory()">Get Weight History for Animal 9</button>
+        <div id="history-result" class="result"></div>
+    </div>
+
+    <script>
+        async function testWeightUpdate() {
+            try {
+                const response = await fetch('/update_animal/9', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "tag_id":"12345-8",
+                        "name":"Brjost",
+                        "breed":"Santa Gertrudis",
+                        "birth_date":"2019-07-01",
+                        "gender":"Cow",
+                        "health_status":"Good",
+                        "notes":"",
+                        "dam_id":null,
+                        "sire_id":null,
+                        "status":"Active",
+                        "features":"Brindle average size with horns large udder when in calf",
+                        "photo_path":"",
+                        "pic":"",
+                        "dod":null,
+                        "weight":460.0
+                    })
+                });
+                
+                const result = await response.json();
+                document.getElementById('update-result').innerHTML = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('update-result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+
+        async function testWeightHistory() {
+            try {
+                const response = await fetch('/api/animal/9/weight-history');
+                const history = await response.json();
+                document.getElementById('history-result').innerHTML = JSON.stringify(history, null, 2);
+            } catch (error) {
+                document.getElementById('history-result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

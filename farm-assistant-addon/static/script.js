@@ -738,6 +738,7 @@ async function enableEditMode(animalId) {
         document.getElementById('edit-photo-path').value = animal.photo_path || '';
         document.getElementById('edit-pic').value = animal.pic || '';
         document.getElementById('edit-status').value = animal.status || 'Active';
+        document.getElementById('edit-weight').value = animal.weight || '';
         
         // Determine category from gender/breed
         let category = 'Other';
@@ -2181,14 +2182,14 @@ async function populateVehicleMakes() {
         
         // Populate add form
         const addMakeSelect = document.getElementById('add-asset-make');
-        addMakeSelect.innerHTML = '<option value="">Select Make</option>';
+        addMakeSelect.innerHTML = '<option value="">Select Make</option><option value="__new__">+ Add New Make</option>';
         makes.forEach(make => {
             addMakeSelect.innerHTML += `<option value="${make}">${make}</option>`;
         });
         
         // Populate edit form
         const editMakeSelect = document.getElementById('edit-asset-make');
-        editMakeSelect.innerHTML = '<option value="">Select Make</option>';
+        editMakeSelect.innerHTML = '<option value="">Select Make</option><option value="__new__">+ Add New Make</option>';
         makes.forEach(make => {
             editMakeSelect.innerHTML += `<option value="${make}">${make}</option>`;
         });
@@ -2221,7 +2222,7 @@ async function populateVehicleModels(make) {
         const addModelSelect = document.getElementById('add-asset-model');
         console.log('🎯 addModelSelect element found:', !!addModelSelect);
         if (addModelSelect) {
-            addModelSelect.innerHTML = '<option value="">Select Model</option>';
+            addModelSelect.innerHTML = '<option value="">Select Model</option><option value="__new__">+ Add New Model</option>';
             models.forEach(model => {
                 addModelSelect.innerHTML += `<option value="${model}">${model}</option>`;
             });
@@ -2234,7 +2235,7 @@ async function populateVehicleModels(make) {
         const editModelSelect = document.getElementById('edit-asset-model');
         console.log('🎯 editModelSelect element found:', !!editModelSelect);
         if (editModelSelect) {
-            editModelSelect.innerHTML = '<option value="">Select Model</option>';
+            editModelSelect.innerHTML = '<option value="">Select Model</option><option value="__new__">+ Add New Model</option>';
             models.forEach(model => {
                 editModelSelect.innerHTML += `<option value="${model}">${model}</option>`;
             });
@@ -2254,6 +2255,71 @@ async function populateVehicleModels(make) {
         if (addModelSelect) {
             addModelSelect.innerHTML = '<option value="">Error loading models</option>';
         }
+    }
+}
+
+async function saveNewMake(make, formType) {
+    try {
+        const category = document.getElementById(`${formType}-asset-category`).value || 'Vehicle';
+        const response = await fetch(`/api/vehicle/make?make=${encodeURIComponent(make)}&category=${encodeURIComponent(category)}`, {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Refresh the make dropdown
+            await populateVehicleMakes();
+            
+            // Select the newly added make
+            const makeSelect = document.getElementById(`${formType}-asset-make`);
+            makeSelect.value = make;
+            
+            // Hide the new make input
+            document.getElementById(`${formType}-asset-make-new`).style.display = 'none';
+            
+            // Show model dropdown and populate models for new make
+            const modelSelect = document.getElementById(`${formType}-asset-model`);
+            modelSelect.parentElement.style.display = 'flex';
+            await populateVehicleModels(make);
+            
+            alert(`Make '${make}' added successfully!`);
+        } else {
+            alert(`Error adding make: ${result.message}`);
+        }
+    } catch (error) {
+        console.error('Error saving new make:', error);
+        alert('Error adding new make. Please try again.');
+    }
+}
+
+async function saveNewModel(make, model, formType) {
+    try {
+        const category = document.getElementById(`${formType}-asset-category`).value || 'Vehicle';
+        const response = await fetch(`/api/vehicle/model?make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&category=${encodeURIComponent(category)}`, {
+            method: 'POST'
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Refresh the model dropdown
+            await populateVehicleModels(make);
+            
+            // Select the newly added model
+            const modelSelect = document.getElementById(`${formType}-asset-model`);
+            modelSelect.value = model;
+            
+            // Hide the new model input
+            document.getElementById(`${formType}-asset-model-new`).style.display = 'none';
+            
+            alert(`Model '${model}' added successfully for make '${make}'!`);
+        } else {
+            alert(`Error adding model: ${result.message}`);
+        }
+    } catch (error) {
+        console.error('Error saving new model:', error);
+        alert('Error adding new model. Please try again.');
     }
 }
 
@@ -2586,11 +2652,24 @@ function setupVehicleSelectionHandlers() {
     
     addMakeSelect.addEventListener('change', async function() {
         const make = this.value;
+        const newMakeInput = document.getElementById('add-asset-make-new');
         console.log('🚗 Make changed to:', make);
         console.log('🎯 addMakeSelect element:', !!addMakeSelect);
         console.log('🎯 addModelSelect element:', !!addModelSelect);
         
-        if (make) {
+        if (make === '__new__') {
+            // Show new make input field
+            newMakeInput.style.display = 'block';
+            newMakeInput.focus();
+            // Hide model dropdown until make is saved
+            addModelSelect.parentElement.style.display = 'none';
+        } else if (make) {
+            // Hide new make input field
+            newMakeInput.style.display = 'none';
+            newMakeInput.value = '';
+            // Show model dropdown
+            addModelSelect.parentElement.style.display = 'flex';
+            
             try {
                 console.log('🔄 Calling populateVehicleModels for:', make);
                 await populateVehicleModels(make);
@@ -2607,8 +2686,14 @@ function setupVehicleSelectionHandlers() {
                 alert(`Error loading models for ${make}: ${error.message}`);
             }
         } else {
+            // Hide new make input field
+            newMakeInput.style.display = 'none';
+            newMakeInput.value = '';
+            // Show model dropdown
+            addModelSelect.parentElement.style.display = 'flex';
+            
             // Clear all dependent fields
-            addModelSelect.innerHTML = '<option value="">Select Model</option>';
+            addModelSelect.innerHTML = '<option value="">Select Model</option><option value="__new__">+ Add New Model</option>';
             addYearSelect.innerHTML = '<option value="">Select Year</option>';
             document.getElementById('add-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
             document.getElementById('add-asset-badge').innerHTML = '<option value="">Select Badge/Trim</option>';
@@ -2616,9 +2701,59 @@ function setupVehicleSelectionHandlers() {
         }
     });
     
+    // Handle new make input
+    document.getElementById('add-asset-make-new').addEventListener('blur', async function() {
+        const newMake = this.value.trim();
+        if (newMake) {
+            await saveNewMake(newMake, 'add');
+        }
+    });
+
+    document.getElementById('add-asset-make-new').addEventListener('keypress', async function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const newMake = this.value.trim();
+            if (newMake) {
+                await saveNewMake(newMake, 'add');
+            }
+        }
+    });
+
+    // Handle new model input
+    document.getElementById('add-asset-model-new').addEventListener('blur', async function() {
+        const newModel = this.value.trim();
+        const make = addMakeSelect.value;
+        if (newModel && make && make !== '__new__') {
+            await saveNewModel(make, newModel, 'add');
+        }
+    });
+
+    document.getElementById('add-asset-model-new').addEventListener('keypress', async function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const newModel = this.value.trim();
+            const make = addMakeSelect.value;
+            if (newModel && make && make !== '__new__') {
+                await saveNewModel(make, newModel, 'add');
+            }
+        }
+    });
+
     addModelSelect.addEventListener('change', async function() {
         const make = addMakeSelect.value;
-        const model = this.value;
+        const newModelInput = document.getElementById('add-asset-model-new');
+        
+        if (this.value === '__new__') {
+            // Show new model input field
+            newModelInput.style.display = 'block';
+            newModelInput.focus();
+        } else {
+            // Hide new model input field
+            newModelInput.style.display = 'none';
+            newModelInput.value = '';
+        }
+        
+        const model = this.value === '__new__' ? '' : this.value;
         if (make && model) {
             await populateVehicleYears(make, model);
             // Clear dependent fields
@@ -2665,7 +2800,21 @@ function setupVehicleSelectionHandlers() {
     
     editMakeSelect.addEventListener('change', async function() {
         const make = this.value;
-        if (make) {
+        const newMakeInput = document.getElementById('edit-asset-make-new');
+        
+        if (make === '__new__') {
+            // Show new make input field
+            newMakeInput.style.display = 'block';
+            newMakeInput.focus();
+            // Hide model dropdown until make is saved
+            editModelSelect.parentElement.style.display = 'none';
+        } else if (make) {
+            // Hide new make input field
+            newMakeInput.style.display = 'none';
+            newMakeInput.value = '';
+            // Show model dropdown
+            editModelSelect.parentElement.style.display = 'flex';
+            
             await populateVehicleModels(make);
             // Clear dependent fields
             editModelSelect.value = '';
@@ -2673,17 +2822,73 @@ function setupVehicleSelectionHandlers() {
             document.getElementById('edit-asset-body-feature').value = '';
             document.getElementById('edit-asset-badge').value = '';
         } else {
+            // Hide new make input field
+            newMakeInput.style.display = 'none';
+            newMakeInput.value = '';
+            // Show model dropdown
+            editModelSelect.parentElement.style.display = 'flex';
+            
             // Clear all dependent fields
-            editModelSelect.innerHTML = '<option value="">Select Model</option>';
+            editModelSelect.innerHTML = '<option value="">Select Model</option><option value="__new__">+ Add New Model</option>';
             editYearSelect.innerHTML = '<option value="">Select Year</option>';
             document.getElementById('edit-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
             document.getElementById('edit-asset-badge').innerHTML = '<option value="">Select Badge/Trim</option>';
         }
     });
     
+    // Handle new make input for edit form
+    document.getElementById('edit-asset-make-new').addEventListener('blur', async function() {
+        const newMake = this.value.trim();
+        if (newMake) {
+            await saveNewMake(newMake, 'edit');
+        }
+    });
+
+    document.getElementById('edit-asset-make-new').addEventListener('keypress', async function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const newMake = this.value.trim();
+            if (newMake) {
+                await saveNewMake(newMake, 'edit');
+            }
+        }
+    });
+
+    // Handle new model input for edit form
+    document.getElementById('edit-asset-model-new').addEventListener('blur', async function() {
+        const newModel = this.value.trim();
+        const make = editMakeSelect.value;
+        if (newModel && make && make !== '__new__') {
+            await saveNewModel(make, newModel, 'edit');
+        }
+    });
+
+    document.getElementById('edit-asset-model-new').addEventListener('keypress', async function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const newModel = this.value.trim();
+            const make = editMakeSelect.value;
+            if (newModel && make && make !== '__new__') {
+                await saveNewModel(make, newModel, 'edit');
+            }
+        }
+    });
+
     editModelSelect.addEventListener('change', async function() {
         const make = editMakeSelect.value;
-        const model = this.value;
+        const newModelInput = document.getElementById('edit-asset-model-new');
+        
+        if (this.value === '__new__') {
+            // Show new model input field
+            newModelInput.style.display = 'block';
+            newModelInput.focus();
+        } else {
+            // Hide new model input field
+            newModelInput.style.display = 'none';
+            newModelInput.value = '';
+        }
+        
+        const model = this.value === '__new__' ? '' : this.value;
         if (make && model) {
             await populateVehicleYears(make, model);
             // Clear dependent fields
@@ -3028,17 +3233,29 @@ function setupVehicleSelectionHandlers() {
         try {
             console.log("Loading animal history for animal:", animalId);
             
-            const response = await fetch(`api/livestock/${animalId}/history`);
-            if (!response.ok) {
+            // Load both event history and weight history
+            const [historyResponse, weightResponse] = await Promise.all([
+                fetch(`api/livestock/${animalId}/history`),
+                fetch(`api/animal/${animalId}/weight-history`)
+            ]);
+            
+            if (!historyResponse.ok) {
                 throw new Error('Failed to fetch animal history');
             }
             
-            const historyRecords = await response.json();
+            const historyRecords = await historyResponse.json();
             console.log("Animal history records:", historyRecords);
+            
+            // Load weight history
+            let weightRecords = [];
+            if (weightResponse.ok) {
+                weightRecords = await weightResponse.json();
+                console.log("Weight history records:", weightRecords);
+            }
             
             const historyContent = document.getElementById('animal-history-content');
             
-            if (historyRecords.length === 0) {
+            if (historyRecords.length === 0 && weightRecords.length === 0) {
                 historyContent.innerHTML = '<p>No history records found for this animal.</p>';
             } else {
                 // Create summary section
@@ -3048,7 +3265,7 @@ function setupVehicleSelectionHandlers() {
                         <div class="summary-grid">
                             <div class="summary-item">
                                 <strong>Total Records:</strong> 
-                                <span class="record-count">${historyRecords.length}</span>
+                                <span class="record-count">${historyRecords.length + weightRecords.length}</span>
                             </div>
                             <div class="summary-item">
                                 <strong>Scheduled Events:</strong> 
@@ -3057,6 +3274,10 @@ function setupVehicleSelectionHandlers() {
                             <div class="summary-item">
                                 <strong>Completed Events:</strong> 
                                 <span class="completed-count">${historyRecords.filter(r => r.record_type === 'history').length}</span>
+                            </div>
+                            <div class="summary-item">
+                                <strong>Weight Records:</strong> 
+                                <span class="weight-count">${weightRecords.length}</span>
                             </div>
                         </div>
                     </div>
@@ -3108,6 +3329,47 @@ function setupVehicleSelectionHandlers() {
                         </tbody>
                     </table>
                 `;
+                
+                // Add weight history table if there are weight records
+                if (weightRecords.length > 0) {
+                    tableHtml += `
+                        <div style="margin-top: 30px;">
+                            <h3>Weight History</h3>
+                            <table class="maintenance-history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Weight (kg)</th>
+                                        <th>Notes</th>
+                                        <th>Recorded By</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
+                    
+                    weightRecords.forEach(record => {
+                        const date = new Date(record.measurement_date).toLocaleDateString();
+                        const time = record.measurement_time ? record.measurement_time.substring(0, 5) : 'N/A';
+                        const weight = record.weight ? parseFloat(record.weight).toFixed(1) : 'N/A';
+                        
+                        tableHtml += `
+                            <tr class="weight-record-row">
+                                <td>${date}</td>
+                                <td>${time}</td>
+                                <td><strong>${weight}</strong></td>
+                                <td>${record.notes || 'N/A'}</td>
+                                <td>${record.recorded_by || 'N/A'}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    tableHtml += `
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                }
                 
                 historyContent.innerHTML = summaryHtml + tableHtml;
             }

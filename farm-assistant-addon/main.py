@@ -99,6 +99,7 @@ class Animal(BaseModel):
     pic: Optional[str] = None
     dod: Optional[str] = None
     status: Optional[str] = None
+    weight: Optional[float] = None
 
 class Event(BaseModel):
     date: str
@@ -329,17 +330,32 @@ async def update_animal(animal_id: int, animal: Animal):
         birth_date = datetime.strptime(animal.birth_date, '%Y-%m-%d').date() if animal.birth_date else None
         dod = datetime.strptime(animal.dod, '%Y-%m-%d').date() if animal.dod else None
         
+        # Get current animal data to check if weight changed
+        current_animal = await conn.fetchrow("SELECT weight FROM livestock_records WHERE id = $1", animal_id)
+        current_weight = current_animal['weight'] if current_animal else None
+        
+        # Update animal record
         await conn.execute("""
             UPDATE livestock_records 
             SET tag_id = $1, name = $2, gender = $3, breed = $4, 
                 birth_date = $5, health_status = $6, notes = $7,
                 status = $8, dam_id = $9, sire_id = $10, features = $11,
-                photo_path = $12, pic = $13, dod = $14
-            WHERE id = $15
+                photo_path = $12, pic = $13, dod = $14, weight = $15
+            WHERE id = $16
         """, animal.tag_id, animal.name, animal.gender, animal.breed,
             birth_date, animal.health_status, animal.notes,
             animal.status, animal.dam_id, animal.sire_id, animal.features,
-            animal.photo_path, animal.pic, dod, animal_id)
+            animal.photo_path, animal.pic, dod, animal.weight, animal_id)
+        
+        # If weight changed, record it in weight history
+        if animal.weight is not None and animal.weight != current_weight:
+            await conn.execute("""
+                INSERT INTO animal_weight_history (animal_id, weight, weight_unit, measurement_date, measurement_time, notes, recorded_by)
+                VALUES ($1, $2, 'kg', CURRENT_DATE, CURRENT_TIME, 'Weight updated during animal edit', 'System')
+            """, animal_id, animal.weight)
+            
+            logging.info(f"Weight history recorded for animal {animal_id}: {animal.weight}kg")
+        
         logging.info(f"Animal {animal_id} updated successfully")
         return {"message": "Animal updated successfully"}
     except Exception as e:
@@ -745,6 +761,54 @@ async def migrate_badge_feature():
     finally:
         await conn.close()
 
+@app.post("/api/migrate/weight")
+async def migrate_weight_columns():
+    """Add weight columns to database tables"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Add weight column to livestock_records
+        await conn.execute("""
+            ALTER TABLE livestock_records 
+            ADD COLUMN IF NOT EXISTS weight DECIMAL(8,2)
+        """)
+        
+        # Add weight columns to animal_history
+        await conn.execute("""
+            ALTER TABLE animal_history 
+            ADD COLUMN IF NOT EXISTS weight DECIMAL(8,2),
+            ADD COLUMN IF NOT EXISTS weight_unit VARCHAR(10) DEFAULT 'kg'
+        """)
+        
+        # Create animal_weight_history table
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS animal_weight_history (
+                id SERIAL PRIMARY KEY,
+                animal_id INTEGER NOT NULL REFERENCES livestock_records(id) ON DELETE CASCADE,
+                weight DECIMAL(8,2) NOT NULL,
+                weight_unit VARCHAR(10) DEFAULT 'kg',
+                measurement_date DATE NOT NULL DEFAULT CURRENT_DATE,
+                measurement_time TIME NOT NULL DEFAULT CURRENT_TIME,
+                notes TEXT,
+                recorded_by VARCHAR(100),
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+            )
+        """)
+        
+        # Create indexes
+        await conn.execute("""
+            CREATE INDEX IF NOT EXISTS idx_livestock_records_weight ON livestock_records(weight);
+            CREATE INDEX IF NOT EXISTS idx_animal_history_weight ON animal_history(weight);
+            CREATE INDEX IF NOT EXISTS idx_animal_weight_history_animal_id ON animal_weight_history(animal_id);
+            CREATE INDEX IF NOT EXISTS idx_animal_weight_history_date ON animal_weight_history(measurement_date);
+        """)
+        
+        return {"message": "Weight columns and tables migrated successfully"}
+    except Exception as e:
+        logging.error(f"Error in weight migration: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
 @app.post("/api/migrate/all")
 async def migrate_all():
     """Run all pending migrations"""
@@ -1104,6 +1168,68 @@ async def search_vehicles(make: str = None, model: str = None, year: int = None,
     finally:
         await conn.close()
 
+# --- Vehicle Data Management Endpoints ---
+
+@app.post("/api/vehicle/make")
+async def add_vehicle_make(make: str = None, category: str = "Vehicle"):
+    """Add a new vehicle make to the database"""
+    if not make:
+        return {"success": False, "message": "Make is required"}
+    
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Check if make already exists
+        existing = await conn.fetchval(
+            "SELECT COUNT(*) FROM vehicle_data WHERE make = $1",
+            make
+        )
+        
+        if existing > 0:
+            return {"success": False, "message": "Make already exists"}
+        
+        # Add a basic entry for the new make
+        await conn.execute(
+            """
+            INSERT INTO vehicle_data (make, model, category)
+            VALUES ($1, 'Unknown Model', $2)
+            """,
+            make, category
+        )
+        
+        return {"success": True, "message": f"Make '{make}' added successfully"}
+    finally:
+        await conn.close()
+
+@app.post("/api/vehicle/model")
+async def add_vehicle_model(make: str = None, model: str = None, category: str = "Vehicle"):
+    """Add a new vehicle model to the database"""
+    if not make or not model:
+        return {"success": False, "message": "Both make and model are required"}
+    
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Check if model already exists for this make
+        existing = await conn.fetchval(
+            "SELECT COUNT(*) FROM vehicle_data WHERE make = $1 AND model = $2",
+            make, model
+        )
+        
+        if existing > 0:
+            return {"success": False, "message": "Model already exists for this make"}
+        
+        # Add the new model
+        await conn.execute(
+            """
+            INSERT INTO vehicle_data (make, model, category)
+            VALUES ($1, $2, $3)
+            """,
+            make, model, category
+        )
+        
+        return {"success": True, "message": f"Model '{model}' added for make '{make}'"}
+    finally:
+        await conn.close()
+
 # --- Asset Management Endpoints ---
 
 class AssetCreate(BaseModel):
@@ -1372,6 +1498,51 @@ async def get_asset_maintenance_history(asset_id: int):
         all_records.sort(key=lambda x: (x['completed_date'] or '9999-12-31'), reverse=True)
         
         return all_records
+    finally:
+        await conn.close()
+
+@app.get("/api/animal/{animal_id}/weight-history")
+async def get_animal_weight_history(animal_id: int):
+    """Get weight history for a specific animal"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        records = await conn.fetch("""
+            SELECT id, weight, weight_unit, measurement_date, measurement_time, notes, recorded_by, created_at
+            FROM animal_weight_history 
+            WHERE animal_id = $1 
+            ORDER BY measurement_date DESC, measurement_time DESC
+        """, animal_id)
+        
+        return [dict(record) for record in records]
+    except Exception as e:
+        logging.error(f"Error fetching weight history for animal {animal_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
+
+@app.post("/api/animal/{animal_id}/weight")
+async def record_animal_weight(animal_id: int, weight: float, notes: str = None, recorded_by: str = "User"):
+    """Record a new weight measurement for an animal"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Insert weight record
+        await conn.execute("""
+            INSERT INTO animal_weight_history (animal_id, weight, weight_unit, measurement_date, measurement_time, notes, recorded_by)
+            VALUES ($1, $2, 'kg', CURRENT_DATE, CURRENT_TIME, $3, $4)
+        """, animal_id, weight, notes, recorded_by)
+        
+        # Update current weight in livestock_records
+        await conn.execute("""
+            UPDATE livestock_records 
+            SET weight = $1 
+            WHERE id = $2
+        """, weight, animal_id)
+        
+        logging.info(f"Weight recorded for animal {animal_id}: {weight}kg")
+        return {"message": "Weight recorded successfully"}
+    except Exception as e:
+        logging.error(f"Error recording weight for animal {animal_id}: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
     finally:
         await conn.close()
 

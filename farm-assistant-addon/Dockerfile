@@ -11,7 +11,7 @@ RUN apk add --no-cache python3 py3-pip postgresql-dev gcc musl-dev && \
 # Create app directory
 RUN mkdir -p /app/templates /app/static
 
-# Copy addon files
+# Copy addon files (excluding .ssh-askpass and other sensitive files)
 COPY run.sh /
 COPY main.py /app/
 COPY vin_decoder.py /app/

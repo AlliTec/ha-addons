@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test New Make/Model Functionality</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; }
+        select, input { padding: 5px; margin: 5px; }
+        button { padding: 10px 15px; margin: 5px; background: #007cba; color: white; border: none; cursor: pointer; }
+        .result { margin: 10px 0; padding: 10px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>Test New Make/Model Functionality</h1>
+    
+    <div class="test-section">
+        <h2>Test Make Selection</h2>
+        <div style="display: flex; gap: 5px;">
+            <select id="test-make" style="flex: 1;">
+                <option value="">Select Make</option>
+                <option value="__new__">+ Add New Make</option>
+            </select>
+            <input type="text" id="test-make-new" placeholder="Enter new make" style="display: none; flex: 1;">
+        </div>
+        <button onclick="testAddMake()">Add Test Make</button>
+        <div id="make-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Model Selection</h2>
+        <div style="display: flex; gap: 5px;">
+            <select id="test-model" style="flex: 1;">
+                <option value="">Select Model</option>
+                <option value="__new__">+ Add New Model</option>
+            </select>
+            <input type="text" id="test-model-new" placeholder="Enter new model" style="display: none; flex: 1;">
+        </div>
+        <button onclick="testAddModel()">Add Test Model</button>
+        <div id="model-result" class="result"></div>
+    </div>
+
+    <script>
+        // Load existing makes
+        async function loadMakes() {
+            try {
+                const response = await fetch('/api/vehicle/makes');
+                const makes = await response.json();
+                const select = document.getElementById('test-make');
+                select.innerHTML = '<option value="">Select Make</option><option value="__new__">+ Add New Make</option>';
+                makes.forEach(make => {
+                    select.innerHTML += `<option value="${make}">${make}</option>`;
+                });
+            } catch (error) {
+                console.error('Error loading makes:', error);
+            }
+        }
+
+        // Handle make selection
+        document.getElementById('test-make').addEventListener('change', function() {
+            const newMakeInput = document.getElementById('test-make-new');
+            if (this.value === '__new__') {
+                newMakeInput.style.display = 'block';
+                newMakeInput.focus();
+            } else {
+                newMakeInput.style.display = 'none';
+                newMakeInput.value = '';
+                loadModels(this.value);
+            }
+        });
+
+        // Handle model selection
+        document.getElementById('test-model').addEventListener('change', function() {
+            const newModelInput = document.getElementById('test-model-new');
+            if (this.value === '__new__') {
+                newModelInput.style.display = 'block';
+                newModelInput.focus();
+            } else {
+                newModelInput.style.display = 'none';
+                newModelInput.value = '';
+            }
+        });
+
+        // Load models for selected make
+        async function loadModels(make) {
+            if (!make) return;
+            try {
+                const response = await fetch(`/api/vehicle/models?make=${encodeURIComponent(make)}`);
+                const models = await response.json();
+                const select = document.getElementById('test-model');
+                select.innerHTML = '<option value="">Select Model</option><option value="__new__">+ Add New Model</option>';
+                models.forEach(model => {
+                    select.innerHTML += `<option value="${model}">${model}</option>`;
+                });
+            } catch (error) {
+                console.error('Error loading models:', error);
+            }
+        }
+
+        // Test adding new make
+        async function testAddMake() {
+            const makeName = 'TestMake' + Date.now();
+            try {
+                const response = await fetch(`/api/vehicle/make?make=${encodeURIComponent(makeName)}&category=Vehicle`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                document.getElementById('make-result').innerHTML = JSON.stringify(result, null, 2);
+                if (result.success) {
+                    await loadMakes();
+                }
+            } catch (error) {
+                document.getElementById('make-result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+
+        // Test adding new model
+        async function testAddModel() {
+            const makeSelect = document.getElementById('test-make');
+            const modelName = 'TestModel' + Date.now();
+            if (!makeSelect.value || makeSelect.value === '__new__') {
+                document.getElementById('model-result').innerHTML = 'Please select a valid make first';
+                return;
+            }
+            try {
+                const response = await fetch(`/api/vehicle/model?make=${encodeURIComponent(makeSelect.value)}&model=${encodeURIComponent(modelName)}&category=Vehicle`, {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                document.getElementById('model-result').innerHTML = JSON.stringify(result, null, 2);
+                if (result.success) {
+                    await loadModels(makeSelect.value);
+                }
+            } catch (error) {
+                document.getElementById('model-result').innerHTML = 'Error: ' + error.message;
+            }
+        }
+
+        // Initialize
+        loadMakes();
+    </script>
+</body>
+</html>

@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.11.24 - 2025-11-21
+
+### Added Animal Weight Tracking
+- **Weight Field**: Added weight input field to edit animal modal
+- **Weight History**: Created dedicated table for tracking weight measurements over time
+- **Automatic Recording**: Weight changes automatically recorded in history with timestamps
+- **History View**: Weight history displayed in animal history modal with date, time, and notes
+- **Database Migration**: Added weight columns to livestock_records and animal_weight_history table
+- **API Endpoints**: Added endpoints for weight history retrieval and recording
+- **Timestamp Tracking**: Each weight measurement includes date, time, notes, and recorded by information
+
 ## 1.11.23 - 2025-11-20
 
 ### Added Event Completion Fields
