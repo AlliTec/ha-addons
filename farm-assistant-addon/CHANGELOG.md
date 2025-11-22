@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.11.37 - 2025-11-23
+
+### CRITICAL FIX - Image Modal Z-Index Issue
+- **Problem**: Animal details modal was covering the image overlay, making photos not visible
+- **Root Cause**: Image modal had same z-index (1000) as other modals
+- **Solution**: Increased image modal z-index to 2000 to appear above all other modals
+- **Files Modified**: `static/style.css` - Added `z-index: 2000` to `#image-modal`
+- **Result**: Image overlay now properly displays in front of animal details modal
+
 ## 1.11.36 - 2025-11-23
 
 ### Image Overlay Feature - Click Photos for Full View with Opaque Background

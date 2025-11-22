@@ -421,6 +421,7 @@ th {
 /* Image Modal Specific Styles */
 #image-modal {
     background-color: rgba(0,0,0,0.95);
+    z-index: 2000; /* Higher than other modals to appear on top */
 }
 
 #image-modal .modal-content {
