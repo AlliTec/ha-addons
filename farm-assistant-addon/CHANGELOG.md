@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.11.32 - 2025-11-22
+
+### Critical Event Listener Fix for Photo Display
+- **DOM Ready Issue**: Fixed event listener setup executing before DOM was ready
+- **Event Handler Placement**: Moved animal list click event listener inside DOMContentLoaded handler
+- **Click Detection**: Ensured animal row clicks properly trigger `showAnimalDetails` function
+- **Complete User Flow**: Fixed entire workflow from page load → animal click → photo display
+- **Root Cause**: Event listeners were set up at global level instead of after DOM ready
+- **Verified Fix**: Confirmed images now display correctly when clicking animals in details modal
+- **No Regressions**: All existing functionality remains intact
+
 ## 1.11.31 - 2025-11-22
 
 ### Complete Photo Storage & Display Fix
