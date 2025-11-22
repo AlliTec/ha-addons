@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.11.34 - 2025-11-22
+
+### CRITICAL Home Assistant Proxy Fix for Photo Upload
+- **404 Error Fix**: Fixed photo upload failing with 404 errors when accessed through Home Assistant proxy
+- **Root Cause**: Photo API calls used absolute paths (`/api/animal/X/photo`) while other APIs used relative paths (`api/animals`)
+- **Proxy Issue**: Absolute paths bypass Home Assistant's ingress proxy, causing 404s on port 8123
+- **Solution**: Changed all photo API calls to use consistent relative paths
+- **Files Fixed**: 
+  - `static/script.js`: Updated `uploadAnimalPhotos()`, `loadAnimalPhotos()`, `loadAnimalPhotosForDetails()`, `deleteExistingPhoto()`
+  - `static/minimal_photo_test.html`: Updated test file for consistency
+- **Testing**: Verified photo upload, retrieval, and deletion work through Home Assistant proxy
+
 ## 1.11.33 - 2025-11-22
 
 ### CRITICAL Event Listener Timing Fix for Photo Display

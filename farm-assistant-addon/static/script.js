@@ -5162,7 +5162,7 @@ async function uploadAnimalPhotos(animalId) {
         formData.append('file', file);
         
         try {
-            const response = await fetch(`/api/animal/${animalId}/photo`, {
+            const response = await fetch(`api/animal/${animalId}/photo`, {
                 method: 'POST',
                 body: formData
             });
@@ -5180,7 +5180,7 @@ async function uploadAnimalPhotos(animalId) {
 
 async function loadAnimalPhotos(animalId) {
     try {
-        const response = await fetch(`/api/animal/${animalId}/photos`);
+        const response = await fetch(`api/animal/${animalId}/photos`);
         if (response.ok) {
             const photos = await response.json();
             
@@ -5228,7 +5228,7 @@ async function loadAnimalPhotos(animalId) {
 
 async function loadAnimalPhotosForDetails(animalId) {
     try {
-        const response = await fetch(`/api/animal/${animalId}/photos`);
+        const response = await fetch(`api/animal/${animalId}/photos`);
         if (response.ok) {
             const photos = await response.json();
             
@@ -5268,7 +5268,7 @@ async function loadAnimalPhotosForDetails(animalId) {
 async function deleteExistingPhoto(animalId, photoId, filename) {
     if (confirm(`Are you sure you want to delete "${filename}"?`)) {
         try {
-            const response = await fetch(`/api/animal/${animalId}/photo/${photoId}`, {
+            const response = await fetch(`api/animal/${animalId}/photo/${photoId}`, {
                 method: 'DELETE'
             });
             

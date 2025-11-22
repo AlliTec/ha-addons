@@ -49,7 +49,7 @@
         // Copy the exact functions from script.js
         async function loadAnimalPhotosForDetails(animalId) {
             try {
-                const response = await fetch(`/api/animal/${animalId}/photos`);
+                const response = await fetch(`api/animal/${animalId}/photos`);
                 if (response.ok) {
                     const photos = await response.json();
                     
