@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.11.28 - 2025-11-22
+
+### Critical Docker Fix
+- **Missing Dependency**: Added python-multipart to Dockerfile pip install command
+- **Addon Startup Crash**: Fixed RuntimeError preventing addon from starting in Home Assistant container
+- **Form Data Support**: Ensured FastAPI can handle form data uploads for photo endpoints
+
 ## 1.11.27 - 2025-11-22
 
 ### Server Startup and Runtime Fixes
