@@ -625,9 +625,6 @@ async function showAnimalDetails(animalId) {
 
         const animalDetailsContent = document.getElementById("animal-details-content");
         
-        // Load animal photos for details view
-        loadAnimalPhotosForDetails(animalId);
-        
         // Format offspring list
         let offspringHtml = '';
         if (animal.offspring && animal.offspring.length > 0) {
@@ -707,6 +704,9 @@ async function showAnimalDetails(animalId) {
         document.getElementById('update-animal-btn').dataset.animalId = animalId;
         document.getElementById('update-animal-btn').dataset.animalName = animal.name || 'Animal';
         document.getElementById('delete-animal-btn').dataset.animalId = animalId;
+        
+        // Load animal photos for details view (after DOM is updated)
+        loadAnimalPhotosForDetails(animalId);
         
         // Show modal
         document.getElementById('animal-details-modal').style.display = "block";

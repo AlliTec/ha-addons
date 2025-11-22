@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.11.31 - 2025-11-22
+
+### Complete Photo Storage & Display Fix
+- **DOM Timing Issue**: Fixed critical timing bug where `loadAnimalPhotosForDetails` was called before DOM element existed
+- **Function Call Order**: Moved photo loading call to after DOM update in `showAnimalDetails` function
+- **Image Storage**: Verified photo upload API correctly stores images to database with proper metadata
+- **Image Display**: Confirmed animal details modal now shows uploaded photos for each specific animal
+- **Complete Workflow**: Tested end-to-end upload → storage → retrieval → display functionality
+- **Database Table**: Ensured `animal_photos` table exists and functions correctly
+- **No Regressions**: All existing features remain intact
+
 ## 1.11.30 - 2025-11-22
 
 ### Animal Details Photo Display Fix
