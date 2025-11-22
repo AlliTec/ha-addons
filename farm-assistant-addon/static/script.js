@@ -732,8 +732,6 @@ async function enableEditMode(animalId) {
         document.getElementById('edit-date-of-disposal').value = animal.dod || '';
         document.getElementById('edit-health-status').value = animal.health_status || 'Healthy';
         document.getElementById('edit-notes').value = animal.notes || '';
-        document.getElementById('edit-dam-id').value = animal.dam_id || '';
-        document.getElementById('edit-sire-id').value = animal.sire_id || '';
         document.getElementById('edit-features').value = animal.features || '';
         document.getElementById('edit-photo-path').value = animal.photo_path || '';
         document.getElementById('edit-pic').value = animal.pic || '';
@@ -777,6 +775,10 @@ async function enableEditMode(animalId) {
         
         // Populate parent dropdowns
         await populateParentDropdowns();
+        
+        // Set dam and sire values AFTER dropdowns are populated
+        document.getElementById('edit-dam-id').value = animal.dam_id || '';
+        document.getElementById('edit-sire-id').value = animal.sire_id || '';
         
         // Update modal title and button text
         const modalTitle = document.querySelector('#edit-animal-modal h2');

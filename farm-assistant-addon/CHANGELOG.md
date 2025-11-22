@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.25 - 2025-11-22
+
+### Fixed Dam/Sire Edit Issue
+- **Parent Field Fix**: Fixed dam and sire dropdown fields not pre-populating with existing values when editing animals
+- **Timing Issue**: Moved dam/sire value assignment to occur after dropdown population to prevent values being cleared
+- **UI Update**: Changed "Schedule Event" button text to "Record Event" in animal details modal
+- **Edit Mode**: Parent fields now properly show and preserve existing dam and sire selections during animal editing
+
 ## 1.11.24 - 2025-11-21
 
 ### Added Animal Weight Tracking
