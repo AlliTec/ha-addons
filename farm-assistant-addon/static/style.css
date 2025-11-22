@@ -1522,3 +1522,43 @@ th {
     background: #17a2b8;
     color: white;
 }
+
+/* Photo Upload Styles */
+.photo-upload-section {
+    margin: 20px 0;
+}
+
+.photo-upload-area {
+    border: 2px dashed var(--input-border);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--input-bg);
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.photo-upload-area:hover {
+    border-color: var(--accent-color);
+    background: #f8f9fa;
+}
+
+.photo-upload-area.dragover {
+    border-color: var(--accent-color);
+    background: #e3f2fd;
+    transform: scale(1.02);
+}
+
+#photo-preview-container {
+    text-align: center;
+}
+
+#remove-photo-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+}

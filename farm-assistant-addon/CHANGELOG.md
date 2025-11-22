@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.11.29 - 2025-11-22
+
+### Animal Photo Upload Feature
+- **Drag-and-Drop Upload**: Added drag-and-drop image upload area to add/edit animal modal
+- **File Browser Support**: Click to browse and select image files for upload
+- **Image Preview**: Show preview of selected images before saving
+- **Placeholder Message**: Display "Drag image here or click to upload" when no image present
+- **File Validation**: Validate image types (JPG, PNG, GIF) and size limit (5MB max)
+- **Photo Management**: Remove photo functionality with delete button
+- **API Integration**: Connected frontend to existing photo upload/delete API endpoints
+- **Visual Feedback**: Hover effects and drag-over states for better UX
+
 ## 1.11.28 - 2025-11-22
 
 ### Critical Docker Fix

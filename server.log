@@ -30,3 +30,4 @@ INFO:     127.0.0.1:37950 - "POST /api/vehicle/lookup-vin HTTP/1.1" 404 Not Foun
 INFO:     127.0.0.1:42472 - "POST /api/vin/validate HTTP/1.1" 200 OK
 INFO:     127.0.0.1:60500 - "GET /api/vin/vehicle-data/JTGFP518704500675 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:47538 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37426 - "GET / HTTP/1.1" 200 OK

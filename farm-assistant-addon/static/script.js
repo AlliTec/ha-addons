@@ -563,6 +563,9 @@ async function openAddAnimalForm() {
     document.getElementById('edit-pic').value = '';
     document.getElementById('edit-status').value = 'Active';
     
+    // Reset photo upload area
+    resetPhotoUpload();
+    
     // Reset gender options to default
     updateGenderOptions('');
     
@@ -737,6 +740,9 @@ async function enableEditMode(animalId) {
         document.getElementById('edit-pic').value = animal.pic || '';
         document.getElementById('edit-status').value = animal.status || 'Active';
         document.getElementById('edit-weight').value = animal.weight || '';
+        
+        // Load existing photo if available
+        loadAnimalPhoto(animal.id);
         
         // Determine category from gender/breed
         let category = 'Other';
@@ -4010,8 +4016,21 @@ function setupVehicleSelectionHandlers() {
                 }
                 
                 if (response.ok) {
+                    const result = await response.json();
                     const message = isUpdate ? 'Animal updated successfully!' : 'Animal added successfully!';
-                    console.log('Success:', message, 'Response:', await response.json());
+                    console.log('Success:', message, 'Response:', result);
+                    
+                    // Upload photo if one was selected
+                    const animalIdForPhoto = isUpdate ? animalId : result.id;
+                    try {
+                        await uploadAnimalPhoto(animalIdForPhoto);
+                        console.log('Photo upload completed');
+                    } catch (photoError) {
+                        console.error('Photo upload failed:', photoError);
+                        // Don't fail the whole operation if photo upload fails
+                        alert(message + ' (Note: Photo upload failed)');
+                    }
+                    
                     alert(message);
                     document.getElementById('edit-animal-modal').style.display = "none";
                     populateAnimalList(); // Refresh the animal list
@@ -4964,4 +4983,192 @@ function setupVehicleSelectionHandlers() {
     window.navigateToDay = navigateToDay;
     window.openAddEventModal = openAddEventModal;
     window.loadCalendarEvents = loadCalendarEvents;
+    
+    // Photo Upload Functionality
+    initializePhotoUpload();
 });
+
+function initializePhotoUpload() {
+    const uploadArea = document.getElementById('animal-photo-upload');
+    const fileInput = document.getElementById('animal-photo-input');
+    const photoPreview = document.getElementById('photo-preview');
+    const photoPreviewContainer = document.getElementById('photo-preview-container');
+    const photoPlaceholder = document.getElementById('photo-placeholder');
+    const removePhotoBtn = document.getElementById('remove-photo-btn');
+    
+    if (!uploadArea) return;
+    
+    // Click to upload
+    uploadArea.addEventListener('click', (e) => {
+        if (e.target !== removePhotoBtn) {
+            fileInput.click();
+        }
+    });
+    
+    // File selection
+    fileInput.addEventListener('change', handleFileSelect);
+    
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFile(files[0]);
+        }
+    });
+    
+    // Remove photo
+    if (removePhotoBtn) {
+        removePhotoBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            removePhoto();
+        });
+    }
+}
+
+function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file) {
+        handleFile(file);
+    }
+}
+
+function handleFile(file) {
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+        alert('Please select an image file (JPG, PNG, GIF)');
+        return;
+    }
+    
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('Image size must be less than 5MB');
+        return;
+    }
+    
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        showPhotoPreview(e.target.result, file);
+    };
+    reader.readAsDataURL(file);
+}
+
+function showPhotoPreview(imageSrc, file) {
+    const photoPreview = document.getElementById('photo-preview');
+    const photoPreviewContainer = document.getElementById('photo-preview-container');
+    const photoPlaceholder = document.getElementById('photo-placeholder');
+    
+    photoPreview.src = imageSrc;
+    photoPreviewContainer.style.display = 'block';
+    photoPlaceholder.style.display = 'none';
+    
+    // Store file for upload
+    photoPreview.dataset.file = file.name;
+    photoPreview.dataset.size = file.size;
+    photoPreview.dataset.type = file.type;
+}
+
+function removePhoto() {
+    const photoPreview = document.getElementById('photo-preview');
+    const photoPreviewContainer = document.getElementById('photo-preview-container');
+    const photoPlaceholder = document.getElementById('photo-placeholder');
+    const fileInput = document.getElementById('animal-photo-input');
+    
+    photoPreview.src = '';
+    photoPreviewContainer.style.display = 'none';
+    photoPlaceholder.style.display = 'block';
+    fileInput.value = '';
+    
+    // Clear stored file data
+    delete photoPreview.dataset.file;
+    delete photoPreview.dataset.size;
+    delete photoPreview.dataset.type;
+}
+
+function uploadAnimalPhoto(animalId) {
+    const fileInput = document.getElementById('animal-photo-input');
+    const photoPreview = document.getElementById('photo-preview');
+    
+    if (!fileInput.files[0] && !photoPreview.dataset.file) {
+        return Promise.resolve(); // No photo to upload
+    }
+    
+    const formData = new FormData();
+    const file = fileInput.files[0] || photoPreview.dataset.file;
+    
+    if (file instanceof File) {
+        formData.append('photo', file);
+    } else if (photoPreview.src && photoPreview.src.startsWith('data:')) {
+        // Convert data URL back to blob
+        fetch(photoPreview.src)
+            .then(res => res.blob())
+            .then(blob => {
+                formData.append('photo', blob, photoPreview.dataset.file || 'photo.jpg');
+                return fetch(`/api/animal/${animalId}/photo`, {
+                    method: 'POST',
+                    body: formData
+                });
+            });
+    }
+    
+    return fetch(`/api/animal/${animalId}/photo`, {
+        method: 'POST',
+        body: formData
+    });
+}
+
+async function loadAnimalPhoto(animalId) {
+    try {
+        const response = await fetch(`/api/animal/${animalId}/photo`);
+        if (response.ok) {
+            const blob = await response.blob();
+            const imageUrl = URL.createObjectURL(blob);
+            
+            const photoPreview = document.getElementById('photo-preview');
+            const photoPreviewContainer = document.getElementById('photo-preview-container');
+            const photoPlaceholder = document.getElementById('photo-placeholder');
+            
+            photoPreview.src = imageUrl;
+            photoPreviewContainer.style.display = 'block';
+            photoPlaceholder.style.display = 'none';
+            
+            // Store file info
+            photoPreview.dataset.existing = 'true';
+        }
+    } catch (error) {
+        console.log('No existing photo found for animal:', animalId);
+        // This is normal if no photo exists
+        resetPhotoUpload();
+    }
+}
+
+function resetPhotoUpload() {
+    const photoPreview = document.getElementById('photo-preview');
+    const photoPreviewContainer = document.getElementById('photo-preview-container');
+    const photoPlaceholder = document.getElementById('photo-placeholder');
+    const fileInput = document.getElementById('animal-photo-input');
+    
+    photoPreview.src = '';
+    photoPreviewContainer.style.display = 'none';
+    photoPlaceholder.style.display = 'block';
+    fileInput.value = '';
+    
+    // Clear stored data
+    delete photoPreview.dataset.file;
+    delete photoPreview.dataset.size;
+    delete photoPreview.dataset.type;
+    delete photoPreview.dataset.existing;
+}

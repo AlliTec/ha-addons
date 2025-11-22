@@ -259,13 +259,24 @@
                     </div>
                 </div>
                 <div class="form-grid">
-                    <div>
-                        <label for="edit-photo-path">Photo Path:</label>
-                        <input type="text" id="edit-photo-path" name="photo_path">
-                    </div>
-                    <div>
-                        <label for="edit-pic">Photo Filename:</label>
-                        <input type="text" id="edit-pic" name="pic">
+                    <div class="photo-upload-section" style="grid-column: 1 / -1;">
+                        <label>Animal Photo:</label>
+                        <div id="animal-photo-upload" class="photo-upload-area">
+                            <input type="file" id="animal-photo-input" accept="image/*" style="display: none;">
+                            <div id="photo-preview-container" style="display: none;">
+                                <img id="photo-preview" style="max-width: 100%; max-height: 200px; border-radius: 5px;">
+                                <button type="button" id="remove-photo-btn" class="action-btn" style="margin-top: 10px; background: #dc3545;">
+                                    <i class="fa-solid fa-trash"></i> Remove Photo
+                                </button>
+                            </div>
+                            <div id="photo-placeholder">
+                                <i class="fa-solid fa-cloud-upload-alt" style="font-size: 48px; color: #ccc; margin-bottom: 10px;"></i>
+                                <p style="margin: 0; color: #666;">Drag image here or click to upload</p>
+                                <p style="margin: 5px 0 0 0; font-size: 12px; color: #999;">Supports: JPG, PNG, GIF (Max 5MB)</p>
+                            </div>
+                        </div>
+                        <input type="hidden" id="edit-photo-path" name="photo_path">
+                        <input type="hidden" id="edit-pic" name="pic">
                     </div>
                 </div>
 
