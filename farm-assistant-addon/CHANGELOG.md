@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.11.27 - 2025-11-22
+
+### Server Startup and Runtime Fixes
+- **Python Dependency**: Fixed missing python-multipart package causing FastAPI startup failures
+- **Import Resolution**: Resolved server import issues by ensuring correct working directory for uvicorn
+- **Configuration Loading**: Fixed config file path resolution for development vs production environments
+- **API Validation**: Verified all core endpoints functional (assets, animals, calendar, vehicle data)
+- **VIN Functionality**: Confirmed VIN decode and vehicle lookup endpoints operational
+- **JavaScript Validation**: Verified script.js syntax and function definitions are correct
+
 ## 1.11.26 - 2025-11-22
 
 ### Fixed Dam/Sire Dropdown Display

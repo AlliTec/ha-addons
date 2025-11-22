@@ -96,6 +96,7 @@ class Animal(BaseModel):
     sire_id: Optional[int] = None
     features: Optional[str] = None
     photo_path: Optional[str] = None
+    photo_mime_type: Optional[str] = None
     pic: Optional[str] = None
     dod: Optional[str] = None
     status: Optional[str] = None
@@ -1595,6 +1596,92 @@ async def get_livestock_history(animal_id: int):
         all_records.sort(key=lambda x: (x['completed_date'] or '9999-12-31'), reverse=True)
         
         return all_records
+    finally:
+        await conn.close()
+
+@app.post("/api/animal/{animal_id}/photo")
+async def upload_animal_photo(animal_id: int, file: UploadFile = File(...)):
+    """Upload and store a photo for an animal"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Validate file type
+        if not file.content_type or not file.content_type.startswith('image/'):
+            raise HTTPException(status_code=400, detail="File must be an image")
+        
+        # Read file content
+        file_content = await file.read()
+        
+        # Check file size (limit to 5MB)
+        if len(file_content) > 5 * 1024 * 1024:
+            raise HTTPException(status_code=400, detail="File size must be less than 5MB")
+        
+        # Update database with photo data
+        await conn.execute("""
+            UPDATE livestock_records 
+            SET photo_data = $1, photo_mime_type = $2, photo_path = $3
+            WHERE id = $4
+        """, file_content, file.content_type, file.filename, animal_id)
+        
+        return {"message": "Photo uploaded successfully", "filename": file.filename}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error uploading photo for animal {animal_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to upload photo")
+    finally:
+        await conn.close()
+
+@app.get("/api/animal/{animal_id}/photo")
+async def get_animal_photo(animal_id: int):
+    """Retrieve an animal's photo"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        record = await conn.fetchrow("""
+            SELECT photo_data, photo_mime_type, photo_path
+            FROM livestock_records 
+            WHERE id = $1 AND photo_data IS NOT NULL
+        """, animal_id)
+        
+        if not record:
+            raise HTTPException(status_code=404, detail="Photo not found")
+        
+        from fastapi.responses import Response
+        return Response(
+            content=record['photo_data'],
+            media_type=record['photo_mime_type'] or 'image/jpeg',
+            headers={"Content-Disposition": f"inline; filename={record['photo_path'] or 'photo.jpg'}"}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error retrieving photo for animal {animal_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve photo")
+    finally:
+        await conn.close()
+
+@app.delete("/api/animal/{animal_id}/photo")
+async def delete_animal_photo(animal_id: int):
+    """Delete an animal's photo"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        result = await conn.execute("""
+            UPDATE livestock_records 
+            SET photo_data = NULL, photo_mime_type = NULL, photo_path = NULL
+            WHERE id = $1
+        """, animal_id)
+        
+        if "UPDATE 0" in result:
+            raise HTTPException(status_code=404, detail="Animal not found")
+            
+        return {"message": "Photo deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting photo for animal {animal_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete photo")
     finally:
         await conn.close()
 

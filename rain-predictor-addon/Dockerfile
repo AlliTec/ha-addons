@@ -20,7 +20,7 @@ RUN pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements.txt
 # Create app directory structure
 RUN mkdir -p /app/templates /app/static
 
-# Copy addon files
+# Copy addon files (excluding .ssh-askpass and other sensitive files)
 COPY run.sh /
 COPY rain_predictor.py /app/
 COPY web_ui.py /app/

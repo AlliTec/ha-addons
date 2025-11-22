@@ -1,1 +1,31 @@
-ERROR:    Error loading ASGI app. Could not import module "main".
+INFO:     Will watch for changes in these directories: ['/home/sog/ai-projects/ha-addons/farm-assistant-addon']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [101011] using StatReload
+2025-11-22 18:31:16,280 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [101059]
+INFO:     Waiting for application startup.
+2025-11-22 18:31:16,344 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-22 18:31:16,402 - INFO - Database connection successful.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:38776 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44334 - "GET /api/assets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44746 - "GET /api/animals HTTP/1.1" 200 OK
+Calendar API called with: start_date=None, end_date=None, filter_type=month
+Parsed dates: start_date_obj=2025-11-01, end_date_obj=2025-11-30
+Processing livestock birth: Lag, birth_date=2024-09-18, birth_date_str=2024-09-18
+Skipping birth event for Lag - date 2024-09-18 not in range 2025-11-01 to 2025-11-30
+Processing livestock death: Lag, dod=2025-11-22, dod_date_str=2025-11-22
+Adding death event for Lag on 2025-11-22
+Processing livestock birth: Lutr, birth_date=2025-11-09, birth_date_str=2025-11-09
+Adding birth event for Lutr on 2025-11-09
+INFO:     127.0.0.1:60876 - "GET /api/calendar HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60878 - "GET /api/vehicle/makes HTTP/1.1" 200 OK
+INFO:     127.0.0.1:35492 - "GET /api/vehicle/decode?vin=JTGFP518704500675 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:35506 - "GET /api/vin/decode?vin=JTGFP518704500675 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:46754 - "GET /api/vin/decode/JTGFP518704500675 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60198 - "GET /api/vehicle/models?make=Toyota HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60210 - "GET /api/vehicle/body-types?make=Toyota&model=Coaster&year=2000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:45062 - "GET /static/script.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:37950 - "POST /api/vehicle/lookup-vin HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:42472 - "POST /api/vin/validate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60500 - "GET /api/vin/vehicle-data/JTGFP518704500675 HTTP/1.1" 200 OK

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Console Test</title>
+</head>
+<body>
+    <h1>Testing JavaScript Console Errors</h1>
+    <div id="results"></div>
+    
+    <script>
+        // Test for common JavaScript errors
+        const results = document.getElementById('results');
+        
+        function logResult(test, status, message) {
+            results.innerHTML += `<p><strong>${test}:</strong> <span style="color: ${status === 'pass' ? 'green' : 'red'}">${status.toUpperCase()}</span> - ${message}</p>`;
+        }
+        
+        // Test 1: Check if populateFromVIN is defined
+        try {
+            if (typeof populateFromVIN === 'undefined') {
+                // Try to load the main script
+                const script = document.createElement('script');
+                script.src = 'http://localhost:8000/static/script.js';
+                script.onload = function() {
+                    setTimeout(() => {
+                        if (typeof populateFromVIN !== 'undefined') {
+                            logResult('populateFromVIN function', 'pass', 'Function is defined');
+                        } else {
+                            logResult('populateFromVIN function', 'fail', 'Function is still undefined');
+                        }
+                        
+                        // Test 2: Check for assignment to const error
+                        try {
+                            // This would cause an error if there were const reassignment issues
+                            eval('const test = 1; test = 2;');
+                            logResult('Const assignment test', 'fail', 'Should have thrown error');
+                        } catch (e) {
+                            logResult('Const assignment test', 'pass', 'Correctly prevents const reassignment');
+                        }
+                        
+                        // Test 3: Check populateVehicleBodyTypes function
+                        if (typeof populateVehicleBodyTypes !== 'undefined') {
+                            logResult('populateVehicleBodyTypes function', 'pass', 'Function is defined');
+                        } else {
+                            logResult('populateVehicleBodyTypes function', 'fail', 'Function is undefined');
+                        }
+                    }, 1000);
+                };
+                script.onerror = function() {
+                    logResult('Script loading', 'fail', 'Could not load script.js');
+                };
+                document.head.appendChild(script);
+            } else {
+                logResult('populateFromVIN function', 'pass', 'Function is already defined');
+            }
+        } catch (error) {
+            logResult('General JavaScript test', 'fail', error.message);
+        }
+    </script>
+</body>
+</html>
