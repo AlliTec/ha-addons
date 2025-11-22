@@ -1615,12 +1615,12 @@ async def upload_animal_photo(animal_id: int, file: UploadFile = File(...)):
         if len(file_content) > 5 * 1024 * 1024:
             raise HTTPException(status_code=400, detail="File size must be less than 5MB")
         
-        # Update database with photo data
+        # Insert photo into animal_photos table
         await conn.execute("""
-            UPDATE livestock_records 
-            SET photo_data = $1, photo_mime_type = $2, photo_path = $3
-            WHERE id = $4
-        """, file_content, file.content_type, file.filename, animal_id)
+            INSERT INTO animal_photos (animal_id, photo_data, photo_mime_type, filename, file_size)
+            VALUES ($1, $2, $3, $4, $5)
+            RETURNING id
+        """, animal_id, file_content, file.content_type, file.filename, len(file_content))
         
         return {"message": "Photo uploaded successfully", "filename": file.filename}
         
@@ -1632,16 +1632,87 @@ async def upload_animal_photo(animal_id: int, file: UploadFile = File(...)):
     finally:
         await conn.close()
 
-@app.get("/api/animal/{animal_id}/photo")
-async def get_animal_photo(animal_id: int):
-    """Retrieve an animal's photo"""
+@app.get("/api/animal/{animal_id}/photos")
+async def get_animal_photos(animal_id: int):
+    """Retrieve all photos for an animal"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        photos = await conn.fetch("""
+            SELECT id, filename, photo_mime_type, upload_time, file_size, description
+            FROM animal_photos 
+            WHERE animal_id = $1 
+            ORDER BY upload_time DESC
+        """, animal_id)
+        
+        return [
+            {
+                "id": photo["id"],
+                "filename": photo["filename"],
+                "mime_type": photo["photo_mime_type"],
+                "upload_time": photo["upload_time"].isoformat(),
+                "file_size": photo["file_size"],
+                "description": photo["description"]
+            }
+            for photo in photos
+        ]
+        
+    except Exception as e:
+        logging.error(f"Error retrieving photos for animal {animal_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve photos")
+    finally:
+        await conn.close()
+
+@app.get("/api/animal/{animal_id}/photo/{photo_id}")
+async def get_animal_photo(animal_id: int, photo_id: int):
+    """Retrieve a specific photo for an animal"""
     conn = await asyncpg.connect(DATABASE_URL)
     try:
         record = await conn.fetchrow("""
-            SELECT photo_data, photo_mime_type, photo_path
-            FROM livestock_records 
-            WHERE id = $1 AND photo_data IS NOT NULL
+            SELECT photo_data, photo_mime_type, filename
+            FROM animal_photos 
+            WHERE id = $1 AND animal_id = $2
+        """, photo_id, animal_id)
+        
+        if not record:
+            raise HTTPException(status_code=404, detail="Photo not found")
+        
+        from fastapi.responses import Response
+        return Response(
+            content=record['photo_data'],
+            media_type=record['photo_mime_type'],
+            headers={"Content-Disposition": f"inline; filename={record['filename']}"}
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error retrieving photo {photo_id} for animal {animal_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to retrieve photo")
+    finally:
+        await conn.close()
+
+# Keep old endpoint for backward compatibility
+@app.get("/api/animal/{animal_id}/photo")
+async def get_animal_photo_legacy(animal_id: int):
+    """Retrieve an animal's primary photo (legacy endpoint)"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # First try new table, fallback to old table
+        record = await conn.fetchrow("""
+            SELECT ap.photo_data, ap.photo_mime_type, ap.filename
+            FROM animal_photos ap
+            WHERE ap.animal_id = $1 
+            ORDER BY ap.upload_time ASC
+            LIMIT 1
         """, animal_id)
+        
+        if not record:
+            # Fallback to old single photo in livestock_records
+            record = await conn.fetchrow("""
+                SELECT photo_data, photo_mime_type, photo_path
+                FROM livestock_records 
+                WHERE id = $1 AND photo_data IS NOT NULL
+            """, animal_id)
         
         if not record:
             raise HTTPException(status_code=404, detail="Photo not found")
@@ -1650,7 +1721,7 @@ async def get_animal_photo(animal_id: int):
         return Response(
             content=record['photo_data'],
             media_type=record['photo_mime_type'] or 'image/jpeg',
-            headers={"Content-Disposition": f"inline; filename={record['photo_path'] or 'photo.jpg'}"}
+            headers={"Content-Disposition": f"inline; filename={record.get('filename', record.get('photo_path', 'photo.jpg'))}"}
         )
         
     except HTTPException:
@@ -1661,11 +1732,41 @@ async def get_animal_photo(animal_id: int):
     finally:
         await conn.close()
 
-@app.delete("/api/animal/{animal_id}/photo")
-async def delete_animal_photo(animal_id: int):
-    """Delete an animal's photo"""
+@app.delete("/api/animal/{animal_id}/photo/{photo_id}")
+async def delete_animal_photo(animal_id: int, photo_id: int):
+    """Delete a specific photo for an animal"""
     conn = await asyncpg.connect(DATABASE_URL)
     try:
+        result = await conn.execute("""
+            DELETE FROM animal_photos 
+            WHERE id = $1 AND animal_id = $2
+        """, photo_id, animal_id)
+        
+        if "DELETE 0" in result:
+            raise HTTPException(status_code=404, detail="Photo not found")
+            
+        return {"message": "Photo deleted successfully"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error deleting photo {photo_id} for animal {animal_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete photo")
+    finally:
+        await conn.close()
+
+# Keep old endpoint for backward compatibility
+@app.delete("/api/animal/{animal_id}/photo")
+async def delete_animal_photo_legacy(animal_id: int):
+    """Delete all photos for an animal (legacy endpoint)"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Delete from new table
+        await conn.execute("""
+            DELETE FROM animal_photos WHERE animal_id = $1
+        """, animal_id)
+        
+        # Clear from old table
         result = await conn.execute("""
             UPDATE livestock_records 
             SET photo_data = NULL, photo_mime_type = NULL, photo_path = NULL
@@ -1675,13 +1776,13 @@ async def delete_animal_photo(animal_id: int):
         if "UPDATE 0" in result:
             raise HTTPException(status_code=404, detail="Animal not found")
             
-        return {"message": "Photo deleted successfully"}
+        return {"message": "All photos deleted successfully"}
         
     except HTTPException:
         raise
     except Exception as e:
-        logging.error(f"Error deleting photo for animal {animal_id}: {e}")
-        raise HTTPException(status_code=500, detail="Failed to delete photo")
+        logging.error(f"Error deleting photos for animal {animal_id}: {e}")
+        raise HTTPException(status_code=500, detail="Failed to delete photos")
     finally:
         await conn.close()
 

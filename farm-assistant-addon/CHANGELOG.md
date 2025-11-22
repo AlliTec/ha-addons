@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.11.30 - 2025-11-22
+
+### Animal Details Photo Display Fix
+- **Missing Function**: Added `loadAnimalPhotosForDetails` function to script.js that was called but not defined
+- **Image Display**: Fixed animal details modal to properly display uploaded photos for selected animal only
+- **Database Table**: Created missing `animal_photos` table required for photo functionality
+- **API Integration**: Verified photo API endpoints work correctly for filtering images by animal_id
+- **No Regressions**: Confirmed all existing functionality remains intact
+
 ## 1.11.29 - 2025-11-22
 
 ### Animal Photo Upload Feature
