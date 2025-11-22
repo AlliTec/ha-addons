@@ -31,3 +31,47 @@ INFO:     127.0.0.1:42472 - "POST /api/vin/validate HTTP/1.1" 200 OK
 INFO:     127.0.0.1:60500 - "GET /api/vin/vehicle-data/JTGFP518704500675 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:47538 - "GET / HTTP/1.1" 200 OK
 INFO:     127.0.0.1:37426 - "GET / HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [101059]
+2025-11-22 22:27:59,991 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [108197]
+INFO:     Waiting for application startup.
+2025-11-22 22:28:00,076 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-22 22:28:00,331 - INFO - Database connection successful.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [108197]
+2025-11-22 22:28:50,283 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [108222]
+INFO:     Waiting for application startup.
+2025-11-22 22:28:50,363 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-22 22:28:50,423 - INFO - Database connection successful.
+INFO:     Application startup complete.
+WARNING:  StatReload detected changes in 'main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [108222]
+2025-11-22 22:29:50,947 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [108361]
+INFO:     Waiting for application startup.
+2025-11-22 22:29:51,024 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-22 22:29:51,088 - INFO - Database connection successful.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:47564 - "GET / HTTP/1.1" 200 OK
+2025-11-22 22:47:46,098 - ERROR - Error retrieving photos for animal 1: relation "animal_photos" does not exist
+INFO:     127.0.0.1:44154 - "GET /api/animal/1/photos HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:44160 - "GET /api/animals HTTP/1.1" 200 OK
+2025-11-22 22:47:57,393 - ERROR - Error retrieving photos for animal 9: relation "animal_photos" does not exist
+INFO:     127.0.0.1:39488 - "GET /api/animal/9/photos HTTP/1.1" 500 Internal Server Error
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [108361]
+INFO:     Stopping reloader process [101011]

@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.11.36 - 2025-11-23
+
+### Image Overlay Feature - Click Photos for Full View with Opaque Background
+- **New Feature**: Added click-to-overlay functionality for all animal photos
+- **User Experience**: Users can now click any animal photo to see it full-size in an overlay with opaque black background
+- **Implementation**: 
+  - Updated `openImageOverlay()` function to use correct modal ID and add proper event handlers
+  - Added specific CSS styling for image modal with full-size display and responsive scaling
+  - Implemented multiple close methods: click image, click background, or close button
+- **Technical Details**:
+  - Uses `rgba(0,0,0,0.95)` background for proper opacity
+  - Images scale with `object-fit: contain` to maintain aspect ratio
+  - Prevents background scrolling when overlay is open
+  - Added hover effects and proper cursor styling
+- **Files Modified**:
+  - `static/script.js`: Enhanced `openImageOverlay()` and `closeImageOverlay()` functions
+  - `static/style.css`: Added comprehensive image modal styling
+- **Testing**: Verified end-to-end functionality with existing animal photos
+
 ## 1.11.35 - 2025-11-22
 
 ### CRITICAL Image Display Fix - Show Images Instead of Links

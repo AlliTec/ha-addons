@@ -5201,7 +5201,7 @@ async function loadAnimalPhotos(animalId) {
                     const photoItem = document.createElement('div');
                     photoItem.className = 'photo-item';
                     photoItem.innerHTML = `
-                        <img src="api/animal/${animalId}/photo/${photo.id}" alt="${photo.filename}">
+                        <img src="api/animal/${animalId}/photo/${photo.id}" alt="${photo.filename}" onclick="openImageOverlay('api/animal/${animalId}/photo/${photo.id}', '${photo.filename}')">
                         <div class="photo-actions">
                             <button class="photo-action-btn delete" onclick="deleteExistingPhoto(${animalId}, ${photo.id}, '${photo.filename}')">
                                 <i class="fa-solid fa-trash"></i>
@@ -5245,7 +5245,8 @@ async function loadAnimalPhotosForDetails(animalId) {
                     photoItem.style.cssText = 'display: inline-block; margin: 5px; text-align: center;';
                     photoItem.innerHTML = `
                         <img src="api/animal/${animalId}/photo/${photo.id}" alt="${photo.filename}" 
-                             style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd;">
+                             style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd; cursor: pointer;"
+                             onclick="openImageOverlay('api/animal/${animalId}/photo/${photo.id}', '${photo.filename}')">
                         <div style="font-size: 12px; color: #666; margin-top: 3px;">${photo.filename}</div>
                     `;
                     
@@ -5319,3 +5320,64 @@ function resetPhotoUpload() {
     window.currentAnimalPhotos = [];
     window.newPhotosToAdd = [];
 }
+
+// Image Overlay Functions
+function openImageOverlay(imageSrc, altText) {
+    const modal = document.getElementById("image-modal");
+    const modalImg = document.getElementById("modal-image");
+    
+    if (modal && modalImg) {
+        modalImg.src = imageSrc;
+        modalImg.alt = altText || "Animal Photo";
+        modal.style.display = "block";
+        document.body.style.overflow = "hidden"; // Prevent background scrolling
+        
+        // Add click handler to close modal when clicking on the image
+        modalImg.onclick = function() {
+            closeImageOverlay();
+        };
+        
+        // Add click handler to close modal when clicking on the background
+        modal.onclick = function(event) {
+            if (event.target === modal) {
+                closeImageOverlay();
+            }
+        };
+    }
+}
+
+function closeImageOverlay() {
+    const modal = document.getElementById("image-modal");
+    if (modal) {
+        modal.style.display = "none";
+        document.body.style.overflow = "auto"; // Restore scrolling
+        document.body.style.overflow = "auto"; // Restore scrolling
+    }
+}
+
+// Initialize overlay event listeners
+document.addEventListener("DOMContentLoaded", function() {
+    const overlay = document.getElementById("image-overlay");
+    const overlayClose = document.getElementById("overlay-close");
+    
+    if (overlay) {
+        // Close overlay when clicking on the background
+        overlay.addEventListener("click", function(e) {
+            if (e.target === overlay) {
+                closeImageOverlay();
+            }
+        });
+    }
+    
+    if (overlayClose) {
+        // Close overlay when clicking the close button
+        overlayClose.addEventListener("click", closeImageOverlay);
+    }
+    
+    // Close overlay with Escape key
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Escape") {
+            closeImageOverlay();
+        }
+    });
+});

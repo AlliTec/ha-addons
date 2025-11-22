@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Image Overlay</title>
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <h1>Test Image Overlay Functionality</h1>
+    
+    <div style="padding: 20px;">
+        <h2>Click on any image to see it in full overlay:</h2>
+        
+        <!-- Test images -->
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div>
+                <h3>Cow Image</h3>
+                <img src="static/cow.png" alt="Cow" 
+                     style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd; cursor: pointer;"
+                     onclick="openImageOverlay('static/cow.png', 'Cow Photo')">
+            </div>
+            
+            <div>
+                <h3>Chicken Image</h3>
+                <img src="static/chicken.png" alt="Chicken" 
+                     style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd; cursor: pointer;"
+                     onclick="openImageOverlay('static/chicken.png', 'Chicken Photo')">
+            </div>
+            
+            <div>
+                <h3>Dog Image</h3>
+                <img src="static/dog.png" alt="Dog" 
+                     style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd; cursor: pointer;"
+                     onclick="openImageOverlay('static/dog.png', 'Dog Photo')">
+            </div>
+            
+            <div>
+                <h3>Farm Image</h3>
+                <img src="static/farm.png" alt="Farm" 
+                     style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd; cursor: pointer;"
+                     onclick="openImageOverlay('static/farm.png', 'Farm Photo')">
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="modal">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modal-image">
+    </div>
+
+    <script>
+        // Image Overlay Functions
+        function openImageOverlay(imageSrc, altText) {
+            const modal = document.getElementById("image-modal");
+            const modalImg = document.getElementById("modal-image");
+            
+            if (modal && modalImg) {
+                modalImg.src = imageSrc;
+                modalImg.alt = altText || "Animal Photo";
+                modal.style.display = "block";
+                document.body.style.overflow = "hidden"; // Prevent background scrolling
+                
+                // Add click handler to close modal when clicking on the image
+                modalImg.onclick = function() {
+                    closeImageOverlay();
+                };
+                
+                // Add click handler to close modal when clicking on the background
+                modal.onclick = function(event) {
+                    if (event.target === modal) {
+                        closeImageOverlay();
+                    }
+                };
+            }
+        }
+
+        function closeImageOverlay() {
+            const modal = document.getElementById("image-modal");
+            if (modal) {
+                modal.style.display = "none";
+                document.body.style.overflow = "auto"; // Restore scrolling
+            }
+        }
+
+        // Setup close button handler
+        document.addEventListener('DOMContentLoaded', function() {
+            const closeBtn = document.querySelector("#image-modal .close-modal");
+            if (closeBtn) {
+                closeBtn.onclick = closeImageOverlay;
+            }
+            
+            // Close modal on Escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeImageOverlay();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
