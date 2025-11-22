@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.11.33 - 2025-11-22
+
+### CRITICAL Event Listener Timing Fix for Photo Display
+- **Timing Issue**: Fixed event listener being attached BEFORE animal rows exist in DOM
+- **Execution Order**: Moved event listener setup to execute AFTER `populateAnimalList()` completes
+- **Root Cause**: Event listeners were attached to empty table, so no animal clicks could be detected
+- **Complete Fix**: Ensured animal rows exist before attaching click event listeners
+- **User Workflow**: Now works correctly - page loads → rows populate → event listener attaches → clicks work → photos display
+- **Verified Resolution**: Tested complete workflow from upload to display functionality
+- **No Regressions**: All existing features remain fully functional
+
 ## 1.11.32 - 2025-11-22
 
 ### Critical Event Listener Fix for Photo Display

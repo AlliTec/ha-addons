@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimal Photo Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .photo-item {
+            display: inline-block;
+            margin: 5px;
+            text-align: center;
+        }
+        .photo-item img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button { padding: 10px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Minimal Photo Test</h1>
+    
+    <button onclick="testAnimalDetails()">Test Animal Details (Animal 9)</button>
+    
+    <div id="test-results">
+        <h2>Test Results:</h2>
+        <div id="results">Click button to test...</div>
+    </div>
+    
+    <h2>Animal Details Modal Simulation:</h2>
+    <div id="animal-details-content">
+        <table class="details-table">
+            <tr>
+                <td class="property-cell">Photos:</td>
+                <td class="value-cell">
+                    <div id="animal-details-photos" class="photo-gallery" style="margin-top: 10px;">
+                        <div style="color: #666; font-style: italic;">Loading photos...</div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        // Copy the exact functions from script.js
+        async function loadAnimalPhotosForDetails(animalId) {
+            try {
+                const response = await fetch(`/api/animal/${animalId}/photos`);
+                if (response.ok) {
+                    const photos = await response.json();
+                    
+                    const detailsPhotoContainer = document.getElementById('animal-details-photos');
+                    
+                    if (photos.length > 0) {
+                        // Clear existing photos
+                        detailsPhotoContainer.innerHTML = '';
+                        
+                        // Add each photo to details gallery
+                        for (const photo of photos) {
+                            const photoItem = document.createElement('div');
+                            photoItem.className = 'photo-item';
+                            photoItem.style.cssText = 'display: inline-block; margin: 5px; text-align: center;';
+                            photoItem.innerHTML = `
+                                <img src="/api/animal/${animalId}/photo/${photo.id}" alt="${photo.filename}" 
+                                     style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd;">
+                                <div style="font-size: 12px; color: #666; margin-top: 3px;">${photo.filename}</div>
+                            `;
+                            
+                            detailsPhotoContainer.appendChild(photoItem);
+                        }
+                        return { success: true, count: photos.length };
+                    } else {
+                        detailsPhotoContainer.innerHTML = '<div style="color: #666; font-style: italic;">No photos uploaded</div>';
+                        return { success: true, count: 0 };
+                    }
+                } else {
+                    const detailsPhotoContainer = document.getElementById('animal-details-photos');
+                    detailsPhotoContainer.innerHTML = '<div style="color: #666; font-style: italic;">Error loading photos</div>';
+                    return { success: false, error: 'API error' };
+                }
+            } catch (error) {
+                console.log('Error loading photos for animal details:', animalId, error);
+                const detailsPhotoContainer = document.getElementById('animal-details-photos');
+                detailsPhotoContainer.innerHTML = '<div style="color: #666; font-style: italic;">Error loading photos</div>';
+                return { success: false, error: error.message };
+            }
+        }
+
+        async function testAnimalDetails() {
+            console.log('Testing animal details for animal 9...');
+            const results = document.getElementById('results');
+            
+            try {
+                const result = await loadAnimalPhotosForDetails(9);
+                
+                if (result.success) {
+                    results.innerHTML = `
+                        <div style="color: green;">
+                            ✓ SUCCESS: Loaded ${result.count} photos<br>
+                            Check the images above this section.
+                        </div>
+                    `;
+                } else {
+                    results.innerHTML = `
+                        <div style="color: red;">
+                            ✗ FAILED: ${result.error}<br>
+                            Check browser console for details.
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                results.innerHTML = `
+                    <div style="color: red;">
+                        ✗ EXCEPTION: ${error.message}<br>
+                        Check browser console for details.
+                    </div>
+                `;
+            }
+        }
+
+        // Test on page load
+        window.addEventListener('load', () => {
+            console.log('Page loaded, ready for testing');
+        });
+    </script>
+</body>
+</html>

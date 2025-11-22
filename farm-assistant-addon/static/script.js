@@ -1683,6 +1683,44 @@ document.addEventListener("DOMContentLoaded", async () => {
     setupSectionTabs();
     setupCalendarListeners();
     
+    // Setup animal list click event listener AFTER populateAnimalList completes
+    const filterBar = document.getElementById("filter-bar");
+    const animalListTable = document.querySelector("#livestock-list");
+    if (!animalListTable) {
+        console.error("script.js: Could not find table with ID #livestock-list.");
+        return;
+    }
+    console.log("script.js: Found table element:", animalListTable);
+
+    animalListTable.addEventListener("click", async (event) => {
+        const target = event.target;
+
+        // Handle row click for animal details
+        if (target.closest('tr')) {
+            const row = target.closest('tr');
+            const animalId = row.dataset.animalId;
+            console.log("Animal row clicked, ID:", animalId);
+            await showAnimalDetails(animalId);
+            return;
+        }
+    });
+
+    const modal = document.getElementById("image-modal");
+    const modalImg = document.getElementById("modal-image");
+    const animalDetailsModal = document.getElementById("animal-details-modal");
+    const animalDetailsContent = document.getElementById("animal-details-content");
+    const closeModals = document.querySelectorAll(".close-modal");
+
+    closeModals.forEach(closeModal => {
+        closeModal.onclick = function() {
+            // Find which modal this close button belongs to
+            const modal = closeModal.closest('.modal');
+            if (modal) {
+                modal.style.display = "none";
+            }
+        }
+    });
+    
     // Initialize vehicle data for asset forms (delay to ensure DOM is ready)
     setTimeout(async () => {
         await populateVehicleMakes();
@@ -4940,42 +4978,7 @@ function setupVehicleSelectionHandlers() {
         document.getElementById('refresh-calendar').addEventListener('click', loadCalendarEvents);
     }
     
-    // Setup animal list click event listener
-    const filterBar = document.getElementById("filter-bar");
-    const animalListTable = document.querySelector("#livestock-list");
-    if (!animalListTable) {
-        console.error("script.js: Could not find table with ID #livestock-list.");
-        return;
-    }
-    console.log("script.js: Found table element:", animalListTable);
-
-    animalListTable.addEventListener("click", async (event) => {
-        const target = event.target;
-
-        // Handle row click for animal details
-        if (target.closest('tr')) {
-            const row = target.closest('tr');
-            const animalId = row.dataset.animalId;
-            await showAnimalDetails(animalId);
-            return;
-        }
-    });
-
-    const modal = document.getElementById("image-modal");
-    const modalImg = document.getElementById("modal-image");
-    const animalDetailsModal = document.getElementById("animal-details-modal");
-    const animalDetailsContent = document.getElementById("animal-details-content");
-    const closeModals = document.querySelectorAll(".close-modal");
-
-    closeModals.forEach(closeModal => {
-        closeModal.onclick = function() {
-            // Find which modal this close button belongs to
-            const modal = closeModal.closest('.modal');
-            if (modal) {
-                modal.style.display = "none";
-            }
-        }
-    });
+    
     
     // Make functions globally accessible for onclick handlers
     window.showEventDetailsModal = showEventDetailsModal;
