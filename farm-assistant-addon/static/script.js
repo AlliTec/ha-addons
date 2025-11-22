@@ -777,8 +777,8 @@ async function enableEditMode(animalId) {
         await populateParentDropdowns();
         
         // Set dam and sire values AFTER dropdowns are populated
-        document.getElementById('edit-dam-id').value = animal.dam_id || '';
-        document.getElementById('edit-sire-id').value = animal.sire_id || '';
+        document.getElementById('edit-dam-id').value = animal.dam_id ? String(animal.dam_id) : '';
+        document.getElementById('edit-sire-id').value = animal.sire_id ? String(animal.sire_id) : '';
         
         // Update modal title and button text
         const modalTitle = document.querySelector('#edit-animal-modal h2');

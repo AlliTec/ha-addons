@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.26 - 2025-11-22
+
+### Fixed Dam/Sire Dropdown Display
+- **Parent Name Display**: Fixed dam and sire dropdown fields to properly show parent names when editing animals
+- **Type Conversion Fix**: Added string conversion for animal IDs to match dropdown option values (integers vs strings)
+- **Selection Logic**: Dropdowns now correctly select and display existing parent names instead of showing empty selections
+- **Edit Mode**: Parent fields properly populate with "Name (ID: X)" format for both dam and sire when editing animals
+
 ## 1.11.25 - 2025-11-22
 
 ### Fixed Dam/Sire Edit Issue
