@@ -5201,7 +5201,7 @@ async function loadAnimalPhotos(animalId) {
                     const photoItem = document.createElement('div');
                     photoItem.className = 'photo-item';
                     photoItem.innerHTML = `
-                        <img src="/api/animal/${animalId}/photo/${photo.id}" alt="${photo.filename}">
+                        <img src="api/animal/${animalId}/photo/${photo.id}" alt="${photo.filename}">
                         <div class="photo-actions">
                             <button class="photo-action-btn delete" onclick="deleteExistingPhoto(${animalId}, ${photo.id}, '${photo.filename}')">
                                 <i class="fa-solid fa-trash"></i>
@@ -5244,7 +5244,7 @@ async function loadAnimalPhotosForDetails(animalId) {
                     photoItem.className = 'photo-item';
                     photoItem.style.cssText = 'display: inline-block; margin: 5px; text-align: center;';
                     photoItem.innerHTML = `
-                        <img src="/api/animal/${animalId}/photo/${photo.id}" alt="${photo.filename}" 
+                        <img src="api/animal/${animalId}/photo/${photo.id}" alt="${photo.filename}" 
                              style="width: 150px; height: 150px; object-fit: cover; border-radius: 5px; border: 1px solid #ddd;">
                         <div style="font-size: 12px; color: #666; margin-top: 3px;">${photo.filename}</div>
                     `;

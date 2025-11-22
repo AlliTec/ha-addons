@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Display Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .photo-item { display: inline-block; margin: 10px; text-align: center; }
+        .photo-item img { width: 200px; height: 200px; object-fit: cover; border: 2px solid #ddd; border-radius: 8px; }
+        .test-section { margin: 30px 0; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        .success { color: green; font-weight: bold; }
+        .error { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Image Display Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Load Animal Photos</h2>
+        <div id="photo-results"></div>
+        <div id="photo-gallery"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: Direct Image Test</h2>
+        <p>Testing direct image src with relative path:</p>
+        <img src="api/animal/9/photo/4" alt="Test Image" style="width: 300px; height: 300px; object-fit: cover; border: 2px solid blue;">
+    </div>
+
+    <script>
+        async function testImageDisplay() {
+            const results = document.getElementById('photo-results');
+            const gallery = document.getElementById('photo-gallery');
+            
+            try {
+                // Test photo retrieval
+                console.log('Testing photo retrieval...');
+                const response = await fetch('api/animal/9/photos');
+                
+                if (response.ok) {
+                    const photos = await response.json();
+                    results.innerHTML = `<p class="success">✅ Retrieved ${photos.length} photos successfully</p>`;
+                    
+                    // Display photos
+                    gallery.innerHTML = '';
+                    photos.forEach(photo => {
+                        const photoItem = document.createElement('div');
+                        photoItem.className = 'photo-item';
+                        photoItem.innerHTML = `
+                            <img src="api/animal/9/photo/${photo.id}" alt="${photo.filename}">
+                            <div>${photo.filename}</div>
+                        `;
+                        gallery.appendChild(photoItem);
+                    });
+                    
+                    console.log('Photos displayed:', photos);
+                } else {
+                    results.innerHTML = `<p class="error">❌ Failed to retrieve photos: ${response.status}</p>`;
+                }
+                
+            } catch (error) {
+                results.innerHTML = `<p class="error">❌ Error: ${error.message}</p>`;
+                console.error('Test error:', error);
+            }
+        }
+        
+        // Run test when page loads
+        testImageDisplay();
+        
+        // Test image loading
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('img[src^="api/animal/"]');
+            images.forEach((img, index) => {
+                img.onload = function() {
+                    console.log(`Image ${index + 1} loaded successfully`);
+                };
+                img.onerror = function() {
+                    console.error(`Image ${index + 1} failed to load`);
+                    this.style.border = '2px solid red';
+                };
+            });
+        });
+    </script>
+</body>
+</html>

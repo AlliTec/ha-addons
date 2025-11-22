@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.11.35 - 2025-11-22
+
+### CRITICAL Image Display Fix - Show Images Instead of Links
+- **Image Display**: Fixed photo display to show actual images instead of broken links
+- **Root Cause**: Image src attributes used absolute paths (`/api/animal/X/photo/Y`) bypassing HA proxy
+- **Solution**: Changed all image src attributes to use relative paths (`api/animal/X/photo/Y`)
+- **Files Fixed**:
+  - `static/script.js`: Fixed `loadAnimalPhotos()` and `loadAnimalPhotosForDetails()` image src attributes
+  - `static/minimal_photo_test.html`: Fixed test file image src for consistency
+- **Testing**: Verified images load and display correctly through Home Assistant proxy
+- **Result**: Users now see actual animal photos instead of broken image links
+
 ## 1.11.34 - 2025-11-22
 
 ### CRITICAL Home Assistant Proxy Fix for Photo Upload
