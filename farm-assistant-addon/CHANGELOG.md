@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.11.42 - 2025-11-23
+
+### Feature Removal - Asset Photo System
+- **Problem**: Asset photo functionality was complex, unreliable, and causing issues
+- **User Impact**: Simplified asset management by removing photo handling
+- **Changes Made**:
+  - Removed `photo_path` and `photo_mime_type` fields from AssetCreate model
+  - Removed asset photo upload, view, and delete API endpoints
+  - Removed photo display from asset list table and details modal
+  - Removed photo upload fields from asset add/edit forms
+  - Removed all photo-related JavaScript functionality
+  - Updated database queries to exclude photo columns
+- **Testing**: All existing asset management features verified working without photos
+- **Result**: Cleaner, more reliable asset management system
+
 ## 1.11.41 - 2025-11-23
 
 ### Bug Fix - Missing Guinea Fowl Category
