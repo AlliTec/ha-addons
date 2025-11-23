@@ -1898,18 +1898,30 @@ document.addEventListener("DOMContentLoaded", async () => {
             
             tableBody.innerHTML = ""; // Clear existing rows
 
-            filteredAssets.forEach((asset, index) => {
+            for (let index = 0; index < filteredAssets.length; index++) {
+                const asset = filteredAssets[index];
                 console.log(`Processing asset ${index + 1}:`, asset);
                 
                 const row = document.createElement("tr");
                 row.dataset.assetId = asset.id;
 
-                // Create photo cell with thumbnail or placeholder
+                // Create photo cell with thumbnail or placeholder (load from asset_photos)
                 let photoCell = '';
-                if (asset.photo_path) {
-                    const filename = asset.photo_path.split('/').pop() || 'asset_photo';
-                    photoCell = `<img src="${asset.photo_path}" alt="${filename}" class="asset-photo-thumbnail" onclick="openImageOverlay('${asset.photo_path}', '${filename}')" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; cursor: pointer;">`;
-                } else {
+                try {
+                    const photosResponse = await fetch(`api/asset/${asset.id}/photos`);
+                    if (photosResponse.ok) {
+                        const photos = await photosResponse.json();
+                        if (photos.length > 0) {
+                            const firstPhoto = photos[0];
+                            photoCell = `<img src="api/asset/${asset.id}/photo/${firstPhoto.id}" alt="${firstPhoto.filename}" class="asset-photo-thumbnail" onclick="openImageOverlay('api/asset/${asset.id}/photo/${firstPhoto.id}', '${firstPhoto.filename}')" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; cursor: pointer;">`;
+                        } else {
+                            photoCell = '<div style="width: 40px; height: 40px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 12px;">No Photo</div>';
+                        }
+                    } else {
+                        photoCell = '<div style="width: 40px; height: 40px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 12px;">No Photo</div>';
+                    }
+                } catch (error) {
+                    console.error('Error loading asset photos:', error);
                     photoCell = '<div style="width: 40px; height: 40px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 12px;">No Photo</div>';
                 }
 
@@ -1923,7 +1935,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 `;
 
                 tableBody.appendChild(row);
-            });
+            }
 
             // Add click event listeners to asset rows
             document.querySelectorAll("#assets-list tbody tr").forEach(row => {
@@ -1999,29 +2011,15 @@ document.addEventListener("DOMContentLoaded", async () => {
                 childComponentsHtml = '<div style="color: #666; font-style: italic;">No components recorded</div>';
             }
             
-            // Build photo HTML for details
-            let photoHtml = '';
-            if (asset.photo_path) {
-                const filename = asset.photo_path.split('/').pop() || 'asset_photo';
-                photoHtml = `
-                    <tr>
-                        <td class="property-cell">Photo:</td>
-                        <td>
-                            <img src="${asset.photo_path}" alt="${filename}" 
-                                 style="max-width: 300px; max-height: 200px; border-radius: 4px; cursor: pointer; object-fit: cover;" 
-                                 onclick="openImageOverlay('${asset.photo_path}', '${filename}')">
-                            <div style="margin-top: 5px; font-size: 12px; color: #666;">${filename}</div>
-                        </td>
-                    </tr>
-                `;
-            } else {
-                photoHtml = `
-                    <tr>
-                        <td class="property-cell">Photo:</td>
-                        <td style="color: #666; font-style: italic;">No photo uploaded</td>
-                    </tr>
-                `;
-            }
+            // Build photo HTML for details (will be loaded asynchronously)
+            let photoHtml = `
+                <tr>
+                    <td class="property-cell">Photos:</td>
+                    <td>
+                        <div id="asset-details-photos" class="photo-gallery" style="margin-top: 10px;"></div>
+                    </td>
+                </tr>
+            `;
 
             const detailsContent = document.getElementById('asset-details-content');
             detailsContent.innerHTML = `
@@ -2054,6 +2052,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Set asset ID for edit/delete buttons
             document.getElementById('edit-asset-btn').dataset.assetId = assetId;
             document.getElementById('delete-asset-btn').dataset.assetId = assetId;
+            
+            // Load asset photos for details view (after DOM is updated)
+            loadAssetPhotos(assetId);
             
             // Store return-to-parent ID if provided
             if (returnToParentId) {
@@ -3148,21 +3149,12 @@ function setupVehicleSelectionHandlers() {
             // General Notes
             document.getElementById('edit-asset-notes').value = asset.notes || '';
             
-            // Display current photo
+            // Display current photos (will be loaded asynchronously)
             const currentPhotoDiv = document.getElementById('edit-asset-current-photo');
-            if (asset.photo_path) {
-                const filename = asset.photo_path.split('/').pop() || 'asset_photo';
-                currentPhotoDiv.innerHTML = `
-                    <div style="margin-top: 10px;">
-                        <strong>Current Photo:</strong>
-                        <img src="${asset.photo_path}" alt="${filename}" 
-                             style="max-width: 200px; max-height: 150px; border-radius: 4px; margin-top: 5px; display: block;">
-                        <div style="margin: 5px 0; font-size: 12px; color: #666;">${filename}</div>
-                    </div>
-                `;
-            } else {
-                currentPhotoDiv.innerHTML = '<div style="margin-top: 10px; color: #666; font-style: italic;">No current photo</div>';
-            }
+            currentPhotoDiv.innerHTML = '<div style="margin-top: 10px;">Loading existing photos...</div>';
+            
+            // Load existing photos after modal is shown
+            setTimeout(() => loadAssetPhotosForEdit(assetId), 100);
             
             // Clear photo preview
             document.getElementById('edit-asset-photo-preview').innerHTML = '';
@@ -5479,6 +5471,103 @@ function resetPhotoUpload() {
     // Clear stored data
     window.currentAnimalPhotos = [];
     window.newPhotosToAdd = [];
+}
+
+// Asset Photo Functions (identical to animal system)
+async function loadAssetPhotos(assetId) {
+    try {
+        const response = await fetch(`api/asset/${assetId}/photos`);
+        if (response.ok) {
+            const photos = await response.json();
+            
+            if (photos.length > 0) {
+                const detailsPhotoContainer = document.getElementById('asset-details-photos');
+                
+                // Clear existing photos
+                detailsPhotoContainer.innerHTML = '';
+                
+                // Add each photo
+                for (const photo of photos) {
+                    const photoDiv = document.createElement('div');
+                    photoDiv.style.cssText = 'display: inline-block; margin: 5px; position: relative;';
+                    photoDiv.innerHTML = `
+                        <img src="api/asset/${assetId}/photo/${photo.id}" alt="${photo.filename}" 
+                             style="max-width: 200px; max-height: 150px; border-radius: 4px; cursor: pointer; object-fit: cover; margin: 2px;" 
+                             onclick="openImageOverlay('api/asset/${assetId}/photo/${photo.id}', '${photo.filename}')">
+                        <div style="margin-top: 5px; font-size: 12px; color: #666;">${photo.filename}</div>
+                    `;
+                    detailsPhotoContainer.appendChild(photoDiv);
+                }
+            } else {
+                const detailsPhotoContainer = document.getElementById('asset-details-photos');
+                detailsPhotoContainer.innerHTML = '<div style="color: #666; font-style: italic;">No photos uploaded</div>';
+            }
+        }
+    } catch (error) {
+        console.error('Error loading asset photos:', error);
+        const detailsPhotoContainer = document.getElementById('asset-details-photos');
+        detailsPhotoContainer.innerHTML = '<div style="color: #666; font-style: italic;">Error loading photos</div>';
+    }
+}
+
+async function loadAssetPhotosForEdit(assetId) {
+    try {
+        const response = await fetch(`api/asset/${assetId}/photos`);
+        if (response.ok) {
+            const photos = await response.json();
+            
+            const currentPhotoDiv = document.getElementById('edit-asset-current-photo');
+            
+            if (photos.length > 0) {
+                let photosHtml = '<div style="margin-top: 10px;"><strong>Current Photos:</strong><br>';
+                
+                for (const photo of photos) {
+                    photosHtml += `
+                        <div style="display: inline-block; margin: 5px; position: relative;">
+                            <img src="api/asset/${assetId}/photo/${photo.id}" alt="${photo.filename}" 
+                                 style="max-width: 150px; max-height: 100px; border-radius: 4px; cursor: pointer; object-fit: cover; margin: 2px;" 
+                                 onclick="openImageOverlay('api/asset/${assetId}/photo/${photo.id}', '${photo.filename}')">
+                            <div style="margin-top: 2px; font-size: 10px; color: #666;">${photo.filename}</div>
+                            <button type="button" onclick="deleteAssetPhoto(${assetId}, ${photo.id}, '${photo.filename}')" 
+                                    style="position: absolute; top: 2px; right: 2px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; font-size: 12px;">×</button>
+                        </div>
+                    `;
+                }
+                
+                photosHtml += '</div>';
+                currentPhotoDiv.innerHTML = photosHtml;
+            } else {
+                currentPhotoDiv.innerHTML = '<div style="margin-top: 10px; color: #666; font-style: italic;">No current photos</div>';
+            }
+        }
+    } catch (error) {
+        console.error('Error loading asset photos for edit:', error);
+        const currentPhotoDiv = document.getElementById('edit-asset-current-photo');
+        currentPhotoDiv.innerHTML = '<div style="margin-top: 10px; color: #666; font-style: italic;">Error loading photos</div>';
+    }
+}
+
+async function deleteAssetPhoto(assetId, photoId, filename) {
+    if (!confirm(`Are you sure you want to delete "${filename}"?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`api/asset/${assetId}/photo/${photoId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            // Reload photos for edit form
+            await loadAssetPhotosForEdit(assetId);
+            console.log(`Successfully deleted photo ${filename}`);
+        } else {
+            alert('Failed to delete photo');
+        }
+    } catch (error) {
+        console.error('Error deleting photo:', error);
+        alert('Error deleting photo');
+    }
 }
 
 // Image Overlay Functions

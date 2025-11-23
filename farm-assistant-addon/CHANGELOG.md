@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.11.42 - 2025-11-24
+
+### Feature Update - Asset Photo System Made Identical to Animal Photo System
+- **Problem**: Asset photo system used file storage while animal system used database storage
+- **User Request**: Make asset photo feature identical to animal photo feature
+- **Changes Made**:
+  - Created `asset_photos` table with identical structure to `animal_photos`
+  - Replaced asset photo file storage with database storage (BYTEA)
+  - Updated asset photo endpoints to match animal photo endpoints exactly:
+    - `POST /api/asset/{asset_id}/photo` - Upload photo to database
+    - `GET /api/asset/{asset_id}/photos` - List all photos
+    - `GET /api/asset/{asset_id}/photo/{photo_id}` - Get specific photo
+    - `DELETE /api/asset/{asset_id}/photo/{photo_id}` - Delete specific photo
+    - Legacy endpoints for backward compatibility
+  - Removed old `photo_path` and `photo_mime_type` columns from asset model
+  - Updated JavaScript to load and display multiple photos per asset
+  - Added photo gallery functionality identical to animal system
+  - Added photo deletion in edit form
+- **Testing**: Verified asset photo system works identically to animal photo system
+- **Result**: Consistent photo management across both animals and assets
+
 ## 1.11.41 - 2025-11-23
 
 ### Bug Fix - Missing Guinea Fowl Category
