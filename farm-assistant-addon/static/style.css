@@ -450,11 +450,23 @@ th {
     object-fit: contain;
     border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.2s ease;
 }
 
-#image-modal #modal-image:hover {
-    transform: scale(1.02);
+#image-modal #modal-image:hover::after {
+    content: attr(alt);
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0,0,0,0.8);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    z-index: 3000;
+    pointer-events: none;
+    white-space: nowrap;
 }
 
 #image-modal .close-modal {

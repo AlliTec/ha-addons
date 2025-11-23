@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.11.38 - 2025-11-23
+
+### UI Enhancement - Remove Image Hover Movement, Add Filename Tooltip
+- **Problem**: Image modal had annoying hover effect that moved/scaled the image
+- **User Request**: Show filename on hover instead of moving image
+- **Changes Made**:
+  - Removed `transform: scale(1.02)` hover effect from image modal
+  - Added CSS `::after` pseudo-element to display filename tooltip on hover
+  - Tooltip appears at bottom center of screen with semi-transparent black background
+- **Technical Details**:
+  - Uses `content: attr(alt)` to display image alt text (filename)
+  - Fixed positioning with `bottom: 20px` and `left: 50%`
+  - High z-index (3000) to appear above all other elements
+  - `pointer-events: none` to prevent tooltip interference
+- **Result**: Clean hover experience with filename display instead of image movement
+
 ## 1.11.37 - 2025-11-23
 
 ### CRITICAL FIX - Image Modal Z-Index Issue
