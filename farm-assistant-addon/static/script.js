@@ -1735,8 +1735,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log('🚗 Vehicle makes populated, handlers will be setup when modal opens');
     }, 100);
     
-    // Setup asset photo previews
-    setupAssetPhotoPreviews();
+    // Setup asset photo previews - Now handled by the new photo upload system
     
     // Set initial table width after data is loaded
     setTimeout(() => {
@@ -3157,7 +3156,8 @@ function setupVehicleSelectionHandlers() {
             setTimeout(() => loadAssetPhotosForEdit(assetId), 100);
             
             // Clear photo preview
-            document.getElementById('edit-asset-photo-preview').innerHTML = '';
+            document.getElementById('asset-edit-photo-gallery').innerHTML = '';
+            document.getElementById('asset-edit-photo-preview-container').style.display = 'none';
             
             // Hide details modal and show edit modal
             document.getElementById('asset-details-modal').style.display = 'none';
@@ -4231,55 +4231,7 @@ function setupVehicleSelectionHandlers() {
         return await response.json();
     }
 
-    // Photo Preview Functions
-    function setupAssetPhotoPreviews() {
-        // Add asset photo preview
-        const addPhotoInput = document.getElementById('add-asset-photo');
-        if (addPhotoInput) {
-            addPhotoInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                const preview = document.getElementById('add-asset-photo-preview');
-                
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        preview.innerHTML = `
-                            <img src="${e.target.result}" alt="Photo preview" style="max-width: 200px; max-height: 200px; border-radius: 4px; margin-top: 10px;">
-                            <p style="margin: 5px 0; font-size: 12px; color: #666;">${file.name}</p>
-                        `;
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    preview.innerHTML = '';
-                }
-            });
-        }
-
-        // Edit asset photo preview
-        const editPhotoInput = document.getElementById('edit-asset-photo');
-        if (editPhotoInput) {
-            editPhotoInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                const preview = document.getElementById('edit-asset-photo-preview');
-                
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        preview.innerHTML = `
-                            <div style="margin-bottom: 10px;">
-                                <strong>New Photo:</strong>
-                                <img src="${e.target.result}" alt="New photo preview" style="max-width: 200px; max-height: 200px; border-radius: 4px; margin-top: 5px;">
-                                <p style="margin: 5px 0; font-size: 12px; color: #666;">${file.name}</p>
-                            </div>
-                        `;
-                    };
-                    reader.readAsDataURL(file);
-                } else {
-                    preview.innerHTML = '';
-                }
-            });
-        }
-    }
+    // Photo Preview Functions - Now handled by the new photo upload system
 
     // Function to calculate due date based on interval and meter readings
     function calculateDueDate() {

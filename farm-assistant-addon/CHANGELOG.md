@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.11.44 - 2025-11-24
+
+### Bug Fix - Edit Asset Button Broken
+- **Problem**: Edit asset button was broken due to conflicting old photo preview code
+- **Root Cause**: Old JavaScript code trying to access non-existent HTML elements
+- **Changes Made**:
+  - Removed old `setupAssetPhotoPreviews()` function that referenced outdated elements
+  - Fixed `enableAssetEditMode()` function to use correct element IDs
+  - Cleaned up references to `edit-asset-photo-preview` and `add-asset-photo-preview`
+  - Ensured compatibility with new asset photo upload system
+- **Testing**: Verified edit asset button now works correctly
+- **Result**: Edit asset functionality restored and working properly
+
 ## 1.11.43 - 2025-11-24
 
 ### UI Enhancement - Asset Photo Upload Interface Completed
