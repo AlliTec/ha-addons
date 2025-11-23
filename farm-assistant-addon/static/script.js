@@ -3163,6 +3163,9 @@ function setupVehicleSelectionHandlers() {
             document.getElementById('asset-details-modal').style.display = 'none';
             document.getElementById('edit-asset-modal').style.display = 'block';
             
+            // Initialize edit asset photo upload after modal is shown
+            setTimeout(() => initializeAssetEditPhotoUpload(), 100);
+            
         } catch (error) {
             console.error('Error enabling asset edit mode:', error);
         }
@@ -4181,16 +4184,13 @@ function setupVehicleSelectionHandlers() {
                     const result = await response.json();
                     const assetId = result.id;
                     
-                    // Handle photo upload if a file was selected
-                    const photoFile = document.getElementById('add-asset-photo').files[0];
-                    if (photoFile) {
-                        try {
-                            await uploadAssetPhoto(assetId, photoFile);
-                            console.log('Asset photo uploaded successfully');
-                        } catch (photoError) {
-                            console.error('Asset photo upload failed:', photoError);
-                            // Don't fail the whole operation if photo upload fails
-                        }
+                    // Handle photo upload if photos were selected
+                    try {
+                        await uploadAssetPhotos(assetId);
+                        console.log('Asset photos uploaded successfully');
+                    } catch (photoError) {
+                        console.error('Asset photo upload failed:', photoError);
+                        // Don't fail the whole operation if photo upload fails
                     }
                     
                     alert('Asset added successfully!');
@@ -4497,16 +4497,13 @@ function setupVehicleSelectionHandlers() {
                     const responseText = await response.text();
                     console.log('Update successful, response:', responseText);
                     
-                    // Handle photo upload if a new file was selected
-                    const photoFile = document.getElementById('edit-asset-photo').files[0];
-                    if (photoFile) {
-                        try {
-                            await uploadAssetPhoto(assetId, photoFile);
-                            console.log('Asset photo uploaded successfully');
-                        } catch (photoError) {
-                            console.error('Asset photo upload failed:', photoError);
-                            // Don't fail the whole operation if photo upload fails
-                        }
+                    // Handle photo upload if new photos were selected
+                    try {
+                        await uploadAssetEditPhotos(assetId);
+                        console.log('Asset photos uploaded successfully');
+                    } catch (photoError) {
+                        console.error('Asset photo upload failed:', photoError);
+                        // Don't fail the whole operation if photo upload fails
                     }
                     
                     alert('Asset updated successfully!');
@@ -5145,6 +5142,7 @@ function setupVehicleSelectionHandlers() {
     
     // Photo Upload Functionality
     initializePhotoUpload();
+    initializeAssetPhotoUpload();
 });
 
 function initializePhotoUpload() {
@@ -5568,6 +5566,369 @@ async function deleteAssetPhoto(assetId, photoId, filename) {
         console.error('Error deleting photo:', error);
         alert('Error deleting photo');
     }
+}
+
+function initializeAssetPhotoUpload() {
+    // Add asset photo upload
+    const uploadArea = document.getElementById('asset-photo-upload');
+    const fileInput = document.getElementById('asset-photo-input');
+    const photoPreviewContainer = document.getElementById('asset-photo-preview-container');
+    const photoPlaceholder = document.getElementById('asset-photo-placeholder');
+    const addMoreBtn = document.getElementById('asset-add-more-photos-btn');
+    
+    if (!uploadArea) return;
+    
+    // Store current asset photos
+    window.currentAssetPhotos = [];
+    window.newAssetPhotosToAdd = [];
+    
+    // Click to upload
+    uploadArea.addEventListener('click', (e) => {
+        if (e.target !== addMoreBtn && !e.target.closest('.photo-action-btn')) {
+            fileInput.click();
+        }
+    });
+    
+    // File selection
+    fileInput.addEventListener('change', handleAssetFileSelect);
+    
+    // Add more photos button
+    if (addMoreBtn) {
+        addMoreBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        });
+    }
+    
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleAssetMultipleFiles(files);
+        }
+    });
+}
+
+function handleAssetFileSelect(e) {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+        handleAssetMultipleFiles(files);
+    }
+}
+
+function handleAssetMultipleFiles(files) {
+    const validFiles = files.filter(file => {
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            alert(`File "${file.name}" is not an image. Please select only image files.`);
+            return false;
+        }
+        
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            alert(`File "${file.name}" is too large. Maximum size is 5MB.`);
+            return false;
+        }
+        
+        return true;
+    });
+    
+    if (validFiles.length > 0) {
+        // Add to new photos array
+        window.newAssetPhotosToAdd = [...window.newAssetPhotosToAdd, ...validFiles];
+        
+        // Display preview
+        displayAssetPhotoPreviews(validFiles);
+    }
+}
+
+function displayAssetPhotoPreviews(files) {
+    const photoPreviewContainer = document.getElementById('asset-photo-preview-container');
+    const photoPlaceholder = document.getElementById('asset-photo-placeholder');
+    const photoGallery = document.getElementById('asset-photo-gallery');
+    
+    // Show gallery container
+    photoPreviewContainer.style.display = 'block';
+    photoPlaceholder.style.display = 'none';
+    
+    // Add each photo to gallery
+    files.forEach(file => {
+        const photoItem = document.createElement('div');
+        photoItem.className = 'photo-item';
+        photoItem.innerHTML = `
+            <img src="${URL.createObjectURL(file)}" alt="${file.name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; margin: 5px;">
+            <div class="photo-actions">
+                <button class="photo-action-btn delete" onclick="removeAssetPhotoFromGallery(this, '${file.name}')">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        `;
+        photoItem.dataset.file = file.name;
+        photoItem.dataset.size = file.size;
+        photoItem.dataset.type = file.type;
+        photoItem.dataset.src = URL.createObjectURL(file);
+        
+        photoGallery.appendChild(photoItem);
+    });
+}
+
+function removeAssetPhotoFromGallery(button, filename) {
+    const photoItem = button.closest('.photo-item');
+    const photoGallery = document.getElementById('asset-photo-gallery');
+    
+    // Remove from new photos array
+    window.newAssetPhotosToAdd = window.newAssetPhotosToAdd.filter(p => p.name !== filename);
+    
+    // Remove from DOM
+    photoGallery.removeChild(photoItem);
+    
+    // Hide gallery if empty
+    if (photoGallery.children.length === 0) {
+        resetAssetPhotoUpload();
+    }
+}
+
+function resetAssetPhotoUpload() {
+    const photoPreviewContainer = document.getElementById('asset-photo-preview-container');
+    const photoPlaceholder = document.getElementById('asset-photo-placeholder');
+    const photoGallery = document.getElementById('asset-photo-gallery');
+    const fileInput = document.getElementById('asset-photo-input');
+    
+    photoPreviewContainer.style.display = 'none';
+    photoPlaceholder.style.display = 'block';
+    photoGallery.innerHTML = '';
+    fileInput.value = '';
+    
+    // Clear stored data
+    window.currentAssetPhotos = [];
+    window.newAssetPhotosToAdd = [];
+}
+
+async function uploadAssetPhotos(assetId) {
+    if (window.newAssetPhotosToAdd.length === 0) {
+        return; // No photos to upload
+    }
+    
+    const photoPreviewContainer = document.getElementById('asset-photo-preview-container');
+    const photoGallery = document.getElementById('asset-photo-gallery');
+    
+    // Upload each photo
+    for (const file of window.newAssetPhotosToAdd) {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const response = await fetch(`api/asset/${assetId}/photo`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to upload ${file.name}`);
+            }
+            
+            console.log(`Successfully uploaded ${file.name}`);
+        } catch (error) {
+            console.error(`Error uploading ${file.name}:`, error);
+            alert(`Failed to upload ${file.name}: ${error.message}`);
+        }
+    }
+    
+    // Clear the upload area
+    resetAssetPhotoUpload();
+}
+
+function initializeAssetEditPhotoUpload() {
+    // Edit asset photo upload
+    const uploadArea = document.getElementById('asset-edit-photo-upload');
+    const fileInput = document.getElementById('asset-edit-photo-input');
+    const photoPreviewContainer = document.getElementById('asset-edit-photo-preview-container');
+    const photoPlaceholder = document.getElementById('asset-edit-photo-placeholder');
+    const addMoreBtn = document.getElementById('asset-edit-add-more-photos-btn');
+    
+    if (!uploadArea) return;
+    
+    // Store current asset photos for edit
+    window.currentEditAssetPhotos = [];
+    window.newEditAssetPhotosToAdd = [];
+    
+    // Click to upload
+    uploadArea.addEventListener('click', (e) => {
+        if (e.target !== addMoreBtn && !e.target.closest('.photo-action-btn')) {
+            fileInput.click();
+        }
+    });
+    
+    // File selection
+    fileInput.addEventListener('change', handleAssetEditFileSelect);
+    
+    // Add more photos button
+    if (addMoreBtn) {
+        addMoreBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            fileInput.click();
+        });
+    }
+    
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleAssetEditMultipleFiles(files);
+        }
+    });
+}
+
+function handleAssetEditFileSelect(e) {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+        handleAssetEditMultipleFiles(files);
+    }
+}
+
+function handleAssetEditMultipleFiles(files) {
+    const validFiles = files.filter(file => {
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            alert(`File "${file.name}" is not an image. Please select only image files.`);
+            return false;
+        }
+        
+        // Validate file size (5MB max)
+        if (file.size > 5 * 1024 * 1024) {
+            alert(`File "${file.name}" is too large. Maximum size is 5MB.`);
+            return false;
+        }
+        
+        return true;
+    });
+    
+    if (validFiles.length > 0) {
+        // Add to new photos array
+        window.newEditAssetPhotosToAdd = [...window.newEditAssetPhotosToAdd, ...validFiles];
+        
+        // Display preview
+        displayAssetEditPhotoPreviews(validFiles);
+    }
+}
+
+function displayAssetEditPhotoPreviews(files) {
+    const photoPreviewContainer = document.getElementById('asset-edit-photo-preview-container');
+    const photoPlaceholder = document.getElementById('asset-edit-photo-placeholder');
+    const photoGallery = document.getElementById('asset-edit-photo-gallery');
+    
+    // Show gallery container
+    photoPreviewContainer.style.display = 'block';
+    photoPlaceholder.style.display = 'none';
+    
+    // Add each photo to gallery
+    files.forEach(file => {
+        const photoItem = document.createElement('div');
+        photoItem.className = 'photo-item';
+        photoItem.innerHTML = `
+            <img src="${URL.createObjectURL(file)}" alt="${file.name}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 4px; margin: 5px;">
+            <div class="photo-actions">
+                <button class="photo-action-btn delete" onclick="removeAssetEditPhotoFromGallery(this, '${file.name}')">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+        `;
+        photoItem.dataset.file = file.name;
+        photoItem.dataset.size = file.size;
+        photoItem.dataset.type = file.type;
+        photoItem.dataset.src = URL.createObjectURL(file);
+        
+        photoGallery.appendChild(photoItem);
+    });
+}
+
+function removeAssetEditPhotoFromGallery(button, filename) {
+    const photoItem = button.closest('.photo-item');
+    const photoGallery = document.getElementById('asset-edit-photo-gallery');
+    
+    // Remove from new photos array
+    window.newEditAssetPhotosToAdd = window.newEditAssetPhotosToAdd.filter(p => p.name !== filename);
+    
+    // Remove from DOM
+    photoGallery.removeChild(photoItem);
+    
+    // Hide gallery if empty
+    if (photoGallery.children.length === 0) {
+        resetAssetEditPhotoUpload();
+    }
+}
+
+function resetAssetEditPhotoUpload() {
+    const photoPreviewContainer = document.getElementById('asset-edit-photo-preview-container');
+    const photoPlaceholder = document.getElementById('asset-edit-photo-placeholder');
+    const photoGallery = document.getElementById('asset-edit-photo-gallery');
+    const fileInput = document.getElementById('asset-edit-photo-input');
+    
+    photoPreviewContainer.style.display = 'none';
+    photoPlaceholder.style.display = 'block';
+    photoGallery.innerHTML = '';
+    fileInput.value = '';
+    
+    // Clear stored data
+    window.currentEditAssetPhotos = [];
+    window.newEditAssetPhotosToAdd = [];
+}
+
+async function uploadAssetEditPhotos(assetId) {
+    if (window.newEditAssetPhotosToAdd.length === 0) {
+        return; // No photos to upload
+    }
+    
+    // Upload each photo
+    for (const file of window.newEditAssetPhotosToAdd) {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const response = await fetch(`api/asset/${assetId}/photo`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to upload ${file.name}`);
+            }
+            
+            console.log(`Successfully uploaded ${file.name}`);
+        } catch (error) {
+            console.error(`Error uploading ${file.name}:`, error);
+            alert(`Failed to upload ${file.name}: ${error.message}`);
+        }
+    }
+    
+    // Clear the upload area
+    resetAssetEditPhotoUpload();
 }
 
 // Image Overlay Functions
