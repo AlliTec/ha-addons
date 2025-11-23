@@ -1735,7 +1735,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.log('🚗 Vehicle makes populated, handlers will be setup when modal opens');
     }, 100);
     
-
+    // Setup asset photo previews
+    setupAssetPhotoPreviews();
     
     // Set initial table width after data is loaded
     setTimeout(() => {
@@ -1903,7 +1904,17 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const row = document.createElement("tr");
                 row.dataset.assetId = asset.id;
 
+                // Create photo cell with thumbnail or placeholder
+                let photoCell = '';
+                if (asset.photo_path) {
+                    const filename = asset.photo_path.split('/').pop() || 'asset_photo';
+                    photoCell = `<img src="${asset.photo_path}" alt="${filename}" class="asset-photo-thumbnail" onclick="openImageOverlay('${asset.photo_path}', '${filename}')" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px; cursor: pointer;">`;
+                } else {
+                    photoCell = '<div style="width: 40px; height: 40px; background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 12px;">No Photo</div>';
+                }
+
                 row.innerHTML = `
+                    <td>${photoCell}</td>
                     <td>${formatCell(asset.name)}</td>
                     <td>${formatCell(asset.make || '')} ${formatCell(asset.model || '')}</td>
                     <td>${formatCell(asset.location)}</td>
@@ -1988,11 +1999,34 @@ document.addEventListener("DOMContentLoaded", async () => {
                 childComponentsHtml = '<div style="color: #666; font-style: italic;">No components recorded</div>';
             }
             
-
+            // Build photo HTML for details
+            let photoHtml = '';
+            if (asset.photo_path) {
+                const filename = asset.photo_path.split('/').pop() || 'asset_photo';
+                photoHtml = `
+                    <tr>
+                        <td class="property-cell">Photo:</td>
+                        <td>
+                            <img src="${asset.photo_path}" alt="${filename}" 
+                                 style="max-width: 300px; max-height: 200px; border-radius: 4px; cursor: pointer; object-fit: cover;" 
+                                 onclick="openImageOverlay('${asset.photo_path}', '${filename}')">
+                            <div style="margin-top: 5px; font-size: 12px; color: #666;">${filename}</div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                photoHtml = `
+                    <tr>
+                        <td class="property-cell">Photo:</td>
+                        <td style="color: #666; font-style: italic;">No photo uploaded</td>
+                    </tr>
+                `;
+            }
 
             const detailsContent = document.getElementById('asset-details-content');
             detailsContent.innerHTML = `
                 <table class="details-table">
+                    ${photoHtml}
                     <tr><td class="property-cell">Asset Name:</td><td>${formatCell(asset.name)}</td></tr>
                     <tr><td class="property-cell">Category:</td><td>${formatCell(asset.category)}</td></tr>
                     <tr><td class="property-cell">Make:</td><td>${formatCell(asset.make)}</td></tr>
@@ -3114,7 +3148,24 @@ function setupVehicleSelectionHandlers() {
             // General Notes
             document.getElementById('edit-asset-notes').value = asset.notes || '';
             
-
+            // Display current photo
+            const currentPhotoDiv = document.getElementById('edit-asset-current-photo');
+            if (asset.photo_path) {
+                const filename = asset.photo_path.split('/').pop() || 'asset_photo';
+                currentPhotoDiv.innerHTML = `
+                    <div style="margin-top: 10px;">
+                        <strong>Current Photo:</strong>
+                        <img src="${asset.photo_path}" alt="${filename}" 
+                             style="max-width: 200px; max-height: 150px; border-radius: 4px; margin-top: 5px; display: block;">
+                        <div style="margin: 5px 0; font-size: 12px; color: #666;">${filename}</div>
+                    </div>
+                `;
+            } else {
+                currentPhotoDiv.innerHTML = '<div style="margin-top: 10px; color: #666; font-style: italic;">No current photo</div>';
+            }
+            
+            // Clear photo preview
+            document.getElementById('edit-asset-photo-preview').innerHTML = '';
             
             // Hide details modal and show edit modal
             document.getElementById('asset-details-modal').style.display = 'none';
@@ -4138,7 +4189,17 @@ function setupVehicleSelectionHandlers() {
                     const result = await response.json();
                     const assetId = result.id;
                     
-
+                    // Handle photo upload if a file was selected
+                    const photoFile = document.getElementById('add-asset-photo').files[0];
+                    if (photoFile) {
+                        try {
+                            await uploadAssetPhoto(assetId, photoFile);
+                            console.log('Asset photo uploaded successfully');
+                        } catch (photoError) {
+                            console.error('Asset photo upload failed:', photoError);
+                            // Don't fail the whole operation if photo upload fails
+                        }
+                    }
                     
                     alert('Asset added successfully!');
                     document.getElementById('add-asset-modal').style.display = 'none';
@@ -4160,9 +4221,73 @@ function setupVehicleSelectionHandlers() {
         });
     }
 
+    // Asset Photo Upload Function
+    async function uploadAssetPhoto(assetId, file) {
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const response = await fetch(`/api/asset/${assetId}/photo`, {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText);
+        }
+        
+        return await response.json();
+    }
 
+    // Photo Preview Functions
+    function setupAssetPhotoPreviews() {
+        // Add asset photo preview
+        const addPhotoInput = document.getElementById('add-asset-photo');
+        if (addPhotoInput) {
+            addPhotoInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                const preview = document.getElementById('add-asset-photo-preview');
+                
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        preview.innerHTML = `
+                            <img src="${e.target.result}" alt="Photo preview" style="max-width: 200px; max-height: 200px; border-radius: 4px; margin-top: 10px;">
+                            <p style="margin: 5px 0; font-size: 12px; color: #666;">${file.name}</p>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.innerHTML = '';
+                }
+            });
+        }
 
-
+        // Edit asset photo preview
+        const editPhotoInput = document.getElementById('edit-asset-photo');
+        if (editPhotoInput) {
+            editPhotoInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                const preview = document.getElementById('edit-asset-photo-preview');
+                
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        preview.innerHTML = `
+                            <div style="margin-bottom: 10px;">
+                                <strong>New Photo:</strong>
+                                <img src="${e.target.result}" alt="New photo preview" style="max-width: 200px; max-height: 200px; border-radius: 4px; margin-top: 5px;">
+                                <p style="margin: 5px 0; font-size: 12px; color: #666;">${file.name}</p>
+                            </div>
+                        `;
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    preview.innerHTML = '';
+                }
+            });
+        }
+    }
 
     // Function to calculate due date based on interval and meter readings
     function calculateDueDate() {
@@ -4380,7 +4505,17 @@ function setupVehicleSelectionHandlers() {
                     const responseText = await response.text();
                     console.log('Update successful, response:', responseText);
                     
-
+                    // Handle photo upload if a new file was selected
+                    const photoFile = document.getElementById('edit-asset-photo').files[0];
+                    if (photoFile) {
+                        try {
+                            await uploadAssetPhoto(assetId, photoFile);
+                            console.log('Asset photo uploaded successfully');
+                        } catch (photoError) {
+                            console.error('Asset photo upload failed:', photoError);
+                            // Don't fail the whole operation if photo upload fails
+                        }
+                    }
                     
                     alert('Asset updated successfully!');
                     document.getElementById('edit-asset-modal').style.display = 'none';

@@ -1270,6 +1270,10 @@ class AssetCreate(BaseModel):
     # General Notes
     notes: Optional[str] = None
     
+    # Photo Information
+    photo_path: Optional[str] = None
+    photo_mime_type: Optional[str] = None
+    
     # Usage Information
     usage_type: Optional[str] = None
     usage_value: Optional[float] = None
@@ -1388,13 +1392,13 @@ async def get_assets(parent_id: Optional[int] = None):
             try:
                  records = await conn.fetch("""
                  SELECT id, name, make, model, location, status, quantity, category,
-                          serial_number, purchase_date, registration_no, registration_due,
-                          permit_info, insurance_info, insurance_due, warranty_provider,
-                          warranty_expiry_date, purchase_price, purchase_location,
-                          manual_or_doc_path, notes, parent_asset_id, body_feature, badge, created_at
-                  FROM asset_inventory 
-                  WHERE parent_asset_id = $1
-                   ORDER BY name
+                         serial_number, purchase_date, registration_no, registration_due,
+                         permit_info, insurance_info, insurance_due, warranty_provider,
+                         warranty_expiry_date, purchase_price, purchase_location,
+                         manual_or_doc_path, notes, parent_asset_id, body_feature, badge, photo_path, photo_mime_type, created_at
+                 FROM asset_inventory 
+                 WHERE parent_asset_id = $1
+                  ORDER BY name
                 """, parent_id)
                  logging.info(f"Query executed successfully, found {len(records)} records")
             except Exception as e:
@@ -1403,13 +1407,13 @@ async def get_assets(parent_id: Optional[int] = None):
         else:
             # Return all assets
             records = await conn.fetch("""
-                  SELECT id, name, make, model, location, status, quantity, category,
-                          serial_number, purchase_date, registration_no, registration_due,
-                          permit_info, insurance_info, insurance_due, warranty_provider,
-                          warranty_expiry_date, purchase_price, purchase_location,
-                          manual_or_doc_path, notes, parent_asset_id, body_feature, badge, created_at
-                  FROM asset_inventory 
-                  ORDER BY name
+                 SELECT id, name, make, model, location, status, quantity, category,
+                         serial_number, purchase_date, registration_no, registration_due,
+                         permit_info, insurance_info, insurance_due, warranty_provider,
+                         warranty_expiry_date, purchase_price, purchase_location,
+                         manual_or_doc_path, notes, parent_asset_id, body_feature, badge, photo_path, photo_mime_type, created_at
+                 FROM asset_inventory 
+                 ORDER BY name
                 """)
         assets = [dict(record) for record in records]
         return assets
@@ -1425,7 +1429,7 @@ async def get_asset(asset_id: int):
                    serial_number, purchase_date, registration_no, registration_due,
                    permit_info, insurance_info, insurance_due, warranty_provider,
                    warranty_expiry_date, purchase_price, purchase_location,
-                    manual_or_doc_path, notes, parent_asset_id, body_feature, badge, created_at,
+                    manual_or_doc_path, notes, parent_asset_id, body_feature, badge, photo_path, photo_mime_type, created_at,
                     year
             FROM asset_inventory 
             WHERE id = $1
@@ -2009,7 +2013,93 @@ async def delete_asset(asset_id: int):
     finally:
         await conn.close()
 
+# --- Asset Photo Endpoints ---
 
+@app.post("/api/asset/{asset_id}/photo")
+async def upload_asset_photo(asset_id: int, file: UploadFile = File(...)):
+    """Upload a photo for an asset"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Check if asset exists
+        asset = await conn.fetchrow("SELECT id FROM asset_inventory WHERE id = $1", asset_id)
+        if not asset:
+            raise HTTPException(status_code=404, detail="Asset not found")
+        
+        # Validate file type
+        if not file.content_type or not file.content_type.startswith('image/'):
+            raise HTTPException(status_code=400, detail="File must be an image")
+        
+        # Create photos directory if it doesn't exist
+        photos_dir = "static/asset_photos"
+        os.makedirs(photos_dir, exist_ok=True)
+        
+        # Generate unique filename
+        file_extension = file.filename.split('.')[-1] if '.' in file.filename else 'jpg'
+        unique_filename = f"asset_{asset_id}_{int(datetime.now().timestamp())}.{file_extension}"
+        file_path = os.path.join(photos_dir, unique_filename)
+        
+        # Save file
+        with open(file_path, "wb") as buffer:
+            content = await file.read()
+            buffer.write(content)
+        
+        # Update asset record with photo path
+        await conn.execute(
+            "UPDATE asset_inventory SET photo_path = $1, photo_mime_type = $2 WHERE id = $3",
+            file_path, file.content_type, asset_id
+        )
+        
+        return {"message": "Photo uploaded successfully", "photo_path": file_path}
+    finally:
+        await conn.close()
+
+@app.get("/api/asset/{asset_id}/photo")
+async def get_asset_photo(asset_id: int):
+    """Get asset photo information"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        record = await conn.fetchrow(
+            "SELECT photo_path, photo_mime_type FROM asset_inventory WHERE id = $1", 
+            asset_id
+        )
+        if not record:
+            raise HTTPException(status_code=404, detail="Asset not found")
+        
+        if not record["photo_path"]:
+            raise HTTPException(status_code=404, detail="No photo found for this asset")
+        
+        return {
+            "photo_path": record["photo_path"],
+            "photo_mime_type": record["photo_mime_type"]
+        }
+    finally:
+        await conn.close()
+
+@app.delete("/api/asset/{asset_id}/photo")
+async def delete_asset_photo(asset_id: int):
+    """Delete asset photo"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Get photo path
+        record = await conn.fetchrow(
+            "SELECT photo_path FROM asset_inventory WHERE id = $1", 
+            asset_id
+        )
+        if not record:
+            raise HTTPException(status_code=404, detail="Asset not found")
+        
+        if record["photo_path"] and os.path.exists(record["photo_path"]):
+            os.remove(record["photo_path"])
+        
+        # Clear photo reference in database
+        await conn.execute(
+            "UPDATE asset_inventory SET photo_path = NULL, photo_mime_type = NULL WHERE id = $1",
+            asset_id
+        )
+        
+        return {"message": "Photo deleted successfully"}
+    finally:
+        await conn.close()
 
 # --- Calendar Endpoints ---
 
