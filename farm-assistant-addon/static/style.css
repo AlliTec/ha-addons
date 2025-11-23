@@ -422,6 +422,7 @@ th {
 #image-modal {
     background-color: rgba(0,0,0,0.95);
     z-index: 2000; /* Higher than other modals to appear on top */
+    overflow-y: auto; /* Enable scrolling for large images */
 }
 
 #image-modal .modal-content {

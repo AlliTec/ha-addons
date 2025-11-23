@@ -1,5 +1,57 @@
 # Changelog
 
+## 1.11.41 - 2025-11-23
+
+### Bug Fix - Missing Guinea Fowl Category
+- **Problem**: Guinea Fowl category was missing from animal edit form despite being mentioned in README
+- **User Request**: Add missing poultry categories (chicken, goose, duck, guinea fowl)
+- **Investigation**: 
+  - Chicken, Goose, Duck were already present in edit form
+  - Only Guinea Fowl was missing from both HTML and JavaScript
+- **Changes Made**:
+  - Added `<option value="Guinea Fowl">Guinea Fowl</option>` to edit animal form
+  - Added gender options for Guinea Fowl: Cock (male), Hen (female)
+  - Added Guinea Fowl to animal type detection function
+  - Added icon mapping for Guinea Fowl (using crow icon)
+- **Testing Results**:
+  - ✅ Guinea Fowl category now appears in edit form dropdown
+  - ✅ Gender options correctly show Cock/Hen when Guinea Fowl selected
+  - ✅ Backend accepts Guinea Fowl category successfully
+  - ✅ Created test animal "Test Guinea Fowl" with gender "Cock" (ID: 67)
+  - ✅ Animal appears correctly in animals list
+- **Note**: Other poultry categories (Chicken, Goose, Duck) were already implemented
+
+## 1.11.40 - 2025-11-23
+
+### New Feature - Asset Photo Support
+- **User Request**: Include photo feature in Asset Register (same as livestock)
+- **Database Changes**:
+  - Added `photo_path` and `photo_mime_type` columns to `asset_inventory` table
+  - Migration script: `add_photo_to_assets.sql`
+- **API Endpoints Added**:
+  - `POST /api/asset/{asset_id}/photo` - Upload asset photo
+  - `GET /api/asset/{asset_id}/photo` - Get asset photo info
+  - `DELETE /api/asset/{asset_id}/photo` - Delete asset photo
+- **Frontend Changes**:
+  - Added photo column to assets table with thumbnails
+  - Photo upload fields in add/edit asset forms
+  - Photo preview functionality with file selection
+  - Current photo display in edit form
+  - Photo display in asset details modal
+  - Click-to-overlay functionality for asset photos
+- **Technical Implementation**:
+  - Photos stored in `static/asset_photos/` directory
+  - Unique filename format: `asset_{id}_{timestamp}.jpg`
+  - Image validation (must be image/* MIME type)
+  - 40x40px thumbnails in asset list
+  - Full-size display with overlay (same as livestock)
+- **Testing Results**:
+  - ✅ Photo upload works correctly
+  - ✅ Photo display in list and details
+  - ✅ Photo deletion works
+  - ✅ Image overlay functionality works
+  - ✅ Form validation and error handling
+
 ## 1.11.38 - 2025-11-23
 
 ### UI Enhancement - Remove Image Hover Movement, Add Filename Tooltip

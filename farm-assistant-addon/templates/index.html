@@ -53,6 +53,7 @@
         <table id="assets-list">
             <thead>
                 <tr>
+                    <th>Photo</th>
                     <th>Asset Name</th>
                     <th>Make/Model</th>
                     <th>Location</th>
@@ -198,6 +199,7 @@
                             <option value="Duck">Duck</option>
                             <option value="Turkey">Turkey</option>
                             <option value="Chicken">Chicken</option>
+                            <option value="Guinea Fowl">Guinea Fowl</option>
                             <option value="Rabbit">Rabbit</option>
                         </select>
                     </div>
@@ -487,6 +489,13 @@
                     </div>
                 </div>
 
+                <!-- Asset Photo -->
+                <div class="form-section">
+                    <h3>Asset Photo</h3>
+                    <input type="file" id="add-asset-photo" name="photo" accept="image/*" style="margin-bottom: 10px;">
+                    <div id="add-asset-photo-preview" style="margin-top: 10px;"></div>
+                </div>
+
                 <!-- General Notes -->
                 <div class="form-section">
                     <h3>General Notes</h3>
@@ -730,6 +739,14 @@
                         <label for="edit-asset-usage-notes">Usage Notes:</label>
                         <textarea id="edit-asset-usage-notes" name="usage_notes" rows="2" placeholder="Optional notes about this usage entry"></textarea>
                     </div>
+                </div>
+
+                <!-- Asset Photo -->
+                <div class="form-section">
+                    <h3>Asset Photo</h3>
+                    <input type="file" id="edit-asset-photo" name="photo" accept="image/*" style="margin-bottom: 10px;">
+                    <div id="edit-asset-photo-preview" style="margin-top: 10px;"></div>
+                    <div id="edit-asset-current-photo" style="margin-top: 10px;"></div>
                 </div>
 
                 <!-- General Notes -->
