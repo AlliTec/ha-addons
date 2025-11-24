@@ -2793,23 +2793,7 @@ function setupVehicleSelectionHandlers() {
         }
     });
     
-    // Handle new make input
-    document.getElementById('add-asset-make-new').addEventListener('blur', async function() {
-        const newMake = this.value.trim();
-        if (newMake) {
-            await saveNewMake(newMake, 'add');
-        }
-    });
-
-    document.getElementById('add-asset-make-new').addEventListener('keypress', async function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const newMake = this.value.trim();
-            if (newMake) {
-                await saveNewMake(newMake, 'add');
-            }
-        }
-    });
+    // Handle new make input - now moved inside setupVehicleSelectionHandlers()
 
     // Handle new model input
     document.getElementById('add-asset-model-new').addEventListener('blur', async function() {
@@ -3020,6 +3004,32 @@ function setupVehicleSelectionHandlers() {
         }
     });
     
+    // Handle new make input
+    const newMakeInput = document.getElementById('add-asset-make-new');
+    if (newMakeInput) {
+        // Remove existing listeners to prevent duplicates
+        const newNewMakeInput = newMakeInput.cloneNode(true);
+        newMakeInput.parentNode.replaceChild(newNewMakeInput, newMakeInput);
+        
+        // Add fresh listeners
+        newNewMakeInput.addEventListener('blur', async function() {
+            const newMake = this.value.trim();
+            if (newMake) {
+                await saveNewMake(newMake, 'add');
+            }
+        });
+
+        newNewMakeInput.addEventListener('keypress', async function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const newMake = this.value.trim();
+                if (newMake) {
+                    await saveNewMake(newMake, 'add');
+                }
+            }
+        });
+    }
+
     // Mark listeners as attached
     addMakeSelect.dataset.listenersAttached = 'true';
 }
@@ -3029,6 +3039,12 @@ function setupVehicleSelectionHandlers() {
         
         // Reset form
         document.getElementById('add-asset-form').reset();
+        
+        // Reset listeners attached flag to ensure handlers are re-attached
+        const addMakeSelect = document.getElementById('add-asset-make');
+        if (addMakeSelect) {
+            addMakeSelect.dataset.listenersAttached = 'false';
+        }
         
         // Set default values
         document.getElementById('add-asset-quantity').value = 1;

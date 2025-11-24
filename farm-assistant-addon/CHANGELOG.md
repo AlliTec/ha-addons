@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.11.45 - 2025-11-24
+
+### Bug Fix - Add New Make Error in Asset Modal
+- **Problem**: Error when attempting to add a new make in add asset modal
+- **Root Cause**: Event listeners not being properly attached due to stale flag
+- **Changes Made**:
+  - Reset `listenersAttached` flag when opening add asset form
+  - Moved new make input event listeners inside proper setup function
+  - Added proper cleanup of existing event listeners to prevent duplicates
+  - Ensured event listeners are attached each time form is opened
+- **Testing**: Verified new make functionality works correctly
+- **Result**: Users can now add new makes without errors
+
 ## 1.11.44 - 2025-11-24
 
 ### Bug Fix - Edit Asset Button Broken
