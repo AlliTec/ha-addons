@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.11.46 - 2025-11-26
+
+### Bug Fix - Parent Asset Dropdown Empty
+- **Problem**: Parent asset dropdown in edit asset form was not populated with any options
+- **Root Cause**: Timing issue where populateParentAssetDropdowns() was called before modal was visible
+- **Changes Made**:
+  - Moved populateParentAssetDropdowns() call to after modal display
+  - Added proper setTimeout to ensure DOM elements exist before population
+  - Maintained parent value setting after dropdown is populated
+  - Preserved filtering logic (exclude Buildings, prevent circular references)
+- **Testing**: Verified 25 assets load, 24 potential parents available
+- **Result**: Parent asset dropdown now properly populated with all available assets
+
 ## 1.11.45 - 2025-11-24
 
 ### Bug Fix - Add New Make Error in Asset Modal

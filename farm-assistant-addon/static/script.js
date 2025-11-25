@@ -515,8 +515,8 @@ async function populateParentDropdowns() {
 }
 
 // Function to populate parent asset dropdowns
-async function populateParentAssetDropdowns() {
-    console.log("populateParentAssetDropdowns called");
+async function populateParentAssetDropdowns(currentAssetId = null) {
+    console.log("populateParentAssetDropdowns called", currentAssetId ? `for asset ${currentAssetId}` : "");
     try {
         const response = await fetch("api/assets");
         console.log("Assets response status:", response.status);
@@ -528,21 +528,26 @@ async function populateParentAssetDropdowns() {
         console.log("Assets received:", assets.length, "assets");
         
         // Populate parent asset dropdowns
-        const addParentSelect = document.getElementById('add-asset-parent-id');
-        const editParentSelect = document.getElementById('edit-asset-parent-id');
+        const addParentSelect = document.getElementById('add-asset-parent');
+        const editParentSelect = document.getElementById('edit-asset-parent');
         
         if (addParentSelect) {
             addParentSelect.innerHTML = '<option value="">No Parent</option>';
             assets.filter(asset => asset.category !== 'Building').forEach(asset => {
                 addParentSelect.innerHTML += `<option value="${asset.id}">${asset.name} (${asset.category})</option>`;
             });
+            console.log("Add parent dropdown populated with", addParentSelect.options.length - 1, "options");
         }
         
         if (editParentSelect) {
             editParentSelect.innerHTML = '<option value="">No Parent</option>';
-            assets.filter(asset => asset.category !== 'Building').forEach(asset => {
+            assets.filter(asset => 
+                asset.category !== 'Building' && 
+                (!currentAssetId || asset.id !== currentAssetId) // Exclude current asset to prevent circular reference
+            ).forEach(asset => {
                 editParentSelect.innerHTML += `<option value="${asset.id}">${asset.name} (${asset.category})</option>`;
             });
+            console.log("Edit parent dropdown populated with", editParentSelect.options.length - 1, "options");
         }
         
         console.log("Parent asset dropdowns populated successfully");
@@ -3095,9 +3100,6 @@ function setupVehicleSelectionHandlers() {
             await populateVehicleMakes();
             setupVehicleSelectionHandlers();
             
-            // Populate parent asset dropdown
-            await populateParentAssetDropdowns();
-            
             // Populate form fields
             document.getElementById('edit-asset-id').value = asset.id;
             
@@ -3137,7 +3139,7 @@ function setupVehicleSelectionHandlers() {
             document.getElementById('edit-asset-location').value = asset.location || '';
             document.getElementById('edit-asset-quantity').value = asset.quantity || 1;
             document.getElementById('edit-asset-status').value = asset.status || 'operational';
-            document.getElementById('edit-asset-parent').value = asset.parent_asset_id || '';
+            // Note: parent asset value will be set after dropdown is populated
             
             // Purchase Information
             document.getElementById('edit-asset-purchase-date').value = asset.purchase_date || '';
@@ -3178,6 +3180,14 @@ function setupVehicleSelectionHandlers() {
             // Hide details modal and show edit modal
             document.getElementById('asset-details-modal').style.display = 'none';
             document.getElementById('edit-asset-modal').style.display = 'block';
+            
+            // Populate parent asset dropdown after modal is shown
+            setTimeout(async () => {
+                await populateParentAssetDropdowns(assetId);
+                // Set parent asset value after dropdown is populated
+                document.getElementById('edit-asset-parent').value = asset.parent_asset_id || '';
+                console.log('Parent asset value set to:', asset.parent_asset_id);
+            }, 100);
             
             // Initialize edit asset photo upload after modal is shown
             setTimeout(() => initializeAssetEditPhotoUpload(), 100);
