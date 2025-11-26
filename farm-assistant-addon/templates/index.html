@@ -11,6 +11,15 @@
     <h1>Farm Assistant</h1>
     <div class="heading-container">
         <h2>Livestock List</h2>
+        <div class="backup-restore-buttons">
+            <button id="backup-btn" class="backup-btn" title="Backup Database">
+                <i class="fa-solid fa-download"></i> Backup
+            </button>
+            <label for="restore-file" class="restore-btn" title="Restore Database">
+                <i class="fa-solid fa-upload"></i> Restore
+            </label>
+            <input type="file" id="restore-file" accept=".zip" style="display: none;">
+        </div>
     </div>
     
     <!-- Main Section Tabs -->

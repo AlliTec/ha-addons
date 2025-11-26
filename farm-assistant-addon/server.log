@@ -1,8 +1,18 @@
-2025-11-17 15:37:26,517 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
-/home/sog/ai-projects/ha-addons/farm-assistant-addon/main.py:73: DeprecationWarning: 
-        on_event is deprecated, use lifespan event handlers instead.
-
-        Read more about it in the
-        [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
-        
-  @app.on_event("startup")
+INFO:     Will watch for changes in these directories: ['/home/sog/ai-projects/ha-addons/farm-assistant-addon']
+INFO:     Uvicorn running on http://0.0.0.0:8123 (Press CTRL+C to quit)
+INFO:     Started reloader process [223086] using StatReload
+2025-11-26 12:01:57,425 - INFO - Database configuration loaded: Host=192.168.1.130, Port=5432, User=postgres, DB=hal_farm_db
+INFO:     Started server process [223134]
+INFO:     Waiting for application startup.
+2025-11-26 12:01:57,494 - INFO - Attempting to connect to the database at 192.168.1.130...
+2025-11-26 12:01:57,543 - INFO - Database connection successful.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:57058 - "POST /api/vehicle/model?make=TestMake&model=TestModel&category=Test HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57396 - "POST /api/vehicle/model?make=Massey%20Ferguson&model=NEWTESTMODEL&category=Machinery HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52432 - "POST /api/vehicle/model?make=Massey%20Ferguson&model=MF35&category=Machinery HTTP/1.1" 200 OK
+INFO:     127.0.0.1:38850 - "GET /docs HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [223134]
+INFO:     Stopping reloader process [223086]

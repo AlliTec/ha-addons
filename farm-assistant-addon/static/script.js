@@ -2433,12 +2433,23 @@ async function populateVehicleYears(make, model) {
             const startYear = yearRange.year_start;
             const endYear = yearRange.year_end || new Date().getFullYear();
             
+            // Skip if startYear is null
+            if (!startYear) return;
+            
             for (let year = endYear; year >= startYear; year--) {
                 if (!yearOptions.includes(year)) {
                     yearOptions.push(year);
                 }
             }
         });
+        
+        // If no valid years found, add common years
+        if (yearOptions.length === 0) {
+            const currentYear = new Date().getFullYear();
+            for (let year = currentYear; year >= 1990; year--) {
+                yearOptions.push(year);
+            }
+        }
         
         // Populate add form
         const addYearSelect = document.getElementById('add-asset-year');
@@ -2470,17 +2481,20 @@ async function populateVehicleBodyTypes(make, model, year) {
         
         const bodyTypes = await response.json();
         
+        // Filter out null values
+        const validBodyTypes = bodyTypes.filter(bt => bt !== null && bt !== undefined);
+        
         // Populate add form
         const addBodySelect = document.getElementById('add-asset-body-feature');
         addBodySelect.innerHTML = '<option value="">Select Body Type</option>';
-        bodyTypes.forEach(bodyType => {
+        validBodyTypes.forEach(bodyType => {
             addBodySelect.innerHTML += `<option value="${bodyType}">${bodyType}</option>`;
         });
         
         // Populate edit form
         const editBodySelect = document.getElementById('edit-asset-body-feature');
         editBodySelect.innerHTML = '<option value="">Select Body Type</option>';
-        bodyTypes.forEach(bodyType => {
+        validBodyTypes.forEach(bodyType => {
             editBodySelect.innerHTML += `<option value="${bodyType}">${bodyType}</option>`;
         });
     } catch (error) {
@@ -2800,26 +2814,6 @@ function setupVehicleSelectionHandlers() {
     
     // Handle new make input - now moved inside setupVehicleSelectionHandlers()
 
-    // Handle new model input
-    document.getElementById('add-asset-model-new').addEventListener('blur', async function() {
-        const newModel = this.value.trim();
-        const make = addMakeSelect.value;
-        if (newModel && make && make !== '__new__') {
-            await saveNewModel(make, newModel, 'add');
-        }
-    });
-
-    document.getElementById('add-asset-model-new').addEventListener('keypress', async function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const newModel = this.value.trim();
-            const make = addMakeSelect.value;
-            if (newModel && make && make !== '__new__') {
-                await saveNewModel(make, newModel, 'add');
-            }
-        }
-    });
-
     addModelSelect.addEventListener('change', async function() {
         const make = addMakeSelect.value;
         const newModelInput = document.getElementById('add-asset-model-new');
@@ -2846,6 +2840,26 @@ function setupVehicleSelectionHandlers() {
             addYearSelect.innerHTML = '<option value="">Select Year</option>';
             document.getElementById('add-asset-body-feature').innerHTML = '<option value="">Select Body Type</option>';
             document.getElementById('add-asset-badge').innerHTML = '<option value="">Select Badge/Trim</option>';
+        }
+    });
+    
+    // Handle new model input - moved inside protection check
+    document.getElementById('add-asset-model-new').addEventListener('blur', async function() {
+        const newModel = this.value.trim();
+        const make = addMakeSelect.value;
+        if (newModel && make && make !== '__new__') {
+            await saveNewModel(make, newModel, 'add');
+        }
+    });
+
+    document.getElementById('add-asset-model-new').addEventListener('keypress', async function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const newModel = this.value.trim();
+            const make = addMakeSelect.value;
+            if (newModel && make && make !== '__new__') {
+                await saveNewModel(make, newModel, 'add');
+            }
         }
     });
     
@@ -2878,6 +2892,11 @@ function setupVehicleSelectionHandlers() {
     const editMakeSelect = document.getElementById('edit-asset-make');
     const editModelSelect = document.getElementById('edit-asset-model');
     const editYearSelect = document.getElementById('edit-asset-year');
+    
+    // Remove existing event listeners to prevent duplicates
+    if (editMakeSelect.dataset.listenersAttached === 'true') {
+        return; // Already attached
+    }
     
     editMakeSelect.addEventListener('change', async function() {
         const make = this.value;
@@ -2935,7 +2954,7 @@ function setupVehicleSelectionHandlers() {
         }
     });
 
-    // Handle new model input for edit form
+    // Handle new model input for edit form - moved inside protection check
     document.getElementById('edit-asset-model-new').addEventListener('blur', async function() {
         const newModel = this.value.trim();
         const make = editMakeSelect.value;
@@ -3037,6 +3056,7 @@ function setupVehicleSelectionHandlers() {
 
     // Mark listeners as attached
     addMakeSelect.dataset.listenersAttached = 'true';
+    editMakeSelect.dataset.listenersAttached = 'true';
 }
 
     async function openAddAssetForm() {
@@ -3095,6 +3115,12 @@ function setupVehicleSelectionHandlers() {
             // Setup asset class change handler
             const editCategorySelect = document.getElementById('edit-asset-category');
             editCategorySelect.addEventListener('change', () => handleCategoryChange('edit'));
+            
+            // Reset listeners attached flag for edit form
+            const editMakeSelect = document.getElementById('edit-asset-make');
+            if (editMakeSelect) {
+                editMakeSelect.dataset.listenersAttached = 'false';
+            }
             
             // Populate vehicle makes and setup handlers first
             await populateVehicleMakes();
@@ -5968,4 +5994,148 @@ document.addEventListener("DOMContentLoaded", function() {
             closeImageOverlay();
         }
     });
+});
+
+// Backup/Restore functionality
+function showBackupRestoreStatus(message, type = 'success') {
+    const statusDiv = document.createElement('div');
+    statusDiv.className = `backup-restore-status ${type}`;
+    statusDiv.textContent = message;
+    
+    const container = document.querySelector('.backup-restore-container');
+    if (container) {
+        // Remove existing status messages
+        const existingStatus = container.querySelector('.backup-restore-status');
+        if (existingStatus) {
+            existingStatus.remove();
+        }
+        
+        container.appendChild(statusDiv);
+        
+        // Auto-remove after 5 seconds
+        setTimeout(() => {
+            if (statusDiv.parentNode) {
+                statusDiv.remove();
+            }
+        }, 5000);
+    }
+}
+
+async function handleBackup() {
+    try {
+        showBackupRestoreStatus('Creating backup...', 'processing');
+        
+        const response = await fetch('/api/backup', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/zip'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Backup failed: ${response.statusText}`);
+        }
+        
+        // Get filename from Content-Disposition header or use default
+        const contentDisposition = response.headers.get('Content-Disposition');
+        let filename = 'farm-assistant-backup.zip';
+        if (contentDisposition) {
+            const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+            if (filenameMatch) {
+                filename = filenameMatch[1];
+            }
+        }
+        
+        // Download the file
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        showBackupRestoreStatus('Backup downloaded successfully', 'success');
+        
+    } catch (error) {
+        console.error('Backup error:', error);
+        showBackupRestoreStatus(`Backup failed: ${error.message}`, 'error');
+    }
+}
+
+async function handleRestore(file) {
+    if (!file) {
+        showBackupRestoreStatus('Please select a backup file', 'error');
+        return;
+    }
+    
+    // Validate file type
+    if (!file.name.endsWith('.zip')) {
+        showBackupRestoreStatus('Please select a valid ZIP backup file', 'error');
+        return;
+    }
+    
+    try {
+        showBackupRestoreStatus('Restoring backup...', 'processing');
+        
+        const formData = new FormData();
+        formData.append('backup_file', file);
+        
+        const response = await fetch('/api/restore', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || `Restore failed: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        showBackupRestoreStatus(result.message, 'success');
+        
+        // Refresh the page after successful restore to show updated data
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
+        
+    } catch (error) {
+        console.error('Restore error:', error);
+        showBackupRestoreStatus(`Restore failed: ${error.message}`, 'error');
+    }
+}
+
+// Initialize backup/restore event listeners when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Backup button
+    const backupBtn = document.getElementById('backup-btn');
+    if (backupBtn) {
+        backupBtn.addEventListener('click', handleBackup);
+    }
+    
+    // Restore button
+    const restoreBtn = document.getElementById('restore-btn');
+    if (restoreBtn) {
+        restoreBtn.addEventListener('click', function() {
+            const fileInput = document.getElementById('restore-file-input');
+            if (fileInput) {
+                fileInput.click();
+            }
+        });
+    }
+    
+    // File input change handler
+    const fileInput = document.getElementById('restore-file-input');
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleRestore(file);
+            }
+            // Reset the input so the same file can be selected again
+            e.target.value = '';
+        });
+    }
 });

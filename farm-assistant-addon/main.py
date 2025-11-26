@@ -6,11 +6,13 @@ import asyncpg
 import logging
 from datetime import datetime, timedelta
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from typing import List, Dict, Optional
+import zipfile
+import tempfile
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -1228,6 +1230,206 @@ async def add_vehicle_model(make: str = None, model: str = None, category: str =
         )
         
         return {"success": True, "message": f"Model '{model}' added for make '{make}'"}
+    finally:
+        await conn.close()
+
+@app.put("/api/vehicle/model")
+async def update_vehicle_model(make: str = None, model: str = None, year_start: int = None, year_end: int = None):
+    """Update vehicle model years in the database"""
+    if not make or not model:
+        return {"success": False, "message": "Both make and model are required"}
+    
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Update the model with new years
+        await conn.execute(
+            """
+            UPDATE vehicle_data 
+            SET year_start = $1, year_end = $2
+            WHERE make = $3 AND model = $4
+            """,
+            year_start, year_end, make, model
+        )
+        
+        return {"success": True, "message": f"Model '{model}' updated with years {year_start}-{year_end}"}
+    except Exception as e:
+        return {"success": False, "message": f"Error updating model: {str(e)}"}
+    finally:
+        await conn.close()
+
+# --- Database Backup and Restore Endpoints ---
+
+@app.get("/api/backup")
+async def backup_database():
+    """Create a complete backup of all database tables"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Get all table names
+        tables = await conn.fetch("""
+            SELECT tablename FROM pg_tables 
+            WHERE schemaname = 'public' 
+            AND tablename IN (
+                'asset_inventory', 'animals', 'animal_history', 'animal_weight_history',
+                'animal_photos', 'asset_photos', 'vehicle_data', 'calendar_entries'
+            )
+            ORDER BY tablename
+        """)
+        
+        backup_data = {}
+        
+        for table in tables:
+            table_name = table['tablename']
+            # Get all data from the table
+            records = await conn.fetch(f"SELECT * FROM {table_name}")
+            backup_data[table_name] = [dict(record) for record in records]
+        
+        # Create backup JSON with metadata
+        backup = {
+            "version": "1.0",
+            "created_at": datetime.now().isoformat(),
+            "description": "Farm Assistant Database Backup",
+            "tables": backup_data
+        }
+        
+        # Create temporary file
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as tmp_file:
+            json.dump(backup, tmp_file, indent=2, default=str)
+            tmp_file_path = tmp_file.name
+        
+        # Create zip file
+        zip_path = tmp_file_path.replace('.json', '.zip')
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            zipf.write(tmp_file_path, f"farm_assistant_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json")
+        
+        # Clean up temp JSON file
+        os.unlink(tmp_file_path)
+        
+        return FileResponse(
+            path=zip_path,
+            filename=f"farm_assistant_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.zip",
+            media_type="application/zip"
+        )
+        
+    except Exception as e:
+        logging.error(f"Backup failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Backup failed: {str(e)}")
+    finally:
+        await conn.close()
+
+@app.post("/api/restore")
+async def restore_database(file: UploadFile = File(...)):
+    """Restore database from backup file"""
+    if not file.filename.endswith('.zip'):
+        raise HTTPException(status_code=400, detail="Only ZIP backup files are supported")
+    
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        # Save uploaded file to temp location
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.zip') as tmp_zip:
+            content = await file.read()
+            tmp_zip.write(content)
+            tmp_zip_path = tmp_zip.name
+        
+        # Extract ZIP file
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            with zipfile.ZipFile(tmp_zip_path, 'r') as zipf:
+                zipf.extractall(tmp_dir)
+            
+            # Find JSON backup file
+            backup_files = [f for f in os.listdir(tmp_dir) if f.endswith('.json')]
+            if not backup_files:
+                raise HTTPException(status_code=400, detail="No JSON backup file found in ZIP")
+            
+            backup_file = os.path.join(tmp_dir, backup_files[0])
+            
+            # Load backup data
+            with open(backup_file, 'r') as f:
+                backup = json.load(f)
+            
+            # Validate backup format
+            if 'tables' not in backup:
+                raise HTTPException(status_code=400, detail="Invalid backup format")
+            
+            # Begin transaction
+            async with conn.transaction():
+                # Clear existing data (in correct order to avoid foreign key constraints)
+                tables_to_clear = [
+                    'animal_photos', 'asset_photos', 'animal_weight_history',
+                    'calendar_entries', 'animal_history', 'vehicle_data',
+                    'asset_inventory', 'animals'
+                ]
+                
+                for table in tables_to_clear:
+                    if table in backup['tables']:
+                        await conn.execute(f"DELETE FROM {table}")
+                        logging.info(f"Cleared table: {table}")
+                
+                # Restore data
+                for table_name, records in backup['tables'].items():
+                    if not records:
+                        continue
+                    
+                    # Get column names from first record
+                    if records:
+                        columns = list(records[0].keys())
+                        
+                        # Build INSERT query
+                        placeholders = ', '.join([f'${i+1}' for i in range(len(columns))])
+                        columns_str = ', '.join(columns)
+                        
+                        for record in records:
+                            values = []
+                            for col in columns:
+                                value = record.get(col)
+                                # Handle date conversion for known date columns
+                                if value and col in ['purchase_date', 'registration_due', 'insurance_due', 'warranty_expiry_date', 'birth_date', 'event_date']:
+                                    if isinstance(value, str):
+                                        try:
+                                            # Try to parse the date string
+                                            value = datetime.strptime(value, '%Y-%m-%d').date()
+                                        except ValueError:
+                                            try:
+                                                # Try datetime format
+                                                value = datetime.fromisoformat(value.replace('Z', '+00:00')).date()
+                                            except ValueError:
+                                                value = None
+                                # Handle datetime conversion for known datetime columns
+                                elif value and col in ['created_at', 'updated_at']:
+                                    if isinstance(value, str):
+                                        try:
+                                            # Try to parse datetime string
+                                            value = datetime.fromisoformat(value.replace('Z', '+00:00'))
+                                        except ValueError:
+                                            try:
+                                                # Try datetime with time format
+                                                value = datetime.strptime(value, '%Y-%m-%d %H:%M:%S')
+                                            except ValueError:
+                                                value = None
+                                # Handle time conversion for known time columns
+                                elif value and col in ['event_time']:
+                                    if isinstance(value, str):
+                                        try:
+                                            # Parse time string
+                                            hours, minutes, seconds = value.split(':')
+                                            value = f"{hours.zfill(2)}:{minutes.zfill(2)}:{seconds.zfill(2)}"
+                                        except ValueError:
+                                            value = None
+                                values.append(value)
+                            await conn.execute(
+                                f"INSERT INTO {table_name} ({columns_str}) VALUES ({placeholders})",
+                                *values
+                            )
+                        
+                        logging.info(f"Restored {len(records)} records to {table_name}")
+        
+        # Clean up temp files
+        os.unlink(tmp_zip_path)
+        
+        return {"success": True, "message": "Database restored successfully"}
+        
+    except Exception as e:
+        logging.error(f"Restore failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Restore failed: {str(e)}")
     finally:
         await conn.close()
 
