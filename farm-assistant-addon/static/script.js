@@ -6025,7 +6025,7 @@ async function handleBackup() {
     try {
         showBackupRestoreStatus('Creating backup...', 'processing');
         
-        const response = await fetch('/api/backup', {
+        const response = await fetch('api/backup', {
             method: 'GET',
             headers: {
                 'Accept': 'application/zip'
@@ -6083,7 +6083,7 @@ async function handleRestore(file) {
         const formData = new FormData();
         formData.append('backup_file', file);
         
-        const response = await fetch('/api/restore', {
+        const response = await fetch('api/restore', {
             method: 'POST',
             body: formData
         });

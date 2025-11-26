@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.11.49 - 2025-11-27
+
+### Bug Fix
+- Fixed backup/restore API 404 errors by correcting JavaScript fetch paths from absolute to relative URLs
+
 ## 1.11.48 - 2025-11-27
 
 ### Hotfix - Backup/Restore Endpoint Activation
