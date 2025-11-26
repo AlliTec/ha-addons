@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.50 - 2025-11-27
+
+### UI Enhancement
+- Replaced backup/restore buttons with hamburger menu in top-right corner
+- Added dedicated backup/restore modal with improved user experience
+- Enhanced file selection with visual feedback and status messages
+- Improved error handling and user feedback for backup/restore operations
+
 ## 1.11.48 - 2025-11-27
 
 ### Hotfix - Backup/Restore Endpoint Activation
