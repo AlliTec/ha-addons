@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.11.48 - 2025-11-27
+
+### Hotfix - Backup/Restore Endpoint Activation
+- **Issue**: Backup and restore endpoints returning 404 errors after deployment
+- **Root Cause**: Home Assistant addon requires restart to pick up new endpoint code
+- **Solution**: Version bump to force addon restart and activate new endpoints
+- **Verification**: Both backup and restore functions tested and working correctly
+- **User Action Required**: Restart addon after this update to activate backup/restore functionality
+
 ## 1.11.47 - 2025-11-27
 
 ### Database Backup and Restore System
