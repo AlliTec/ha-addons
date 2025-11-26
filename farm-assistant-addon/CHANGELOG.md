@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.11.47 - 2025-11-27
+
+### Database Backup and Restore System
+- **New Feature**: Complete database backup and restore functionality
+- **Backup Endpoint**: Added `/api/backup` endpoint for complete database backup as ZIP file
+- **Restore Endpoint**: Added `/api/restore` endpoint for database restoration from ZIP files
+- **Vehicle Model Updates**: Added `/api/vehicle/model` PUT endpoint for updating model year ranges
+- **Data Type Handling**: Enhanced data type conversions for dates, datetimes, and times during restore
+- **Foreign Key Constraints**: Proper handling of foreign key constraints during restore operations
+- **Table Support**: Backup/restore supports all core tables (animals, assets, photos, calendar, vehicle_data, etc.)
+- **Transaction Safety**: Database operations wrapped in transactions for data integrity
+- **Error Handling**: Comprehensive error handling and logging for backup/restore operations
+
 ## 1.11.46 - 2025-11-26
 
 ### Bug Fix - Parent Asset Dropdown Empty
