@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.11.52 - 2025-11-27
+
+### UI Positioning Fix
+- Fixed hamburger menu positioning to account for body margin
+- Menu now appears in true top-right corner of viewport
+- Backup/restore menu items work as direct actions without modal
+
 ## 1.11.51 - 2025-11-27
 
 ### UI Fix
