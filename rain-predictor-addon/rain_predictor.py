@@ -826,17 +826,18 @@ class RainPredictor:
             logging.error(f"Error updating entities: {e}")
 
     def _find_threatening_cell(self):
-        """Find cell most likely to reach location"""
-        best_prediction = None
-        min_arrival_time = float('inf')
+        """Comprehensive analysis of ALL rain cells to find most likely threat"""
+        logging.info(f"\n🌧️ COMPREHENSIVE RAIN ANALYSIS - Evaluating {len(self.tracked_cells)} tracked cells")
+        logging.info(f"🔍 Analysis settings: threshold={self.threshold}, angle_threshold={self.arrival_angle_threshold}°, max_dist={self.max_track_dist}km")
         
-        logging.info(f"\n🔍 Evaluating {len(self.tracked_cells)} tracked cells for threats:")
-        logging.info(f"🔍 Current analysis settings: threshold={self.threshold}, angle_threshold={self.arrival_angle_threshold}°, max_dist={self.max_track_dist}km")
+        # Collect all valid rain cells with their threat potential
+        valid_cells = []
+        all_directions = []
+        all_speeds = []
         
         for cell_id, cell in self.tracked_cells.items():
             logging.info(f"\n  Cell #{cell_id}:")
             logging.info(f"    Track length: {len(cell.positions)} position(s)")
-            logging.info(f"    Cell positions: {cell.positions}")
             
             if len(cell.positions) < self.min_track_len:
                 logging.info(f"    ❌ Track too short (need {self.min_track_len})")
@@ -853,6 +854,7 @@ class RainPredictor:
                 logging.info(f"    ❌ Moving too slowly ({speed_kph:.1f} km/h)")
                 continue
             
+            # Calculate threat metrics
             distance_km = self.haversine(current_lat, current_lon, self.latitude, self.longitude)
             bearing_to_location = self.calculate_bearing(current_lat, current_lon, self.latitude, self.longitude)
             bearing_from_user_to_cell = self.calculate_bearing(self.latitude, self.longitude, current_lat, current_lon)
@@ -863,37 +865,152 @@ class RainPredictor:
             
             angle_diff = abs((direction_deg - bearing_to_location + 180) % 360 - 180)
             
+            # Calculate probability of rain reaching location (0-100%)
+            threat_probability = self._calculate_threat_probability(
+                distance_km, speed_kph, angle_diff, cell.intensity, len(cell.positions)
+            )
+            
             logging.info(f"    Distance: {distance_km:.1f}km")
             logging.info(f"    Speed: {speed_kph:.1f}km/h")
             logging.info(f"    Moving: {direction_deg:.1f}°")
             logging.info(f"    Bearing to location: {bearing_to_location:.1f}°")
-            logging.info(f"    Bearing from user to cell: {bearing_from_user_to_cell:.1f}°")
             logging.info(f"    Angle difference: {angle_diff:.1f}°")
+            logging.info(f"    Threat probability: {threat_probability:.1f}%")
             
-            if angle_diff > self.arrival_angle_threshold:
-                logging.info(f"    ❌ Not moving toward location (angle diff {angle_diff:.1f}° > threshold {self.arrival_angle_threshold}°)")
-                continue
-            else:
-                logging.info(f"    ✅ Moving toward location (angle diff {angle_diff:.1f}° ≤ threshold {self.arrival_angle_threshold}°)")
+            # Collect for overall analysis
+            valid_cells.append({
+                'cell_id': cell_id,
+                'cell': cell,
+                'lat': current_lat,
+                'lon': current_lon,
+                'speed': speed_kph,
+                'direction': direction_deg,
+                'distance': distance_km,
+                'bearing_to_location': bearing_to_location,
+                'bearing_from_user': bearing_from_user_to_cell,
+                'angle_diff': angle_diff,
+                'threat_probability': threat_probability,
+                'intensity': cell.intensity
+            })
             
-            time_to_arrival_hours = distance_km / speed_kph
+            all_directions.append(direction_deg)
+            all_speeds.append(speed_kph)
+        
+        # If no valid cells, return None (no tracking marker)
+        if not valid_cells:
+            logging.info("\n✅ NO VALID RAIN CELLS - No tracking marker needed")
+            return None
+        
+        # Calculate overall rain system patterns
+        avg_direction = sum(all_directions) / len(all_directions) if all_directions else 0
+        avg_speed = sum(all_speeds) / len(all_speeds) if all_speeds else 0
+        
+        logging.info(f"\n📊 RAIN SYSTEM ANALYSIS:")
+        logging.info(f"    Average direction: {avg_direction:.1f}°")
+        logging.info(f"    Average speed: {avg_speed:.1f} km/h")
+        logging.info(f"    Valid cells: {len(valid_cells)}")
+        
+        # Find most likely threat based on multiple factors
+        best_cell = None
+        best_score = 0
+        
+        for cell_data in valid_cells:
+            # Multi-factor scoring for most likely threat
+            score = 0
+            
+            # Factor 1: Threat probability (40% weight)
+            score += cell_data['threat_probability'] * 0.4
+            
+            # Factor 2: Proximity (25% weight) - closer is more threatening
+            proximity_score = max(0, 100 - (cell_data['distance'] / 2))  # 100% at 0km, 0% at 200km
+            score += proximity_score * 0.25
+            
+            # Factor 3: Speed (20% weight) - faster is more imminent
+            speed_score = min(100, cell_data['speed'] * 2)  # 100% at 50 km/h
+            score += speed_score * 0.2
+            
+            # Factor 4: Intensity (15% weight) - more intense is more threatening
+            intensity_score = min(100, (cell_data['intensity'] / self.threshold) * 100)
+            score += intensity_score * 0.15
+            
+            logging.info(f"    Cell #{cell_data['cell_id']}: Score={score:.1f} "
+                        f"(prob={cell_data['threat_probability']:.1f}, "
+                        f"prox={proximity_score:.1f}, "
+                        f"speed={speed_score:.1f}, "
+                        f"int={intensity_score:.1f})")
+            
+            if score > best_score:
+                best_score = score
+                best_cell = cell_data
+        
+        if best_cell:
+            time_to_arrival_hours = best_cell['distance'] / best_cell['speed']
             time_to_arrival_minutes = time_to_arrival_hours * 60
             
-            logging.info(f"    ✅ THREAT! ETA: {time_to_arrival_minutes:.0f} minutes")
+            logging.info(f"\n⚠️ MOST LIKELY THREAT: Cell #{best_cell['cell_id']}")
+            logging.info(f"    Overall score: {best_score:.1f}")
+            logging.info(f"    ETA: {time_to_arrival_minutes:.0f} minutes")
+            logging.info(f"    Distance: {best_cell['distance']:.1f} km")
+            logging.info(f"    Speed: {best_cell['speed']:.1f} km/h")
+            logging.info(f"    Direction: {best_cell['direction']:.1f}°")
             
-            if time_to_arrival_minutes < min_arrival_time:
-                min_arrival_time = time_to_arrival_minutes
-                best_prediction = {
-                    'time_to_rain': round(time_to_arrival_minutes),
-                    'distance_km': round(distance_km, 1),
-                    'speed_kph': round(speed_kph, 1),
-                    'direction_deg': round(direction_deg, 1),
-                    'bearing_to_cell_deg': round(bearing_from_user_to_cell, 1),
-                    'rain_cell_latitude': round(current_lat, 4),
-                    'rain_cell_longitude': round(current_lon, 4)
-                }
+            return {
+                'time_to_rain': round(time_to_arrival_minutes),
+                'distance_km': round(best_cell['distance'], 1),
+                'speed_kph': round(best_cell['speed'], 1),
+                'direction_deg': round(best_cell['direction'], 1),
+                'bearing_to_cell_deg': round(best_cell['bearing_from_user'], 1),
+                'rain_cell_latitude': round(best_cell['lat'], 4),
+                'rain_cell_longitude': round(best_cell['lon'], 4),
+                'threat_probability': round(best_cell['threat_probability'], 1),
+                'system_avg_direction': round(avg_direction, 1),
+                'system_avg_speed': round(avg_speed, 1)
+            }
         
-        return best_prediction
+        logging.info("\n✅ NO THREATENING CELLS FOUND")
+        return None
+    
+    def _calculate_threat_probability(self, distance_km, speed_kph, angle_diff, intensity, track_length):
+        """Calculate probability (0-100%) of rain reaching location"""
+        probability = 0
+        
+        # Distance factor (0-40%): closer is more threatening
+        if distance_km <= 10:
+            probability += 40
+        elif distance_km <= 25:
+            probability += 30
+        elif distance_km <= 50:
+            probability += 20
+        elif distance_km <= 100:
+            probability += 10
+        
+        # Speed factor (0-25%): faster is more threatening
+        if speed_kph >= 30:
+            probability += 25
+        elif speed_kph >= 15:
+            probability += 20
+        elif speed_kph >= 5:
+            probability += 15
+        elif speed_kph >= 1:
+            probability += 10
+        
+        # Direction factor (0-25%): must be moving toward location
+        if angle_diff <= 30:
+            probability += 25
+        elif angle_diff <= 60:
+            probability += 20
+        elif angle_diff <= 90:
+            probability += 15
+        elif angle_diff <= 120:
+            probability += 10
+        elif angle_diff <= 150:
+            probability += 5
+        
+        # Intensity factor (0-10%): more intense is more threatening
+        intensity_ratio = intensity / self.threshold if self.threshold > 0 else 0
+        probability += min(10, intensity_ratio * 10)
+        
+        return min(100, probability)
     
     def run_prediction(self):
         """Run a single prediction cycle"""

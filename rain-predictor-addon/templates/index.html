@@ -914,7 +914,7 @@
         }
 
         function createTracker(mode) {
-            console.log(`Creating tracker for mode: ${mode}`);
+            console.log(`Creating enhanced tracker for mode: ${mode}`);
             if (!cellData[mode] || !cellData[mode].center) {
                 console.log(`No cell data for mode: ${mode}`);
                 return;
@@ -929,79 +929,69 @@
                 return;
             }
 
-            const color = mode === 'manual' ? '#e53e3e' : '#00FF00';
             const trackerKey = mode + 'Tracker';
 
             // Remove old tracker if exists
             removeTracker(mode);
 
-            // Create green mask overlay for tracked cell (larger, more visible)
-            console.log('Creating green mask overlay...');
-            const greenMask = L.circle([lat, lng], {
-                radius: 8000, // 8km radius for better visibility
-                color: '#00FF00', // Bright green border
-                weight: 3,
-                fillColor: '#00FF00', // Bright green fill
-                fillOpacity: 0.3, // Semi-transparent overlay
-                zIndex: 9999, // High z-index to be on top
-                className: 'green-mask-overlay'
+            // Create large green circle for rain cell position
+            console.log('Creating large green circle for rain cell...');
+            const greenCircle = L.circle([lat, lng], {
+                radius: 8000, // 8km radius - larger to mark rain cell area
+                color: '#00FF00', // Green border
+                weight: 4,
+                fillColor: '#00FF00', // Green fill
+                fillOpacity: 0.3, // Semi-transparent
+                zIndex: 10000, // Ensure it's on top
+                className: 'green-mask-overlay' // Add pulsing animation
             }).addTo(map);
-            console.log('Green mask added to map');
+            console.log('Large green circle added to map');
 
-            trackerMarkers[trackerKey + 'GreenMask'] = greenMask;
+            trackerMarkers[trackerKey] = greenCircle;
 
-            // Create inner circle for precise cell location
-            const innerCircle = L.circle([lat, lng], {
-                radius: 3000, // 3km radius for cell center
-                color: '#FFFFFF', // White border
-                weight: 2,
-                fillColor: '#008000', // Dark green fill
-                fillOpacity: 0.8,
-                zIndex: 10000 // Ensure it's on top
-            }).addTo(map);
-            console.log('Inner circle added to map');
+            // Create dotted trajectory line from rain cell to user location
+            if (currentLocation) {
+                const trajectoryLine = L.polyline([[lat, lng], [currentLocation.latitude, currentLocation.longitude]], {
+                    color: '#FFD700', // Gold dotted line
+                    weight: 3,
+                    opacity: 0.8,
+                    dashArray: '10, 5', // Dotted pattern
+                    zIndex: 9999,
+                    className: 'trajectory-line' // Add flow animation
+                }).addTo(map);
+                trackerMarkers[trackerKey + 'TrajectoryLine'] = trajectoryLine;
+                console.log('Gold trajectory line added to map');
 
-            trackerMarkers[trackerKey] = innerCircle;
-            console.log('Tracker markers object:', trackerMarkers);
+                // Create red moving marker that travels along the trajectory
+                const redMarker = L.divIcon({
+                    className: 'trajectory-marker',
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8]
+                });
 
-            // Add enhanced pulse effect
-            const pulseCircle = L.circle([lat, lng], {
-                radius: 2000,
-                color: color,
-                fillColor: color,
-                fillOpacity: 0.3,
-                weight: 3,
-                className: 'tracker-pulse-enhanced'
-            }).addTo(map);
+                const movingMarker = L.marker([lat, lng], {
+                    icon: redMarker,
+                    zIndex: 10001 // On top of everything
+                }).addTo(map);
 
-            trackerMarkers[trackerKey + 'Pulse'] = pulseCircle;
+                trackerMarkers[trackerKey + 'MovingMarker'] = movingMarker;
+                console.log('Red moving marker added to map');
 
-            // Add direction arrow with enhanced visibility
-            const arrow = createTrackerArrow(lat, lng, cellData[mode]);
-            if (arrow) {
-                trackerMarkers[trackerKey + 'Arrow'] = arrow;
+                // Start animating the red marker along the trajectory
+                animateMarkerAlongTrajectory(movingMarker, lat, lng, currentLocation.latitude, currentLocation.longitude, mode);
             }
 
-            // Add enhanced prediction path with animation
-            const predictionPath = calculatePredictionPath(lat, lng, cellData[mode]);
-            const predictionLine = L.polyline(predictionPath, {
-                color: color,
-                weight: 4,
-                opacity: 0.8,
-                dashArray: '10, 5',
-                className: 'prediction-path-animated'
-            }).addTo(map);
-            trackerMarkers[trackerKey + 'PredictionLine'] = predictionLine;
-
-            // Add trajectory animation from cell to user location
-            createTrajectoryAnimation(lat, lng, mode);
-
-            // Add enhanced label with metrics
+            // Add comprehensive tooltip with threat info
             const labelContent = mode === 'manual' ? 
-                'Manual Track Point' : 
-                `Auto Track: ${cellData[mode].speed ? cellData[mode].speed.toFixed(1) + ' kph' : 'Tracking...'}`;
+                `Manual Point<br>Speed: ${cellData[mode].speed || 0} kph<br>Direction: ${degreesToCardinal(cellData[mode].direction || -1)}` : 
+                `🌧️ RAIN CELL THREAT<br>
+                 Threat Level: ${cellData[mode].threat_probability || 0}%<br>
+                 ETA: ${formatTimeToRain(cellData[mode].time_to_rain || 999)}<br>
+                 Distance: ${cellData[mode].distance || 0} km<br>
+                 Speed: ${cellData[mode].speed || 0} kph<br>
+                 Direction: ${degreesToCardinal(cellData[mode].direction || -1)}`;
             
-            trackerMarkers[trackerKey].bindTooltip(labelContent, {
+            greenCircle.bindTooltip(labelContent, {
                 permanent: false,
                 direction: 'top',
                 offset: [0, -30],
@@ -1052,42 +1042,22 @@
         function updateTracker(lat, lng, mode) {
             if (!cellData[mode]) return;
             
-            const color = mode === 'manual' ? '#e53e3e' : '#00FF00';
             const trackerKey = mode + 'Tracker';
 
-            // Update green mask overlay
-            if (trackerMarkers[trackerKey + 'GreenMask']) {
-                trackerMarkers[trackerKey + 'GreenMask'].setLatLng([lat, lng]);
-            }
-
-            // Update main tracker circle
+            // Update green circle
             if (trackerMarkers[trackerKey]) {
                 trackerMarkers[trackerKey].setLatLng([lat, lng]);
             }
 
-            // Update pulse circle
-            if (trackerMarkers[trackerKey + 'Pulse']) {
-                trackerMarkers[trackerKey + 'Pulse'].setLatLng([lat, lng]);
+            // Update dotted line to user location
+            if (trackerMarkers[trackerKey + 'DottedLine'] && currentLocation) {
+                trackerMarkers[trackerKey + 'DottedLine'].setLatLngs([[lat, lng], [currentLocation.latitude, currentLocation.longitude]]);
             }
 
-            // Update direction arrow
-            if (trackerMarkers[trackerKey + 'Arrow']) {
-                updateTrackerArrow(trackerMarkers[trackerKey + 'Arrow'], lat, lng, cellData[mode]);
-            }
-
-            // Update prediction line
-            if (trackerMarkers[trackerKey + 'PredictionLine']) {
-                const predictionPath = calculatePredictionPath(lat, lng, cellData[mode]);
-                trackerMarkers[trackerKey + 'PredictionLine'].setLatLngs(predictionPath);
-            }
-
-            // Update trajectory animation
-            createTrajectoryAnimation(lat, lng, mode);
-
-            // Update enhanced label with current metrics
+            // Update simple tooltip with threat info
             const labelContent = mode === 'manual' ? 
-                'Manual Track Point' : 
-                `Auto Track: ${cellData[mode].speed ? cellData[mode].speed.toFixed(1) + ' kph' : 'Tracking...'}`;
+                'Manual Point' : 
+                `Threat: ${cellData[mode].threat_probability || 0}%<br>ETA: ${formatTimeToRain(cellData[mode].time_to_rain || 999)}`;
             
             if (trackerMarkers[trackerKey]) {
                 trackerMarkers[trackerKey].setTooltipContent(labelContent);
@@ -1147,9 +1117,9 @@
             animateMarkerAlongPath(marker, startLat, startLng, currentLocation.latitude, currentLocation.longitude, mode);
         }
 
-        function animateMarkerAlongPath(marker, startLat, startLng, endLat, endLng, mode) {
-            const duration = 3000; // 3 seconds for animation
-            const steps = 60;
+        function animateMarkerAlongTrajectory(marker, startLat, startLng, endLat, endLng, mode) {
+            const duration = 4000; // 4 seconds for animation (slower for visibility)
+            const steps = 80;
             const stepDuration = duration / steps;
             let currentStep = 0;
 
@@ -1159,10 +1129,10 @@
             const animationInterval = setInterval(() => {
                 if (currentStep >= steps) {
                     clearInterval(animationInterval);
-                    // Restart animation
+                    // Restart animation after a brief pause
                     setTimeout(() => {
-                        animateMarkerAlongPath(marker, startLat, startLng, endLat, endLng, mode);
-                    }, 1000);
+                        animateMarkerAlongTrajectory(marker, startLat, startLng, endLat, endLng, mode);
+                    }, 1500);
                     return;
                 }
 
@@ -1177,7 +1147,8 @@
         function removeTracker(mode) {
             const trackerKey = mode + 'Tracker';
             
-            ['', 'Pulse', 'Arrow', 'PredictionLine', 'GreenMask', 'Trajectory', 'TrajectoryLine'].forEach(suffix => {
+            // Remove all tracker components: circle, trajectory line, and moving marker
+            ['', 'TrajectoryLine', 'MovingMarker'].forEach(suffix => {
                 const key = trackerKey + suffix;
                 if (trackerMarkers[key]) {
                     map.removeLayer(trackerMarkers[key]);
@@ -1679,26 +1650,37 @@
                     console.log('Distance from API:', data.distance, 'Type:', typeof data.distance);
                     console.log('Rain cell coords:', data.rain_cell_latitude, data.rain_cell_longitude);
                     
+                    // Check if there's a valid threat (backend returns null when no threat)
+                    if (!data.rain_cell_latitude || !data.rain_cell_longitude || data.distance === 999) {
+                        console.log('No threatening rain cells detected - removing tracker');
+                        removeTracker('auto');
+                        cellData.auto = null;
+                        updateDataDisplay(null);
+                        return;
+                    }
+                    
                     const rainLat = parseFloat(data.rain_cell_latitude);
                     const rainLng = parseFloat(data.rain_cell_longitude);
                     
                     console.log('Parsed coords:', rainLat, rainLng);
                     
-                    // Fallback to user location if rain cell coordinates are invalid
-                    const centerLat = isNaN(rainLat) ? currentLocation.latitude : rainLat;
-                    const centerLng = isNaN(rainLng) ? currentLocation.longitude : rainLng;
+                    if (isNaN(rainLat) || isNaN(rainLng)) {
+                        console.log('Invalid coordinates - removing tracker');
+                        removeTracker('auto');
+                        cellData.auto = null;
+                        updateDataDisplay(null);
+                        return;
+                    }
                     
-                    console.log('Final center coords:', centerLat, centerLng);
+                    console.log('Final center coords:', rainLat, rainLng);
                     
                     cellData.auto = {
                         ...data,
-                        center: { lat: centerLat, lng: centerLng }
+                        center: { lat: rainLat, lng: rainLng }
                     };
                     
-                    // Create/Update auto tracker marker and prediction line
+                    // Create/Update auto tracker marker
                     createTracker('auto');
-                    updatePredictionLine('auto');
-                    
                     updateDataDisplay(data);
                 } else {
                     console.error(`API request failed: ${response.status}`);
@@ -1723,7 +1705,6 @@
                         center: { lat: rainLat, lng: rainLng }
                     };
                     createTracker('auto');
-                    updatePredictionLine('auto');
                     updateDataDisplay(simData);
                 }
             } catch (error) {
@@ -1743,7 +1724,6 @@
                     center: { lat: simData.latitude, lng: simData.longitude }
                 };
                 createTracker('auto');
-                updatePredictionLine('auto');
                 updateDataDisplay(simData);
             }
         }

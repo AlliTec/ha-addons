@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.31 (2025-11-28)
+
+### Enhanced Rain Tracker Visualization Restoration
+- **Large Green Circle**: Restored 8km radius green circle to mark rain cell position with pulsing animation
+- **Red Moving Marker**: Implemented red trajectory marker that travels along dotted line showing rain path to user location
+- **Gold Trajectory Line**: Added animated gold dotted line connecting rain cell to user location with flow effect
+- **Enhanced Animation**: Red marker continuously travels from rain cell to user location showing predicted rain delivery path
+- **Improved Tooltips**: Comprehensive threat information including probability, ETA, distance, speed, and direction
+- **Visual Hierarchy**: Green circle shows rain cell area, red marker shows movement, gold line shows trajectory
+
+### Animation System Improvements
+- **Continuous Loop**: Red marker cycles every 4 seconds with 1.5 second pause for visibility
+- **Smooth Movement**: 80-step animation for fluid marker movement along trajectory
+- **CSS Animations**: Pulsing green overlay and flowing gold trajectory lines
+- **Professional Styling**: Enhanced visual effects with proper z-index layering
+
+### Technical Enhancements
+- **Component Management**: Proper cleanup of all tracker components (circle, line, marker)
+- **Animation Control**: Enhanced `animateMarkerAlongTrajectory` function for better performance
+- **Error Handling**: Robust coordinate validation and fallback mechanisms
+- **Code Organization**: Improved function structure for enhanced tracker system
+
 ## Version 1.1.30 (2025-11-28)
 
 ### Major Rain Tracking Enhancement
