@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.32 (2025-11-28)
+
+### Fixed Tracker Visualization Logic
+- **Static Green Circle**: Green circle now remains static at rain cell location (does not move)
+- **Static Gold Line**: Gold dotted line remains static from green circle to user location
+- **Moving Red Marker**: Red marker travels along static gold line at cloud speed to show arrival time
+- **Correct Animation Logic**: Fixed animation so only red marker moves, green circle and gold line stay fixed
+- **Enhanced Visual Clarity**: Clear distinction between static elements (green circle, gold line) and dynamic element (red marker)
+
+### Extended Tracking Range
+- **Increased Tracking Distance**: Extended max tracking distance from 50km to 150km for longer range detection
+- **Expanded Analysis Area**: Increased lat/lon range from 2.5° to 5.0° for wider area coverage
+- **Updated Schema**: Extended maximum values in configuration schema (200km tracking, 15° analysis range)
+- **Better Early Warning**: Can now detect and track rain cells from much further away
+
+### Technical Improvements
+- **Fixed Animation Behavior**: Corrected which elements should be static vs. moving
+- **Enhanced Configuration**: Updated default settings for better long-range tracking
+- **Improved User Experience**: Clearer visual representation of rain cell position and arrival timing
+
 ## Version 1.1.31 (2025-11-28)
 
 ### Enhanced Rain Tracker Visualization Restoration

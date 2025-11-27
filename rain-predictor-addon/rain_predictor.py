@@ -236,8 +236,8 @@ class RainPredictor:
         
         # Analysis settings
         self.threshold = config.get('analysis_settings.rain_threshold', 50)  # Lowered from 75 to detect lighter rain
-        self.lat_range = config.get('analysis_settings.lat_range_deg', 1.80)
-        self.lon_range = config.get('analysis_settings.lon_range_deg', 1.99)
+        self.lat_range = config.get('analysis_settings.lat_range_deg', 5.0)
+        self.lon_range = config.get('analysis_settings.lon_range_deg', 5.0)
         self.arrival_angle_threshold = config.get('analysis_settings.arrival_angle_threshold_deg', 90)  # Increased from 45° to be less restrictive
 
         # Debug settings
@@ -245,7 +245,7 @@ class RainPredictor:
         self.save_debug_images = config.get('debug.save_images', False)
         
         # Tracking settings
-        self.max_track_dist = config.get('tracking_settings.max_tracking_distance_km', 15)  # Reduced from 30km for better accuracy
+        self.max_track_dist = config.get('tracking_settings.max_tracking_distance_km', 150)  # Extended for long-range tracking
         self.min_track_len = config.get('tracking_settings.min_track_length', 3)  # Increased for more reliable tracking
         
         # View bounds for focused analysis

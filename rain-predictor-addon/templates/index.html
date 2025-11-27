@@ -934,6 +934,85 @@
             // Remove old tracker if exists
             removeTracker(mode);
 
+            // Create static green circle for rain cell position (DOES NOT MOVE)
+            console.log('Creating static green circle for rain cell...');
+            const greenCircle = L.circle([lat, lng], {
+                radius: 8000, // 8km radius - marks rain cell area
+                color: '#00FF00', // Green border
+                weight: 4,
+                fillColor: '#00FF00', // Green fill
+                fillOpacity: 0.3, // Semi-transparent
+                zIndex: 10000, // Ensure it's on top
+                className: 'green-mask-overlay' // Add pulsing animation
+            }).addTo(map);
+            console.log('Static green circle added to map');
+
+            trackerMarkers[trackerKey] = greenCircle;
+
+            // Create static gold dotted line from rain cell to user location (DOES NOT MOVE)
+            if (currentLocation) {
+                const trajectoryLine = L.polyline([[lat, lng], [currentLocation.latitude, currentLocation.longitude]], {
+                    color: '#FFD700', // Gold dotted line
+                    weight: 3,
+                    opacity: 0.8,
+                    dashArray: '10, 5', // Dotted pattern
+                    zIndex: 9999,
+                    className: 'trajectory-line' // Add flow animation
+                }).addTo(map);
+                trackerMarkers[trackerKey + 'TrajectoryLine'] = trajectoryLine;
+                console.log('Static gold trajectory line added to map');
+
+                // Create red moving marker that travels along the static line at cloud speed
+                const redMarker = L.divIcon({
+                    className: 'trajectory-marker',
+                    iconSize: [16, 16],
+                    iconAnchor: [8, 8]
+                });
+
+                const movingMarker = L.marker([lat, lng], {
+                    icon: redMarker,
+                    zIndex: 10001 // On top of everything
+                }).addTo(map);
+
+                trackerMarkers[trackerKey + 'MovingMarker'] = movingMarker;
+                console.log('Red moving marker added to map');
+
+                // Start animating red marker along static trajectory at cloud speed
+                animateMarkerAlongTrajectory(movingMarker, lat, lng, currentLocation.latitude, currentLocation.longitude, mode);
+            }
+
+            // Add comprehensive tooltip with threat info
+            const labelContent = mode === 'manual' ? 
+                `Manual Point<br>Speed: ${cellData[mode].speed || 0} kph<br>Direction: ${degreesToCardinal(cellData[mode].direction || -1)}` : 
+                `🌧️ RAIN CELL THREAT<br>
+                 Threat Level: ${cellData[mode].threat_probability || 0}%<br>
+                 ETA: ${formatTimeToRain(cellData[mode].time_to_rain || 999)}<br>
+                 Distance: ${cellData[mode].distance || 0} km<br>
+                 Speed: ${cellData[mode].speed || 0} kph<br>
+                 Direction: ${degreesToCardinal(cellData[mode].direction || -1)}`;
+            
+            greenCircle.bindTooltip(labelContent, {
+                permanent: false,
+                direction: 'top',
+                offset: [0, -30],
+                className: 'tracker-label-enhanced'
+            });
+        }
+
+            const lat = cellData[mode].center.lat;
+            const lng = cellData[mode].center.lng;
+            console.log(`Tracker coordinates: lat=${lat}, lng=${lng}`);
+
+            if (isNaN(lat) || isNaN(lng)) {
+                console.error('Invalid tracker coordinates');
+                return;
+            }
+
+            const trackerKey = mode + 'Tracker';
+
+            // Remove old tracker if exists
+            removeTracker(mode);
+
             // Create large green circle for rain cell position
             console.log('Creating large green circle for rain cell...');
             const greenCircle = L.circle([lat, lng], {
