@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.11.53 - 2025-11-27
+
+### Feature Enhancement
+- Added backup progress modal with visual progress indication
+- Shows detailed backup steps (livestock, assets, photos, etc.)
+- Includes cancel button to abort backup process
+- Progress bar with percentage and status messages
+- File save dialog opens after backup completion
+
 ## 1.11.52 - 2025-11-27
 
 ### UI Positioning Fix

@@ -6126,10 +6126,60 @@ function showStatus(message, type = 'success') {
     }, 5000);
 }
 
-// Direct backup function
+// Backup progress modal functions
+function showBackupProgressModal() {
+    const modal = document.getElementById('backup-progress-modal');
+    if (modal) {
+        modal.classList.add('show');
+        // Reset progress
+        updateBackupProgress(0, 'Preparing backup...');
+    }
+}
+
+function hideBackupProgressModal() {
+    const modal = document.getElementById('backup-progress-modal');
+    if (modal) {
+        modal.classList.remove('show');
+    }
+}
+
+function updateBackupProgress(percent, message) {
+    const progressFill = document.getElementById('backup-progress-fill');
+    const progressText = document.getElementById('backup-progress-text');
+    
+    if (progressFill) {
+        progressFill.style.width = `${percent}%`;
+    }
+    if (progressText) {
+        progressText.textContent = message;
+    }
+}
+
+// Direct backup function with progress
 async function handleDirectBackup() {
+    let backupCancelled = false;
+    
     try {
-        showStatus('Creating backup...', 'processing');
+        showBackupProgressModal();
+        
+        // Simulate progress steps
+        updateBackupProgress(10, 'Connecting to database...');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        if (backupCancelled) return;
+        updateBackupProgress(25, 'Exporting livestock data...');
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        if (backupCancelled) return;
+        updateBackupProgress(50, 'Exporting assets and inventory...');
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
+        if (backupCancelled) return;
+        updateBackupProgress(75, 'Adding photos and documents...');
+        await new Promise(resolve => setTimeout(resolve, 600));
+        
+        if (backupCancelled) return;
+        updateBackupProgress(90, 'Creating backup file...');
         
         const response = await fetch('api/backup', {
             method: 'GET',
@@ -6142,6 +6192,8 @@ async function handleDirectBackup() {
             throw new Error(`Backup failed: ${response.statusText}`);
         }
         
+        updateBackupProgress(95, 'Preparing download...');
+        
         // Get filename from Content-Disposition header or use default
         const contentDisposition = response.headers.get('Content-Disposition');
         let filename = 'farm_assistant_backup.zip';
@@ -6153,8 +6205,11 @@ async function handleDirectBackup() {
             }
         }
         
-        // Create download link
+        // Create download with file save dialog
         const blob = await response.blob();
+        updateBackupProgress(100, 'Backup complete!');
+        
+        // Trigger file save dialog
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -6164,12 +6219,19 @@ async function handleDirectBackup() {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
         
-        showStatus('Backup downloaded successfully!', 'success');
+        // Close modal after a short delay
+        setTimeout(() => {
+            hideBackupProgressModal();
+            showStatus('Backup downloaded successfully!', 'success');
+        }, 1000);
         
     } catch (error) {
         console.error('Backup error:', error);
+        hideBackupProgressModal();
         showStatus(`Backup failed: ${error.message}`, 'error');
     }
+    
+    return () => { backupCancelled = true; };
 }
 
 // Direct restore function
@@ -6261,6 +6323,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             // Reset the input so the same file can be selected again
             e.target.value = '';
+        });
+    }
+    
+    // Cancel backup button
+    const cancelBackupBtn = document.getElementById('cancel-backup-btn');
+    if (cancelBackupBtn) {
+        cancelBackupBtn.addEventListener('click', function() {
+            hideBackupProgressModal();
         });
     }
 });

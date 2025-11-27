@@ -1166,6 +1166,42 @@
     
     <!-- Status message container -->
     <div id="status-container" class="status-container"></div>
+    
+    <!-- Backup Progress Modal -->
+    <div id="backup-progress-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Creating Backup</h2>
+            </div>
+            <div class="modal-body">
+                <div class="backup-progress-section">
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div id="backup-progress-fill" class="progress-fill"></div>
+                        </div>
+                        <div id="backup-progress-text" class="progress-text">Preparing backup...</div>
+                    </div>
+                    
+                    <div class="backup-details">
+                        <p><strong>Creating backup of:</strong></p>
+                        <ul>
+                            <li>Livestock data</li>
+                            <li>Asset inventory</li>
+                            <li>Maintenance records</li>
+                            <li>Calendar entries</li>
+                            <li>Photos and documents</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="backup-actions">
+                        <button id="cancel-backup-btn" class="btn-secondary">
+                            <i class="fa-solid fa-times"></i> Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
