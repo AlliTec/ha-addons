@@ -6107,34 +6107,29 @@ async function handleRestore(file) {
     }
 }
 
-// Modal functions
-function showBackupRestoreModal() {
-    const modal = document.getElementById('backup-restore-modal');
-    if (modal) {
-        modal.classList.add('show');
-        // Clear any previous status messages
-        const backupStatus = document.getElementById('backup-status');
-        const restoreStatus = document.getElementById('restore-status');
-        if (backupStatus) backupStatus.textContent = '';
-        if (restoreStatus) restoreStatus.textContent = '';
-    }
-}
-
-function hideBackupRestoreModal() {
-    const modal = document.getElementById('backup-restore-modal');
-    if (modal) {
-        modal.classList.remove('show');
-    }
-}
-
-async function handleModalBackup() {
-    const backupStatus = document.getElementById('backup-status');
-    const modalBackupBtn = document.getElementById('modal-backup-btn');
+// Simple status message function
+function showStatus(message, type = 'success') {
+    const statusContainer = document.getElementById('status-container');
+    if (!statusContainer) return;
     
+    const statusDiv = document.createElement('div');
+    statusDiv.className = `status-message ${type}`;
+    statusDiv.textContent = message;
+    
+    statusContainer.appendChild(statusDiv);
+    
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        if (statusDiv.parentNode) {
+            statusDiv.remove();
+        }
+    }, 5000);
+}
+
+// Direct backup function
+async function handleDirectBackup() {
     try {
-        if (backupStatus) backupStatus.textContent = 'Creating backup...';
-        if (backupStatus) backupStatus.className = 'status-message processing';
-        if (modalBackupBtn) modalBackupBtn.disabled = true;
+        showStatus('Creating backup...', 'processing');
         
         const response = await fetch('api/backup', {
             method: 'GET',
@@ -6169,33 +6164,24 @@ async function handleModalBackup() {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
         
-        if (backupStatus) backupStatus.textContent = 'Backup downloaded successfully!';
-        if (backupStatus) backupStatus.className = 'status-message success';
+        showStatus('Backup downloaded successfully!', 'success');
         
     } catch (error) {
         console.error('Backup error:', error);
-        if (backupStatus) backupStatus.textContent = `Backup failed: ${error.message}`;
-        if (backupStatus) backupStatus.className = 'status-message error';
-    } finally {
-        if (modalBackupBtn) modalBackupBtn.disabled = false;
+        showStatus(`Backup failed: ${error.message}`, 'error');
     }
 }
 
-async function handleModalRestore(file) {
-    const restoreStatus = document.getElementById('restore-status');
-    const modalExecuteRestoreBtn = document.getElementById('modal-execute-restore-btn');
-    
+// Direct restore function
+async function handleDirectRestore(file) {
     // Validate file type
     if (!file.name.endsWith('.zip')) {
-        if (restoreStatus) restoreStatus.textContent = 'Please select a valid ZIP backup file';
-        if (restoreStatus) restoreStatus.className = 'status-message error';
+        showStatus('Please select a valid ZIP backup file', 'error');
         return;
     }
     
     try {
-        if (restoreStatus) restoreStatus.textContent = 'Restoring backup...';
-        if (restoreStatus) restoreStatus.className = 'status-message processing';
-        if (modalExecuteRestoreBtn) modalExecuteRestoreBtn.disabled = true;
+        showStatus('Restoring backup...', 'processing');
         
         const formData = new FormData();
         formData.append('backup_file', file);
@@ -6211,8 +6197,7 @@ async function handleModalRestore(file) {
         }
         
         const result = await response.json();
-        if (restoreStatus) restoreStatus.textContent = result.message;
-        if (restoreStatus) restoreStatus.className = 'status-message success';
+        showStatus(result.message, 'success');
         
         // Refresh the page after successful restore to show updated data
         setTimeout(() => {
@@ -6221,10 +6206,7 @@ async function handleModalRestore(file) {
         
     } catch (error) {
         console.error('Restore error:', error);
-        if (restoreStatus) restoreStatus.textContent = `Restore failed: ${error.message}`;
-        if (restoreStatus) restoreStatus.className = 'status-message error';
-    } finally {
-        if (modalExecuteRestoreBtn) modalExecuteRestoreBtn.disabled = false;
+        showStatus(`Restore failed: ${error.message}`, 'error');
     }
 }
 
@@ -6250,77 +6232,35 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Backup menu button
+    // Backup menu button - direct action
     const backupMenuBtn = document.getElementById('backup-menu-btn');
     if (backupMenuBtn) {
         backupMenuBtn.addEventListener('click', function() {
             menuDropdown.classList.remove('show');
-            showBackupRestoreModal();
+            handleDirectBackup();
         });
     }
     
-    // Restore menu button
+    // Restore menu button - file selection
     const restoreMenuBtn = document.getElementById('restore-menu-btn');
-    if (restoreMenuBtn) {
+    const restoreFileInput = document.getElementById('restore-file-input');
+    
+    if (restoreMenuBtn && restoreFileInput) {
         restoreMenuBtn.addEventListener('click', function() {
             menuDropdown.classList.remove('show');
-            showBackupRestoreModal();
+            restoreFileInput.click();
         });
     }
     
-    // Modal functionality
-    const modal = document.getElementById('backup-restore-modal');
-    const closeBtn = modal ? modal.querySelector('.close') : null;
-    
-    if (closeBtn) {
-        closeBtn.addEventListener('click', hideBackupRestoreModal);
-    }
-    
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                hideBackupRestoreModal();
-            }
-        });
-    }
-    
-    // Modal backup button
-    const modalBackupBtn = document.getElementById('modal-backup-btn');
-    if (modalBackupBtn) {
-        modalBackupBtn.addEventListener('click', handleModalBackup);
-    }
-    
-    // Modal restore file selection
-    const modalRestoreBtn = document.getElementById('modal-restore-btn');
-    const modalRestoreFile = document.getElementById('modal-restore-file');
-    const modalExecuteRestoreBtn = document.getElementById('modal-execute-restore-btn');
-    const selectedFileName = document.getElementById('selected-file-name');
-    
-    if (modalRestoreBtn && modalRestoreFile) {
-        modalRestoreBtn.addEventListener('click', function() {
-            modalRestoreFile.click();
-        });
-    }
-    
-    if (modalRestoreFile) {
-        modalRestoreFile.addEventListener('change', function(e) {
+    // File input change handler
+    if (restoreFileInput) {
+        restoreFileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
-                selectedFileName.textContent = file.name;
-                modalExecuteRestoreBtn.disabled = false;
-            } else {
-                selectedFileName.textContent = 'No file selected';
-                modalExecuteRestoreBtn.disabled = true;
+                handleDirectRestore(file);
             }
-        });
-    }
-    
-    if (modalExecuteRestoreBtn) {
-        modalExecuteRestoreBtn.addEventListener('click', function() {
-            const file = modalRestoreFile.files[0];
-            if (file) {
-                handleModalRestore(file);
-            }
+            // Reset the input so the same file can be selected again
+            e.target.value = '';
         });
     }
 });

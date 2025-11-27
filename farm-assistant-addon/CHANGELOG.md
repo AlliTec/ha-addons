@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.11.51 - 2025-11-27
+
+### UI Fix
+- Fixed hamburger menu positioning to actual top-right corner of screen (fixed positioning)
+- Simplified backup/restore to direct menu actions without complex modal
+- Backup menu item directly downloads backup file
+- Restore menu item directly opens file selection dialog
+- Added simple status notifications in top-right corner
+
 ## 1.11.50 - 2025-11-27
 
 ### UI Enhancement
