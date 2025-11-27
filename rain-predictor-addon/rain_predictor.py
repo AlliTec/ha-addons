@@ -566,7 +566,7 @@ class RainPredictor:
                     # Predict movement over 5 minute interval (RainViewer frame interval)
                     time_hours = 5.0 / 60.0  # 5 minutes in hours
                     predicted_distance = speed_kph * time_hours
-                    predicted_lat, predicted_lon = self._project_position(
+                    predicted_lat, predicted_lon = tracked_cell._project_position(
                         last_lat, last_lon, predicted_distance, direction_deg
                     )
                     logging.debug(f"Track #{cell_id}: predicted movement {predicted_distance:.1f}km @ {direction_deg:.1f}°")

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.29 (2025-11-27)
+
+### Bug Fix
+- Fixed critical AttributeError in rain cell tracking logic
+- Corrected `_project_position` method call from `self._project_position` to `tracked_cell._project_position`
+- Rain tracking and threat detection now working correctly
+- System now properly detects and tracks approaching rain cells
+
 ## Version 1.1.28 (2025-11-10)
 
 ### Location Marker Tooltip Improvements
