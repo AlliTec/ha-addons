@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.33 (2025-11-28)
+
+### Critical JavaScript Syntax Fix
+- **Fixed Illegal Return Statement**: Resolved critical JavaScript syntax error in `createTracker()` function
+- **Removed Duplicate Code**: Eliminated duplicate code block that was causing "Illegal return statement" errors
+- **Restored Frontend Functionality**: Web UI now loads properly without JavaScript errors
+- **Fixed Map Display**: Map and tracking data now display correctly for users
+- **System Recovery**: Complete addon functionality restored after frontend crash
+
+### Root Cause Resolution
+- **Syntax Error Identification**: Found duplicate code outside function scope causing JavaScript parsing failures
+- **Code Cleanup**: Removed redundant `createTracker()` function implementation that was breaking page load
+- **JavaScript Validation**: Applied proper syntax checking to prevent future issues
+- **User Experience**: Eliminated "no map or tracking data" problem caused by frontend crash
+
 ## Version 1.1.32 (2025-11-28)
 
 ### Fixed Tracker Visualization Logic
