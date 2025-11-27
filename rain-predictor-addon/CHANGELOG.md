@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.35 (2025-11-28)
+
+### Tracker-Metrics Consistency Enhancement
+- **Synchronized Display Logic**: Tracking overlay now automatically hidden when all metrics show "--"
+- **Enhanced updateDataDisplay Function**: Added comprehensive validation to ensure tracker visibility matches metrics
+- **Automatic Tracker Removal**: When no valid metrics exist (time=999, distance=999, speed=0, direction=-1, bearing=-1), both auto and manual trackers are removed
+- **Consistent User Experience**: Eliminates confusion where tracking overlay was visible but metrics showed no data
+- **Improved Logic Flow**: Single source of truth for tracker visibility based on metric validity
+
+### Technical Implementation
+- **Metric Validation Logic**: Added `hasAnyValidMetric` check to determine if any meaningful data exists
+- **Dual Tracker Cleanup**: Ensures both auto and manual trackers are removed when appropriate
+- **Enhanced Debugging**: Added console logging for tracker removal decisions and validation states
+- **Robust Edge Cases**: Handles both null data and data with all invalid values consistently
+
+### User Experience Improvements
+- **Visual Consistency**: Tracking overlay only appears when there's actual threat data to display
+- **Clear State Management**: Users can trust that visible tracking corresponds to displayed metrics
+- **Reduced Confusion**: Eliminates scenarios where tracking animation runs without supporting data
+- **Professional Interface**: More polished and predictable behavior
+
 ## Version 1.1.34 (2025-11-28)
 
 ### Enhanced Rain Cell Tracking Logic

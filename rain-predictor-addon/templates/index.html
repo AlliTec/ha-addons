@@ -1520,6 +1520,33 @@
                 const direction = parseFloat(data.direction);
                 const bearing = parseFloat(data.bearing);
 
+                // Check if all metrics are effectively null/invalid (showing --)
+                const hasValidTime = timeToRain !== 999;
+                const hasValidDistance = distance !== 999;
+                const hasValidSpeed = speed !== 0;
+                const hasValidDirection = direction !== -1;
+                const hasValidBearing = bearing !== -1;
+                
+                const hasAnyValidMetric = hasValidTime || hasValidDistance || hasValidSpeed || hasValidDirection || hasValidBearing;
+
+                // If no valid metrics, remove tracker and show -- values
+                if (!hasAnyValidMetric) {
+                    console.log('No valid metrics - removing tracker and clearing display');
+                    removeTracker('auto');
+                    removeTracker('manual');
+                    timeElement.classList.remove('now');
+                    timeElement.innerText = '--';
+                    document.getElementById('distance').innerText = '--';
+                    document.getElementById('distance').style.color = '#aaa';
+                    document.getElementById('speed').innerText = '--';
+                    document.getElementById('speed').style.color = '#aaa';
+                    document.getElementById('direction').innerText = '--';
+                    document.getElementById('direction').style.color = '#aaa';
+                    document.getElementById('bearing').innerText = '--';
+                    document.getElementById('bearing').style.color = '#aaa';
+                    return;
+                }
+
                 const formattedTime = (timeToRain === 999) ? '--' : formatTimeToRain(timeToRain);
                 timeElement.classList.toggle('now', formattedTime === 'NOW');
                 timeElement.innerText = formattedTime;
@@ -1580,6 +1607,10 @@
                 updateTrackerLabels(data);
 
             } else {
+                // No data at all - remove trackers and clear display
+                console.log('No data available - removing trackers and clearing display');
+                removeTracker('auto');
+                removeTracker('manual');
                 timeElement.classList.remove('now');
                 timeElement.innerText = '--';
                 document.getElementById('distance').innerText = '--';
