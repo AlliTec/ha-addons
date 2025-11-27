@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.34 (2025-11-28)
+
+### Enhanced Rain Cell Tracking Logic
+- **Fixed Visual Tracking Elements**: Green circle now remains static (origin), red marker moves along predicted path
+- **Separated Tracker Functions**: Created `updateMovingMarker()` to move only red marker, not green circle
+- **Corrected Visual Hierarchy**: Green circle shows rain cell origin, gold line shows path, red marker shows movement
+
+### Advanced Directional Analysis
+- **General Movement Calculation**: Added circular mean calculation for overall rain system movement direction
+- **Directional Filtering**: Cells not matching general movement pattern are filtered out (45° tolerance)
+- **User-Relative Analysis**: Only cells moving generally toward user location (within 90°) are considered
+- **Improved Threat Assessment**: More accurate probability calculation based on system-wide movement patterns
+
+### Enhanced Prediction Accuracy
+- **Pattern-Based Filtering**: Eliminates cells moving contrary to overall weather system direction
+- **Logical Consistency**: If all cells move east, cells moving northwest are filtered out
+- **Better Probability**: Higher confidence in tracked cells that match general movement patterns
+- **Comprehensive Logging**: Detailed logging of directional filtering decisions and reasoning
+
+### Technical Improvements
+- **Added degrees_to_cardinal()**: Utility method for converting degrees to cardinal directions
+- **Circular Statistics**: Proper circular mean calculation for directional data
+- **Enhanced Debug Output**: Better visibility into filtering and threat assessment decisions
+- **Improved User Experience**: More accurate and visually consistent rain tracking
+
 ## Version 1.1.33 (2025-11-28)
 
 ### Critical JavaScript Syntax Fix

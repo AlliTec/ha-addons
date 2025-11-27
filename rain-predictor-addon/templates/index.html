@@ -867,7 +867,7 @@
 
             // If radar frames/timestamps are not ready, just pin at center
             if (!frameTimestamps || frameTimestamps.length === 0 || frameIndex >= frameTimestamps.length) {
-                updateTracker(activeCell.center.lat, activeCell.center.lng, activeMode);
+                updateMovingMarker(activeCell.center.lat, activeCell.center.lng, activeMode);
                 return;
             }
 
@@ -882,12 +882,6 @@
             const trackerDirection = activeCell.direction;
             const theta = trackerDirection * Math.PI / 180; // 0°=N, 90°=E
             
-            // Enhanced debug logging to track distance calculation
-            console.log(`Tracker debug - Frame: ${frameIndex}, FrameTime: ${frameTime}, StartTime: ${startTime}`);
-            console.log(`Tracker debug - Speed: ${activeCell.speed}kph, TimeDiff: ${timeDiffHours.toFixed(4)}h`);
-            console.log(`Tracker debug - CellFrom: ${activeCell.direction}°, TrackerTo: ${trackerDirection}°, Distance: ${distance.toFixed(2)}km`);
-            console.log(`Theta: ${theta.toFixed(3)}rad, cos: ${Math.cos(theta).toFixed(3)}, sin: ${Math.sin(theta).toFixed(3)}`);
-            
             // Safety check for invalid coordinates
             if (!activeCell.center || isNaN(activeCell.center.lat) || isNaN(activeCell.center.lng)) {
                 console.error('Invalid center coordinates:', activeCell.center);
@@ -897,19 +891,24 @@
             const latOffset = (distance * Math.cos(theta)) / 111;
             const latRad = activeCell.center.lat * Math.PI / 180;
             const lngOffset = (distance * Math.sin(theta)) / (111 * Math.cos(latRad));
-            
-            console.log(`Offsets - Lat: ${latOffset.toFixed(6)}, Lng: ${lngOffset.toFixed(6)}`);
 
             const newLat = activeCell.center.lat + latOffset;
             const newLng = activeCell.center.lng + lngOffset;
-            
-            console.log(`New position - Lat: ${newLat.toFixed(6)}, Lng: ${newLng.toFixed(6)}`);
 
             if (Number.isFinite(newLat) && Number.isFinite(newLng)) {
-                updateTracker(newLat, newLng, activeMode);
+                updateMovingMarker(newLat, newLng, activeMode);
             } else {
                 // Fallback to center if anything is off
-                updateTracker(activeCell.center.lat, activeCell.center.lng, activeMode);
+                updateMovingMarker(activeCell.center.lat, activeCell.center.lng, activeMode);
+            }
+        }
+
+        function updateMovingMarker(lat, lng, mode) {
+            const trackerKey = mode + 'Tracker';
+            
+            // Update ONLY the red moving marker, NOT the green circle
+            if (trackerMarkers[trackerKey + 'MovingMarker']) {
+                trackerMarkers[trackerKey + 'MovingMarker'].setLatLng([lat, lng]);
             }
         }
 

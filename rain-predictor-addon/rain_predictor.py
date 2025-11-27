@@ -319,6 +319,29 @@ class RainPredictor:
             logging.error(f"Bearing calculation error: {e}")
             return None
     
+    def degrees_to_cardinal(self, degrees):
+        """Convert degrees to cardinal direction"""
+        if degrees is None or degrees < 0:
+            return '--'
+        
+        normalized = ((float(degrees) % 360) + 360) % 360
+        directions = [
+            ('N', 348.75, 360), ('N', 0, 11.25),
+            ('NNE', 11.25, 33.75), ('NE', 33.75, 56.25),
+            ('ENE', 56.25, 78.75), ('E', 78.75, 101.25),
+            ('ESE', 101.25, 123.75), ('SE', 123.75, 146.25),
+            ('SSE', 146.25, 168.75), ('S', 168.75, 191.25),
+            ('SSW', 191.25, 213.75), ('SW', 213.75, 236.25),
+            ('WSW', 236.25, 258.75), ('W', 258.75, 281.25),
+            ('WNW', 281.25, 303.75), ('NW', 303.75, 326.25),
+            ('NNW', 326.25, 348.75)
+        ]
+        
+        for name, min_deg, max_deg in directions:
+            if min_deg <= normalized < max_deg:
+                return name
+        return 'N'
+    
     def download_radar_image(self, image_url):
         """Download radar image from URL"""
         logging.debug(f"Downloading: {image_url}")
@@ -607,7 +630,13 @@ class RainPredictor:
                     continue
                 
                 # Multiple scoring factors
-                score_factors = {}
+                score_factors = {
+                    'distance': 0,
+                    'prediction': 0,
+                    'movement': 0,
+                    'intensity': 0,
+                    'size': 0
+                }
                 
                 # Factor 1: Distance from last position (primary)
                 score_factors['distance'] = dist_from_last
@@ -623,9 +652,6 @@ class RainPredictor:
                     if expected_distance > 0:
                         movement_consistency = abs(expected_distance - actual_distance) / expected_distance
                         score_factors['movement'] = movement_consistency * 2.0  # Penalize inconsistent movement
-                else:
-                    score_factors['prediction'] = 0
-                    score_factors['movement'] = 0
                 
                 # Factor 4: Intensity consistency
                 if tracked_cell.intensity > 0:
@@ -902,19 +928,73 @@ class RainPredictor:
             return None
         
         # Calculate overall rain system patterns
-        avg_direction = sum(all_directions) / len(all_directions) if all_directions else 0
+        if all_directions:
+            # Calculate circular mean for directional data
+            x = sum(math.cos(math.radians(d)) for d in all_directions)
+            y = sum(math.sin(math.radians(d)) for d in all_directions)
+            avg_direction = math.degrees(math.atan2(y, x))
+            if avg_direction < 0:
+                avg_direction += 360
+        else:
+            avg_direction = 0
+            
         avg_speed = sum(all_speeds) / len(all_speeds) if all_speeds else 0
         
         logging.info(f"\n📊 RAIN SYSTEM ANALYSIS:")
-        logging.info(f"    Average direction: {avg_direction:.1f}°")
+        logging.info(f"    General movement direction: {avg_direction:.1f}° ({self.degrees_to_cardinal(avg_direction)})")
         logging.info(f"    Average speed: {avg_speed:.1f} km/h")
         logging.info(f"    Valid cells: {len(valid_cells)}")
+        
+        # Filter cells based on general movement pattern
+        filtered_cells = []
+        direction_tolerance = 45  # degrees tolerance from general movement
+        
+        for cell_data in valid_cells:
+            # Check if cell movement aligns with general pattern
+            cell_direction = cell_data['direction']
+            direction_diff = abs((cell_direction - avg_direction + 180) % 360 - 180)
+            
+            # Additional check: cell should be positioned such that its movement
+            # could plausibly reach the user location
+            user_relative_bearing = cell_data['bearing_from_user']
+            movement_to_user_diff = abs((cell_direction - user_relative_bearing + 180) % 360 - 180)
+            
+            # Cell passes if:
+            # 1. Its movement direction is within tolerance of general pattern
+            # 2. Its movement is generally toward the user location
+            passes_direction_filter = (
+                direction_diff <= direction_tolerance and 
+                movement_to_user_diff <= 90  # Within 90° of user direction
+            )
+            
+            if passes_direction_filter:
+                cell_data['direction_alignment'] = direction_diff
+                cell_data['movement_to_user'] = movement_to_user_diff
+                filtered_cells.append(cell_data)
+                logging.info(f"    ✅ Cell #{cell_data['cell_id']}: PASSED filter")
+                logging.info(f"       Direction alignment: {direction_diff:.1f}° (≤{direction_tolerance}°)")
+                logging.info(f"       Movement to user: {movement_to_user_diff:.1f}° (≤90°)")
+            else:
+                logging.info(f"    ❌ Cell #{cell_data['cell_id']}: FILTERED OUT")
+                logging.info(f"       Direction alignment: {direction_diff:.1f}° (> {direction_tolerance}°)")
+                logging.info(f"       Movement to user: {movement_to_user_diff:.1f}° (> 90°)")
+                logging.info(f"       Cell moving {self.degrees_to_cardinal(cell_direction)}, "
+                           f"general pattern: {self.degrees_to_cardinal(avg_direction)}")
+        
+        # Use filtered cells for threat analysis
+        analysis_cells = filtered_cells if filtered_cells else valid_cells
+        
+        if not analysis_cells:
+            logging.info("\n✅ NO CELLS PASS DIRECTIONAL FILTER - No tracking marker needed")
+            return None
+        
+        logging.info(f"\n🎯 ANALYZING {len(analysis_cells)} FILTERED CELLS:")
         
         # Find most likely threat based on multiple factors
         best_cell = None
         best_score = 0
         
-        for cell_data in valid_cells:
+        for cell_data in analysis_cells:
             # Multi-factor scoring for most likely threat
             score = 0
             
