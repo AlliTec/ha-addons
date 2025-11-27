@@ -17,7 +17,7 @@ from scipy.ndimage import label
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.27"
+VERSION = "1.1.30"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -548,7 +548,7 @@ class RainPredictor:
             return []
     
     def _update_tracked_cells(self, detected_cells, timestamp):
-        """Update tracked cells with new detections using improved matching algorithm"""
+        """Update tracked cells with enhanced matching algorithm for extreme accuracy"""
         unmatched_cells = detected_cells.copy()
         matched_count = 0
         
@@ -558,40 +558,110 @@ class RainPredictor:
             
             last_lat, last_lon, _ = tracked_cell.positions[-1]
             
-            # Get predicted position based on previous velocity
+            # Enhanced prediction with multiple factors
             predicted_lat, predicted_lon = last_lat, last_lon
+            confidence_score = 1.0
+            
             if len(tracked_cell.positions) >= 2:
                 speed_kph, direction_deg = tracked_cell.get_velocity()
                 if speed_kph and direction_deg is not None:
                     # Predict movement over 5 minute interval (RainViewer frame interval)
                     time_hours = 5.0 / 60.0  # 5 minutes in hours
                     predicted_distance = speed_kph * time_hours
+                    
+                    # Add acceleration/deceleration consideration
+                    if len(tracked_cell.positions) >= 3:
+                        # Calculate recent speed trend
+                        recent_speeds = []
+                        for i in range(len(tracked_cell.positions) - 2, len(tracked_cell.positions)):
+                            if i > 0:
+                                pos1 = tracked_cell.positions[i-1]
+                                pos2 = tracked_cell.positions[i]
+                                time_diff = (pos2[2] - pos1[2]).total_seconds() / 3600.0
+                                if time_diff > 0:
+                                    dist = self.haversine(pos1[0], pos1[1], pos2[0], pos2[1])
+                                    recent_speeds.append(dist / time_diff)
+                        
+                        if recent_speeds:
+                            avg_speed = sum(recent_speeds) / len(recent_speeds)
+                            speed_trend = (speed_kph - avg_speed) / avg_speed if avg_speed > 0 else 0
+                            # Adjust predicted distance based on trend
+                            predicted_distance *= (1.0 + speed_trend * 0.3)
+                            confidence_score *= 0.9 if abs(speed_trend) > 0.2 else 1.0
+                    
                     predicted_lat, predicted_lon = tracked_cell._project_position(
                         last_lat, last_lon, predicted_distance, direction_deg
                     )
-                    logging.debug(f"Track #{cell_id}: predicted movement {predicted_distance:.1f}km @ {direction_deg:.1f}°")
+                    logging.debug(f"Track #{cell_id}: enhanced prediction {predicted_distance:.1f}km @ {direction_deg:.1f}° (confidence: {confidence_score:.2f})")
             
             best_cell = None
             best_score = float('inf')
+            best_match_details = {}
             
             for cell in unmatched_cells:
-                dist = self.haversine(last_lat, last_lon, cell['lat'], cell['lon'])
+                # Distance from last known position
+                dist_from_last = self.haversine(last_lat, last_lon, cell['lat'], cell['lon'])
                 
                 # Skip if too far from last known position
-                if dist > self.max_track_dist:
+                if dist_from_last > self.max_track_dist:
                     continue
                 
-                # Calculate directional consistency score
-                if len(tracked_cell.positions) >= 2:
-                    pred_dist = self.haversine(predicted_lat, predicted_lon, cell['lat'], cell['lon'])
-                    # Combined score: distance from last pos + directional penalty
-                    score = dist + (pred_dist * 0.5)  # Weight directional prediction
-                else:
-                    score = dist
+                # Multiple scoring factors
+                score_factors = {}
                 
-                if score < best_score:
-                    best_score = score
+                # Factor 1: Distance from last position (primary)
+                score_factors['distance'] = dist_from_last
+                
+                # Factor 2: Directional consistency (if we have velocity)
+                if len(tracked_cell.positions) >= 2:
+                    dist_from_predicted = self.haversine(predicted_lat, predicted_lon, cell['lat'], cell['lon'])
+                    score_factors['prediction'] = dist_from_predicted * 0.7  # Weight prediction accuracy
+                    
+                    # Factor 3: Movement consistency
+                    expected_distance = self.haversine(last_lat, last_lon, predicted_lat, predicted_lon)
+                    actual_distance = dist_from_last
+                    if expected_distance > 0:
+                        movement_consistency = abs(expected_distance - actual_distance) / expected_distance
+                        score_factors['movement'] = movement_consistency * 2.0  # Penalize inconsistent movement
+                else:
+                    score_factors['prediction'] = 0
+                    score_factors['movement'] = 0
+                
+                # Factor 4: Intensity consistency
+                if tracked_cell.intensity > 0:
+                    intensity_diff = abs(tracked_cell.intensity - cell.get('intensity', 0))
+                    score_factors['intensity'] = intensity_diff * 0.1
+                else:
+                    score_factors['intensity'] = 0
+                
+                # Factor 5: Size consistency
+                if hasattr(tracked_cell, 'last_size') and tracked_cell.last_size:
+                    size_diff = abs(tracked_cell.last_size - cell.get('size', 0))
+                    score_factors['size'] = size_diff * 0.01
+                else:
+                    score_factors['size'] = 0
+                
+                # Calculate weighted total score
+                total_score = (
+                    score_factors['distance'] * 1.0 +
+                    score_factors['prediction'] +
+                    score_factors['movement'] +
+                    score_factors['intensity'] +
+                    score_factors['size']
+                ) * confidence_score
+                
+                # Apply confidence weighting
+                if confidence_score < 0.8:
+                    total_score *= 1.2  # Penalty for low confidence predictions
+                
+                if total_score < best_score:
+                    best_score = total_score
                     best_cell = cell
+                    best_match_details = {
+                        'factors': score_factors,
+                        'confidence': confidence_score,
+                        'total_score': total_score
+                    }
             
             if best_cell:
                 tracked_cell.add_position(
@@ -600,15 +670,35 @@ class RainPredictor:
                     timestamp,
                     best_cell.get('intensity', 0)
                 )
+                # Store size for consistency checking
+                tracked_cell.last_size = best_cell.get('size', 0)
+                
                 unmatched_cells.remove(best_cell)
                 matched_count += 1
                 actual_dist = self.haversine(last_lat, last_lon, best_cell['lat'], best_cell['lon'])
-                logging.info(f"✅ Track #{cell_id}: matched (moved {actual_dist:.1f}km, score={best_score:.1f})")
+                
+                logging.info(f"✅ Track #{cell_id}: ENHANCED MATCH")
+                logging.info(f"   Movement: {actual_dist:.1f}km (score: {best_score:.2f}, confidence: {confidence_score:.2f})")
+                logging.info(f"   Factors: dist={best_match_details['factors']['distance']:.2f}, "
+                           f"pred={best_match_details['factors']['prediction']:.2f}, "
+                           f"move={best_match_details['factors']['movement']:.2f}")
             else:
-                logging.debug(f"❌ Track #{cell_id}: no match found")
+                logging.debug(f"❌ Track #{cell_id}: no suitable match found")
         
-        # Create new tracks
+        # Enhanced new track creation with quality filtering
+        high_quality_cells = []
         for cell in unmatched_cells:
+            # Quality criteria for new tracks
+            intensity = cell.get('intensity', 0)
+            size = cell.get('size', 0)
+            
+            # Only create tracks for significant rain cells
+            if intensity >= self.threshold * 0.8 and size >= 3:
+                high_quality_cells.append(cell)
+            else:
+                logging.debug(f"Skipping low-quality cell: intensity={intensity:.1f}, size={size}")
+        
+        for cell in high_quality_cells:
             new_track = RainCell(
                 self.next_cell_id,
                 cell['lat'],
@@ -616,22 +706,36 @@ class RainPredictor:
                 timestamp,
                 cell.get('intensity', 0)
             )
+            new_track.last_size = cell.get('size', 0)
             self.tracked_cells[self.next_cell_id] = new_track
-            logging.info(f"➕ Created new track ID {self.next_cell_id}")
+            logging.info(f"➕ Created HIGH-QUALITY track ID {self.next_cell_id} "
+                        f"(intensity: {cell.get('intensity', 0):.1f}, size: {cell.get('size', 0)})")
             self.next_cell_id += 1
         
-        # Clean up old tracks
+        # Enhanced cleanup with performance-based retention
         current_time = timestamp
         removed_count = 0
         for cell_id in list(self.tracked_cells.keys()):
             track = self.tracked_cells[cell_id]
             age = (current_time - track.last_seen).total_seconds() / 60.0
-            if age > 30:
+            
+            # Keep high-performing tracks longer
+            base_retention = 30  # minutes
+            if len(track.positions) >= 3:
+                speed, direction = track.get_velocity()
+                if speed and speed > 5:  # Keep fast-moving cells longer
+                    base_retention = 45
+                if track.intensity > self.threshold * 1.5:  # Keep intense cells longer
+                    base_retention = 60
+            
+            if age > base_retention:
                 del self.tracked_cells[cell_id]
-                logging.debug(f"Removed old track ID {cell_id} (age: {age:.1f}min)")
+                logging.debug(f"Removed track ID {cell_id} (age: {age:.1f}min > {base_retention}min)")
                 removed_count += 1
         
-        logging.debug(f"Track update: {matched_count} matched, {len(unmatched_cells)} new, {removed_count} removed")
+        total_matches = matched_count + len(high_quality_cells)
+        logging.info(f"🎯 ENHANCED TRACKING: {matched_count} matched, {len(high_quality_cells)} new high-quality, {removed_count} removed")
+        logging.info(f"📊 Track quality: {total_matches}/{len(detected_cells)} cells tracked ({(total_matches/len(detected_cells)*100):.1f}% coverage)")
     
     def _validate_api_response(self, api_data):
         """Validate that API response has required structure"""

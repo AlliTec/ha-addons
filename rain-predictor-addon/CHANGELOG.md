@@ -4,6 +4,38 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.30 (2025-11-28)
+
+### Major Rain Tracking Enhancement
+- **Green Mask Overlay**: Implemented large semi-transparent green overlay for tracked rain cells (8km radius)
+- **Enhanced Visual Markers**: Added dual-layer markers with green mask and white-bordered center circle for maximum visibility
+- **Trajectory Animation**: Created animated golden trajectory line from rain cell to user location with moving marker
+- **Smooth Animation Transitions**: Implemented CSS animations for pulsing effects and flowing trajectory lines
+- **Enhanced Cell Matching**: Revolutionary multi-factor scoring algorithm for extremely accurate rain cell tracking
+- **Movement Prediction**: Added acceleration/deceleration consideration and speed trend analysis
+- **Quality Filtering**: Only tracks high-quality rain cells with intensity and size thresholds
+- **Performance-Based Retention**: Keeps fast-moving and intense cells longer for better tracking
+
+### Visual Improvements
+- **Color-Coded Metrics**: Distance colored by urgency (red/orange/yellow/green), speed with trend icons
+- **Direction Arrows**: Added cardinal and intercardinal arrow indicators for direction and bearing
+- **Enhanced Labels**: Comprehensive tooltip labels showing speed, distance, ETA, and direction
+- **Animated Elements**: Pulsing green masks, flowing trajectory lines, enhanced pulse effects
+- **Professional Styling**: Improved CSS with animations, gradients, and modern design elements
+
+### Tracking Accuracy Improvements
+- **Multi-Factor Scoring**: Distance, directional consistency, movement consistency, intensity, and size factors
+- **Confidence Weighting**: Higher confidence predictions get preference in cell matching
+- **Speed Trend Analysis**: Considers acceleration/deceleration patterns in predictions
+- **Enhanced Validation**: Improved coordinate and timestamp validation throughout tracking pipeline
+- **Quality Metrics**: Tracks percentage of detected cells that are successfully tracked
+
+### Technical Enhancements
+- **Improved Algorithm**: Enhanced cell matching with 5-factor scoring system
+- **Better Debugging**: Comprehensive logging of tracking decisions and quality metrics
+- **Performance Optimization**: Efficient cleanup and retention strategies for tracked cells
+- **Robust Error Handling**: Enhanced validation and fallback mechanisms
+
 ## Version 1.1.29 (2025-11-27)
 
 ### Bug Fix

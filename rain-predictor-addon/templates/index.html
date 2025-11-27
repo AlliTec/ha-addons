@@ -417,6 +417,85 @@
             80% { opacity: 1; }
             100% { opacity: 0; }
         }
+
+        /* Enhanced tracker styles */
+        .green-mask-overlay {
+            animation: greenPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes greenPulse {
+            0% {
+                fillOpacity: 0.2;
+                strokeOpacity: 0.6;
+            }
+            50% {
+                fillOpacity: 0.4;
+                strokeOpacity: 1.0;
+            }
+            100% {
+                fillOpacity: 0.2;
+                strokeOpacity: 0.6;
+            }
+        }
+
+        .tracker-pulse-enhanced {
+            animation: enhancedPulse 2s ease-out infinite;
+        }
+
+        @keyframes enhancedPulse {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(3);
+                opacity: 0;
+            }
+        }
+
+        .prediction-path-animated {
+            animation: dashAnimation 20s linear infinite;
+        }
+
+        @keyframes dashAnimation {
+            to {
+                stroke-dashoffset: -100;
+            }
+        }
+
+        .tracker-label-enhanced {
+            background: rgba(0, 0, 0, 0.8) !important;
+            border: 2px solid #00FF00 !important;
+            border-radius: 6px !important;
+            font-weight: bold !important;
+            font-size: 12px !important;
+            color: white !important;
+            padding: 4px 8px !important;
+        }
+
+        .trajectory-marker {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 3px solid #FFD700;
+            background: #FF6347;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+            z-index: 10001;
+        }
+
+        .trajectory-line {
+            stroke: #FFD700;
+            stroke-width: 3;
+            stroke-dasharray: 5, 5;
+            fill: none;
+            animation: trajectoryFlow 2s linear infinite;
+        }
+
+        @keyframes trajectoryFlow {
+            to {
+                stroke-dashoffset: -10;
+            }
+        }
     </style>
 </head>
 <body data-latitude="{{ user_latitude }}" data-longitude="{{ user_longitude }}">
@@ -856,57 +935,78 @@
             // Remove old tracker if exists
             removeTracker(mode);
 
-            // Create a circle to highlight the tracked cell
-            console.log('Creating circle...');
-            const circle = L.circle([lat, lng], {
-                radius: 5000, // 5km radius
-                color: '#00FF00', // Lime green border
-                weight: 1,
+            // Create green mask overlay for tracked cell (larger, more visible)
+            console.log('Creating green mask overlay...');
+            const greenMask = L.circle([lat, lng], {
+                radius: 8000, // 8km radius for better visibility
+                color: '#00FF00', // Bright green border
+                weight: 3,
+                fillColor: '#00FF00', // Bright green fill
+                fillOpacity: 0.3, // Semi-transparent overlay
+                zIndex: 9999, // High z-index to be on top
+                className: 'green-mask-overlay'
+            }).addTo(map);
+            console.log('Green mask added to map');
+
+            trackerMarkers[trackerKey + 'GreenMask'] = greenMask;
+
+            // Create inner circle for precise cell location
+            const innerCircle = L.circle([lat, lng], {
+                radius: 3000, // 3km radius for cell center
+                color: '#FFFFFF', // White border
+                weight: 2,
                 fillColor: '#008000', // Dark green fill
                 fillOpacity: 0.8,
                 zIndex: 10000 // Ensure it's on top
             }).addTo(map);
-            console.log('Circle added to map');
+            console.log('Inner circle added to map');
 
-            trackerMarkers[trackerKey] = circle;
+            trackerMarkers[trackerKey] = innerCircle;
             console.log('Tracker markers object:', trackerMarkers);
 
-            // Add pulse effect
+            // Add enhanced pulse effect
             const pulseCircle = L.circle([lat, lng], {
-                radius: 1000,
+                radius: 2000,
                 color: color,
                 fillColor: color,
-                fillOpacity: 0.2,
-                weight: 2,
-                className: 'tracker-pulse'
+                fillOpacity: 0.3,
+                weight: 3,
+                className: 'tracker-pulse-enhanced'
             }).addTo(map);
 
             trackerMarkers[trackerKey + 'Pulse'] = pulseCircle;
 
-            // Add direction arrow
+            // Add direction arrow with enhanced visibility
             const arrow = createTrackerArrow(lat, lng, cellData[mode]);
             if (arrow) {
                 trackerMarkers[trackerKey + 'Arrow'] = arrow;
             }
 
-            // Add prediction line
+            // Add enhanced prediction path with animation
             const predictionPath = calculatePredictionPath(lat, lng, cellData[mode]);
             const predictionLine = L.polyline(predictionPath, {
                 color: color,
-                weight: 3,
-                opacity: 0.7,
-                dashArray: '5, 10'
+                weight: 4,
+                opacity: 0.8,
+                dashArray: '10, 5',
+                className: 'prediction-path-animated'
             }).addTo(map);
             trackerMarkers[trackerKey + 'PredictionLine'] = predictionLine;
 
-            // Add label for manual mode
-            if (mode === 'manual') {
-                trackerMarkers[trackerKey].bindTooltip('Manual Point', {
-                    permanent: false,
-                    direction: 'top',
-                    offset: [0, -20]
-                });
-            }
+            // Add trajectory animation from cell to user location
+            createTrajectoryAnimation(lat, lng, mode);
+
+            // Add enhanced label with metrics
+            const labelContent = mode === 'manual' ? 
+                'Manual Track Point' : 
+                `Auto Track: ${cellData[mode].speed ? cellData[mode].speed.toFixed(1) + ' kph' : 'Tracking...'}`;
+            
+            trackerMarkers[trackerKey].bindTooltip(labelContent, {
+                permanent: false,
+                direction: 'top',
+                offset: [0, -30],
+                className: 'tracker-label-enhanced'
+            });
         }
 
         function updatePredictionLine(mode) {
@@ -955,6 +1055,11 @@
             const color = mode === 'manual' ? '#e53e3e' : '#00FF00';
             const trackerKey = mode + 'Tracker';
 
+            // Update green mask overlay
+            if (trackerMarkers[trackerKey + 'GreenMask']) {
+                trackerMarkers[trackerKey + 'GreenMask'].setLatLng([lat, lng]);
+            }
+
             // Update main tracker circle
             if (trackerMarkers[trackerKey]) {
                 trackerMarkers[trackerKey].setLatLng([lat, lng]);
@@ -975,6 +1080,18 @@
                 const predictionPath = calculatePredictionPath(lat, lng, cellData[mode]);
                 trackerMarkers[trackerKey + 'PredictionLine'].setLatLngs(predictionPath);
             }
+
+            // Update trajectory animation
+            createTrajectoryAnimation(lat, lng, mode);
+
+            // Update enhanced label with current metrics
+            const labelContent = mode === 'manual' ? 
+                'Manual Track Point' : 
+                `Auto Track: ${cellData[mode].speed ? cellData[mode].speed.toFixed(1) + ' kph' : 'Tracking...'}`;
+            
+            if (trackerMarkers[trackerKey]) {
+                trackerMarkers[trackerKey].setTooltipContent(labelContent);
+            }
         }
 
         function updateTrackerArrow(arrow, lat, lng, cellInfo) {
@@ -988,10 +1105,79 @@
             arrow.setLatLngs([[lat, lng], [endLat, endLng]]);
         }
 
+        function createTrajectoryAnimation(startLat, startLng, mode) {
+            if (!cellData[mode] || !currentLocation) return;
+
+            const trackerKey = mode + 'Trajectory';
+            
+            // Remove existing trajectory
+            if (trackerMarkers[trackerKey]) {
+                map.removeLayer(trackerMarkers[trackerKey]);
+            }
+            if (trackerMarkers[trackerKey + 'Line']) {
+                map.removeLayer(trackerMarkers[trackerKey + 'Line']);
+            }
+
+            // Create animated trajectory line from rain cell to user location
+            const trajectoryLine = L.polyline([[startLat, startLng], [currentLocation.latitude, currentLocation.longitude]], {
+                color: '#FFD700',
+                weight: 3,
+                opacity: 0.8,
+                dashArray: '10, 5',
+                className: 'trajectory-line'
+            }).addTo(map);
+
+            trackerMarkers[trackerKey + 'Line'] = trajectoryLine;
+
+            // Create moving marker along the trajectory
+            const trajectoryMarker = L.divIcon({
+                className: 'trajectory-marker',
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            });
+
+            const marker = L.marker([startLat, startLng], {
+                icon: trajectoryMarker,
+                zIndex: 10001
+            }).addTo(map);
+
+            trackerMarkers[trackerKey] = marker;
+
+            // Animate marker along trajectory
+            animateMarkerAlongPath(marker, startLat, startLng, currentLocation.latitude, currentLocation.longitude, mode);
+        }
+
+        function animateMarkerAlongPath(marker, startLat, startLng, endLat, endLng, mode) {
+            const duration = 3000; // 3 seconds for animation
+            const steps = 60;
+            const stepDuration = duration / steps;
+            let currentStep = 0;
+
+            const latStep = (endLat - startLat) / steps;
+            const lngStep = (endLng - startLng) / steps;
+
+            const animationInterval = setInterval(() => {
+                if (currentStep >= steps) {
+                    clearInterval(animationInterval);
+                    // Restart animation
+                    setTimeout(() => {
+                        animateMarkerAlongPath(marker, startLat, startLng, endLat, endLng, mode);
+                    }, 1000);
+                    return;
+                }
+
+                const currentLat = startLat + (latStep * currentStep);
+                const currentLng = startLng + (lngStep * currentStep);
+                
+                marker.setLatLng([currentLat, currentLng]);
+                currentStep++;
+            }, stepDuration);
+        }
+
         function removeTracker(mode) {
             const trackerKey = mode + 'Tracker';
             
-            ['', 'Pulse', 'Arrow', 'PredictionLine'].forEach(suffix => {
+            ['', 'Pulse', 'Arrow', 'PredictionLine', 'GreenMask', 'Trajectory', 'TrajectoryLine'].forEach(suffix => {
                 const key = trackerKey + suffix;
                 if (trackerMarkers[key]) {
                     map.removeLayer(trackerMarkers[key]);
@@ -1368,17 +1554,113 @@
                 timeElement.classList.toggle('now', formattedTime === 'NOW');
                 timeElement.innerText = formattedTime;
 
-                document.getElementById('distance').innerText = (distance === 999) ? '--' : `${distance.toFixed(1)} km`;
-                document.getElementById('speed').innerText = (speed === 0) ? '--' : `${speed.toFixed(1)} kph`;
-                document.getElementById('direction').innerText = (direction === -1) ? '--' : degreesToCardinal(direction);
-                document.getElementById('bearing').innerText = (bearing === -1) ? '--' : degreesToCardinal(bearing);
+                // Enhanced distance with color coding
+                const distanceElement = document.getElementById('distance');
+                if (distance === 999) {
+                    distanceElement.innerText = '--';
+                    distanceElement.style.color = '#aaa';
+                } else {
+                    distanceElement.innerText = `${distance.toFixed(1)} km`;
+                    // Color code by urgency
+                    if (distance < 10) {
+                        distanceElement.style.color = '#ff4444'; // Red - very close
+                    } else if (distance < 25) {
+                        distanceElement.style.color = '#ff8800'; // Orange - close
+                    } else if (distance < 50) {
+                        distanceElement.style.color = '#ffaa00'; // Yellow - moderate
+                    } else {
+                        distanceElement.style.color = '#00ff00'; // Green - far
+                    }
+                }
+
+                // Enhanced speed with trend indicators
+                const speedElement = document.getElementById('speed');
+                if (speed === 0) {
+                    speedElement.innerText = '--';
+                    speedElement.style.color = '#aaa';
+                } else {
+                    const speedTrend = getSpeedTrend(speed);
+                    speedElement.innerHTML = `${speed.toFixed(1)} kph ${speedTrend.icon}`;
+                    speedElement.style.color = speedTrend.color;
+                }
+
+                // Enhanced direction with arrow
+                const directionElement = document.getElementById('direction');
+                if (direction === -1) {
+                    directionElement.innerText = '--';
+                    directionElement.style.color = '#aaa';
+                } else {
+                    const arrow = getDirectionArrow(direction);
+                    directionElement.innerHTML = `${arrow} ${degreesToCardinal(direction)}`;
+                    directionElement.style.color = '#4a90e2';
+                }
+
+                // Enhanced bearing with precision
+                const bearingElement = document.getElementById('bearing');
+                if (bearing === -1) {
+                    bearingElement.innerText = '--';
+                    bearingElement.style.color = '#aaa';
+                } else {
+                    const bearingArrow = getDirectionArrow(bearing);
+                    bearingElement.innerHTML = `${bearingArrow} ${degreesToCardinal(bearing)}`;
+                    bearingElement.style.color = '#9b59b6';
+                }
+
+                // Update tracker labels with comprehensive metrics
+                updateTrackerLabels(data);
+
             } else {
                 timeElement.classList.remove('now');
                 timeElement.innerText = '--';
                 document.getElementById('distance').innerText = '--';
+                document.getElementById('distance').style.color = '#aaa';
                 document.getElementById('speed').innerText = '--';
+                document.getElementById('speed').style.color = '#aaa';
                 document.getElementById('direction').innerText = '--';
+                document.getElementById('direction').style.color = '#aaa';
                 document.getElementById('bearing').innerText = '--';
+                document.getElementById('bearing').style.color = '#aaa';
+            }
+        }
+
+        function getSpeedTrend(speed) {
+            if (speed < 10) {
+                return { icon: '🐢', color: '#00ff00' }; // Slow - green
+            } else if (speed < 30) {
+                return { icon: '🚶', color: '#ffaa00' }; // Moderate - yellow
+            } else if (speed < 60) {
+                return { icon: '🚗', color: '#ff8800' }; // Fast - orange
+            } else {
+                return { icon: '🚀', color: '#ff4444' }; // Very fast - red
+            }
+        }
+
+        function getDirectionArrow(degrees) {
+            const normalizedDegrees = ((parseFloat(degrees) % 360) + 360) % 360;
+            const arrows = ['↑', '↗', '→', '↘', '↓', '↙', '←', '↖'];
+            const index = Math.round(normalizedDegrees / 45) % 8;
+            return arrows[index];
+        }
+
+        function updateTrackerLabels(data) {
+            // Update auto tracker label with comprehensive metrics
+            if (cellData.auto && trackerMarkers['autoTracker']) {
+                const metrics = [
+                    `Speed: ${data.speed || 0} kph`,
+                    `Dist: ${data.distance || 0} km`,
+                    `ETA: ${formatTimeToRain(data.time_to_rain || 999)}`,
+                    `Dir: ${degreesToCardinal(data.direction || -1)}`
+                ];
+                trackerMarkers['autoTracker'].setTooltipContent(`Auto Track<br>${metrics.join('<br>')}`);
+            }
+
+            // Update manual tracker label
+            if (cellData.manual && trackerMarkers['manualTracker']) {
+                const manualMetrics = [
+                    `Speed: ${cellData.manual.speed || 0} kph`,
+                    `Dir: ${degreesToCardinal(cellData.manual.direction || -1)}`
+                ];
+                trackerMarkers['manualTracker'].setTooltipContent(`Manual Track<br>${manualMetrics.join('<br>')}`);
             }
         }
 
