@@ -1,5 +1,5 @@
 name: Rain Predictor
-version: "1.1.43"
+version: "1.1.44"
 slug: rain_predictor
 description: "Advanced rain prediction using radar image analysis"
 url: "https://github.com/AlliTec/rain-predictor-addon"
@@ -49,7 +49,7 @@ options:
     lon_range_deg: 5.0
     arrival_angle_threshold_deg: 90
   tracking_settings:
-    max_tracking_distance_km: 150
+    max_tracking_distance_km: 1000
     min_track_length: 2
   debug:
     log_level: "DEBUG"
@@ -82,7 +82,7 @@ schema:
     lon_range_deg: float(0.1,15.0)
     arrival_angle_threshold_deg: float(1,180)
   tracking_settings:
-    max_tracking_distance_km: int(1,200)
+    max_tracking_distance_km: int(1,2000)
     min_track_length: int(2,10)
   debug:
     log_level: list(DEBUG|INFO|WARNING|ERROR)

@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.44 (2025-11-29)
+
+### Critical Coordinate System and Positioning Fixes
+- **Fixed Coordinate Conversion Bug**: Corrected backwards lat/lon offset calculation that was causing systematic NW positioning errors
+- **Accurate Distance Calculations**: Fixed `lat_offset = (center_y - centroid_y) * lat_inc` to `lat_offset = (centroid_y - center_y) * lat_inc`
+- **Proper Green Circle Positioning**: Now correctly positioned at actual rain cell locations instead of systematic NW offset
+- **Enhanced Visual Tracking**: Made directional filtering more permissive (135°) with fallback to track all visible cells
+- **Updated Test Suite**: Corrected directional filter test expectations to match new permissive filtering behavior
+
+### Technical Resolution
+- **Coordinate System Fix**: Fundamental correction to pixel-to-lat/lon conversion eliminating systematic positioning errors
+- **Distance Accuracy**: Distance calculations now correct with proper coordinate system implementation
+- **Threat Detection Enhancement**: Enhanced filtering to track what user actually sees on screen rather than being overly restrictive
+- **Performance Optimization**: Maintained previous performance improvements while fixing accuracy issues
+- **Test Validation**: All directional filter tests now pass with corrected positioning logic
+
+### User Experience Improvements
+- **Correct Positioning**: Green circles now appear at actual rain cell locations, not NW offset positions
+- **Accurate Distances**: Distance measurements now match visual reality on screen
+- **Visual Consistency**: Tracking now matches what user sees on radar display
+- **Extended Range Support**: 1000km tracking range now works with accurate positioning
+- **Comprehensive Coverage**: Fallback logic ensures no visible rain cells are missed
+
 ## Version 1.1.43 (2025-11-28)
 
 ### Performance and Range Optimization

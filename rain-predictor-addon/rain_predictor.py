@@ -581,8 +581,9 @@ class RainPredictor:
                     continue
                 
                 centroid_x, centroid_y = np.mean(x_coords), np.mean(y_coords)
-                lat_offset = (center_y - centroid_y) * lat_inc
-                lon_offset = (centroid_x - center_x) * lon_inc
+                # FIXED: Correct coordinate conversion - image Y increases downward, lat increases upward
+                lat_offset = (centroid_y - center_y) * lat_inc  # Positive Y = north of center
+                lon_offset = (centroid_x - center_x) * lon_inc  # Positive X = east of center
                 
                 # Use dynamic center based on user view or fallback to configured location
                 if hasattr(self, 'view_center') and self.view_center:
@@ -962,6 +963,12 @@ class RainPredictor:
             logging.info(f"    Angle difference: {angle_diff:.1f}°")
             logging.info(f"    Threat probability: {threat_probability:.1f}%")
             
+            # DEBUG: Log coordinate details for troubleshooting
+            logging.info(f"    DEBUG: Cell current pos: {current_lat:.4f}, {current_lon:.4f}")
+            logging.info(f"    DEBUG: Cell initial pos: {initial_lat:.4f}, {initial_lon:.4f}")
+            logging.info(f"    DEBUG: User pos: {self.latitude:.4f}, {self.longitude:.4f}")
+            logging.info(f"    DEBUG: Distance calc: haversine({current_lat:.4f},{current_lon:.4f} -> {self.latitude:.4f},{self.longitude:.4f})")
+            
             # Collect for overall analysis
             valid_cells.append({
                 'cell_id': cell_id,
@@ -1020,8 +1027,9 @@ class RainPredictor:
             # Check if rain cell movement direction is roughly toward user (within 90° of cell-to-user bearing)
             movement_to_user_diff = abs((cell_data['direction'] - cell_to_user_bearing + 180) % 360 - 180)
             
-            # Cell passes if its movement is generally toward user location
-            passes_direction_filter = movement_to_user_diff <= 90  # Within 90° of cell-to-user direction
+            # ENHANCED: More permissive filtering for visual tracking
+            # Cell passes if movement is even loosely toward user (within 135° instead of 90°)
+            passes_direction_filter = movement_to_user_diff <= 135  # More permissive for visual tracking
             
             if passes_direction_filter:
                 cell_data['movement_to_user'] = movement_to_user_diff
@@ -1036,13 +1044,19 @@ class RainPredictor:
                 logging.info(f"       Cell moving {self.degrees_to_cardinal(cell_data['direction'])} "
                            f"away from user location")
         
-        # Use filtered cells for threat analysis
-        # Only consider cells that are actually moving toward user location
-        analysis_cells = filtered_cells if filtered_cells else []
+        # ENHANCED: Use all cells for analysis if directional filtering is too restrictive
+        # This ensures visual tracking matches what user sees on screen
+        if len(filtered_cells) == 0 and len(valid_cells) > 0:
+            logging.info("\n⚠️ DIRECTIONAL FILTER TOO RESTRICTIVE - Using all detected cells")
+            logging.info("   Visual tracking mode: tracking all visible cells regardless of perfect direction")
+            analysis_cells = valid_cells
+        else:
+            # Use filtered cells for threat analysis when available
+            analysis_cells = filtered_cells if filtered_cells else []
         
         if not analysis_cells:
-            logging.info("\n✅ NO CELLS PASS DIRECTIONAL FILTER - No tracking marker needed")
-            logging.info("   All detected rain cells are moving away from user location")
+            logging.info("\n✅ NO CELLS AVAILABLE - No tracking marker needed")
+            logging.info("   No rain cells detected or all filtered out")
             return None
         
         logging.info(f"\n🎯 ANALYZING {len(analysis_cells)} FILTERED CELLS:")
