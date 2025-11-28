@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.41 (2025-11-28)
+
+### Critical Positioning Logic Fix
+- **Fixed Bearing Range Logic**: Corrected positioning filter from 225-315° to 240-300° (WSW to WNW) for west-to-east interception
+- **Eliminated False Positives**: Rain cells northwest of user moving east are now properly filtered out (they move away, not toward)
+- **Mathematical Precision**: Only cells positioned truly west of user are considered for eastward movement interception
+- **Enhanced Threat Accuracy**: Green marker now tracks only cells that can realistically reach user location
+
+### Technical Resolution
+- **Positioning Mathematics**: Fixed fundamental flaw where northwest cells (bearing 304°) were accepted for eastward interception
+- **Bearing Range Optimization**: Tightened range ensures only WSW-WNW positioned cells (240-300°) qualify for eastward movement
+- **Logic Validation**: Cells must be positioned west of user AND moving east to be considered threats
+- **Comprehensive Testing**: All directional filter tests pass with corrected positioning logic
+
 ## Version 1.1.40 (2025-11-28)
 
 ### Critical West-to-East Rain Cell Tracking Fix

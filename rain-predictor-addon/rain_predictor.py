@@ -929,9 +929,10 @@ class RainPredictor:
                 # Check if cell is positioned to intercept with west-to-east movement
                 bearing_from_user = self.calculate_bearing(self.latitude, self.longitude, current_lat, current_lon)
                 
-                # For west-to-east movement, cell should be west of user (bearing 225-315°)
+                # For west-to-east movement, cell should be WEST of user (bearing 225-315°)
+                # But more specifically: should be in western quadrant (240-300°) for eastward movement to reach user
                 if bearing_from_user is not None:
-                    is_west_of_user = 225 <= bearing_from_user <= 315
+                    is_west_of_user = 240 <= bearing_from_user <= 300  # Tighter range: WSW to WNW
                     
                     if is_west_of_user:
                         logging.info(f"    ✅ Using assumed west-to-east pattern: {assumed_speed_kph:.1f} km/h @ {assumed_direction_deg:.1f}°")
