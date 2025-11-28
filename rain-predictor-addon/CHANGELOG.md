@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.45 (2025-11-29)
+
+### Animation Frame Fix
+- **Fixed Frame Limiting**: Removed artificial 6-frame limit and restored full 13-frame animation
+- **Complete Radar History**: Now displays all available radar frames (typically 13) for complete weather timeline
+- **Enhanced Animation Coverage**: Users can now see full 65 minutes of radar history (13 frames × 5 minutes each)
+- **Improved Weather Analysis**: Complete animation provides better context for storm movement and development
+
+### Technical Resolution
+- **Frontend Frame Loading**: Changed from `slice(-maxFrames)` with `maxFrames = 6` to `slice(-13)` 
+- **Performance Balance**: Maintains performance while providing complete radar coverage
+- **User Experience**: Full animation timeline matches user expectations for comprehensive weather analysis
+
 ## Version 1.1.44 (2025-11-29)
 
 ### Critical Coordinate System and Positioning Fixes
