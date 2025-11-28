@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.42 (2025-11-28)
+
+### Critical Rain Cell Tracking System Overhaul
+- **Fixed Velocity Calculation**: Corrected method calls from `_haversine/_calculate_bearing` to main class methods `haversine/calculate_bearing`
+- **Fixed Green Circle Positioning**: Now uses initial detection coordinates (`initial_lat/initial_lon`) instead of current position for accurate tracking origin
+- **Removed Incorrect West-to-East Assumption**: Eliminated flawed weather pattern assumption that was overriding real velocity data
+- **Fixed Directional Logic**: Corrected interception logic to check if rain cell movement is toward user location (opposite bearing)
+- **Enhanced Animation Accuracy**: Red dot now moves at actual measured rain cell speed from correct starting position
+
+### Technical Resolution
+- **Method Reference Fix**: Updated `get_velocity()` to accept predictor instance and use proper class methods
+- **Coordinate System Fix**: Green marker now correctly positioned at first frame detection location
+- **Directional Mathematics**: Fixed bearing calculation to properly detect cells moving toward marked location
+- **Velocity Validation**: Removed unrealistic speed thresholds that were filtering out valid rain cell movement
+- **Test Suite Updates**: Corrected directional filter test cases with proper movement patterns
+
+### User Experience Improvements
+- **Accurate Tracking**: Green circle appears at actual rain cell detection location
+- **Correct Movement**: Red dot animates along proper trajectory at realistic speed
+- **Proper Direction**: System now correctly identifies rain cells that will intercept user location
+- **Eliminated False Positives**: No longer tracks cells moving away from marked location
+
 ## Version 1.1.41 (2025-11-28)
 
 ### Critical Positioning Logic Fix

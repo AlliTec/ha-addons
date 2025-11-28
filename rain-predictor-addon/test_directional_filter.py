@@ -35,7 +35,7 @@ def test_directional_filtering():
     print("TEST CASE 1: Cell moving AWAY from user")
     print("User location: -27.4, 152.9")
     print("Cell location: -27.5, 152.8 (SW of user)")
-    print("Cell direction: 32° (NNE)")
+    print("Cell direction: ~200° (SSW)")
     print("Expected: FILTERED OUT (moving opposite direction)")
     
     # Create a mock cell moving away from user
@@ -45,8 +45,8 @@ def test_directional_filtering():
     cell_away = RainCell(1, -27.5, 152.8, datetime.datetime.now(), 70)
     # Add positions to simulate movement away from user (with proper time gaps)
     now = datetime.datetime.now()
-    cell_away.add_position(-27.49, 152.81, now + datetime.timedelta(minutes=2), 70)  # Moving NNE
-    cell_away.add_position(-27.48, 152.82, now + datetime.timedelta(minutes=4), 70)  # Moving NNE
+    cell_away.add_position(-27.51, 152.79, now + datetime.timedelta(minutes=2), 70)  # Moving SSW (away from user)
+    cell_away.add_position(-27.52, 152.78, now + datetime.timedelta(minutes=4), 70)  # Moving SSW (away from user)
     
     predictor.tracked_cells = {1: cell_away}
     
@@ -58,14 +58,14 @@ def test_directional_filtering():
     print("TEST CASE 2: Cell moving TOWARD user")
     print("User location: -27.4, 152.9")
     print("Cell location: -27.3, 152.7 (NE of user)")
-    print("Cell direction: 212° (SSW)")
+    print("Cell direction: ~250° (WSW)")
     print("Expected: PASS FILTER (moving toward user)")
     
     cell_toward = RainCell(2, -27.3, 152.7, datetime.datetime.now(), 70)
     # Add positions to simulate movement toward user (with proper time gaps)
     now = datetime.datetime.now()
-    cell_toward.add_position(-27.31, 152.69, now + datetime.timedelta(minutes=2), 70)  # Moving SSW
-    cell_toward.add_position(-27.32, 152.68, now + datetime.timedelta(minutes=4), 70)  # Moving SSW
+    cell_toward.add_position(-27.31, 152.71, now + datetime.timedelta(minutes=2), 70)  # Moving WSW (toward user)
+    cell_toward.add_position(-27.32, 152.72, now + datetime.timedelta(minutes=4), 70)  # Moving WSW (toward user)
     
     predictor.tracked_cells = {2: cell_toward}
     

@@ -126,7 +126,7 @@ class RainCell:
         
         logging.debug(f"Added position to cell {self.id}: ({lat:.4f},{lon:.4f})@{timestamp}, track_len={len(self.positions)}")
     
-    def get_velocity(self):
+    def get_velocity(self, predictor=None):
         """Calculate velocity from last two positions with enhanced accuracy"""
         if len(self.positions) < 2:
             return None, None
@@ -138,8 +138,15 @@ class RainCell:
             logging.warning(f"Invalid time difference: {time_diff:.4f}h for cell track")
             return None, None
         
-        distance_km = self._haversine(lat1, lon1, lat2, lon2)
-        bearing = self._calculate_bearing(lat1, lon1, lat2, lon2)
+        # Use predictor methods if available, otherwise use local methods
+        if predictor:
+            distance_km = predictor.haversine(lat1, lon1, lat2, lon2)
+            bearing = predictor.calculate_bearing(lat1, lon1, lat2, lon2)
+        else:
+            # Fallback to local calculation methods
+            distance_km = self._haversine_fallback(lat1, lon1, lat2, lon2)
+            bearing = self._calculate_bearing_fallback(lat1, lon1, lat2, lon2)
+        
         speed_kph = distance_km / time_diff
         
         # Enhanced validation and debugging - temporarily disabled for debugging
@@ -158,8 +165,8 @@ class RainCell:
         
         return speed_kph, bearing
     
-    def _haversine(self, lat1, lon1, lat2, lon2):
-        """Calculate great-circle distance"""
+    def _haversine_fallback(self, lat1, lon1, lat2, lon2):
+        """Fallback haversine calculation"""
         R = 6371
         lat1_rad, lon1_rad, lat2_rad, lon2_rad = map(radians, [lat1, lon1, lat2, lon2])
         dlon = lon2_rad - lon1_rad
@@ -168,14 +175,16 @@ class RainCell:
         c = 2 * asin(sqrt(a))
         return R * c
     
-    def _calculate_bearing(self, lat1, lon1, lat2, lon2):
-        """Calculate bearing from point 1 to point 2"""
+    def _calculate_bearing_fallback(self, lat1, lon1, lat2, lon2):
+        """Fallback bearing calculation"""
         lat1_rad, lon1_rad, lat2_rad, lon2_rad = map(radians, [lat1, lon1, lat2, lon2])
         dlon = lon2_rad - lon1_rad
         y = sin(dlon) * cos(lat2_rad)
         x = cos(lat1_rad) * sin(lat2_rad) - sin(lat1_rad) * cos(lat2_rad) * cos(dlon)
         bearing = atan2(y, x)
         return (degrees(bearing) + 360) % 360
+    
+
     
     def _project_position(self, lat, lon, distance_km, bearing_deg):
         """Project new position given distance and bearing from current position"""
@@ -492,7 +501,7 @@ class RainPredictor:
                 logging.info(f"\nTracked Cell #{cell_id}:")
                 logging.info(f"  Positions: {len(cell.positions)}")
                 logging.info(f"  Intensity: {cell.intensity:.1f}")
-                speed, direction = cell.get_velocity()
+                speed, direction = cell.get_velocity(self)
                 if speed and direction:
                     logging.info(f"  Velocity: {speed:.1f} km/h at {direction:.1f}°")
                 else:
@@ -620,7 +629,7 @@ class RainPredictor:
             confidence_score = 1.0
             
             if len(tracked_cell.positions) >= 2:
-                speed_kph, direction_deg = tracked_cell.get_velocity()
+                speed_kph, direction_deg = tracked_cell.get_velocity(self)
                 if speed_kph and direction_deg is not None:
                     # Predict movement over 5 minute interval (RainViewer frame interval)
                     time_hours = 5.0 / 60.0  # 5 minutes in hours
@@ -792,7 +801,7 @@ class RainPredictor:
             # Keep high-performing tracks longer
             base_retention = 30  # minutes
             if len(track.positions) >= 3:
-                speed, direction = track.get_velocity()
+                speed, direction = track.get_velocity(self)
                 if speed and speed > 5:  # Keep fast-moving cells longer
                     base_retention = 45
                 if track.intensity > self.threshold * 1.5:  # Keep intense cells longer
@@ -916,37 +925,18 @@ class RainPredictor:
             # Get both initial detection position and current position
             initial_lat, initial_lon, _ = cell.positions[0]  # First detection position
             current_lat, current_lon, _ = cell.positions[-1]  # Current position
-            speed_kph, direction_deg = cell.get_velocity()
+            speed_kph, direction_deg = cell.get_velocity(self)
             
-            # NEW: Handle cells with no velocity data using weather pattern assumptions
-            if speed_kph is None or direction_deg is None or speed_kph < 1:
-                logging.info(f"    ⚠️ No reliable velocity data ({speed_kph if speed_kph else 'None'} km/h)")
+            # Validate velocity data
+            if speed_kph is None or direction_deg is None:
+                logging.info(f"    ❌ No velocity data available")
+                continue
+            
+            if speed_kph < 0.1:
+                logging.info(f"    ❌ Cell stationary (speed: {speed_kph:.1f} km/h)")
+                continue
                 
-                # Use west-to-east weather pattern assumption (common for many regions)
-                assumed_speed_kph = 25.0  # Typical rain cell movement speed
-                assumed_direction_deg = 270.0  # West to east (270°)
-                
-                # Check if cell is positioned to intercept with west-to-east movement
-                bearing_from_user = self.calculate_bearing(self.latitude, self.longitude, current_lat, current_lon)
-                
-                # For west-to-east movement, cell should be WEST of user (bearing 225-315°)
-                # But more specifically: should be in western quadrant (240-300°) for eastward movement to reach user
-                if bearing_from_user is not None:
-                    is_west_of_user = 240 <= bearing_from_user <= 300  # Tighter range: WSW to WNW
-                    
-                    if is_west_of_user:
-                        logging.info(f"    ✅ Using assumed west-to-east pattern: {assumed_speed_kph:.1f} km/h @ {assumed_direction_deg:.1f}°")
-                        logging.info(f"       Cell is west of user (bearing {bearing_from_user:.1f}°) - could intercept")
-                        speed_kph = assumed_speed_kph
-                        direction_deg = assumed_direction_deg
-                    else:
-                        logging.info(f"    ❌ Cell not positioned for west-to-east intercept (bearing {bearing_from_user:.1f}°)")
-                        continue
-                else:
-                    logging.info(f"    ❌ Cannot calculate bearing to user")
-                    continue
-            else:
-                logging.info(f"    ✅ Using measured velocity: {speed_kph:.1f} km/h @ {direction_deg:.1f}°")
+            logging.info(f"    ✅ Using measured velocity: {speed_kph:.1f} km/h @ {direction_deg:.1f}°")
             
             # Calculate threat metrics from current position (for accurate ETA)
             distance_km = self.haversine(current_lat, current_lon, self.latitude, self.longitude)
@@ -1019,14 +1009,18 @@ class RainPredictor:
         filtered_cells = []
         
         for cell_data in valid_cells:
-            # Primary check: cell should be positioned such that its movement
-            # could plausibly reach the user location
-            user_relative_bearing = cell_data['bearing_from_user']
-            movement_to_user_diff = abs((cell_data['direction'] - user_relative_bearing + 180) % 360 - 180)
+            # Primary check: cell should be moving toward user location
+            # For interception: rain cell should be moving in direction that points toward user
+            user_relative_bearing = cell_data['bearing_from_user']  # Bearing FROM user TO cell
             
-            # Cell passes if its movement is generally toward the user location
-            # This is the most important filter - cells moving away are not threats
-            passes_direction_filter = movement_to_user_diff <= 90  # Within 90° of user direction
+            # Calculate bearing FROM cell TO user (opposite direction)
+            cell_to_user_bearing = (user_relative_bearing + 180) % 360
+            
+            # Check if rain cell movement direction is roughly toward user (within 90° of cell-to-user bearing)
+            movement_to_user_diff = abs((cell_data['direction'] - cell_to_user_bearing + 180) % 360 - 180)
+            
+            # Cell passes if its movement is generally toward user location
+            passes_direction_filter = movement_to_user_diff <= 90  # Within 90° of cell-to-user direction
             
             if passes_direction_filter:
                 cell_data['movement_to_user'] = movement_to_user_diff
@@ -1113,8 +1107,8 @@ class RainPredictor:
                 'speed_kph': round(best_cell['speed'], 1),
                 'direction_deg': round(best_cell['direction'], 1),
                 'bearing_to_cell_deg': round(best_cell['bearing_from_user'], 1),
-                'rain_cell_latitude': round(best_cell['lat'], 4),  # Current position for green marker (matches distance calculation)
-                'rain_cell_longitude': round(best_cell['lon'], 4),  # Current position for green marker (matches distance calculation)
+                'rain_cell_latitude': round(best_cell['initial_lat'], 4),  # Initial detection position for green marker
+                'rain_cell_longitude': round(best_cell['initial_lon'], 4),  # Initial detection position for green marker
                 'threat_probability': round(best_cell['threat_probability'], 1),
                 'system_avg_direction': round(avg_direction, 1),
                 'system_avg_speed': round(avg_speed, 1)
