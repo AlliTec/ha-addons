@@ -255,7 +255,7 @@ class RainPredictor:
         self.save_debug_images = config.get('debug.save_images', False)
         
         # Tracking settings
-        self.max_track_dist = config.get('tracking_settings.max_tracking_distance_km', 150)  # Extended for long-range tracking
+        self.max_track_dist = config.get('tracking_settings.max_tracking_distance_km', 1000)  # Extended for very long-range tracking (1000km)
         self.min_track_len = config.get('tracking_settings.min_track_length', 3)  # Increased for more reliable tracking
         
         # View bounds for focused analysis
@@ -470,28 +470,29 @@ class RainPredictor:
             sorted_frames = sorted(past_frames, key=lambda f: f.get('time', 0))
             logging.info(f"Processing frames from {datetime.fromtimestamp(sorted_frames[0]['time'])} to {datetime.fromtimestamp(sorted_frames[-1]['time'])}")
             
-            total_cells_detected = 0
-            for i, frame in enumerate(sorted_frames):
-                frame_time = datetime.fromtimestamp(frame['time'])
-                logging.info(f"\n--- Frame {i+1}/{len(sorted_frames)} at {frame_time} ---")
+            # OPTIMIZATION: Only process latest frame for cell detection to reduce HTTP requests
+            # Use tracking data for movement analysis instead of processing every frame
+            latest_frame = sorted_frames[-1]
+            frame_time = datetime.fromtimestamp(latest_frame['time'])
+            logging.info(f"\n--- Processing latest frame {frame_time} for cell detection ---")
+            
+            cells = self._extract_cells_from_frame(latest_frame, api_data)
+            logging.info(f"Found {len(cells)} cell(s) in latest frame")
+            
+            total_cells_detected = len(cells)
+            if cells:
+                # Use view center if available, otherwise user location
+                center_lat = self.view_center.get('lat') if self.view_center else self.latitude
+                center_lon = self.view_center.get('lng') if self.view_center else self.longitude
                 
-                cells = self._extract_cells_from_frame(frame, api_data)
-                logging.info(f"Found {len(cells)} cell(s) in frame at {frame_time}")
+                for j, cell in enumerate(cells):
+                    dist = self.haversine(center_lat, center_lon, cell['lat'], cell['lon'])
+                    bearing = self.calculate_bearing(center_lat, center_lon, cell['lat'], cell['lon'])
+                    logging.info(f"  Cell {j+1}: lat={cell['lat']:.4f}, lon={cell['lon']:.4f}, "
+                               f"intensity={cell['intensity']:.1f}, size={cell['size']}, "
+                               f"dist={dist:.1f}km, bearing={bearing:.1f}°")
                 
-                if cells:
-                    total_cells_detected += len(cells)
-                    # Use view center if available, otherwise user location
-                    center_lat = self.view_center.get('lat') if self.view_center else self.latitude
-                    center_lon = self.view_center.get('lng') if self.view_center else self.longitude
-                    
-                    for j, cell in enumerate(cells):
-                        dist = self.haversine(center_lat, center_lon, cell['lat'], cell['lon'])
-                        bearing = self.calculate_bearing(center_lat, center_lon, cell['lat'], cell['lon'])
-                        logging.info(f"  Cell {j+1}: lat={cell['lat']:.4f}, lon={cell['lon']:.4f}, "
-                                   f"intensity={cell['intensity']:.1f}, size={cell['size']}, "
-                                   f"dist={dist:.1f}km, bearing={bearing:.1f}°")
-                    
-                    self._update_tracked_cells(cells, frame_time)
+                self._update_tracked_cells(cells, frame_time)
             
             logging.info(f"\n📊 SUMMARY: Detected {total_cells_detected} total cells across all frames")
             logging.info(f"Currently tracking {len(self.tracked_cells)} cell(s)")

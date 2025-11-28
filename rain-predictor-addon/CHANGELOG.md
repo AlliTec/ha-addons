@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.43 (2025-11-28)
+
+### Performance and Range Optimization
+- **Fixed Slow Load Times**: Optimized backend to process only latest radar frame instead of all frames, reducing HTTP requests dramatically
+- **Extended Tracking Range**: Increased max tracking distance from 150km to 1000km to handle large screen views (650km+ visibility)
+- **Fixed Frontend Frame Loading**: Corrected web UI frame parameter from `0` to actual frame object for proper cell detection
+- **Optimized Animation Performance**: Limited radar frames to 6 (from all available) to improve performance on larger screens
+- **Enhanced Long-Range Detection**: Now properly tracks and displays WNW cells moving ESE at 450-500km range
+
+### Technical Improvements
+- **Backend Optimization**: `_extract_cells_from_frame()` now called only once per analysis cycle instead of per-frame
+- **API Call Reduction**: Eliminated multiple radar tile downloads during cell detection process
+- **Frame Limiting**: Frontend now loads maximum 6 frames to reduce memory and processing overhead
+- **Distance Validation**: Extended tracking distance limits to match user's visible screen area requirements
+- **Cell Detection Fix**: Fixed web UI parameter passing to ensure proper rain cell detection
+
+### User Experience Enhancements
+- **Faster Loading**: Dramatically reduced addon startup and radar data loading times
+- **Complete Coverage**: Now tracks all visible rain cells up to 1000km range
+- **Accurate Metrics**: WNW→ESE moving cells properly displayed in metrics and tracking animation
+- **Smooth Animation**: Optimized frame loading for smoother animation performance on large screens
+- **First Frame Origin**: Green circle correctly positioned at initial detection point for all tracked cells
+
 ## Version 1.1.42 (2025-11-28)
 
 ### Critical Rain Cell Tracking System Overhaul

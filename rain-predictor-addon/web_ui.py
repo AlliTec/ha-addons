@@ -118,7 +118,10 @@ def get_all_data():
                     time_to_rain = str(int(prediction.get('time_to_rain', 0)))
                     
                     # Also return detected cells for visualization
-                    cells = predictor._extract_cells_from_frame(0, api_data)
+                    if past_frames:
+                        cells = predictor._extract_cells_from_frame(past_frames[0], api_data)
+                    else:
+                        cells = []
                     
                     logging.info(f"Threat analysis: rain cell at {rain_cell_lat:.4f}, {rain_cell_lng:.4f}")
                     logging.info(f"Distance: {distance}km, Speed: {speed}km/h, Direction: {direction}°")

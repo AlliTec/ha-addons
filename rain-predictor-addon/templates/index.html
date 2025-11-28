@@ -768,8 +768,10 @@
                 const response = await fetch('https://api.rainviewer.com/public/weather-maps.json');
                 const data = await response.json();
                 
-                radarData = data.radar.past;
-                console.log(`Loaded ${radarData.length} radar frames`);
+                // OPTIMIZATION: Limit frames to improve performance for larger screens
+                const maxFrames = 6; // Limit to 6 frames for better performance
+                radarData = data.radar.past.slice(-maxFrames);
+                console.log(`Loaded ${radarData.length} radar frames (limited from ${data.radar.past.length} total)`);
                 
                 // Store frame timestamps for interpolation
                 frameTimestamps = radarData.map(frame => frame.time);
