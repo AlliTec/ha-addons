@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tracker Positioning Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1c1c1c; color: #e0e0e0; }
+        #map { height: 400px; width: 100%; margin: 20px 0; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #444; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; background: #4a90e2; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #357abd; }
+        .debug { background: #2a2a2a; padding: 10px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Tracker Positioning Test</h1>
+    
+    <div class="test-section">
+        <h2>Map Test</h2>
+        <div id="map"></div>
+        <button onclick="testTrackerPosition()">Test Tracker Position</button>
+        <button onclick="clearTrackers()">Clear All Trackers</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Debug Output</h2>
+        <div id="debug" class="debug">Click "Test Tracker Position" to see debugging info...</div>
+    </div>
+
+    <script>
+        let map;
+        let trackerMarkers = {};
+        let cellData = {};
+        let currentLocation = { latitude: -33.9698, longitude: 151.1795 }; // Sydney
+
+        function initMap() {
+            map = L.map('map').setView([currentLocation.latitude, currentLocation.longitude], 8);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Add user location marker
+            L.marker([currentLocation.latitude, currentLocation.longitude])
+                .addTo(map)
+                .bindPopup('User Location')
+                .openPopup();
+        }
+
+        function debugLog(message) {
+            const debugDiv = document.getElementById('debug');
+            debugDiv.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+            console.log(message);
+        }
+
+        function createTracker(mode) {
+            debugLog(`Creating tracker for mode: ${mode}`);
+            debugLog('Cell data: ' + JSON.stringify(cellData[mode], null, 2));
+            
+            if (!cellData[mode] || !cellData[mode].center) {
+                debugLog(`No cell data for mode: ${mode}`);
+                return;
+            }
+
+            const lat = cellData[mode].center.lat;
+            const lng = cellData[mode].center.lng;
+            debugLog(`Tracker coordinates: lat=${lat}, lng=${lng}`);
+            debugLog('Coordinate types: ' + typeof lat + ', ' + typeof lng);
+            debugLog('Coordinate validation: isNaN(lat)=' + isNaN(lat) + ', isNaN(lng)=' + isNaN(lng));
+
+            if (isNaN(lat) || isNaN(lng)) {
+                debugLog('ERROR: Invalid tracker coordinates');
+                return;
+            }
+
+            const trackerKey = mode + 'Tracker';
+
+            // Remove old tracker if exists
+            removeTracker(mode);
+
+            // Create static green circle for rain cell position
+            debugLog('Creating green circle at: [' + lat + ', ' + lng + ']');
+            const greenCircle = L.circle([lat, lng], {
+                radius: 8000, // 8km radius
+                color: '#00FF00',
+                weight: 4,
+                fillColor: '#00FF00',
+                fillOpacity: 0.3,
+                zIndex: 10000
+            }).addTo(map);
+            
+            const actualCenter = greenCircle.getLatLng();
+            debugLog('Green circle actual center: ' + actualCenter.lat + ', ' + actualCenter.lng);
+
+            trackerMarkers[trackerKey] = greenCircle;
+
+            // Add a marker at the exact same coordinates for comparison
+            const comparisonMarker = L.marker([lat, lng], {
+                icon: L.icon({
+                    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34],
+                    shadowSize: [41, 41]
+                })
+            }).addTo(map).bindPopup('Expected Position: ' + lat + ', ' + lng);
+
+            trackerMarkers[trackerKey + 'Comparison'] = comparisonMarker;
+
+            // Create gold line to user location
+            if (currentLocation) {
+                const trajectoryLine = L.polyline([[lat, lng], [currentLocation.latitude, currentLocation.longitude]], {
+                    color: '#FFD700',
+                    weight: 3,
+                    opacity: 0.8,
+                    dashArray: '10, 5',
+                    zIndex: 9999
+                }).addTo(map);
+
+                trackerMarkers[trackerKey + 'TrajectoryLine'] = trajectoryLine;
+            }
+
+            debugLog('Tracker created successfully');
+        }
+
+        function removeTracker(mode) {
+            const trackerKey = mode + 'Tracker';
+            
+            ['', 'TrajectoryLine', 'Comparison'].forEach(suffix => {
+                const key = trackerKey + suffix;
+                if (trackerMarkers[key]) {
+                    map.removeLayer(trackerMarkers[key]);
+                    delete trackerMarkers[key];
+                    debugLog('Removed tracker component: ' + key);
+                }
+            });
+        }
+
+        function clearTrackers() {
+            Object.keys(trackerMarkers).forEach(key => {
+                if (trackerMarkers[key]) {
+                    map.removeLayer(trackerMarkers[key]);
+                }
+            });
+            trackerMarkers = {};
+            cellData = {};
+            debugLog('All trackers cleared');
+        }
+
+        function testTrackerPosition() {
+            debugLog('=== Testing Tracker Position ===');
+            
+            // Test with known coordinates
+            const testLat = currentLocation.latitude + 0.5; // 50km north
+            const testLng = currentLocation.longitude + 0.5; // 50km east
+            
+            debugLog('Test coordinates: ' + testLat + ', ' + testLng);
+            
+            // Simulate the data structure from the real app
+            const testData = {
+                time_to_rain: 30,
+                distance: 50,
+                speed: 45,
+                direction: 135,
+                bearing: 315,
+                rain_cell_latitude: testLat.toString(),
+                rain_cell_longitude: testLng.toString()
+            };
+            
+            const rainLat = parseFloat(testData.rain_cell_latitude);
+            const rainLng = parseFloat(testData.rain_cell_longitude);
+            
+            debugLog('Parsed rain coordinates: ' + rainLat + ', ' + rainLng);
+            
+            cellData.auto = {
+                ...testData,
+                center: { lat: rainLat, lng: rainLng }
+            };
+            
+            debugLog('cellData.auto: ' + JSON.stringify(cellData.auto, null, 2));
+            
+            createTracker('auto');
+            
+            // Pan map to show both user location and tracker
+            map.fitBounds([
+                [currentLocation.latitude, currentLocation.longitude],
+                [rainLat, rainLng]
+            ]);
+        }
+
+        // Initialize map when page loads
+        window.onload = function() {
+            initMap();
+            debugLog('Map initialized');
+            debugLog('User location: ' + currentLocation.latitude + ', ' + currentLocation.longitude);
+        };
+    </script>
+</body>
+</html>

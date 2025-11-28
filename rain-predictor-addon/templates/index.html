@@ -914,6 +914,8 @@
 
         function createTracker(mode) {
             console.log(`Creating enhanced tracker for mode: ${mode}`);
+            console.log('Cell data for mode:', JSON.stringify(cellData[mode], null, 2));
+            
             if (!cellData[mode] || !cellData[mode].center) {
                 console.log(`No cell data for mode: ${mode}`);
                 return;
@@ -922,6 +924,8 @@
             const lat = cellData[mode].center.lat;
             const lng = cellData[mode].center.lng;
             console.log(`Tracker coordinates: lat=${lat}, lng=${lng}`);
+            console.log('Coordinate types:', typeof lat, typeof lng);
+            console.log('Coordinate validation:', isNaN(lat), isNaN(lng));
 
             if (isNaN(lat) || isNaN(lng)) {
                 console.error('Invalid tracker coordinates');
@@ -934,7 +938,7 @@
             removeTracker(mode);
 
             // Create static green circle for rain cell position (DOES NOT MOVE)
-            console.log('Creating static green circle for rain cell...');
+            console.log('Creating static green circle for rain cell at:', [lat, lng]);
             const greenCircle = L.circle([lat, lng], {
                 radius: 8000, // 8km radius - marks rain cell area
                 color: '#00FF00', // Green border
@@ -944,7 +948,7 @@
                 zIndex: 10000, // Ensure it's on top
                 className: 'green-mask-overlay' // Add pulsing animation
             }).addTo(map);
-            console.log('Static green circle added to map');
+            console.log('Static green circle added to map with center:', greenCircle.getLatLng());
 
             trackerMarkers[trackerKey] = greenCircle;
 
@@ -1709,6 +1713,8 @@
                         center: { lat: rainLat, lng: rainLng }
                     };
                     
+                    console.log('cellData.auto after assignment:', JSON.stringify(cellData.auto, null, 2));
+                    
                     // Create/Update auto tracker marker
                     createTracker('auto');
                     updateDataDisplay(data);
@@ -1730,10 +1736,15 @@
                     const rainLat = parseFloat(simData.rain_cell_latitude);
                     const rainLng = parseFloat(simData.rain_cell_longitude);
                     
+                    console.log('Simulated rain coords:', rainLat, rainLng);
+                    
                     cellData.auto = {
                         ...simData,
                         center: { lat: rainLat, lng: rainLng }
                     };
+                    
+                    console.log('cellData.auto (simulated):', JSON.stringify(cellData.auto, null, 2));
+                    
                     createTracker('auto');
                     updateDataDisplay(simData);
                 }
