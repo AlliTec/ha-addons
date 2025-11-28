@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 from PIL import Image, ImageDraw
 import io
 from scipy.ndimage import label
+import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
@@ -949,50 +950,50 @@ class RainPredictor:
         logging.info(f"    Average speed: {avg_speed:.1f} km/h")
         logging.info(f"    Valid cells: {len(valid_cells)}")
         
-        # Filter cells based on general movement pattern
+        # Filter cells based on movement toward user location
         filtered_cells = []
-        direction_tolerance = 45  # degrees tolerance from general movement
         
         for cell_data in valid_cells:
-            # Check if cell movement aligns with general pattern
-            cell_direction = cell_data['direction']
-            direction_diff = abs((cell_direction - avg_direction + 180) % 360 - 180)
-            
-            # Additional check: cell should be positioned such that its movement
+            # Primary check: cell should be positioned such that its movement
             # could plausibly reach the user location
             user_relative_bearing = cell_data['bearing_from_user']
-            movement_to_user_diff = abs((cell_direction - user_relative_bearing + 180) % 360 - 180)
+            movement_to_user_diff = abs((cell_data['direction'] - user_relative_bearing + 180) % 360 - 180)
             
-            # Cell passes if:
-            # 1. Its movement direction is within tolerance of general pattern
-            # 2. Its movement is generally toward the user location
-            passes_direction_filter = (
-                direction_diff <= direction_tolerance and 
-                movement_to_user_diff <= 90  # Within 90° of user direction
-            )
+            # Cell passes if its movement is generally toward the user location
+            # This is the most important filter - cells moving away are not threats
+            passes_direction_filter = movement_to_user_diff <= 90  # Within 90° of user direction
             
             if passes_direction_filter:
-                cell_data['direction_alignment'] = direction_diff
                 cell_data['movement_to_user'] = movement_to_user_diff
                 filtered_cells.append(cell_data)
                 logging.info(f"    ✅ Cell #{cell_data['cell_id']}: PASSED filter")
-                logging.info(f"       Direction alignment: {direction_diff:.1f}° (≤{direction_tolerance}°)")
                 logging.info(f"       Movement to user: {movement_to_user_diff:.1f}° (≤90°)")
+                logging.info(f"       Cell moving {self.degrees_to_cardinal(cell_data['direction'])} "
+                           f"toward user location")
             else:
                 logging.info(f"    ❌ Cell #{cell_data['cell_id']}: FILTERED OUT")
-                logging.info(f"       Direction alignment: {direction_diff:.1f}° (> {direction_tolerance}°)")
                 logging.info(f"       Movement to user: {movement_to_user_diff:.1f}° (> 90°)")
-                logging.info(f"       Cell moving {self.degrees_to_cardinal(cell_direction)}, "
-                           f"general pattern: {self.degrees_to_cardinal(avg_direction)}")
+                logging.info(f"       Cell moving {self.degrees_to_cardinal(cell_data['direction'])} "
+                           f"away from user location")
         
         # Use filtered cells for threat analysis
-        analysis_cells = filtered_cells if filtered_cells else valid_cells
+        # Only consider cells that are actually moving toward user location
+        analysis_cells = filtered_cells if filtered_cells else []
         
         if not analysis_cells:
             logging.info("\n✅ NO CELLS PASS DIRECTIONAL FILTER - No tracking marker needed")
+            logging.info("   All detected rain cells are moving away from user location")
             return None
         
         logging.info(f"\n🎯 ANALYZING {len(analysis_cells)} FILTERED CELLS:")
+        
+        # Log all cells with their distances for debugging
+        if len(analysis_cells) > 1:
+            logging.info("    All cells being considered:")
+            for cell_data in analysis_cells:
+                logging.info(f"        Cell #{cell_data['cell_id']}: {cell_data['distance']:.1f}km, "
+                           f"moving {self.degrees_to_cardinal(cell_data['direction'])}, "
+                           f"score: {cell_data.get('threat_probability', 0):.1f}%")
         
         # Find most likely threat based on multiple factors
         best_cell = None
@@ -1037,6 +1038,9 @@ class RainPredictor:
             logging.info(f"    Distance: {best_cell['distance']:.1f} km")
             logging.info(f"    Speed: {best_cell['speed']:.1f} km/h")
             logging.info(f"    Direction: {best_cell['direction']:.1f}°")
+            logging.info(f"    Position: {best_cell['lat']:.4f}, {best_cell['lon']:.4f}")
+            logging.info(f"    Bearing to user: {best_cell['bearing_from_user']:.1f}°")
+            logging.info(f"    Moving toward user: {best_cell.get('movement_to_user', 'N/A')}°")
             
             return {
                 'time_to_rain': round(time_to_arrival_minutes),
@@ -1044,10 +1048,8 @@ class RainPredictor:
                 'speed_kph': round(best_cell['speed'], 1),
                 'direction_deg': round(best_cell['direction'], 1),
                 'bearing_to_cell_deg': round(best_cell['bearing_from_user'], 1),
-                'rain_cell_latitude': round(best_cell['initial_lat'], 4),  # Initial detection position for green marker
-                'rain_cell_longitude': round(best_cell['initial_lon'], 4),  # Initial detection position for green marker
-                'rain_cell_current_latitude': round(best_cell['lat'], 4),  # Current position for reference
-                'rain_cell_current_longitude': round(best_cell['lon'], 4),  # Current position for reference
+                'rain_cell_latitude': round(best_cell['lat'], 4),  # Current position for green marker (matches distance calculation)
+                'rain_cell_longitude': round(best_cell['lon'], 4),  # Current position for green marker (matches distance calculation)
                 'threat_probability': round(best_cell['threat_probability'], 1),
                 'system_avg_direction': round(avg_direction, 1),
                 'system_avg_speed': round(avg_speed, 1)

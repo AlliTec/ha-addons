@@ -1703,8 +1703,7 @@
                     console.log('Speed from API:', data.speed, 'Type:', typeof data.speed);
                     console.log('Direction from API:', data.direction, 'Type:', typeof data.direction);
                     console.log('Distance from API:', data.distance, 'Type:', typeof data.distance);
-                    console.log('Rain cell initial coords:', data.rain_cell_latitude, data.rain_cell_longitude);
-                    console.log('Rain cell current coords:', data.rain_cell_current_latitude, data.rain_cell_current_longitude);
+                    console.log('Rain cell coords:', data.rain_cell_latitude, data.rain_cell_longitude);
                     
                     // Check if there's a valid threat (backend returns null when no threat)
                     if (!data.rain_cell_latitude || !data.rain_cell_longitude || data.distance === 999) {
@@ -1715,16 +1714,11 @@
                         return;
                     }
                     
-                    // Use initial detection position for green marker (where threat was first detected)
+                    // Use current rain cell position for green marker (matches distance calculation)
                     const rainLat = parseFloat(data.rain_cell_latitude);
                     const rainLng = parseFloat(data.rain_cell_longitude);
                     
-                    // Store current position for reference if needed
-                    const currentRainLat = data.rain_cell_current_latitude ? parseFloat(data.rain_cell_current_latitude) : rainLat;
-                    const currentRainLng = data.rain_cell_current_longitude ? parseFloat(data.rain_cell_current_longitude) : rainLng;
-                    
-                    console.log('Parsed initial coords (green marker):', rainLat, rainLng);
-                    console.log('Parsed current coords (reference):', currentRainLat, currentRainLng);
+                    console.log('Parsed rain cell coords (green marker):', rainLat, rainLng);
                     
                     if (isNaN(rainLat) || isNaN(rainLng)) {
                         console.log('Invalid coordinates - removing tracker');
@@ -1734,12 +1728,11 @@
                         return;
                     }
                     
-                    console.log('Final green marker coords (initial detection):', rainLat, rainLng);
+                    console.log('Final green marker coords (current position):', rainLat, rainLng);
                     
                     cellData.auto = {
                         ...data,
-                        center: { lat: rainLat, lng: rainLng },  // Initial position for green marker
-                        current: { lat: currentRainLat, lng: currentRainLng }  // Current position for reference
+                        center: { lat: rainLat, lng: rainLng }  // Current position for green marker (matches distance)
                     };
                     
                     console.log('cellData.auto after assignment:', JSON.stringify(cellData.auto, null, 2));
@@ -1758,26 +1751,19 @@
                         bearing: (Math.random() * 360).toFixed(1),
                         latitude: currentLocation.latitude + (Math.random() - 0.5) * 0.5,
                         longitude: currentLocation.longitude + (Math.random() - 0.5) * 0.5,
-                        // Initial detection position (where green marker should be)
+                        // Rain cell position (where green marker should be, matches distance calculation)
                         rain_cell_latitude: currentLocation.latitude + (Math.random() - 0.5) * 2,
-                        rain_cell_longitude: currentLocation.longitude + (Math.random() - 0.5) * 2,
-                        // Current position (where rain cell is now) - slightly moved from initial
-                        rain_cell_current_latitude: currentLocation.latitude + (Math.random() - 0.5) * 2.2,
-                        rain_cell_current_longitude: currentLocation.longitude + (Math.random() - 0.5) * 2.2
+                        rain_cell_longitude: currentLocation.longitude + (Math.random() - 0.5) * 2
                     };
                     
                     const rainLat = parseFloat(simData.rain_cell_latitude);
                     const rainLng = parseFloat(simData.rain_cell_longitude);
-                    const currentRainLat = parseFloat(simData.rain_cell_current_latitude);
-                    const currentRainLng = parseFloat(simData.rain_cell_current_longitude);
                     
-                    console.log('Simulated initial rain coords (green marker):', rainLat, rainLng);
-                    console.log('Simulated current rain coords (reference):', currentRainLat, currentRainLng);
+                    console.log('Simulated rain coords (green marker):', rainLat, rainLng);
                     
                     cellData.auto = {
                         ...simData,
-                        center: { lat: rainLat, lng: rainLng },  // Initial position for green marker
-                        current: { lat: currentRainLat, lng: currentRainLng }  // Current position for reference
+                        center: { lat: rainLat, lng: rainLng }  // Current position for green marker (matches distance)
                     };
                     
                     console.log('cellData.auto (simulated):', JSON.stringify(cellData.auto, null, 2));

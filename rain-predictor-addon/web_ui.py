@@ -104,17 +104,9 @@ def get_all_data():
         lat_offset = (rain_distance * math.cos(rain_angle)) / 111.0  # ~111km per degree latitude
         lng_offset = (rain_distance * math.sin(rain_angle)) / (111.0 * math.cos(math.radians(user_lat)))
         
-        # Initial detection position (where green marker should be)
+        # Rain cell position (where green marker should be, matches distance calculation)
         rain_cell_lat = user_lat + lat_offset
         rain_cell_lng = user_lng + lng_offset
-        
-        # Current position (where rain cell is now) - slightly moved from initial
-        movement_distance = random.uniform(5, 20)  # 5-20km movement from initial
-        movement_angle = random.uniform(0, 2 * 3.14159)
-        current_lat_offset = (movement_distance * math.cos(movement_angle)) / 111.0
-        current_lng_offset = (movement_distance * math.sin(movement_angle)) / (111.0 * math.cos(math.radians(rain_cell_lat)))
-        rain_cell_current_lat = rain_cell_lat + current_lat_offset
-        rain_cell_current_lng = rain_cell_lng + current_lng_offset
         
         # Generate corresponding metrics
         random_speed = random.uniform(10, 60)
@@ -124,8 +116,7 @@ def get_all_data():
         direction = f"{int(random.uniform(0, 360))}"
         bearing = f"{int(random.uniform(0, 360))}"
         
-        logging.info(f"Generated simulated rain cell initial at {rain_cell_lat:.4f}, {rain_cell_lng:.4f}")
-        logging.info(f"Generated simulated rain cell current at {rain_cell_current_lat:.4f}, {rain_cell_current_lng:.4f}")
+        logging.info(f"Generated simulated rain cell at {rain_cell_lat:.4f}, {rain_cell_lng:.4f} (distance: {rain_distance:.1f}km from user)")
     
     return {
         "time_to_rain": time_to_rain,
@@ -133,10 +124,8 @@ def get_all_data():
         "speed": speed,
         "direction": direction,
         "bearing": bearing,
-        "rain_cell_latitude": rain_cell_lat,  # Initial position for green marker
-        "rain_cell_longitude": rain_cell_lng,  # Initial position for green marker
-        "rain_cell_current_latitude": rain_cell_current_lat,  # Current position for reference
-        "rain_cell_current_longitude": rain_cell_current_lng,  # Current position for reference
+        "rain_cell_latitude": rain_cell_lat,  # Current position for green marker (matches distance)
+        "rain_cell_longitude": rain_cell_lng,  # Current position for green marker (matches distance)
     }
 # ========== Options.json persistence ==========
 def read_options_latlon(default_lat=-24.98, default_lng=151.86) -> Tuple[float, float]:

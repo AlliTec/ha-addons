@@ -6,25 +6,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## Version 1.1.37 (2025-11-28)
 
-### Critical Green Marker Positioning Fix
+### Critical Directional Filtering Enhancement
+- **Fixed Directional Filtering Logic**: Enhanced filtering to prevent tracking rain cells moving away from user location
+- **Improved Cell Selection**: Only cells moving generally toward user (within 90°) are now considered as threats
+- **Eliminated False Positives**: Cells moving opposite direction to user are completely filtered out
+- **Enhanced Threat Accuracy**: More reliable tracking by focusing only on approaching rain systems
+- **Comprehensive Testing**: Added directional filtering test suite to validate logic
+
+### Technical Implementation
+- **Simplified Filtering Logic**: Removed complex general pattern matching that caused mixed-direction failures
+- **Primary Movement Check**: Focus on `movement_to_user_diff` ≤ 90° as the main filtering criterion
+- **Enhanced Logging**: Detailed logging of directional filtering decisions and movement analysis
+- **Math Import Fix**: Added missing `math` import for circular statistics calculations
+- **Robust Test Coverage**: Comprehensive test suite validating away/toward/mixed scenarios
+
+### Green Marker Positioning Fix
 - **Fixed Green Marker Position**: Green marker now correctly positioned at initial rain cell detection location (first frame)
 - **Enhanced Red Marker Animation**: Red marker now travels from green marker position to user location at actual rain cell speed
 - **Dual Position Tracking**: Added both initial detection position and current position tracking for accurate visualization
 - **Speed-Based Animation**: Red marker travel time now calculated based on actual rain cell speed, not fixed duration
 - **Realistic Movement Simulation**: Enhanced simulated data to show movement from initial to current positions
 
-### Technical Implementation
-- **Initial Position Tracking**: Modified `cell.positions[0]` to capture first detection coordinates for green marker
-- **Current Position Tracking**: Maintained `cell.positions[-1]` for accurate distance/ETA calculations
-- **Enhanced Data Structure**: Added `rain_cell_current_latitude/longitude` fields for current position reference
-- **Dynamic Animation Speed**: Red marker animation duration calculated from actual speed and distance
-- **Distance Calculation**: Added Haversine formula for accurate animation timing
-
 ### User Experience Improvements
-- **Accurate Threat Visualization**: Green marker now shows where threat was first detected
-- **Realistic Arrival Animation**: Red marker travels at correct speed showing actual rain arrival time
-- **Clear Visual Distinction**: Green marker = origin, red marker = arrival, gold line = path
-- **Professional Tracking**: Eliminates confusing marker positioning and timing issues
+- **Accurate Threat Detection**: Only tracks rain cells that are actually approaching user location
+- **Eliminated Confusion**: No more tracking markers for rain cells moving away from user
+- **Professional Reliability**: More dependable threat assessment with directional validation
+- **Clear Visual Logic**: Green marker only appears for legitimate approaching threats
 - **Consistent Behavior**: Works correctly in both Home Assistant and standalone environments
 
 ## Version 1.1.36 (2025-11-28)
