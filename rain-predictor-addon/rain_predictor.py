@@ -278,6 +278,32 @@ class RainPredictor:
         logging.info(f"View bounds set: center=({center.get('lat', 0):.4f}, {center.get('lng', 0):.4f}), zoom={zoom}")
         logging.info(f"View bounds set: size={view_size_km.get('width', 0):.1f}km x {view_size_km.get('height', 0):.1f}km")
     
+    def _load_view_bounds_from_file(self):
+        """Load current view bounds from shared file"""
+        try:
+            with open('/tmp/view_bounds.json', 'r') as f:
+                view_data = json.load(f)
+            
+            # Check if data is recent (within last 30 seconds)
+            if time.time() - view_data.get('timestamp', 0) < 30:
+                self.set_view_bounds(
+                    view_data.get('bounds', {}),
+                    view_data.get('center', {}),
+                    view_data.get('zoom', 8),
+                    view_data.get('view_size_km', {})
+                )
+                return True
+            else:
+                logging.debug("View bounds data is stale, ignoring")
+                return False
+                
+        except FileNotFoundError:
+            logging.debug("No view bounds file found")
+            return False
+        except Exception as e:
+            logging.debug(f"Error loading view bounds: {e}")
+            return False
+    
     def _log_config(self):
         """Log current configuration"""
         logging.info("=" * 60)
@@ -399,6 +425,9 @@ class RainPredictor:
         logging.info(f"ANALYZING {len(past_frames)} FRAMES")
         logging.info("=" * 60)
         
+        # Load current view bounds for focused analysis
+        self._load_view_bounds_from_file()
+        
         prediction = {
             'time_to_rain': None,
             'speed_kph': None,
@@ -488,53 +517,46 @@ class RainPredictor:
         return False
     
     def _extract_cells_from_frame(self, frame, api_data):
-        """Extract rain cells from a single frame"""
+        """Extract rain cells from radar frame with enhanced tracking"""
         try:
-            frame_path = frame.get('path')
-            api_host = api_data.get('host')
+            # Download and process radar frame
+            img_url = api_data['radar']['past'][0]['frame']
+            logging.info(f"Downloading frame: {img_url}")
             
-            if not frame_path or not api_host:
-                logging.warning("Missing frame path or API host")
-                return []
+            response = requests.get(img_url)
+            img = Image.open(io.BytesIO(response.content))
             
-            # Use view center if available, otherwise user location
-            center_lat = self.view_center.get('lat') if self.view_center else self.latitude
-            center_lon = self.view_center.get('lng') if self.view_center else self.longitude
+            # Convert to grayscale and threshold
+            img_gray = img.convert('L')
+            img_array = np.array(img_gray)
             
-            # Use higher zoom for focused analysis if user is zoomed in
-            zoom_level = self.view_zoom if hasattr(self, 'view_zoom') else self.image_zoom
+            # Apply threshold to identify rain areas
+            thresholded = (img_array > self.threshold).astype(np.uint8) * 255
             
-            image_url = f"{api_host}{frame_path}/{self.image_size}/{zoom_level}/{center_lat}/{center_lon}/{self.image_color}/{self.image_opts}.png"
-            image_data = self.download_radar_image(image_url)
-            
-            if not image_data:
-                logging.warning("Failed to download radar image")
-                return []
-            
-            img = Image.open(io.BytesIO(image_data)).convert('L')
-            img_array = np.array(img)
-            
-            logging.debug(f"Image shape: {img_array.shape}, min: {np.min(img_array)}, max: {np.max(img_array)}")
-            
-            # Find rain pixels
-            rain_pixels = img_array > self.threshold
-            rain_pixel_count = np.sum(rain_pixels)
-            
-            logging.debug(f"Rain pixels above threshold {self.threshold}: {rain_pixel_count}")
-            
-            if not np.any(rain_pixels):
-                logging.debug("No rain pixels found above threshold")
-                return []
-            
-            # Label connected components
-            labeled_image, num_labels = label(rain_pixels)
+            # Find connected components (rain cells)
+            labeled_image, num_labels = label(thresholded)
             
             logging.debug(f"Found {num_labels} connected components")
             
             cells = []
             img_height, img_width = img_array.shape
-            lat_inc = self.lat_range / img_height
-            lon_inc = self.lon_range / img_width
+            
+            # Use dynamic analysis area based on user view or fallback to configured range
+            if hasattr(self, 'view_size_km') and self.view_size_km:
+                # Calculate lat/lon ranges based on view size
+                view_width_km = self.view_size_km.get('width', 100)
+                view_height_km = self.view_size_km.get('height', 100)
+                lat_range = view_height_km / 111.0  # ~111km per degree latitude
+                lon_range = view_width_km / (111.0 * math.cos(math.radians(self.latitude)))
+                logging.info(f"Using view-based analysis: {view_width_km:.1f}km x {view_height_km:.1f}km ({lat_range:.3f}° x {lon_range:.3f}°)")
+            else:
+                # Fallback to configured analysis range
+                lat_range = self.lat_range
+                lon_range = self.lon_range
+                logging.info(f"Using configured analysis range: {lat_range:.1f}° x {lon_range:.1f}°")
+            
+            lat_inc = lat_range / img_height
+            lon_inc = lon_range / img_width
             center_y = (img_height - 1) / 2.0
             center_x = (img_width - 1) / 2.0
             
@@ -549,8 +571,17 @@ class RainPredictor:
                 centroid_x, centroid_y = np.mean(x_coords), np.mean(y_coords)
                 lat_offset = (center_y - centroid_y) * lat_inc
                 lon_offset = (centroid_x - center_x) * lon_inc
-                est_lat = np.clip(self.latitude + lat_offset, -90, 90)
-                est_lon = np.clip(self.longitude + lon_offset, -180, 180)
+                
+                # Use dynamic center based on user view or fallback to configured location
+                if hasattr(self, 'view_center') and self.view_center:
+                    center_lat = self.view_center.get('lat', self.latitude)
+                    center_lon = self.view_center.get('lng', self.longitude)
+                else:
+                    center_lat = self.latitude
+                    center_lon = self.longitude
+                
+                est_lat = np.clip(center_lat + lat_offset, -90, 90)
+                est_lon = np.clip(center_lon + lon_offset, -180, 180)
                 
                 intensity = np.mean(img_array[y_coords, x_coords])
                 
@@ -626,8 +657,18 @@ class RainPredictor:
                 # Distance from last known position
                 dist_from_last = self.haversine(last_lat, last_lon, cell['lat'], cell['lon'])
                 
+                # Use dynamic tracking distance based on view size or fallback to configured max
+                if hasattr(self, 'view_size_km') and self.view_size_km:
+                    # Calculate dynamic tracking distance based on view size (1.5x view diagonal)
+                    view_width = self.view_size_km.get('width', 100)
+                    view_height = self.view_size_km.get('height', 100)
+                    view_diagonal = math.sqrt(view_width**2 + view_height**2)
+                    dynamic_max_dist = max(view_diagonal * 1.5, self.max_track_dist * 0.5)  # At least 50% of configured
+                else:
+                    dynamic_max_dist = self.max_track_dist
+                
                 # Skip if too far from last known position
-                if dist_from_last > self.max_track_dist:
+                if dist_from_last > dynamic_max_dist:
                     continue
                 
                 # Multiple scoring factors

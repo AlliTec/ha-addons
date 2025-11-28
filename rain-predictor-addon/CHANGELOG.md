@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.38 (2025-11-28)
+
+### Dynamic View-Based Tracking Enhancement
+- **Screen-Area Tracking**: Now tracks rain cells visible in user's current map view instead of fixed 550km x 550km area
+- **Dynamic Analysis Area**: Automatically adjusts analysis range based on user's zoom level and pan position
+- **Adaptive Tracking Distance**: Uses 1.5x view diagonal for optimal tracking distance (96km for 50x40km view vs 150km default)
+- **Real-Time Synchronization**: Web UI sends view bounds to rain predictor on every pan/zoom action
+- **Focused Precision**: Much higher precision for local areas with smaller analysis zones
+
+### Technical Implementation
+- **View Bounds API**: Added `/api/update_view_bounds` endpoint for real-time view synchronization
+- **Shared File Communication**: Web UI saves view data to `/tmp/view_bounds.json` for rain predictor to read
+- **Dynamic Range Calculation**: Converts view size in km to lat/lon degrees for accurate analysis
+- **Fresh Data Validation**: Only uses view data less than 30 seconds old to ensure relevance
+- **Fallback Logic**: Gracefully falls back to configured ranges when no view data available
+
+### User Experience Improvements
+- **Track What You See**: Only analyzes and tracks rain cells currently visible on screen
+- **Automatic Adjustment**: No manual configuration needed when zooming in/out or panning
+- **Better Performance**: Smaller analysis areas mean faster processing and less resource usage
+- **Precision Focus**: Higher accuracy for local weather monitoring
+- **Seamless Integration**: Works transparently with existing tracking and prediction features
+
 ## Version 1.1.37 (2025-11-28)
 
 ### Critical Directional Filtering Enhancement

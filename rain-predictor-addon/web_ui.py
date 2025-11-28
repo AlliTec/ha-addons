@@ -17,6 +17,9 @@ from flask import Flask, render_template, jsonify, request
 app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
+# Global rain predictor instance for view synchronization
+rain_predictor_instance = None
+
 # ========== Settings ==========
 # Radar sampling/analysis settings for manual selection
 RAIN_THRESHOLD = 65          # 60–75 works well; raise if motion looks noisy
@@ -400,8 +403,23 @@ def update_view_bounds():
         logging.info(f"View bounds update: center=({center.get('lat', 0):.4f}, {center.get('lng', 0):.4f}), zoom={zoom}")
         logging.info(f"View bounds update: size={view_size.get('width', 0):.1f}km x {view_size.get('height', 0):.1f}km")
         
-        # Store for use in rain prediction analysis
-        # TODO: Pass these bounds to rain_predictor.py for focused cell tracking
+        # Store view bounds in shared file for rain predictor to read
+        try:
+            view_data = {
+                'bounds': bounds,
+                'center': center,
+                'zoom': zoom,
+                'view_size_km': view_size,
+                'timestamp': time.time()
+            }
+            
+            with open('/tmp/view_bounds.json', 'w') as f:
+                json.dump(view_data, f)
+            
+            logging.info("View bounds saved to shared file for rain predictor")
+            
+        except Exception as e:
+            logging.error(f"Error saving view bounds: {e}", exc_info=True)
         
         return jsonify({"status": "success", "message": "View bounds updated"}), 200
         
