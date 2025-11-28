@@ -142,10 +142,10 @@ class RainCell:
         bearing = self._calculate_bearing(lat1, lon1, lat2, lon2)
         speed_kph = distance_km / time_diff
         
-        # Enhanced validation and debugging
-        if distance_km < 0.1:  # Less than 100m movement
-            logging.info(f"VELOCITY: Minimal movement ({distance_km:.3f}km), treating as stationary")
-            return 0.0, bearing
+        # Enhanced validation and debugging - temporarily disabled for debugging
+        # if distance_km < 0.01:  # Less than 10m movement (reduced from 100m)
+        #     logging.info(f"VELOCITY: Minimal movement ({distance_km:.3f}km), treating as stationary")
+        #     return 0.0, bearing
         
         # Cap unrealistic speeds
         if speed_kph > 200:  # Cap at 200 KPH (hurricane speed)
@@ -918,13 +918,34 @@ class RainPredictor:
             current_lat, current_lon, _ = cell.positions[-1]  # Current position
             speed_kph, direction_deg = cell.get_velocity()
             
-            if speed_kph is None or direction_deg is None:
-                logging.info(f"    ❌ Cannot calculate velocity")
-                continue
+            # NEW: Handle cells with no velocity data using weather pattern assumptions
+            if speed_kph is None or direction_deg is None or speed_kph < 1:
+                logging.info(f"    ⚠️ No reliable velocity data ({speed_kph if speed_kph else 'None'} km/h)")
                 
-            if speed_kph < 1:
-                logging.info(f"    ❌ Moving too slowly ({speed_kph:.1f} km/h)")
-                continue
+                # Use west-to-east weather pattern assumption (common for many regions)
+                assumed_speed_kph = 25.0  # Typical rain cell movement speed
+                assumed_direction_deg = 270.0  # West to east (270°)
+                
+                # Check if cell is positioned to intercept with west-to-east movement
+                bearing_from_user = self.calculate_bearing(self.latitude, self.longitude, current_lat, current_lon)
+                
+                # For west-to-east movement, cell should be west of user (bearing 225-315°)
+                if bearing_from_user is not None:
+                    is_west_of_user = 225 <= bearing_from_user <= 315
+                    
+                    if is_west_of_user:
+                        logging.info(f"    ✅ Using assumed west-to-east pattern: {assumed_speed_kph:.1f} km/h @ {assumed_direction_deg:.1f}°")
+                        logging.info(f"       Cell is west of user (bearing {bearing_from_user:.1f}°) - could intercept")
+                        speed_kph = assumed_speed_kph
+                        direction_deg = assumed_direction_deg
+                    else:
+                        logging.info(f"    ❌ Cell not positioned for west-to-east intercept (bearing {bearing_from_user:.1f}°)")
+                        continue
+                else:
+                    logging.info(f"    ❌ Cannot calculate bearing to user")
+                    continue
+            else:
+                logging.info(f"    ✅ Using measured velocity: {speed_kph:.1f} km/h @ {direction_deg:.1f}°")
             
             # Calculate threat metrics from current position (for accurate ETA)
             distance_km = self.haversine(current_lat, current_lon, self.latitude, self.longitude)

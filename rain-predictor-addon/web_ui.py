@@ -86,52 +86,43 @@ def get_all_data():
     # Get user location
     user_lat, user_lng = read_options_latlon()
     
-    # Get real rain cell data from rain predictor
+    # Use main rain predictor's sophisticated threat analysis
     try:
-        # Import rain predictor to get real data
-        import sys
-        sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-        from rain_predictor import RainPredictor, AddonConfig, HomeAssistantAPI
-        
         # Create rain predictor instance
+        from rain_predictor import RainPredictor, AddonConfig, HomeAssistantAPI
         config = AddonConfig()
         ha_api_instance = HomeAssistantAPI()
         predictor = RainPredictor(config, ha_api_instance)
         
-        # Get real rain cell data
+        # Run's same analysis as main predictor
         import requests
         response = requests.get(predictor.api_url, timeout=10)
         response.raise_for_status()
         api_data = response.json()
+        
         if api_data and predictor._validate_api_response(api_data):
-            cells = predictor._extract_cells_from_frame(0, api_data)
+            past_frames = api_data['radar'].get('past', [])
             
-            if cells:
-                # Find nearest rain cell to user location
-                import numpy as np
-                min_distance = float('inf')
-                nearest_cell = None
+            if len(past_frames) >= 2:
+                # Use the main predictor's analyze_radar_data method
+                prediction = predictor.analyze_radar_data(past_frames, api_data)
                 
-                for cell in cells:
-                    # Calculate distance from user to rain cell
-                    dist = predictor.haversine(user_lat, user_lng, float(cell['lat']), float(cell['lon']))
-                    if dist < min_distance:
-                        min_distance = dist
-                        nearest_cell = cell
-                
-                if nearest_cell:
-                    # Calculate movement metrics
-                    rain_cell_lat = float(nearest_cell['lat'])
-                    rain_cell_lng = float(nearest_cell['lon'])
-                    distance = f"{min_distance:.1f}"
+                if prediction.get('time_to_rain') is not None:
+                    # Extract the sophisticated threat analysis results
+                    rain_cell_lat = prediction.get('rain_cell_latitude', user_lat)
+                    rain_cell_lng = prediction.get('rain_cell_longitude', user_lng)
+                    distance = f"{prediction.get('distance_km', 0):.1f}"
+                    speed = f"{prediction.get('speed_kph', 0):.1f}"
+                    direction = f"{prediction.get('direction_deg', 0):.1f}"
+                    bearing = f"{prediction.get('bearing_to_cell_deg', 0):.1f}"
+                    time_to_rain = str(int(prediction.get('time_to_rain', 0)))
                     
-                    # Estimate speed and direction based on cell movement (simplified)
-                    speed = f"{np.random.uniform(10, 60):.1f}"  # Placeholder - would need multiple frames for real speed
-                    direction = f"{int(np.random.uniform(0, 360))}"  # Placeholder
-                    bearing = f"{int(np.random.uniform(0, 360))}"  # Placeholder
-                    time_to_rain = str(int(min_distance / max(1, float(speed))))  # Time based on distance and speed
+                    # Also return detected cells for visualization
+                    cells = predictor._extract_cells_from_frame(0, api_data)
                     
-                    logging.info(f"Found real rain cell at {rain_cell_lat:.4f}, {rain_cell_lng:.4f} (distance: {min_distance:.1f}km from user)")
+                    logging.info(f"Threat analysis: rain cell at {rain_cell_lat:.4f}, {rain_cell_lng:.4f}")
+                    logging.info(f"Distance: {distance}km, Speed: {speed}km/h, Direction: {direction}°")
+                    logging.info(f"Time to rain: {time_to_rain}min, Bearing: {bearing}°")
                     
                     return {
                         "time_to_rain": time_to_rain,
@@ -141,14 +132,17 @@ def get_all_data():
                         "bearing": bearing,
                         "rain_cell_latitude": rain_cell_lat,
                         "rain_cell_longitude": rain_cell_lng,
-                        "cells": [{"lat": float(c['lat']), "lng": float(c['lon']), "intensity": float(c['intensity'])} for c in cells[:10]]  # Return first 10 cells
+                        "cells": [{"lat": float(c['lat']), "lng": float(c['lon']), "intensity": float(c['intensity'])} for c in cells[:10]]
                     }
-        
-        # Fallback if no real data available
-        logging.warning("No real rain cell data available, using defaults")
-        
+                else:
+                    logging.warning("No threat prediction available from main analyzer")
+            else:
+                logging.warning(f"Insufficient frames for threat analysis: {len(past_frames)}")
+        else:
+            logging.warning("Invalid API response for threat analysis")
+            
     except Exception as e:
-        logging.error(f"Error getting real rain cell data: {e}", exc_info=True)
+        logging.error(f"Error in threat analysis: {e}", exc_info=True)
     
     # Fallback to Home Assistant entities or defaults
     time_to_rain = ha_api.get_state("input_number.rain_arrival_minutes", "--")
