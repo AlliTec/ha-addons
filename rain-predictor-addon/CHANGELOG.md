@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.39 (2025-11-28)
+
+### Critical Rain Cell Tracking Fix
+- **Fixed API Data Structure**: Resolved `KeyError: 'frame'` that prevented rain cell detection
+- **Correct URL Format**: Updated RainViewer image URL construction with proper color parameter
+- **Real Cell Detection**: Restored actual rain cell extraction from radar data instead of simulation fallback
+- **Green Marker Tracking**: Fixed green marker to track actual nearest rain cell coordinates
+- **End-to-End Workflow**: Complete tracking workflow now functional from radar detection to UI display
+
+### Technical Resolution
+- **API Path Fix**: Changed from `api_data['radar']['past'][0]['frame']` to timestamp-based URL construction
+- **URL Construction**: Updated to `https://tilecache.rainviewer.com/v2/radar/{timestamp}/256/0/0/0/2/1_1.png`
+- **Web UI Integration**: Updated web UI to use real rain cell data instead of random simulation
+- **Distance Calculation**: Fixed distance calculation using proper `haversine` method
+- **Cell Extraction**: Successfully extracting 20+ rain cells from radar imagery
+
 ## Version 1.1.38 (2025-11-28)
 
 ### Dynamic View-Based Tracking Enhancement

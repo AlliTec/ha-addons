@@ -519,8 +519,10 @@ class RainPredictor:
     def _extract_cells_from_frame(self, frame, api_data):
         """Extract rain cells from radar frame with enhanced tracking"""
         try:
-            # Download and process radar frame
-            img_url = api_data['radar']['past'][0]['frame']
+            # Construct radar frame URL from API data (correct format with color parameter)
+            host = api_data.get('host', 'https://tilecache.rainviewer.com').replace('https://', '')
+            timestamp = api_data['radar']['past'][0]['time']
+            img_url = f"https://{host}/v2/radar/{timestamp}/256/0/0/0/2/1_1.png"
             logging.info(f"Downloading frame: {img_url}")
             
             response = requests.get(img_url)
