@@ -980,8 +980,9 @@
                 trackerMarkers[trackerKey + 'MovingMarker'] = movingMarker;
                 console.log('Red moving marker added to map');
 
-                // Start animating red marker along static trajectory at cloud speed
-                animateMarkerAlongTrajectory(movingMarker, lat, lng, currentLocation.latitude, currentLocation.longitude, mode);
+                // Start animating red marker along static trajectory at actual cloud speed
+                const speed = parseFloat(cellData[mode].speed) || 20; // Default to 20 kph if no speed
+                animateMarkerAlongTrajectory(movingMarker, lat, lng, currentLocation.latitude, currentLocation.longitude, speed);
             }
 
             // Add comprehensive tooltip with threat info
@@ -1120,21 +1121,30 @@
             animateMarkerAlongPath(marker, startLat, startLng, currentLocation.latitude, currentLocation.longitude, mode);
         }
 
-        function animateMarkerAlongTrajectory(marker, startLat, startLng, endLat, endLng, mode) {
-            const duration = 4000; // 4 seconds for animation (slower for visibility)
+        function animateMarkerAlongTrajectory(marker, startLat, startLng, endLat, endLng, speedKph) {
+            // Calculate actual travel time based on speed and distance
+            const distanceKm = calculateDistance(startLat, startLng, endLat, endLng);
+            const travelTimeHours = distanceKm / Math.max(1, speedKph); // Avoid division by zero
+            const travelTimeMs = travelTimeHours * 3600 * 1000; // Convert to milliseconds
+            
+            // Scale animation for visibility (max 10 seconds, min 2 seconds)
+            const animationDuration = Math.min(10000, Math.max(2000, travelTimeMs));
+            
             const steps = 80;
-            const stepDuration = duration / steps;
+            const stepDuration = animationDuration / steps;
             let currentStep = 0;
 
             const latStep = (endLat - startLat) / steps;
             const lngStep = (endLng - startLng) / steps;
+
+            console.log(`Animating marker: distance=${distanceKm.toFixed(1)}km, speed=${speedKph}kph, duration=${(animationDuration/1000).toFixed(1)}s`);
 
             const animationInterval = setInterval(() => {
                 if (currentStep >= steps) {
                     clearInterval(animationInterval);
                     // Restart animation after a brief pause
                     setTimeout(() => {
-                        animateMarkerAlongTrajectory(marker, startLat, startLng, endLat, endLng, mode);
+                        animateMarkerAlongTrajectory(marker, startLat, startLng, endLat, endLng, speedKph);
                     }, 1500);
                     return;
                 }
@@ -1145,6 +1155,17 @@
                 marker.setLatLng([currentLat, currentLng]);
                 currentStep++;
             }, stepDuration);
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
         }
 
         function removeTracker(mode) {
@@ -1682,7 +1703,8 @@
                     console.log('Speed from API:', data.speed, 'Type:', typeof data.speed);
                     console.log('Direction from API:', data.direction, 'Type:', typeof data.direction);
                     console.log('Distance from API:', data.distance, 'Type:', typeof data.distance);
-                    console.log('Rain cell coords:', data.rain_cell_latitude, data.rain_cell_longitude);
+                    console.log('Rain cell initial coords:', data.rain_cell_latitude, data.rain_cell_longitude);
+                    console.log('Rain cell current coords:', data.rain_cell_current_latitude, data.rain_cell_current_longitude);
                     
                     // Check if there's a valid threat (backend returns null when no threat)
                     if (!data.rain_cell_latitude || !data.rain_cell_longitude || data.distance === 999) {
@@ -1693,10 +1715,16 @@
                         return;
                     }
                     
+                    // Use initial detection position for green marker (where threat was first detected)
                     const rainLat = parseFloat(data.rain_cell_latitude);
                     const rainLng = parseFloat(data.rain_cell_longitude);
                     
-                    console.log('Parsed coords:', rainLat, rainLng);
+                    // Store current position for reference if needed
+                    const currentRainLat = data.rain_cell_current_latitude ? parseFloat(data.rain_cell_current_latitude) : rainLat;
+                    const currentRainLng = data.rain_cell_current_longitude ? parseFloat(data.rain_cell_current_longitude) : rainLng;
+                    
+                    console.log('Parsed initial coords (green marker):', rainLat, rainLng);
+                    console.log('Parsed current coords (reference):', currentRainLat, currentRainLng);
                     
                     if (isNaN(rainLat) || isNaN(rainLng)) {
                         console.log('Invalid coordinates - removing tracker');
@@ -1706,11 +1734,12 @@
                         return;
                     }
                     
-                    console.log('Final center coords:', rainLat, rainLng);
+                    console.log('Final green marker coords (initial detection):', rainLat, rainLng);
                     
                     cellData.auto = {
                         ...data,
-                        center: { lat: rainLat, lng: rainLng }
+                        center: { lat: rainLat, lng: rainLng },  // Initial position for green marker
+                        current: { lat: currentRainLat, lng: currentRainLng }  // Current position for reference
                     };
                     
                     console.log('cellData.auto after assignment:', JSON.stringify(cellData.auto, null, 2));
@@ -1729,18 +1758,26 @@
                         bearing: (Math.random() * 360).toFixed(1),
                         latitude: currentLocation.latitude + (Math.random() - 0.5) * 0.5,
                         longitude: currentLocation.longitude + (Math.random() - 0.5) * 0.5,
+                        // Initial detection position (where green marker should be)
                         rain_cell_latitude: currentLocation.latitude + (Math.random() - 0.5) * 2,
-                        rain_cell_longitude: currentLocation.longitude + (Math.random() - 0.5) * 2
+                        rain_cell_longitude: currentLocation.longitude + (Math.random() - 0.5) * 2,
+                        // Current position (where rain cell is now) - slightly moved from initial
+                        rain_cell_current_latitude: currentLocation.latitude + (Math.random() - 0.5) * 2.2,
+                        rain_cell_current_longitude: currentLocation.longitude + (Math.random() - 0.5) * 2.2
                     };
                     
                     const rainLat = parseFloat(simData.rain_cell_latitude);
                     const rainLng = parseFloat(simData.rain_cell_longitude);
+                    const currentRainLat = parseFloat(simData.rain_cell_current_latitude);
+                    const currentRainLng = parseFloat(simData.rain_cell_current_longitude);
                     
-                    console.log('Simulated rain coords:', rainLat, rainLng);
+                    console.log('Simulated initial rain coords (green marker):', rainLat, rainLng);
+                    console.log('Simulated current rain coords (reference):', currentRainLat, currentRainLng);
                     
                     cellData.auto = {
                         ...simData,
-                        center: { lat: rainLat, lng: rainLng }
+                        center: { lat: rainLat, lng: rainLng },  // Initial position for green marker
+                        current: { lat: currentRainLat, lng: currentRainLng }  // Current position for reference
                     };
                     
                     console.log('cellData.auto (simulated):', JSON.stringify(cellData.auto, null, 2));

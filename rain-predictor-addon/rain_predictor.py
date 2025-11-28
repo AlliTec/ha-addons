@@ -17,7 +17,7 @@ from scipy.ndimage import label
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.36"
+VERSION = "1.1.37"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -869,7 +869,9 @@ class RainPredictor:
                 logging.info(f"    ❌ Track too short (need {self.min_track_len})")
                 continue
             
-            current_lat, current_lon, _ = cell.positions[-1]
+            # Get both initial detection position and current position
+            initial_lat, initial_lon, _ = cell.positions[0]  # First detection position
+            current_lat, current_lon, _ = cell.positions[-1]  # Current position
             speed_kph, direction_deg = cell.get_velocity()
             
             if speed_kph is None or direction_deg is None:
@@ -880,7 +882,7 @@ class RainPredictor:
                 logging.info(f"    ❌ Moving too slowly ({speed_kph:.1f} km/h)")
                 continue
             
-            # Calculate threat metrics
+            # Calculate threat metrics from current position (for accurate ETA)
             distance_km = self.haversine(current_lat, current_lon, self.latitude, self.longitude)
             bearing_to_location = self.calculate_bearing(current_lat, current_lon, self.latitude, self.longitude)
             bearing_from_user_to_cell = self.calculate_bearing(self.latitude, self.longitude, current_lat, current_lon)
@@ -907,8 +909,10 @@ class RainPredictor:
             valid_cells.append({
                 'cell_id': cell_id,
                 'cell': cell,
-                'lat': current_lat,
-                'lon': current_lon,
+                'lat': current_lat,  # Current position for distance/ETA calculations
+                'lon': current_lon,  # Current position for distance/ETA calculations
+                'initial_lat': initial_lat,  # Initial detection position for green marker
+                'initial_lon': initial_lon,  # Initial detection position for green marker
                 'speed': speed_kph,
                 'direction': direction_deg,
                 'distance': distance_km,
@@ -1040,8 +1044,10 @@ class RainPredictor:
                 'speed_kph': round(best_cell['speed'], 1),
                 'direction_deg': round(best_cell['direction'], 1),
                 'bearing_to_cell_deg': round(best_cell['bearing_from_user'], 1),
-                'rain_cell_latitude': round(best_cell['lat'], 4),
-                'rain_cell_longitude': round(best_cell['lon'], 4),
+                'rain_cell_latitude': round(best_cell['initial_lat'], 4),  # Initial detection position for green marker
+                'rain_cell_longitude': round(best_cell['initial_lon'], 4),  # Initial detection position for green marker
+                'rain_cell_current_latitude': round(best_cell['lat'], 4),  # Current position for reference
+                'rain_cell_current_longitude': round(best_cell['lon'], 4),  # Current position for reference
                 'threat_probability': round(best_cell['threat_probability'], 1),
                 'system_avg_direction': round(avg_direction, 1),
                 'system_avg_speed': round(avg_speed, 1)

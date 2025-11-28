@@ -4,6 +4,29 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.37 (2025-11-28)
+
+### Critical Green Marker Positioning Fix
+- **Fixed Green Marker Position**: Green marker now correctly positioned at initial rain cell detection location (first frame)
+- **Enhanced Red Marker Animation**: Red marker now travels from green marker position to user location at actual rain cell speed
+- **Dual Position Tracking**: Added both initial detection position and current position tracking for accurate visualization
+- **Speed-Based Animation**: Red marker travel time now calculated based on actual rain cell speed, not fixed duration
+- **Realistic Movement Simulation**: Enhanced simulated data to show movement from initial to current positions
+
+### Technical Implementation
+- **Initial Position Tracking**: Modified `cell.positions[0]` to capture first detection coordinates for green marker
+- **Current Position Tracking**: Maintained `cell.positions[-1]` for accurate distance/ETA calculations
+- **Enhanced Data Structure**: Added `rain_cell_current_latitude/longitude` fields for current position reference
+- **Dynamic Animation Speed**: Red marker animation duration calculated from actual speed and distance
+- **Distance Calculation**: Added Haversine formula for accurate animation timing
+
+### User Experience Improvements
+- **Accurate Threat Visualization**: Green marker now shows where threat was first detected
+- **Realistic Arrival Animation**: Red marker travels at correct speed showing actual rain arrival time
+- **Clear Visual Distinction**: Green marker = origin, red marker = arrival, gold line = path
+- **Professional Tracking**: Eliminates confusing marker positioning and timing issues
+- **Consistent Behavior**: Works correctly in both Home Assistant and standalone environments
+
 ## Version 1.1.36 (2025-11-28)
 
 ### Critical Tracker Positioning Fix
