@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.49 (2025-11-29)
+
+### Critical Rain Cell Position Fix
+- **Fixed Green Marker Position**: Now displays current rain cell position instead of initial detection position
+- **Corrected Tracking Display**: Green tracker now shows where rain cell actually is, not where it was first detected
+- **Fixed Math Import Error**: Resolved NameError in circular mean calculation
+- **Accurate Distance Display**: Distance now reflects current position, not historical position
+
 ## Version 1.1.48 (2025-11-29)
 
 ### Screen-Accurate View Area Calculation

@@ -1409,9 +1409,9 @@ class RainPredictor:
         # Calculate overall rain system patterns
         if all_directions:
             # Calculate circular mean for directional data
-            x = sum(math.cos(math.radians(d)) for d in all_directions)
-            y = sum(math.sin(math.radians(d)) for d in all_directions)
-            avg_direction = math.degrees(math.atan2(y, x))
+            x = sum(cos(radians(d)) for d in all_directions)
+            y = sum(sin(radians(d)) for d in all_directions)
+            avg_direction = degrees(atan2(y, x))
             if avg_direction < 0:
                 avg_direction += 360
         else:
@@ -1533,8 +1533,8 @@ class RainPredictor:
                 'speed_kph': round(best_cell['speed'], 1),
                 'direction_deg': round(best_cell['direction'], 1),
                 'bearing_to_cell_deg': round(best_cell['bearing_from_user'], 1),
-                'rain_cell_latitude': round(best_cell['initial_lat'], 4),  # Initial detection position for green marker
-                'rain_cell_longitude': round(best_cell['initial_lon'], 4),  # Initial detection position for green marker
+                'rain_cell_latitude': round(best_cell['current_lat'], 4),  # Current position for green marker
+                'rain_cell_longitude': round(best_cell['current_lon'], 4),  # Current position for green marker
                 'threat_probability': round(best_cell['threat_probability'], 1),
                 'system_avg_direction': round(avg_direction, 1),
                 'system_avg_speed': round(avg_speed, 1)
