@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.53 (2025-11-29)
+
+### Screen-Area Tracking & Green Marker Origin Fix
+- **Fixed Analysis Area**: Now uses actual screen view instead of 5°×5° default when view bounds available
+- **Green Marker Origin**: Shows initial detection position instead of current position
+- **Proper Cell Tracking**: Tracks all visible rain cells on screen for general movement pattern
+- **Direction Validation**: Uses general rain system direction to validate individual cell tracking
+
+## Version 1.1.52 (2025-11-29)
+
+### Critical Green Marker Position Bug Fix
+- **Fixed False Marker Display**: No longer shows green marker at user location when no rain detected
+- **Removed Coordinate Fallback**: Stopped using user coordinates as default rain cell position
+- **Proper Null Handling**: API now sends null coordinates when no threatening cells exist
+- **Fixed Confusing Display**: Green marker only appears when actual rain cells are tracked
+
 ## Version 1.1.51 (2025-11-29)
 
 ### Fixed 400 Bad Request Errors

@@ -109,8 +109,13 @@ def get_all_data():
                 
                 if prediction.get('time_to_rain') is not None:
                     # Extract the sophisticated threat analysis results
-                    rain_cell_lat = prediction.get('rain_cell_latitude', user_lat)
-                    rain_cell_lng = prediction.get('rain_cell_longitude', user_lng)
+                    rain_cell_lat = prediction.get('rain_cell_latitude')
+                    rain_cell_lng = prediction.get('rain_cell_longitude')
+                    
+                    # Only use coordinates if they exist (no fallback to user location)
+                    if rain_cell_lat is None or rain_cell_lng is None:
+                        rain_cell_lat = None
+                        rain_cell_lng = None
                     distance = f"{prediction.get('distance_km', 0):.1f}"
                     speed = f"{prediction.get('speed_kph', 0):.1f}"
                     direction = f"{prediction.get('direction_deg', 0):.1f}"
@@ -153,8 +158,8 @@ def get_all_data():
     speed = ha_api.get_state("input_number.rain_prediction_speed", "--")
     direction = ha_api.get_state("input_number.rain_cell_direction", "N/A")
     bearing = ha_api.get_state("input_number.bearing_to_rain_cell", "N/A")
-    rain_cell_lat = ha_api.get_state("input_number.rain_cell_latitude", user_lat)
-    rain_cell_lng = ha_api.get_state("input_number.rain_cell_longitude", user_lng)
+    rain_cell_lat = ha_api.get_state("input_number.rain_cell_latitude", None)
+    rain_cell_lng = ha_api.get_state("input_number.rain_cell_longitude", None)
     
     return {
         "time_to_rain": time_to_rain,

@@ -660,7 +660,10 @@ class RainPredictor:
             lon_range = self.lon_range
             center_lat = self.latitude
             center_lon = self.longitude
-            logging.info(f"Using configured analysis range: {lat_range:.1f}° x {lon_range:.1f}°")
+            if hasattr(self, 'view_center') and self.view_center and hasattr(self, 'view_size_km') and self.view_size_km:
+                logging.info(f"Using view-based analysis: {view_width_km:.1f}km x {view_height_km:.1f}km")
+            else:
+                logging.info(f"Using configured analysis range: {lat_range:.1f}° x {lon_range:.1f}°")
         
         lat_inc = lat_range / img_height
         lon_inc = lon_range / img_width
@@ -1535,8 +1538,8 @@ class RainPredictor:
                 'speed_kph': round(best_cell['speed'], 1),
                 'direction_deg': round(best_cell['direction'], 1),
                 'bearing_to_cell_deg': round(best_cell['bearing_from_user'], 1),
-                'rain_cell_latitude': round(best_cell['current_lat'], 4),  # Current position for green marker
-                'rain_cell_longitude': round(best_cell['current_lon'], 4),  # Current position for green marker
+                'rain_cell_latitude': round(best_cell['initial_lat'], 4),  # Initial detection position for green marker
+                'rain_cell_longitude': round(best_cell['initial_lon'], 4),  # Initial detection position for green marker
                 'threat_probability': round(best_cell['threat_probability'], 1),
                 'system_avg_direction': round(avg_direction, 1),
                 'system_avg_speed': round(avg_speed, 1)
