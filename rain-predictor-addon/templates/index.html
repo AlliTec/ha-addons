@@ -1490,22 +1490,48 @@
                 const center = map.getCenter();
                 const zoom = map.getZoom();
                 
-                // Calculate viewable area dimensions in kilometers
+                // Calculate actual screen-based viewable area
                 const north = bounds.getNorth();
                 const south = bounds.getSouth();
                 const east = bounds.getEast();
                 const west = bounds.getWest();
                 
-                // Approximate km per degree at this latitude
+                // Get screen dimensions and calculate physical properties
+                const screenWidth = window.screen.width;
+                const screenHeight = window.screen.height;
+                const screenDiagonal = window.screen.width * window.screen.height;
+                
+                // Calculate screen size in inches (approximate)
+                const screenPPI = window.screen.devicePixelRatio * 96; // Approximate PPI
+                const screenWidthInches = screenWidth / screenPPI;
+                const screenHeightInches = screenHeight / screenPPI;
+                
+                // Get browser window dimensions (actual viewing area)
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+                const windowWidthInches = windowWidth / screenPPI;
+                const windowHeightInches = windowHeight / screenPPI;
+                
+                // Calculate geographic area per pixel at current zoom level
                 const lat_km = 111; // km per degree latitude
                 const lon_km = 111 * Math.cos(center.lat * Math.PI / 180); // km per degree longitude
                 
-                const view_width_km = (east - west) * lon_km;
-                const view_height_km = (north - south) * lat_km;
+                const total_geo_width_km = (east - west) * lon_km;
+                const total_geo_height_km = (north - south) * lat_km;
+                
+                // Calculate km per pixel based on current zoom and view
+                const km_per_pixel_x = total_geo_width_km / screenWidth;
+                const km_per_pixel_y = total_geo_height_km / screenHeight;
+                
+                // Calculate actual viewable area based on browser window size
+                const view_width_km = windowWidth * km_per_pixel_x;
+                const view_height_km = windowHeight * km_per_pixel_y;
                 
                 console.log(`Map View Sync: center=(${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}), zoom=${zoom}`);
-                console.log(`Map View Sync: bounds=(${north.toFixed(4)}, ${west.toFixed(4)}) to (${south.toFixed(4)}, ${east.toFixed(4)})`);
-                console.log(`Map View Sync: size=${view_width_km.toFixed(1)}km x ${view_height_km.toFixed(1)}km`);
+                console.log(`Screen Info: ${screenWidth}x${screenHeight}px, ${screenWidthInches.toFixed(1)}x${screenHeightInches.toFixed(1)}in`);
+                console.log(`Window: ${windowWidth}x${windowHeight}px, ${windowWidthInches.toFixed(1)}x${windowHeightInches.toFixed(1)}in`);
+                console.log(`Map bounds: (${north.toFixed(4)}, ${west.toFixed(4)}) to (${south.toFixed(4)}, ${east.toFixed(4)})`);
+                console.log(`Actual viewable area: ${view_width_km.toFixed(1)}km x ${view_height_km.toFixed(1)}km = ${(view_width_km * view_height_km).toFixed(0)}km²`);
                 
                 // Send view bounds to backend for focused analysis
                 fetch('/api/update_view_bounds', {

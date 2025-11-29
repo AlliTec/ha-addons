@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.48 (2025-11-29)
+
+### Screen-Accurate View Area Calculation
+- **Fixed View Area Calculation**: Now calculates actual viewable area based on screen dimensions, resolution, and zoom level
+- **Screen Size Integration**: Accounts for physical screen size (e.g., 49-inch monitors) and browser window dimensions
+- **Pixel-to-KM Conversion**: Accurate conversion based on current zoom level and window size
+- **True Viewing Area**: Analysis area now matches exactly what user sees on screen instead of geographic bounds
+
 ## Version 1.1.47 (2025-11-29)
 
 ### Complete Rain Tracking System Rewrite
