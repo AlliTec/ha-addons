@@ -1303,12 +1303,12 @@ class RainPredictor:
                                        self.entities['bearing'], values['bearing'])
 
             # Update rain cell latitude
-            if self.entities.get('rain_cell_latitude'):
+            if self.entities.get('rain_cell_latitude') and values.get('rain_cell_latitude') is not None:
                 self.ha_api.call_service("input_number/set_value",
                                        self.entities['rain_cell_latitude'], values['rain_cell_latitude'])
 
             # Update rain cell longitude
-            if self.entities.get('rain_cell_longitude'):
+            if self.entities.get('rain_cell_longitude') and values.get('rain_cell_longitude') is not None:
                 self.ha_api.call_service("input_number/set_value",
                                        self.entities['rain_cell_longitude'], values['rain_cell_longitude'])
 

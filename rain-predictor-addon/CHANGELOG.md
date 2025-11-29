@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.51 (2025-11-29)
+
+### Fixed 400 Bad Request Errors
+- **Fixed Entity Update Logic**: Now checks for None values before sending to Home Assistant
+- **Prevents Invalid API Calls**: No longer sends None values to input_number entities
+- **Clean Error Logs**: Eliminates 400 Bad Request errors when no rain detected
+- **Proper Null Handling**: Only updates entities when valid rain cell coordinates exist
+
 ## Version 1.1.50 (2025-11-29)
 
 ### Critical Threat Detection Logic Fix
