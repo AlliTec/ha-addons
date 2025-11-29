@@ -1180,32 +1180,7 @@ class RainPredictor:
             else:
                 logging.debug(f"❌ Track #{cell_id}: no suitable match found")
         
-        # Enhanced new track creation with quality filtering
-        high_quality_cells = []
-        for cell in unmatched_cells:
-            # Quality criteria for new tracks
-            intensity = cell.get('intensity', 0)
-            size = cell.get('size', 0)
-            
-            # Only create tracks for significant rain cells
-            if intensity >= self.threshold * 0.8 and size >= 3:
-                high_quality_cells.append(cell)
-            else:
-                logging.debug(f"Skipping low-quality cell: intensity={intensity:.1f}, size={size}")
-        
-        for cell in high_quality_cells:
-            new_track = RainCell(
-                self.next_cell_id,
-                cell['lat'],
-                cell['lon'],
-                timestamp,
-                cell.get('intensity', 0)
-            )
-            new_track.last_size = cell.get('size', 0)
-            self.tracked_cells[self.next_cell_id] = new_track
-            logging.info(f"➕ Created HIGH-QUALITY track ID {self.next_cell_id} "
-                        f"(intensity: {cell.get('intensity', 0):.1f}, size: {cell.get('size', 0)})")
-            self.next_cell_id += 1
+        # Removed duplicate track creation - movement-based tracking handles all cells properly
         
         # Enhanced cleanup with performance-based retention
         current_time = timestamp

@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.54 (2025-11-29)
+
+### CRITICAL: Removed Duplicate Tracking System
+- **Fixed Conflicting Trackers**: Eliminated second tracking system creating single-position cells
+- **Proper Movement Tracking**: Now only uses movement-based tracking across frames
+- **Accurate Direction Calculation**: Cells now have proper velocity and direction data
+- **Eliminated "Track Too Short" Error**: All tracked cells now have movement history
+
 ## Version 1.1.53 (2025-11-29)
 
 ### Screen-Area Tracking & Green Marker Origin Fix
