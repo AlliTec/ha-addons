@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.50 (2025-11-29)
+
+### Critical Threat Detection Logic Fix
+- **Fixed Direction Logic**: Now correctly identifies rain cells moving AWAY from user as non-threats
+- **Stricter Angle Calculation**: Fixed bearing comparison to properly detect movement toward vs away from user
+- **Tighter Threat Scoring**: Eliminated points for cells moving away from user location
+- **Fixed ENE Marker Issue**: Rain cells moving ESE from ENE position are now correctly identified as moving away
+
 ## Version 1.1.49 (2025-11-29)
 
 ### Critical Rain Cell Position Fix

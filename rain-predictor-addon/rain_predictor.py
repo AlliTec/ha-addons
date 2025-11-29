@@ -909,7 +909,7 @@ class RainPredictor:
         if not movement:
             return False
         
-        # Calculate bearing from cell to user
+        # Calculate bearing from cell to user (direction rain needs to travel to reach user)
         bearing_to_user = self.calculate_bearing(
             cell['lat'], cell['lon'],
             self.latitude, self.longitude
@@ -918,9 +918,9 @@ class RainPredictor:
         # Calculate angle difference between movement direction and bearing to user
         angle_diff = abs((movement['direction'] - bearing_to_user + 180) % 360 - 180)
         
-        # Cell is moving toward user if angle difference is within 135 degrees
-        # (more permissive to catch WNW→ESE patterns that might curve)
-        is_toward = angle_diff <= 135
+        # Cell is moving toward user if angle difference is within 90 degrees (stricter)
+        # This means rain is generally moving in the direction of the user
+        is_toward = angle_diff <= 90
         
         # Log at INFO level for debugging movement detection issues
         logging.info(f"Movement check: dir={movement['direction']:.1f}°, "
@@ -1353,14 +1353,16 @@ class RainPredictor:
             
             # Calculate threat metrics from current position (for accurate ETA)
             distance_km = self.haversine(current_lat, current_lon, self.latitude, self.longitude)
-            bearing_to_location = self.calculate_bearing(current_lat, current_lon, self.latitude, self.longitude)
+            bearing_to_user = self.calculate_bearing(current_lat, current_lon, self.latitude, self.longitude)
             bearing_from_user_to_cell = self.calculate_bearing(self.latitude, self.longitude, current_lat, current_lon)
             
-            if bearing_to_location is None or bearing_from_user_to_cell is None:
+            if bearing_to_user is None or bearing_from_user_to_cell is None:
                 logging.info(f"    ❌ Cannot calculate bearing")
                 continue
             
-            angle_diff = abs((direction_deg - bearing_to_location + 180) % 360 - 180)
+            # Calculate angle difference between rain movement and direction TO user
+            # Small angle difference = rain moving toward user
+            angle_diff = abs((direction_deg - bearing_to_user + 180) % 360 - 180)
             
             # Calculate probability of rain reaching location (0-100%)
             threat_probability = self._calculate_threat_probability(
@@ -1568,16 +1570,12 @@ class RainPredictor:
             probability += 10
         
         # Direction factor (0-25%): must be moving toward location
-        if angle_diff <= 30:
+        # Much stricter - only cells actually moving toward user get points
+        if angle_diff <= 45:
             probability += 25
-        elif angle_diff <= 60:
-            probability += 20
         elif angle_diff <= 90:
-            probability += 15
-        elif angle_diff <= 120:
             probability += 10
-        elif angle_diff <= 150:
-            probability += 5
+        # No points for cells moving away (angle_diff > 90)
         
         # Intensity factor (0-10%): more intense is more threatening
         intensity_ratio = intensity / self.threshold if self.threshold > 0 else 0
