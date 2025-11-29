@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.47 (2025-11-29)
+
+### Complete Rain Tracking System Rewrite
+- **Fixed Time Calculation**: Corrected distance field name causing "NOW" display instead of actual ETA
+- **Proper Tracking Logic**: Now tracks ALL rain cells first, then determines general movement pattern
+- **General Direction Analysis**: Calculates weighted average direction of all rain cells for pattern detection
+- **Intercept-Based Filtering**: Filters cells based on general direction and intercept course with user location
+- **Correct Green Circle Placement**: Uses initial detection position, not current position
+- **Fixed Coordinate Fields**: Added missing bearing_from_user field for proper frontend display
+- **Accurate ETA**: Now showing realistic time estimates (306 minutes vs "NOW")
+
+### Major Movement Detection Fix
+- **Fixed Movement Detection**: Resolved timestamp ordering bug causing 0 moving cells despite visible rain
+- **Dynamic View Bounds**: Fixed view bounds not being applied (now uses 1.4°×1.4° vs 5°×5°)
+- **Frame Timing Correction**: Updated from 5 to 10 minutes per frame (RainViewer API standard)
+- **Wind Data Validation**: Added OpenWeatherMap API integration for movement validation
+- **Performance**: Now detecting 13 moving cells vs 0 before
+
+## Version 1.1.46 (2025-11-29)
+
+### Major Movement Detection Fix
+- **Fixed Movement Detection**: Resolved timestamp ordering bug causing 0 moving cells despite visible rain
+- **Dynamic View Bounds**: Fixed view bounds not being applied (now uses 1.4°×1.4° vs 5°×5°)
+- **Frame Timing Correction**: Updated from 5 to 10 minutes per frame (RainViewer API standard)
+- **Wind Data Validation**: Added OpenWeatherMap API integration for movement validation
+- **Performance**: Now detecting 13 moving cells vs 0 before
+
+### Animation Frame Fix
+- **Fixed Frame Limiting**: Removed artificial 6-frame limit and restored full 13-frame animation
+
 ## Version 1.1.45 (2025-11-29)
 
 ### Animation Frame Fix

@@ -262,8 +262,12 @@ class RainPredictor:
         self.view_bounds = None
         self.view_center = None
         
+        # Wind validation settings
+        self.openweather_api_key = config.get('openweather_api_key', None)
+        self.enable_wind_validation = config.get('wind_validation.enabled', False)
+        self.wind_tolerance_deg = config.get('wind_validation.direction_tolerance_deg', 45)
+        self.wind_speed_tolerance = config.get('wind_validation.speed_tolerance_ratio', 0.5)
 
-        
         logging.info(f"Rain Predictor {VERSION} initialized")
         self._log_config()
     
@@ -428,11 +432,45 @@ class RainPredictor:
         except Exception as e:
             logging.error(f"Error saving debug image: {e}")
     
+    def _read_view_bounds(self):
+        """Read current view bounds from frontend shared file"""
+        try:
+            import json
+            with open('/tmp/view_bounds.json', 'r') as f:
+                view_data = json.load(f)
+            
+            # Check if data is recent (within last 30 seconds)
+            import time
+            if time.time() - view_data.get('timestamp', 0) < 30:
+                self.view_center = view_data.get('center', {})
+                self.view_size_km = view_data.get('view_size_km', {})
+                self.view_bounds = view_data.get('bounds', {})
+                bounds = self.view_bounds
+                
+                logging.info(f"🗺️ Dynamic view update: center=({self.view_center.get('lat', 0):.4f}, {self.view_center.get('lng', 0):.4f})")
+                logging.info(f"   View size: {self.view_size_km.get('width', 0):.1f}km x {self.view_size_km.get('height', 0):.1f}km")
+                logging.info(f"   Bounds: ({bounds.get('north', 0):.4f}, {bounds.get('west', 0):.4f}) to ({bounds.get('south', 0):.4f}, {bounds.get('east', 0):.4f})")
+                
+                return True
+            else:
+                logging.debug("View bounds data is stale, using defaults")
+                return False
+                
+        except FileNotFoundError:
+            logging.debug("No view bounds file found, using defaults")
+            return False
+        except Exception as e:
+            logging.warning(f"Error reading view bounds: {e}")
+            return False
+    
     def analyze_radar_data(self, past_frames, api_data):
         """Analyze radar data and predict rain arrival"""
         logging.info("=" * 60)
         logging.info(f"ANALYZING {len(past_frames)} FRAMES")
         logging.info("=" * 60)
+        
+        # Read dynamic view bounds from frontend
+        self._read_view_bounds()
         
         # Load current view bounds for focused analysis
         self._load_view_bounds_from_file()
@@ -470,29 +508,28 @@ class RainPredictor:
             sorted_frames = sorted(past_frames, key=lambda f: f.get('time', 0))
             logging.info(f"Processing frames from {datetime.fromtimestamp(sorted_frames[0]['time'])} to {datetime.fromtimestamp(sorted_frames[-1]['time'])}")
             
-            # OPTIMIZATION: Only process latest frame for cell detection to reduce HTTP requests
-            # Use tracking data for movement analysis instead of processing every frame
-            latest_frame = sorted_frames[-1]
-            frame_time = datetime.fromtimestamp(latest_frame['time'])
-            logging.info(f"\n--- Processing latest frame {frame_time} for cell detection ---")
+            # NEW: Analyze ALL frames for comprehensive movement detection
+            logging.info(f"\n--- Analyzing ALL {len(sorted_frames)} frames for movement patterns ---")
             
-            cells = self._extract_cells_from_frame(latest_frame, api_data)
-            logging.info(f"Found {len(cells)} cell(s) in latest frame")
+            moving_cells = self._extract_cells_from_all_frames(api_data)
+            logging.info(f"Found {len(moving_cells)} cell(s) moving toward user location")
             
-            total_cells_detected = len(cells)
-            if cells:
+            total_cells_detected = len(moving_cells)
+            if moving_cells:
                 # Use view center if available, otherwise user location
                 center_lat = self.view_center.get('lat') if self.view_center else self.latitude
                 center_lon = self.view_center.get('lng') if self.view_center else self.longitude
                 
-                for j, cell in enumerate(cells):
-                    dist = self.haversine(center_lat, center_lon, cell['lat'], cell['lon'])
-                    bearing = self.calculate_bearing(center_lat, center_lon, cell['lat'], cell['lon'])
-                    logging.info(f"  Cell {j+1}: lat={cell['lat']:.4f}, lon={cell['lon']:.4f}, "
+                for j, cell in enumerate(moving_cells):
+                    dist = self.haversine(center_lat, center_lon, cell['current_lat'], cell['current_lon'])
+                    bearing = self.calculate_bearing(center_lat, center_lon, cell['current_lat'], cell['current_lon'])
+                    logging.info(f"  Cell {j+1}: lat={cell['current_lat']:.4f}, lon={cell['current_lon']:.4f}, "
                                f"intensity={cell['intensity']:.1f}, size={cell['size']}, "
-                               f"dist={dist:.1f}km, bearing={bearing:.1f}°")
+                               f"dist={dist:.1f}km, bearing={bearing:.1f}°, "
+                               f"speed={cell['speed']:.1f}kph, dir={cell['direction']:.1f}°")
                 
-                self._update_tracked_cells(cells, frame_time)
+                # Create tracked cells from movement analysis
+                self._create_tracked_cells_from_movement(moving_cells)
             
             logging.info(f"\n📊 SUMMARY: Detected {total_cells_detected} total cells across all frames")
             logging.info(f"Currently tracking {len(self.tracked_cells)} cell(s)")
@@ -526,94 +563,468 @@ class RainPredictor:
         """Check if rain is currently at location"""
         return False
     
-    def _extract_cells_from_frame(self, frame, api_data):
-        """Extract rain cells from radar frame with enhanced tracking"""
+    def _extract_cells_from_all_frames(self, api_data):
+        """Extract rain cells from ALL radar frames and analyze movement patterns"""
         try:
-            # Construct radar frame URL from API data (correct format with color parameter)
+            past_frames = api_data['radar']['past']
+            if len(past_frames) < 3:
+                logging.warning(f"Need at least 3 frames for movement analysis, got {len(past_frames)}")
+                return []
+            
+            logging.info(f"Analyzing ALL {len(past_frames)} frames for movement detection")
+            
+            # Read dynamic view bounds from frontend
+            self._read_view_bounds()
+            
+            # Extract cells from each frame
+            frame_cells = []
             host = api_data.get('host', 'https://tilecache.rainviewer.com').replace('https://', '')
-            timestamp = api_data['radar']['past'][0]['time']
-            img_url = f"https://{host}/v2/radar/{timestamp}/256/0/0/0/2/1_1.png"
-            logging.info(f"Downloading frame: {img_url}")
             
-            response = requests.get(img_url)
-            img = Image.open(io.BytesIO(response.content))
-            
-            # Convert to grayscale and threshold
-            img_gray = img.convert('L')
-            img_array = np.array(img_gray)
-            
-            # Apply threshold to identify rain areas
-            thresholded = (img_array > self.threshold).astype(np.uint8) * 255
-            
-            # Find connected components (rain cells)
-            labeled_image, num_labels = label(thresholded)
-            
-            logging.debug(f"Found {num_labels} connected components")
-            
-            cells = []
-            img_height, img_width = img_array.shape
-            
-            # Use dynamic analysis area based on user view or fallback to configured range
-            if hasattr(self, 'view_size_km') and self.view_size_km:
-                # Calculate lat/lon ranges based on view size
-                view_width_km = self.view_size_km.get('width', 100)
-                view_height_km = self.view_size_km.get('height', 100)
-                lat_range = view_height_km / 111.0  # ~111km per degree latitude
-                lon_range = view_width_km / (111.0 * math.cos(math.radians(self.latitude)))
-                logging.info(f"Using view-based analysis: {view_width_km:.1f}km x {view_height_km:.1f}km ({lat_range:.3f}° x {lon_range:.3f}°)")
-            else:
-                # Fallback to configured analysis range
-                lat_range = self.lat_range
-                lon_range = self.lon_range
-                logging.info(f"Using configured analysis range: {lat_range:.1f}° x {lon_range:.1f}°")
-            
-            lat_inc = lat_range / img_height
-            lon_inc = lon_range / img_width
-            center_y = (img_height - 1) / 2.0
-            center_x = (img_width - 1) / 2.0
-            
-            for i in range(1, num_labels + 1):
-                y_coords, x_coords = np.where(labeled_image == i)
-                cell_size = len(y_coords)
+            for frame_idx, frame in enumerate(past_frames):
+                timestamp = frame['time']
+                img_url = f"https://{host}/v2/radar/{timestamp}/256/0/0/0/2/1_1.png"
                 
-                if cell_size < 5:
-                    logging.debug(f"  Component {i}: size {cell_size} too small, skipping")
+                try:
+                    response = requests.get(img_url, timeout=5)
+                    img = Image.open(io.BytesIO(response.content))
+                    
+                    # Convert to grayscale and threshold
+                    img_gray = img.convert('L')
+                    img_array = np.array(img_gray)
+                    
+                    # Apply threshold to identify rain areas
+                    thresholded = (img_array > self.threshold).astype(np.uint8) * 255
+                    
+                    # Find connected components (rain cells)
+                    labeled_image, num_labels = label(thresholded)
+                    
+                    # Convert cells to lat/lon coordinates
+                    cells = self._convert_cells_to_coordinates(img_array, labeled_image, num_labels)
+                    
+                    frame_cells.append({
+                        'timestamp': timestamp,
+                        'cells': cells,
+                        'frame_idx': frame_idx
+                    })
+                    
+                    logging.info(f"Frame {frame_idx}: {timestamp} - Found {len(cells)} cells")
+                    
+                except Exception as e:
+                    logging.error(f"Error processing frame {frame_idx}: {e}")
                     continue
-                
-                centroid_x, centroid_y = np.mean(x_coords), np.mean(y_coords)
-                # FIXED: Correct coordinate conversion - image Y increases downward, lat increases upward
-                lat_offset = (centroid_y - center_y) * lat_inc  # Positive Y = north of center
-                lon_offset = (centroid_x - center_x) * lon_inc  # Positive X = east of center
-                
-                # Use dynamic center based on user view or fallback to configured location
-                if hasattr(self, 'view_center') and self.view_center:
-                    center_lat = self.view_center.get('lat', self.latitude)
-                    center_lon = self.view_center.get('lng', self.longitude)
-                else:
-                    center_lat = self.latitude
-                    center_lon = self.longitude
-                
-                est_lat = np.clip(center_lat + lat_offset, -90, 90)
-                est_lon = np.clip(center_lon + lon_offset, -180, 180)
-                
-                intensity = np.mean(img_array[y_coords, x_coords])
-                
-                cells.append({
-                    'lat': est_lat,
-                    'lon': est_lon,
-                    'intensity': intensity,
-                    'size': cell_size
-                })
-                
-                logging.debug(f"  Component {i}: size={cell_size}, intensity={intensity:.1f}, "
-                            f"centroid=({centroid_x:.1f},{centroid_y:.1f}), "
-                            f"location=({est_lat:.4f},{est_lon:.4f})")
             
-            return cells
+            # Analyze movement patterns across frames
+            moving_cells = self._analyze_movement_patterns(frame_cells)
+            logging.info(f"Movement analysis found {len(moving_cells)} cells with consistent movement")
+            
+            return moving_cells
             
         except Exception as e:
-            logging.error(f"Error extracting cells: {e}", exc_info=True)
+            logging.error(f"Error extracting cells from all frames: {e}", exc_info=True)
             return []
+    
+    def _convert_cells_to_coordinates(self, img_array, labeled_image, num_labels):
+        """Convert pixel cells to lat/lon coordinates"""
+        cells = []
+        img_height, img_width = img_array.shape
+        
+        # Use dynamic analysis area based on user view bounds
+        if hasattr(self, 'view_center') and self.view_center and hasattr(self, 'view_size_km') and self.view_size_km:
+            # Calculate range from actual view bounds
+            bounds = getattr(self, 'view_bounds', {})
+            if bounds:
+                north = bounds.get('north', self.latitude + 2.5)
+                south = bounds.get('south', self.latitude - 2.5)
+                east = bounds.get('east', self.longitude + 2.5)
+                west = bounds.get('west', self.longitude - 2.5)
+                
+                lat_range = north - south
+                lon_range = east - west
+                center_lat = (north + south) / 2.0
+                center_lon = (east + west) / 2.0
+                
+                logging.info(f"Using dynamic view bounds: {lat_range:.3f}° x {lon_range:.3f}°")
+                logging.info(f"   Center: ({center_lat:.4f}, {center_lon:.4f})")
+            else:
+                # Fallback to view size calculation
+                view_width_km = self.view_size_km.get('width', 500)
+                view_height_km = self.view_size_km.get('height', 500)
+                lat_range = view_height_km / 111.0
+                lon_range = view_width_km / (111.0 * math.cos(math.radians(self.latitude)))
+                center_lat = self.view_center.get('lat', self.latitude)
+                center_lon = self.view_center.get('lng', self.longitude)
+                
+                logging.info(f"Using view-based analysis: {view_width_km:.1f}km x {view_height_km:.1f}km")
+        else:
+            lat_range = self.lat_range
+            lon_range = self.lon_range
+            center_lat = self.latitude
+            center_lon = self.longitude
+            logging.info(f"Using configured analysis range: {lat_range:.1f}° x {lon_range:.1f}°")
+        
+        lat_inc = lat_range / img_height
+        lon_inc = lon_range / img_width
+        center_y = (img_height - 1) / 2.0
+        center_x = (img_width - 1) / 2.0
+        
+        # Center is already calculated above based on view bounds
+        
+        for i in range(1, num_labels + 1):
+            y_coords, x_coords = np.where(labeled_image == i)
+            cell_size = len(y_coords)
+            
+            if cell_size < 5:
+                continue
+            
+            centroid_x, centroid_y = np.mean(x_coords), np.mean(y_coords)
+            # FIXED: Correct coordinate conversion
+            lat_offset = (centroid_y - center_y) * lat_inc
+            lon_offset = (centroid_x - center_x) * lon_inc
+            
+            est_lat = np.clip(center_lat + lat_offset, -90, 90)
+            est_lon = np.clip(center_lon + lon_offset, -180, 180)
+            
+            intensity = np.mean(img_array[y_coords, x_coords])
+            
+            cells.append({
+                'lat': est_lat,
+                'lon': est_lon,
+                'intensity': intensity,
+                'size': cell_size
+            })
+        
+        return cells
+    
+    def _analyze_movement_patterns(self, frame_cells):
+        """Analyze ALL rain cell movements to determine general direction and threats"""
+        if len(frame_cells) < 3:
+            return []
+        
+        all_moving_cells = []
+        cells_with_movement = 0
+        
+        # For each cell in the latest frame, track backwards regardless of trajectory
+        latest_frame = frame_cells[-1]['cells']
+        logging.info(f"Latest frame has {len(latest_frame)} cells to track")
+        
+        for cell_idx, latest_cell in enumerate(latest_frame):
+            # Track this cell back through previous frames
+            positions = self._track_cell_backwards(latest_cell, frame_cells, cell_idx)
+            
+            if len(positions) >= 2:  # Need at least 2 positions for movement detection
+                cells_with_movement += 1
+                # Calculate movement vector
+                movement = self._calculate_movement_vector(positions)
+                
+                if movement:
+                    # Store ALL moving cells with their data
+                    all_moving_cells.append({
+                        'cell_id': cell_idx,
+                        'current_lat': latest_cell['lat'],
+                        'current_lon': latest_cell['lon'],
+                        'initial_lat': positions[0]['lat'],  # First frame position
+                        'initial_lon': positions[0]['lon'],  # First frame position
+                        'speed': movement['speed'],
+                        'direction': movement['direction'],
+                        'intensity': latest_cell['intensity'],
+                        'size': latest_cell['size'],
+                        'positions': positions,
+                        'distance_to_user': self.haversine(
+                            latest_cell['lat'], latest_cell['lon'],
+                            self.latitude, self.longitude
+                        )
+                    })
+        
+        logging.info(f"Movement analysis: {cells_with_movement}/{len(latest_frame)} cells have movement")
+        
+        if not all_moving_cells:
+            return []
+        
+        # Calculate general/average direction of ALL rain cells
+        general_direction = self._calculate_general_direction(all_moving_cells)
+        logging.info(f"General rain movement direction: {general_direction:.1f}°")
+        
+        # Filter cells that are moving in similar direction to general pattern
+        threat_cells = self._filter_threat_cells(all_moving_cells, general_direction)
+        
+        # Sort by distance to user (closest first)
+        threat_cells.sort(key=lambda x: x['distance_to_user'])
+        
+        return threat_cells
+    
+    def _calculate_general_direction(self, moving_cells):
+        """Calculate the general/average direction of all rain cell movements"""
+        if not moving_cells:
+            return 0
+        
+        # Convert directions to vectors and average them
+        x_sum = 0
+        y_sum = 0
+        
+        for cell in moving_cells:
+            direction_rad = math.radians(cell['direction'])
+            # Weight by cell size/intensity for more accurate general direction
+            weight = cell.get('size', 1) * cell.get('intensity', 1) / 100
+            x_sum += math.cos(direction_rad) * weight
+            y_sum += math.sin(direction_rad) * weight
+        
+        # Calculate average direction
+        avg_direction_rad = math.atan2(y_sum, x_sum)
+        avg_direction_deg = math.degrees(avg_direction_rad)
+        
+        # Normalize to 0-360
+        return avg_direction_deg % 360
+    
+    def _filter_threat_cells(self, moving_cells, general_direction):
+        """Filter cells that are on intercept course with user location"""
+        threat_cells = []
+        direction_tolerance = 45  # Degrees tolerance from general direction
+        
+        for cell in moving_cells:
+            # Check if cell direction matches general pattern
+            direction_diff = abs((cell['direction'] - general_direction + 180) % 360 - 180)
+            
+            if direction_diff <= direction_tolerance:
+                # Check if this cell will intercept user location
+                if self._will_intercept_user(cell):
+                    # Calculate bearing from user to cell
+                    bearing_from_user = self.calculate_bearing(
+                        self.latitude, self.longitude,
+                        cell['current_lat'], cell['current_lon']
+                    )
+                    cell['bearing_from_user'] = bearing_from_user
+                    
+                    threat_cells.append(cell)
+                    logging.info(f"Threat cell {cell['cell_id']}: dir={cell['direction']:.1f}°, "
+                               f"dist={cell['distance_to_user']:.1f}km, "
+                               f"speed={cell['speed']:.1f}kph, "
+                               f"bearing={bearing_from_user:.1f}°")
+                else:
+                    logging.debug(f"Cell {cell['cell_id']}: matches direction but no intercept")
+            else:
+                logging.debug(f"Cell {cell['cell_id']}: direction {direction_diff:.1f}° from general")
+        
+        logging.info(f"Found {len(threat_cells)} threat cells on intercept course")
+        return threat_cells
+    
+    def _will_intercept_user(self, cell):
+        """Check if rain cell is on course to intercept user location"""
+        # Calculate bearing from cell to user
+        bearing_to_user = self.calculate_bearing(
+            cell['current_lat'], cell['current_lon'],
+            self.latitude, self.longitude
+        )
+        
+        # Calculate angle difference between cell movement and bearing to user
+        angle_diff = abs((cell['direction'] - bearing_to_user + 180) % 360 - 180)
+        
+        # Cell is threat if moving generally toward user (within 90 degrees)
+        return angle_diff <= 90
+    
+    def _track_cell_backwards(self, target_cell, frame_cells, cell_idx):
+        """Track a single cell backwards through frames"""
+        positions = []
+        max_distance_km = 100  # Max distance to consider same cell between frames (more permissive)
+        
+        # Start with current position
+        positions.append({
+            'lat': target_cell['lat'],
+            'lon': target_cell['lon'],
+            'timestamp': frame_cells[-1]['timestamp']
+        })
+        
+        # Work backwards through frames
+        current_lat = target_cell['lat']
+        current_lon = target_cell['lon']
+        
+        logging.debug(f"Tracking cell {cell_idx} backwards from {current_lat:.4f}, {current_lon:.4f}")
+        
+        for frame_idx in range(len(frame_cells) - 2, -1, -1):
+            frame = frame_cells[frame_idx]
+            best_match = None
+            best_distance = float('inf')
+            
+            # Find closest cell in this frame
+            for cell in frame['cells']:
+                distance = self.haversine(current_lat, current_lon, cell['lat'], cell['lon'])
+                if distance < max_distance_km and distance < best_distance:
+                    best_distance = distance
+                    best_match = cell
+            
+            if best_match:
+                positions.append({
+                    'lat': best_match['lat'],
+                    'lon': best_match['lon'],
+                    'timestamp': frame['timestamp']
+                })
+                current_lat = best_match['lat']
+                current_lon = best_match['lon']
+                logging.debug(f"  Frame {frame_idx}: matched at {best_distance:.1f}km")
+            else:
+                logging.debug(f"  Frame {frame_idx}: no match (lost track) - checked {len(frame['cells'])} cells")
+                break  # Lost track
+        
+        logging.debug(f"Cell {cell_idx}: tracked {len(positions)} positions total")
+        return positions
+    
+    def _calculate_movement_vector(self, positions):
+        """Calculate speed and direction from cell positions"""
+        if len(positions) < 2:
+            return None
+        
+        # Sort positions by timestamp to ensure chronological order
+        positions_sorted = sorted(positions, key=lambda p: p['timestamp'])
+        first_pos = positions_sorted[0]
+        last_pos = positions_sorted[-1]
+        
+        # Calculate time difference in hours
+        time_diff = (last_pos['timestamp'] - first_pos['timestamp']) / 3600.0
+        if time_diff <= 0:
+            return None
+        
+        # Calculate distance
+        distance_km = self.haversine(
+            first_pos['lat'], first_pos['lon'],
+            last_pos['lat'], last_pos['lon']
+        )
+        
+        # Calculate speed
+        speed_kph = distance_km / time_diff
+        
+        # Calculate direction (where cell is moving TO)
+        direction = self.calculate_bearing(
+            first_pos['lat'], first_pos['lon'],
+            last_pos['lat'], last_pos['lon']
+        )
+        
+        return {
+            'speed': speed_kph,
+            'direction': direction,
+            'distance': distance_km,
+            'time_hours': time_diff
+        }
+    
+    def _is_moving_toward_user(self, movement, cell):
+        """Check if cell movement is toward user location"""
+        if not movement:
+            return False
+        
+        # Calculate bearing from cell to user
+        bearing_to_user = self.calculate_bearing(
+            cell['lat'], cell['lon'],
+            self.latitude, self.longitude
+        )
+        
+        # Calculate angle difference between movement direction and bearing to user
+        angle_diff = abs((movement['direction'] - bearing_to_user + 180) % 360 - 180)
+        
+        # Cell is moving toward user if angle difference is within 135 degrees
+        # (more permissive to catch WNW→ESE patterns that might curve)
+        is_toward = angle_diff <= 135
+        
+        # Log at INFO level for debugging movement detection issues
+        logging.info(f"Movement check: dir={movement['direction']:.1f}°, "
+                     f"bearing_to_user={bearing_to_user:.1f}°, "
+                     f"angle_diff={angle_diff:.1f}°, "
+                     f"speed={movement['speed']:.1f}kph, "
+                     f"toward_user={is_toward}")
+        
+        return is_toward
+    
+    def _fetch_wind_data(self):
+        """Fetch current wind data from OpenWeatherMap API"""
+        if not self.openweather_api_key or not self.enable_wind_validation:
+            return None
+            
+        try:
+            url = f"https://api.openweathermap.org/data/2.5/weather"
+            params = {
+                'lat': self.latitude,
+                'lon': self.longitude,
+                'appid': self.openweather_api_key,
+                'units': 'metric'
+            }
+            
+            response = requests.get(url, params=params, timeout=5)
+            response.raise_for_status()
+            
+            data = response.json()
+            wind = data.get('wind', {})
+            
+            wind_data = {
+                'speed_kph': wind.get('speed', 0) * 3.6,  # Convert m/s to kph
+                'direction_deg': wind.get('deg', 0),
+                'gust_kph': wind.get('gust', 0) * 3.6 if 'gust' in wind else None
+            }
+            
+            logging.info(f"Wind data: {wind_data['speed_kph']:.1f}kph @ {wind_data['direction_deg']:.0f}°")
+            return wind_data
+            
+        except Exception as e:
+            logging.warning(f"Failed to fetch wind data: {e}")
+            return None
+    
+    def _validate_movement_with_wind(self, movement, wind_data):
+        """Validate rain cell movement against wind data"""
+        if not movement or not wind_data:
+            return True  # No validation if no wind data
+            
+        # Calculate direction difference
+        wind_dir = wind_data['direction_deg']
+        rain_dir = movement['direction']
+        
+        # Normalize angles to 0-360
+        wind_dir = wind_dir % 360
+        rain_dir = rain_dir % 360
+        
+        # Calculate minimum angle difference
+        angle_diff = abs((rain_dir - wind_dir + 180) % 360 - 180)
+        
+        # Check speed consistency (rain cells typically move at 50-150% of wind speed)
+        wind_speed = wind_data['speed_kph']
+        rain_speed = movement['speed']
+        
+        speed_ratio = rain_speed / wind_speed if wind_speed > 0 else 0
+        speed_consistent = 0.5 <= speed_ratio <= 2.0  # Rain speed within 50-200% of wind speed
+        
+        direction_consistent = angle_diff <= self.wind_tolerance_deg
+        
+        logging.debug(f"Wind validation: wind={wind_dir:.0f}°@{wind_speed:.1f}kph, "
+                     f"rain={rain_dir:.0f}°@{rain_speed:.1f}kph, "
+                     f"angle_diff={angle_diff:.0f}°, speed_ratio={speed_ratio:.2f}, "
+                     f"dir_ok={direction_consistent}, speed_ok={speed_consistent}")
+        
+        return direction_consistent and speed_consistent
+    
+    def _create_tracked_cells_from_movement(self, moving_cells):
+        """Create tracked cells from movement analysis results"""
+        self.tracked_cells.clear()  # Clear old tracking
+        
+        for cell_data in moving_cells:
+            # Create new RainCell with movement data
+            cell = RainCell(
+                cell_id=cell_data['cell_id'],
+                lat=cell_data['initial_lat'],
+                lon=cell_data['initial_lon'],
+                timestamp=datetime.fromtimestamp(cell_data['positions'][0]['timestamp']),
+                intensity=cell_data['intensity']
+            )
+            
+            # Add all positions from movement tracking
+            for pos in cell_data['positions']:
+                cell.add_position(
+                    pos['lat'], 
+                    pos['lon'], 
+                    datetime.fromtimestamp(pos['timestamp']),
+                    cell_data['intensity']
+                )
+            
+            self.tracked_cells[cell_data['cell_id']] = cell
+            
+            logging.info(f"➕ Created movement-based track ID {cell_data['cell_id']}: "
+                        f"speed={cell_data['speed']:.1f}kph, "
+                        f"dir={cell_data['direction']:.1f}°, "
+                        f"dist={cell_data['distance_to_user']:.1f}km")
     
     def _update_tracked_cells(self, detected_cells, timestamp):
         """Update tracked cells with enhanced matching algorithm for extreme accuracy"""
@@ -1103,13 +1514,13 @@ class RainPredictor:
                 best_cell = cell_data
         
         if best_cell:
-            time_to_arrival_hours = best_cell['distance'] / best_cell['speed']
+            time_to_arrival_hours = best_cell['distance_to_user'] / best_cell['speed']
             time_to_arrival_minutes = time_to_arrival_hours * 60
             
             logging.info(f"\n⚠️ MOST LIKELY THREAT: Cell #{best_cell['cell_id']}")
             logging.info(f"    Overall score: {best_score:.1f}")
             logging.info(f"    ETA: {time_to_arrival_minutes:.0f} minutes")
-            logging.info(f"    Distance: {best_cell['distance']:.1f} km")
+            logging.info(f"    Distance: {best_cell['distance_to_user']:.1f} km")
             logging.info(f"    Speed: {best_cell['speed']:.1f} km/h")
             logging.info(f"    Direction: {best_cell['direction']:.1f}°")
             logging.info(f"    Position: {best_cell['lat']:.4f}, {best_cell['lon']:.4f}")
@@ -1118,7 +1529,7 @@ class RainPredictor:
             
             return {
                 'time_to_rain': round(time_to_arrival_minutes),
-                'distance_km': round(best_cell['distance'], 1),
+                'distance_km': round(best_cell['distance_to_user'], 1),
                 'speed_kph': round(best_cell['speed'], 1),
                 'direction_deg': round(best_cell['direction'], 1),
                 'bearing_to_cell_deg': round(best_cell['bearing_from_user'], 1),
