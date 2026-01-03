@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.55 (2026-01-04)
+
+### Maintenance
+- Incremented version to 1.1.55 following performance and stability updates.
+
 ## Version 1.1.54 (2026-01-04)
 
 ### Performance & Stability Overhaul
