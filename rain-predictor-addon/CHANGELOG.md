@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.54 (2026-01-04)
+
+### Performance & Stability Overhaul
+- **Instant Page Load**: Implemented analysis caching to eliminate slow Web UI loading.
+- **Rate Limit Protection**: Added staggered tile loading and 429 error handling in the frontend.
+- **Backend Optimization**: Background predictor now saves state to a JSON cache for immediate UI access.
+- **Version Alignment**: Synchronized all internal version strings to 1.1.54.
+
 ## Version 1.1.54 (2025-11-29)
 
 ### CRITICAL: Removed Duplicate Tracking System

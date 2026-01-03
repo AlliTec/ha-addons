@@ -82,94 +82,54 @@ class HomeAssistantAPI:
 ha_api = HomeAssistantAPI()
 
 def get_all_data():
-    """Get all rain prediction data for the frontend"""
-    # Get user location
-    user_lat, user_lng = read_options_latlon()
+    """Get all rain prediction data for the frontend from cache"""
+    cache_path = "/home/sog/ai-projects/ha-addons/rain-predictor-addon/latest_analysis.json"
     
-    # Use main rain predictor's sophisticated threat analysis
     try:
-        # Create rain predictor instance
-        from rain_predictor import RainPredictor, AddonConfig, HomeAssistantAPI
-        config = AddonConfig()
-        ha_api_instance = HomeAssistantAPI()
-        predictor = RainPredictor(config, ha_api_instance)
+        if os.path.exists(cache_path):
+            with open(cache_path, 'r') as f:
+                data = json.load(f)
+                # Check if cache is fresh (within 10 minutes)
+                if time.time() - data.get('timestamp', 0) < 600:
+                    logging.info("Returning data from cache")
+                    return data.get('ui_data', {})
         
-        # Run's same analysis as main predictor
-        import requests
-        response = requests.get(predictor.api_url, timeout=10)
-        response.raise_for_status()
-        api_data = response.json()
-        
-        if api_data and predictor._validate_api_response(api_data):
-            past_frames = api_data['radar'].get('past', [])
-            
-            if len(past_frames) >= 2:
-                # Use the main predictor's analyze_radar_data method
-                prediction = predictor.analyze_radar_data(past_frames, api_data)
-                
-                if prediction.get('time_to_rain') is not None:
-                    # Extract the sophisticated threat analysis results
-                    rain_cell_lat = prediction.get('rain_cell_latitude')
-                    rain_cell_lng = prediction.get('rain_cell_longitude')
-                    
-                    # Only use coordinates if they exist (no fallback to user location)
-                    if rain_cell_lat is None or rain_cell_lng is None:
-                        rain_cell_lat = None
-                        rain_cell_lng = None
-                    distance = f"{prediction.get('distance_km', 0):.1f}"
-                    speed = f"{prediction.get('speed_kph', 0):.1f}"
-                    direction = f"{prediction.get('direction_deg', 0):.1f}"
-                    bearing = f"{prediction.get('bearing_to_cell_deg', 0):.1f}"
-                    time_to_rain = str(int(prediction.get('time_to_rain', 0)))
-                    
-                    # Also return detected cells for visualization
-                    if past_frames:
-                        cells = predictor._extract_cells_from_frame(past_frames[0], api_data)
-                    else:
-                        cells = []
-                    
-                    logging.info(f"Threat analysis: rain cell at {rain_cell_lat:.4f}, {rain_cell_lng:.4f}")
-                    logging.info(f"Distance: {distance}km, Speed: {speed}km/h, Direction: {direction}°")
-                    logging.info(f"Time to rain: {time_to_rain}min, Bearing: {bearing}°")
-                    
-                    return {
-                        "time_to_rain": time_to_rain,
-                        "distance": distance,
-                        "speed": speed,
-                        "direction": direction,
-                        "bearing": bearing,
-                        "rain_cell_latitude": rain_cell_lat,
-                        "rain_cell_longitude": rain_cell_lng,
-                        "cells": [{"lat": float(c['lat']), "lng": float(c['lon']), "intensity": float(c['intensity'])} for c in cells[:10]]
-                    }
-                else:
-                    logging.warning("No threat prediction available from main analyzer")
-            else:
-                logging.warning(f"Insufficient frames for threat analysis: {len(past_frames)}")
-        else:
-            logging.warning("Invalid API response for threat analysis")
-            
+        logging.warning("Cache missing or stale, returning defaults")
     except Exception as e:
-        logging.error(f"Error in threat analysis: {e}", exc_info=True)
-    
-    # Fallback to Home Assistant entities or defaults
-    time_to_rain = ha_api.get_state("input_number.rain_arrival_minutes", "--")
-    distance = ha_api.get_state("input_number.rain_prediction_distance", "--")
-    speed = ha_api.get_state("input_number.rain_prediction_speed", "--")
-    direction = ha_api.get_state("input_number.rain_cell_direction", "N/A")
-    bearing = ha_api.get_state("input_number.bearing_to_rain_cell", "N/A")
-    rain_cell_lat = ha_api.get_state("input_number.rain_cell_latitude", None)
-    rain_cell_lng = ha_api.get_state("input_number.rain_cell_longitude", None)
-    
-    return {
-        "time_to_rain": time_to_rain,
-        "distance": distance,
-        "speed": speed,
-        "direction": direction,
-        "bearing": bearing,
-        "rain_cell_latitude": rain_cell_lat,
-        "rain_cell_longitude": rain_cell_lng,
-    }
+        logging.error(f"Error reading cache: {e}")
+
+    # Fallback to current state from HA or defaults
+    try:
+        time_to_rain = ha_api.get_state("input_number.rain_arrival_minutes", "--")
+        distance = ha_api.get_state("input_number.rain_prediction_distance", "--")
+        speed = ha_api.get_state("input_number.rain_prediction_speed", "--")
+        direction = ha_api.get_state("input_number.rain_cell_direction", "N/A")
+        bearing = ha_api.get_state("input_number.bearing_to_rain_cell", "N/A")
+        rain_cell_lat = ha_api.get_state("input_number.rain_cell_latitude", None)
+        rain_cell_lng = ha_api.get_state("input_number.rain_cell_longitude", None)
+        
+        return {
+            "time_to_rain": str(time_to_rain),
+            "distance": str(distance),
+            "speed": str(speed),
+            "direction": str(direction),
+            "bearing": str(bearing),
+            "rain_cell_latitude": rain_cell_lat,
+            "rain_cell_longitude": rain_cell_lng,
+            "cells": []
+        }
+    except Exception as e:
+        logging.error(f"Fallback failed: {e}")
+        return {
+            "time_to_rain": "--",
+            "distance": "--",
+            "speed": "--",
+            "direction": "N/A",
+            "bearing": "N/A",
+            "rain_cell_latitude": None,
+            "rain_cell_longitude": None,
+            "cells": []
+        }
 # ========== Options.json persistence ==========
 def read_options_latlon(default_lat=-24.98, default_lng=151.86) -> Tuple[float, float]:
     try:

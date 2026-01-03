@@ -18,7 +18,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.37"
+VERSION = "1.1.54"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -212,6 +212,8 @@ class RainPredictor:
         self.running = False
         self.tracked_cells = {}
         self.next_cell_id = 1
+        self.latest_analysis_path = "/home/sog/ai-projects/ha-addons/rain-predictor-addon/latest_analysis.json"
+        self.last_detected_cells = []
         # Extract configuration values
         self.latitude = config.get('latitude', -24.98)
         self.longitude = config.get('longitude', 151.86)
@@ -563,6 +565,33 @@ class RainPredictor:
         """Check if rain is currently at location"""
         return False
     
+
+    def _extract_cells_from_frame(self, frame, api_data):
+        """Extract rain cells from a single radar frame"""
+        try:
+            timestamp = frame['time']
+            host = api_data.get('host', 'https://tilecache.rainviewer.com').replace('https://', '')
+            img_url = f"https://{host}/v2/radar/{timestamp}/256/0/0/0/2/1_1.png"
+            
+            response = requests.get(img_url, timeout=5)
+            img = Image.open(io.BytesIO(response.content))
+            
+            # Convert to grayscale and threshold
+            img_gray = img.convert('L')
+            img_array = np.array(img_gray)
+            
+            # Apply threshold to identify rain areas
+            thresholded = (img_array > self.threshold).astype(np.uint8) * 255
+            
+            # Find connected components (rain cells)
+            labeled_image, num_labels = label(thresholded)
+            
+            # Convert cells to lat/lon coordinates
+            return self._convert_cells_to_coordinates(img_array, labeled_image, num_labels)
+        except Exception as e:
+            logging.error(f"Error extracting cells from frame: {e}")
+            return []
+
     def _extract_cells_from_all_frames(self, api_data):
         """Extract rain cells from ALL radar frames and analyze movement patterns"""
         try:
@@ -581,38 +610,23 @@ class RainPredictor:
             host = api_data.get('host', 'https://tilecache.rainviewer.com').replace('https://', '')
             
             for frame_idx, frame in enumerate(past_frames):
-                timestamp = frame['time']
-                img_url = f"https://{host}/v2/radar/{timestamp}/256/0/0/0/2/1_1.png"
-                
                 try:
-                    response = requests.get(img_url, timeout=5)
-                    img = Image.open(io.BytesIO(response.content))
+                    cells = self._extract_cells_from_frame(frame, api_data)
                     
-                    # Convert to grayscale and threshold
-                    img_gray = img.convert('L')
-                    img_array = np.array(img_gray)
-                    
-                    # Apply threshold to identify rain areas
-                    thresholded = (img_array > self.threshold).astype(np.uint8) * 255
-                    
-                    # Find connected components (rain cells)
-                    labeled_image, num_labels = label(thresholded)
-                    
-                    # Convert cells to lat/lon coordinates
-                    cells = self._convert_cells_to_coordinates(img_array, labeled_image, num_labels)
-                    
+                    if frame_idx == len(past_frames) - 1:
+                        self.last_detected_cells = cells
+    
                     frame_cells.append({
-                        'timestamp': timestamp,
+                        'timestamp': frame['time'],
                         'cells': cells,
                         'frame_idx': frame_idx
                     })
                     
-                    logging.info(f"Frame {frame_idx}: {timestamp} - Found {len(cells)} cells")
+                    logging.info(f"Frame {frame_idx}: {frame['time']} - Found {len(cells)} cells")
                     
                 except Exception as e:
                     logging.error(f"Error processing frame {frame_idx}: {e}")
                     continue
-            
             # Analyze movement patterns across frames
             moving_cells = self._analyze_movement_patterns(frame_cells)
             logging.info(f"Movement analysis found {len(moving_cells)} cells with consistent movement")
@@ -1350,7 +1364,7 @@ class RainPredictor:
             logging.info(f"    Distance: {distance_km:.1f}km")
             logging.info(f"    Speed: {speed_kph:.1f}km/h")
             logging.info(f"    Moving: {direction_deg:.1f}°")
-            logging.info(f"    Bearing to location: {bearing_to_location:.1f}°")
+            logging.info(f"    Bearing to location: {bearing_to_user:.1f}°")
             logging.info(f"    Angle difference: {angle_diff:.1f}°")
             logging.info(f"    Threat probability: {threat_probability:.1f}%")
             
@@ -1371,7 +1385,7 @@ class RainPredictor:
                 'speed': speed_kph,
                 'direction': direction_deg,
                 'distance': distance_km,
-                'bearing_to_location': bearing_to_location,
+                'bearing_to_location': bearing_to_user,
                 'bearing_from_user': bearing_from_user_to_cell,
                 'angle_diff': angle_diff,
                 'threat_probability': threat_probability,
@@ -1389,9 +1403,9 @@ class RainPredictor:
         # Calculate overall rain system patterns
         if all_directions:
             # Calculate circular mean for directional data
-            x = sum(cos(radians(d)) for d in all_directions)
-            y = sum(sin(radians(d)) for d in all_directions)
-            avg_direction = degrees(atan2(y, x))
+            x = sum(math.cos(math.radians(d)) for d in all_directions)
+            y = sum(math.sin(math.radians(d)) for d in all_directions)
+            avg_direction = math.degrees(math.atan2(y, x))
             if avg_direction < 0:
                 avg_direction += 360
         else:
@@ -1561,6 +1575,40 @@ class RainPredictor:
         
         return min(100, probability)
     
+
+    def _save_analysis_to_cache(self, values, prediction):
+        """Save analysis results to cache file for Web UI"""
+        try:
+            ui_cells = []
+            if hasattr(self, 'last_detected_cells'):
+                ui_cells = [{"lat": float(c['lat']), "lng": float(c['lon']), "intensity": float(c['intensity'])} for c in self.last_detected_cells[:10]]
+
+            ui_data = {
+                "time_to_rain": str(values.get('time', '--')),
+                "distance": str(values.get('distance', '--')),
+                "speed": str(values.get('speed', '--')),
+                "direction": str(values.get('direction', 'N/A')),
+                "bearing": str(values.get('bearing', 'N/A')),
+                "rain_cell_latitude": prediction.get('rain_cell_latitude') if prediction else None,
+                "rain_cell_longitude": prediction.get('rain_cell_longitude') if prediction else None,
+                "cells": ui_cells
+            }
+
+            cache_data = {
+                "timestamp": time.time(),
+                "values": values,
+                "prediction": prediction,
+                "ui_data": ui_data
+            }
+
+            temp_path = self.latest_analysis_path + ".tmp"
+            with open(temp_path, 'w') as f:
+                json.dump(cache_data, f)
+            os.replace(temp_path, self.latest_analysis_path)
+            logging.info(f"Analysis results saved to cache: {self.latest_analysis_path}")
+        except Exception as e:
+            logging.error(f"Error saving analysis to cache: {e}")
+
     def run_prediction(self):
         """Run a single prediction cycle"""
         logging.info("\n\n" + "=" * 60)
@@ -1617,6 +1665,7 @@ class RainPredictor:
         except Exception as e:
             logging.error(f"❌ Error in prediction cycle: {e}", exc_info=True)
         
+        self._save_analysis_to_cache(values, prediction)
         self._update_entities(values)
         
         logging.info("\n" + "=" * 60)
