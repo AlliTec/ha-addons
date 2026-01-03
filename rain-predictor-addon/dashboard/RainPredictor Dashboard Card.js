@@ -32,7 +32,7 @@ const RainRadarCard = () => {
   }, []);
 
   const getStatusColor = () => {
-    switch(rainData.status) {
+    switch (rainData.status) {
       case 'raining': return 'bg-blue-500';
       case 'approaching': return 'bg-yellow-500';
       default: return 'bg-green-500';
