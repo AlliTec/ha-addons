@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.56 (2026-01-04)
+
+### Fix
+- Fixed critical syntax error in index.html caused by literal newline characters.
+
 ## Version 1.1.55 (2026-01-04)
 
 ### Maintenance

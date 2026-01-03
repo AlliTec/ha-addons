@@ -760,7 +760,9 @@
             }
             
             baseLayer.addTo(map);
-        }\n\n        async function loadRadarData() {
+        }
+
+        async function loadRadarData() {
             try {
                 console.log('Loading radar data...');
                 const response = await fetch('https://api.rainviewer.com/public/weather-maps.json');

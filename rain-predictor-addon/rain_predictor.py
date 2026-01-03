@@ -18,7 +18,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.55"
+VERSION = "1.1.56"
 
 class AddonConfig:
     """Load and manage addon configuration"""
