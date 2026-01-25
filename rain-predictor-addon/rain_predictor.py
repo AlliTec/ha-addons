@@ -18,7 +18,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.58"
+VERSION = "1.1.59"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -1014,34 +1014,56 @@ class RainPredictor:
         return direction_consistent and speed_consistent
     
     def _create_tracked_cells_from_movement(self, moving_cells):
-        """Create tracked cells from movement analysis results"""
-        self.tracked_cells.clear()  # Clear old tracking
-        
+        """Update tracked cells from movement analysis, accumulating positions over time"""
+        current_timestamp = datetime.now()
+        seen_cell_ids = set()
+
         for cell_data in moving_cells:
-            # Create new RainCell with movement data
-            cell = RainCell(
-                cell_id=cell_data['cell_id'],
-                lat=cell_data['initial_lat'],
-                lon=cell_data['initial_lon'],
-                timestamp=datetime.fromtimestamp(cell_data['positions'][0]['timestamp']),
-                intensity=cell_data['intensity']
-            )
-            
-            # Add all positions from movement tracking
+            cell_id = cell_data['cell_id']
+            seen_cell_ids.add(cell_id)
+
+            if cell_id in self.tracked_cells:
+                existing_cell = self.tracked_cells[cell_id]
+                existing_cell.intensity = cell_data['intensity']
+                logging.info(f"📍 Updated track ID {cell_id} with new position")
+            else:
+                existing_cell = RainCell(
+                    cell_id=cell_id,
+                    lat=cell_data['initial_lat'],
+                    lon=cell_data['initial_lon'],
+                    timestamp=datetime.fromtimestamp(cell_data['positions'][0]['timestamp']),
+                    intensity=cell_data['intensity']
+                )
+                self.tracked_cells[cell_id] = existing_cell
+                logging.info(f"➕ Created new track ID {cell_id}")
+
             for pos in cell_data['positions']:
-                cell.add_position(
-                    pos['lat'], 
-                    pos['lon'], 
+                existing_cell.add_position(
+                    pos['lat'],
+                    pos['lon'],
                     datetime.fromtimestamp(pos['timestamp']),
                     cell_data['intensity']
                 )
-            
-            self.tracked_cells[cell_data['cell_id']] = cell
-            
-            logging.info(f"➕ Created movement-based track ID {cell_data['cell_id']}: "
-                        f"speed={cell_data['speed']:.1f}kph, "
-                        f"dir={cell_data['direction']:.1f}°, "
-                        f"dist={cell_data['distance_to_user']:.1f}km")
+
+            speed, direction = existing_cell.get_velocity(self)
+            dist = self.haversine(existing_cell.positions[-1][0], existing_cell.positions[-1][1],
+                                   self.latitude, self.longitude)
+            logging.info(f"   Track #{cell_id}: {len(existing_cell.positions)} positions, "
+                        f"speed={speed:.1f}kph, dir={direction:.1f}°, dist={dist:.1f}km")
+
+        stale_threshold = datetime.now() - timedelta(minutes=15)
+        stale_count = 0
+        for cell_id in list(self.tracked_cells.keys()):
+            if cell_id not in seen_cell_ids:
+                cell = self.tracked_cells[cell_id]
+                if cell.positions:
+                    last_pos_time = cell.positions[-1][2]
+                    if last_pos_time < stale_threshold:
+                        del self.tracked_cells[cell_id]
+                        stale_count += 1
+
+        if stale_count > 0:
+            logging.info(f"🗑️ Removed {stale_count} stale tracks not seen in 15 minutes")
     
     def _update_tracked_cells(self, detected_cells, timestamp):
         """Update tracked cells with enhanced matching algorithm for extreme accuracy"""

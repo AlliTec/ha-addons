@@ -23,6 +23,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Added proper initialization of prediction variable before try block
 - Prevents crash when RainViewer API returns 404 or times out
 
+## Version 1.1.59 (2026-01-26)
+
+### Fix
+- Fixed tracked cells being cleared each cycle (positions now accumulate over time)
+- Cells now accumulate positions across prediction cycles for velocity calculation
+- Added 15-minute stale track expiration to remove old cells
+- Prevents "Not enough data yet" velocity errors by maintaining cell history
+
 ## Version 1.1.56 (2026-01-04)
 
 ### Fix
