@@ -1767,6 +1767,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 // Hide all sections and tables
                 document.getElementById('livestock-section').style.display = 'none';
                 document.getElementById('assets-section').style.display = 'none';
+                document.getElementById('chemicals-section').style.display = 'none';
                 document.getElementById('calendar-section').style.display = 'none';
                 document.getElementById('livestock-list').style.display = 'none';
                 document.getElementById('assets-list').style.display = 'none';
@@ -1785,6 +1786,10 @@ document.addEventListener("DOMContentLoaded", async () => {
                     headingElement.textContent = 'Asset Register';
                     populateAssetFilterTabs(); // Populate asset filter tabs
                     populateAssetList(); // Load assets when switching to assets tab
+                } else if (section === 'chemicals') {
+                    document.getElementById('chemicals-section').style.display = 'block';
+                    headingElement.textContent = 'Chemical Register';
+                    loadChemicals(); // Load chemicals when switching to chemicals tab
                 } else if (section === 'calendar') {
                     console.log("Showing calendar section");
                     document.getElementById('calendar-section').style.display = 'block';
