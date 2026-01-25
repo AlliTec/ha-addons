@@ -6331,15 +6331,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Cancel backup button
-    const cancelBackupBtn = document.getElementById('cancel-backup-btn');
-    if (cancelBackupBtn) {
-        cancelBackupBtn.addEventListener('click', function() {
-            hideBackupProgressModal();
-        });
-    }
-});
-    
     // ============================
     // Chemical Register Functions
     // ============================
@@ -6487,7 +6478,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div><span>Notes:</span><span>${chemical.notes || '-'}</span></div>
             `;
             
-            // Store chemical ID for edit/delete
             document.getElementById('chemical-details-modal').dataset.chemicalId = chemicalId;
             
             document.getElementById('chemical-details-modal').style.display = 'block';
