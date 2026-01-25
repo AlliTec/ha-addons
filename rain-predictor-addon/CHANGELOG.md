@@ -44,6 +44,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Reduced timestamp comparison from 60 seconds to 0.001 seconds
 - Cells can now accumulate positions from all radar frames for velocity calculation
 
+## Version 1.1.62 (2026-01-26)
+
+### Fix
+- Fixed cache file path to use /data/ directory
+- Cache now writes to correct location in Docker container
+- Fixes "No such file or directory" error for latest_analysis.json
+
 ## Version 1.1.56 (2026-01-04)
 
 ### Fix

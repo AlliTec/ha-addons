@@ -83,7 +83,7 @@ ha_api = HomeAssistantAPI()
 
 def get_all_data():
     """Get all rain prediction data for the frontend from cache"""
-    cache_path = "/home/sog/ai-projects/ha-addons/rain-predictor-addon/latest_analysis.json"
+    cache_path = "/data/latest_analysis.json"
     
     try:
         if os.path.exists(cache_path):

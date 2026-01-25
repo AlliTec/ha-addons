@@ -18,7 +18,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.61"
+VERSION = "1.1.62"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -212,7 +212,7 @@ class RainPredictor:
         self.running = False
         self.tracked_cells = {}
         self.next_cell_id = 1
-        self.latest_analysis_path = "/home/sog/ai-projects/ha-addons/rain-predictor-addon/latest_analysis.json"
+        self.latest_analysis_path = "/data/latest_analysis.json"
         self.last_detected_cells = []
         # Extract configuration values
         self.latitude = config.get('latitude', -24.98)
