@@ -45,6 +45,13 @@
 - Expiry dates shown on calendar as action items
 - Full CRUD operations (add, edit, delete, view details)
 
+## 1.11.60 - 2026-01-26
+
+### UI
+- Added Chemical Register button to section tabs
+- Added chemicals section to hide/show switching logic
+- Flask icon for chemical register
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
