@@ -18,7 +18,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.57"
+VERSION = "1.1.58"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -1448,7 +1448,7 @@ class RainPredictor:
         logging.info("\n\n" + "=" * 60)
         logging.info(f"PREDICTION CYCLE STARTING - {datetime.now()}")
         logging.info("=" * 60)
-        
+
         values = {
             'time': self.defaults['no_rain'],
             'distance': self.defaults['no_rain'],
@@ -1458,6 +1458,8 @@ class RainPredictor:
             'rain_cell_latitude': None,
             'rain_cell_longitude': None
         }
+
+        prediction = None
         
         try:
             logging.info(f"Fetching API data from: {self.api_url}")

@@ -16,6 +16,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Green marker now placed directly over detected rain cell location
 - Tracking now prioritizes closest approaching cell for accuracy
 
+## Version 1.1.58 (2026-01-26)
+
+### Fix
+- Fixed UnboundLocalError when API call fails (prediction variable not initialized)
+- Added proper initialization of prediction variable before try block
+- Prevents crash when RainViewer API returns 404 or times out
+
 ## Version 1.1.56 (2026-01-04)
 
 ### Fix
