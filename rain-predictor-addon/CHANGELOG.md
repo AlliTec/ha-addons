@@ -31,6 +31,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Added 15-minute stale track expiration to remove old cells
 - Prevents "Not enough data yet" velocity errors by maintaining cell history
 
+## Version 1.1.60 (2026-01-26)
+
+### Fix
+- Fixed TypeError when velocity returns None (added None check before formatting)
+- Prevents crash when logging cell tracking with insufficient position data
+
 ## Version 1.1.56 (2026-01-04)
 
 ### Fix

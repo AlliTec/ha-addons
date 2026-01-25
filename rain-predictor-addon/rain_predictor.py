@@ -18,7 +18,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.59"
+VERSION = "1.1.60"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -1048,8 +1048,12 @@ class RainPredictor:
             speed, direction = existing_cell.get_velocity(self)
             dist = self.haversine(existing_cell.positions[-1][0], existing_cell.positions[-1][1],
                                    self.latitude, self.longitude)
-            logging.info(f"   Track #{cell_id}: {len(existing_cell.positions)} positions, "
-                        f"speed={speed:.1f}kph, dir={direction:.1f}°, dist={dist:.1f}km")
+            if speed is None or direction is None:
+                logging.info(f"   Track #{cell_id}: {len(existing_cell.positions)} positions, "
+                            f"speed=N/A, dir=N/A, dist={dist:.1f}km")
+            else:
+                logging.info(f"   Track #{cell_id}: {len(existing_cell.positions)} positions, "
+                            f"speed={speed:.1f}kph, dir={direction:.1f}°, dist={dist:.1f}km")
 
         stale_threshold = datetime.now() - timedelta(minutes=15)
         stale_count = 0
