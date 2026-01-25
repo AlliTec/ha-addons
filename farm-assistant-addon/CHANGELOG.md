@@ -14,6 +14,12 @@
 - Widened all modals to 80% of viewport width
 - Better visibility for animal details and asset information
 
+## 1.11.56 - 2026-01-26
+
+### Fix
+- Simplified modal animation to prevent centering issues
+- Removed transform from animation to keep horizontal centering consistent
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
