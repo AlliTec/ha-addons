@@ -6339,3 +6339,258 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+    
+    // ============================
+    // Chemical Register Functions
+    // ============================
+    
+    // Add chemical button
+    const addChemicalBtn = document.getElementById('add-chemical-btn');
+    if (addChemicalBtn) {
+        addChemicalBtn.addEventListener('click', function() {
+            document.getElementById('add-chemical-form').reset();
+            document.getElementById('add-chemical-modal').style.display = 'block';
+        });
+    }
+    
+    // Add chemical form submission
+    const addChemicalForm = document.getElementById('add-chemical-form');
+    if (addChemicalForm) {
+        addChemicalForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(addChemicalForm);
+            const chemicalData = {
+                name: formData.get('name'),
+                chemical_type: formData.get('chemical_type'),
+                purpose: formData.get('purpose'),
+                supplier: formData.get('supplier'),
+                purchase_date: formData.get('purchase_date') || null,
+                expiry_date: formData.get('expiry_date') || null,
+                location: formData.get('location'),
+                ppe_requirements: formData.get('ppe_requirements'),
+                msds_link: formData.get('msds_link'),
+                quantity: parseInt(formData.get('quantity')) || 1,
+                unit: formData.get('unit'),
+                notes: formData.get('notes')
+            };
+            
+            try {
+                const response = await fetch('/api/chemicals', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(chemicalData)
+                });
+                
+                if (response.ok) {
+                    document.getElementById('add-chemical-modal').style.display = 'none';
+                    loadChemicals();
+                } else {
+                    alert('Failed to add chemical');
+                }
+            } catch (error) {
+                console.error('Error adding chemical:', error);
+                alert('Error adding chemical');
+            }
+        });
+    }
+    
+    // Close chemical modal buttons
+    document.querySelectorAll('.close-chemical-btn, .close-edit-chemical-btn, .close-chemical-details-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.closest('.modal').style.display = 'none';
+        });
+    });
+    
+    // Load chemicals with optional filter
+    async function loadChemicals(chemicalType = null) {
+        try {
+            const url = chemicalType ? `/api/chemicals?chemical_type=${chemicalType}` : '/api/chemicals';
+            const response = await fetch(url);
+            const chemicals = await response.json();
+            renderChemicals(chemicals);
+            createChemicalFilterTabs();
+        } catch (error) {
+            console.error('Error loading chemicals:', error);
+        }
+    }
+    
+    // Render chemicals table
+    function renderChemicals(chemicals) {
+        const tbody = document.querySelector('#chemicals-list tbody');
+        if (!tbody) return;
+        
+        tbody.innerHTML = '';
+        
+        chemicals.forEach(chemical => {
+            const row = document.createElement('tr');
+            row.style.cursor = 'pointer';
+            row.onclick = () => showChemicalDetails(chemical.id);
+            
+            const purchaseDate = chemical.purchase_date ? new Date(chemical.purchase_date).toLocaleDateString() : '-';
+            const expiryDate = chemical.expiry_date ? new Date(chemical.expiry_date).toLocaleDateString() : '-';
+            const typeClass = chemical.chemical_type === 'herbicide' ? 'status-pending' : 
+                              chemical.chemical_type === 'pesticide' ? 'status-completed' : 'status-action';
+            
+            row.innerHTML = `
+                <td>${chemical.name}</td>
+                <td><span class="status-badge ${typeClass}">${chemical.chemical_type}</span></td>
+                <td>${chemical.purpose || '-'}</td>
+                <td>${chemical.supplier || '-'}</td>
+                <td>${purchaseDate}</td>
+                <td>${expiryDate}</td>
+                <td>${chemical.location || '-'}</td>
+                <td>${chemical.quantity} ${chemical.unit || ''}</td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+    
+    // Create chemical filter tabs
+    function createChemicalFilterTabs() {
+        const filterBar = document.getElementById('chemicals-filter-bar');
+        if (!filterBar) return;
+        
+        filterBar.innerHTML = `
+            <button class="filter-tab active" data-chemical-type="">All</button>
+            <button class="filter-tab" data-chemical-type="herbicide">Herbicide</button>
+            <button class="filter-tab" data-chemical-type="pesticide">Pesticide</button>
+            <button class="filter-tab" data-chemical-type="other">Other</button>
+        `;
+        
+        filterBar.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                filterBar.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                loadChemicals(this.dataset.chemicalType || null);
+            });
+        });
+    }
+    
+    // Show chemical details
+    async function showChemicalDetails(chemicalId) {
+        try {
+            const response = await fetch(`/api/chemical/${chemicalId}`);
+            const chemical = await response.json();
+            
+            const content = document.getElementById('chemical-details-content');
+            content.innerHTML = `
+                <div><span>Name:</span><span>${chemical.name}</span></div>
+                <div><span>Type:</span><span>${chemical.chemical_type}</span></div>
+                <div><span>Purpose:</span><span>${chemical.purpose || '-'}</span></div>
+                <div><span>Supplier:</span><span>${chemical.supplier || '-'}</span></div>
+                <div><span>Purchase Date:</span><span>${chemical.purchase_date ? new Date(chemical.purchase_date).toLocaleDateString() : '-'}</span></div>
+                <div><span>Expiry Date:</span><span>${chemical.expiry_date ? new Date(chemical.expiry_date).toLocaleDateString() : '-'}</span></div>
+                <div><span>Location:</span><span>${chemical.location || '-'}</span></div>
+                <div><span>Quantity:</span><span>${chemical.quantity} ${chemical.unit || ''}</span></div>
+                <div><span>PPE Requirements:</span><span>${chemical.ppe_requirements || '-'}</span></div>
+                <div><span>MSDS:</span><span>${chemical.msds_link ? '<a href="' + chemical.msds_link + '" target="_blank">View MSDS</a>' : '-'}</span></div>
+                <div><span>Notes:</span><span>${chemical.notes || '-'}</span></div>
+            `;
+            
+            // Store chemical ID for edit/delete
+            document.getElementById('chemical-details-modal').dataset.chemicalId = chemicalId;
+            
+            document.getElementById('chemical-details-modal').style.display = 'block';
+        } catch (error) {
+            console.error('Error loading chemical details:', error);
+        }
+    }
+    
+    // Edit chemical button
+    const editChemicalBtn = document.getElementById('edit-chemical-btn');
+    if (editChemicalBtn) {
+        editChemicalBtn.addEventListener('click', async function() {
+            const chemicalId = document.getElementById('chemical-details-modal').dataset.chemicalId;
+            
+            try {
+                const response = await fetch(`/api/chemical/${chemicalId}`);
+                const chemical = await response.json();
+                
+                document.getElementById('edit-chemical-id').value = chemical.id;
+                document.getElementById('edit-chemical-name').value = chemical.name || '';
+                document.getElementById('edit-chemical-type').value = chemical.chemical_type || 'other';
+                document.getElementById('edit-chemical-purpose').value = chemical.purpose || '';
+                document.getElementById('edit-chemical-supplier').value = chemical.supplier || '';
+                document.getElementById('edit-chemical-purchase-date').value = chemical.purchase_date || '';
+                document.getElementById('edit-chemical-expiry-date').value = chemical.expiry_date || '';
+                document.getElementById('edit-chemical-location').value = chemical.location || '';
+                document.getElementById('edit-chemical-quantity').value = chemical.quantity || 1;
+                document.getElementById('edit-chemical-unit').value = chemical.unit || '';
+                document.getElementById('edit-chemical-ppe').value = chemical.ppe_requirements || '';
+                document.getElementById('edit-chemical-msds').value = chemical.msds_link || '';
+                document.getElementById('edit-chemical-notes').value = chemical.notes || '';
+                
+                document.getElementById('chemical-details-modal').style.display = 'none';
+                document.getElementById('edit-chemical-modal').style.display = 'block';
+            } catch (error) {
+                console.error('Error loading chemical for edit:', error);
+            }
+        });
+    }
+    
+    // Edit chemical form submission
+    const editChemicalForm = document.getElementById('edit-chemical-form');
+    if (editChemicalForm) {
+        editChemicalForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const chemicalId = document.getElementById('edit-chemical-id').value;
+            const formData = new FormData(editChemicalForm);
+            const chemicalData = {
+                name: formData.get('name'),
+                chemical_type: formData.get('chemical_type'),
+                purpose: formData.get('purpose'),
+                supplier: formData.get('supplier'),
+                purchase_date: formData.get('purchase_date') || null,
+                expiry_date: formData.get('expiry_date') || null,
+                location: formData.get('location'),
+                ppe_requirements: formData.get('ppe_requirements'),
+                msds_link: formData.get('msds_link'),
+                quantity: parseInt(formData.get('quantity')) || 1,
+                unit: formData.get('unit'),
+                notes: formData.get('notes')
+            };
+            
+            try {
+                const response = await fetch(`/api/chemical/${chemicalId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(chemicalData)
+                });
+                
+                if (response.ok) {
+                    document.getElementById('edit-chemical-modal').style.display = 'none';
+                    loadChemicals();
+                } else {
+                    alert('Failed to update chemical');
+                }
+            } catch (error) {
+                console.error('Error updating chemical:', error);
+                alert('Error updating chemical');
+            }
+        });
+    }
+    
+    // Delete chemical button
+    const deleteChemicalBtn = document.getElementById('delete-chemical-btn');
+    if (deleteChemicalBtn) {
+        deleteChemicalBtn.addEventListener('click', async function() {
+            if (!confirm('Are you sure you want to delete this chemical?')) return;
+            
+            const chemicalId = document.getElementById('chemical-details-modal').dataset.chemicalId;
+            
+            try {
+                const response = await fetch(`/api/chemical/${chemicalId}`, { method: 'DELETE' });
+                
+                if (response.ok) {
+                    document.getElementById('chemical-details-modal').style.display = 'none';
+                    loadChemicals();
+                } else {
+                    alert('Failed to delete chemical');
+                }
+            } catch (error) {
+                console.error('Error deleting chemical:', error);
+                alert('Error deleting chemical');
+            }
+        });
+    }
+});
