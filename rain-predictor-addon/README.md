@@ -1,327 +1,344 @@
 # Rain Predictor Home Assistant Addon
 
-Advanced rain prediction using radar image analysis, converted from AppDaemon to a standalone Home Assistant addon.
+Advanced rain prediction using radar image analysis. Tracks rain cells across consecutive radar frames to predict arrival time at your location.
 
-## Features
+## Architecture Overview
 
-- 🌧️ **Advanced Rain Prediction** - Analyzes radar images to predict rain arrival
-- 📍 **Location-Based** - Tracks rain cells moving toward your specific location
-- 🎯 **Directional Analysis** - Only predicts rain from cells actually approaching you
-- 🏠 **Home Assistant Integration** - Updates input_number entities automatically
-- 🌐 **Web UI** - Easy configuration through a beautiful web interface
-- 🔧 **Highly Configurable** - Tune analysis parameters for your region
-- 📊 **Multiple Data Points** - Time, distance, speed, direction, and bearing
-- 🐛 **Debug Mode** - Save radar images and detailed logging
+The addon consists of three main components:
 
-## Installation
+1. **rain_predictor.py** - Core prediction engine (background service)
+2. **web_ui.py** - Flask web server (port 8099)
+3. **templates/index.html** - Interactive Leaflet.js map frontend
 
-### Method 1: Add Repository (Recommended)
+### Data Flow
 
-1. **Add the addon repository** to Home Assistant:
-   - Go to **Settings** → **Add-ons** → **Add-on Store**
-   - Click the **⋮** menu → **Repositories**
-   - Add: `https://github.com/AlliTec/ha-addons/`
-
-2. **Install the addon**:
-   - Find "Rain Predictor" in the addon store
-   - Click **Install**
-
-### Method 2: Local Installation
-
-1. **Copy addon files** to your Home Assistant:
-   ```
-   /config/addons_local/rain_predictor/
-   ├── config.yaml
-   ├── Dockerfile
-   ├── requirements.txt
-   ├── run.sh
-   ├── rain_predictor.py
-   ├── web_ui.py
-   └── templates/
-       └── index.html
-   ```
-
-2. **Refresh** the addon store and install "Rain Predictor"
-
-## Setup
-
-### 1. Create Required Input Numbers
-
-Add these to your `configuration.yaml`:
-
-```yaml
-input_number:
-  rain_arrival_minutes:
-    name: "Rain Arrival Time"
-    min: 0
-    max: 1440
-    step: 1
-    unit_of_measurement: "min"
-    icon: mdi:timer-outline
-    
-  rain_prediction_distance:
-    name: "Rain Cell Distance"
-    min: 0
-    max: 500
-    step: 0.1
-    unit_of_measurement: "km"
-    icon: mdi:map-marker-distance
-    
-  rain_prediction_speed:
-    name: "Rain Cell Speed"
-    min: 0
-    max: 200
-    step: 0.1
-    unit_of_measurement: "km/h"
-    icon: mdi:speedometer
-    
-  rain_cell_direction:
-    name: "Rain Cell Direction"
-    min: -1
-    max: 360
-    step: 0.1
-    unit_of_measurement: "°"
-    icon: mdi:compass-outline
-    
-  bearing_to_rain_cell:
-    name: "Bearing to Rain Cell"
-    min: -1
-    max: 360
-    step: 0.1
-    unit_of_measurement: "°"
-    icon: mdi:compass
+```
+RainViewer API (https://api.rainviewer.com/public/weather-maps.json)
+         ↓
+    rain_predictor.py (runs every 3 minutes)
+         ↓
+    Extracts rain cells from 13 radar frames
+         ↓
+    Tracks movement across frames
+         ↓
+    Filters cells approaching user location
+         ↓
+    Home Assistant API (input_number entities)
+         ↓
+    web_ui.py serves cache to frontend
+         ↓
+    index.html displays on interactive map
 ```
 
-### 2. Configure the Addon
+## Core Components
 
-1. **Start the addon** (it will create default configuration)
-2. **Open the Web UI** at `http://your-ha-ip:8099`
-3. **Configure your settings**:
-   - **Location**: Enter your exact latitude/longitude
-   - **Entities**: Specify the input_number entity IDs
-   - **Analysis**: Tune thresholds for your region
-   - **Image**: Adjust radar parameters if needed
+### 1. RainCell Class (`rain_predictor.py:99-170`)
 
-### 3. Key Configuration Parameters
+Represents a single rain cell being tracked across multiple radar frames.
 
-#### Location Settings
-- **Latitude/Longitude**: Your exact location in decimal degrees
-- **Update Interval**: How often to check for rain (3-10 minutes recommended)
+**Key Attributes:**
+- `id` - Unique cell identifier
+- `positions` - List of (lat, lon, timestamp) tuples
+- `intensity` - Maximum radar return intensity observed
+- `last_seen` - Most recent timestamp
 
-#### Analysis Settings
-- **Rain Threshold**: Pixel intensity to consider as rain (75-100 typical)
-- **Arrival Angle**: Degrees ± for approach detection (30-60° recommended)
-- **Lat/Lon Range**: Degrees covered by radar image (tune based on zoom level)
+**Key Methods:**
+```python
+add_position(lat, lon, timestamp, intensity)
+    # Adds validated position, stores last 10 positions max
 
-#### Image Settings
-- **Size**: 256x256 recommended for good detail vs performance
-- **Zoom**: 8-10 for regional view, higher for local detail
-- **Color Scheme**: 3 (default RainViewer scheme)
-
-## Usage
-
-### Dashboard Cards
-
-Add these to your dashboard to display predictions:
-
-```yaml
-# Rain Arrival Card
-- type: entities
-  title: Rain Prediction
-  entities:
-    - entity: input_number.rain_arrival_minutes
-      name: Time to Rain
-      icon: mdi:weather-rainy
-    - entity: input_number.rain_prediction_distance
-      name: Distance
-      icon: mdi:map-marker-distance
-    - entity: input_number.rain_prediction_speed
-      name: Speed
-      icon: mdi:speedometer
-    - entity: input_number.rain_cell_direction
-      name: Direction
-      icon: mdi:compass-outline
-    - entity: input_number.bearing_to_rain_cell
-      name: Bearing
-      icon: mdi:compass
-
-# Rain Status Card
-- type: conditional
-  conditions:
-    - entity: input_number.rain_arrival_minutes
-      state_not: "999"
-  card:
-    type: markdown
-    content: >
-      ## ⛈️ Rain Incoming!
-      
-      **{{ states('input_number.rain_arrival_minutes') | int }}** minutes away
-      
-      **{{ states('input_number.rain_prediction_distance') }}** km distance
-      
-      Moving at **{{ states('input_number.rain_prediction_speed') }}** km/h
+get_velocity(predictor=None)
+    # Returns (speed_kph, direction_deg) from last 2 positions
+    # Requires 2+ positions to calculate
 ```
 
-### Automations
+### 2. RainPredictor Class (`rain_predictor.py:172-1600+`)
 
-Create automations based on rain predictions:
+Main prediction engine that orchestrates radar analysis.
 
-```yaml
-# Rain Alert Automation
-- alias: "Rain Arriving Soon"
-  trigger:
-    - platform: numeric_state
-      entity_id: input_number.rain_arrival_minutes
-      below: 30
-      above: 0
-  condition:
-    - condition: numeric_state
-      entity_id: input_number.rain_arrival_minutes
-      below: 999  # Not the "no rain" value
-  action:
-    - service: notify.mobile_app_your_phone
-      data:
-        title: "🌧️ Rain Alert"
-        message: >
-          Rain expected in {{ states('input_number.rain_arrival_minutes') | int }} minutes!
-          Distance: {{ states('input_number.rain_prediction_distance') }}km
-        data:
-          tag: "rain_alert"
-          
-# Close Windows When Rain Detected
-- alias: "Close Windows - Rain Detected"
-  trigger:
-    - platform: numeric_state
-      entity_id: input_number.rain_arrival_minutes
-      equals: 0
-  action:
-    - service: notify.family
-      data:
-        message: "Rain detected at location! Close windows and bring in laundry."
-    # Add your specific window/device controls here
+**Initialization Flow:**
+```
+AddonConfig (loads /data/options.json)
+    ↓
+RainPredictor.__init__()
+    ↓
+Read configuration (latitude, longitude, entities, thresholds)
+    ↓
+Create HomeAssistantAPI client
+    ↓
+Initialize tracked_cells dictionary
 ```
 
-## Understanding the Data
+**Main Loop (`run()`):**
+```python
+while running:
+    run_prediction()  # Analyze radar, update entities
+    sleep(run_interval)  # Default: 3 minutes
+```
 
-### Entity Values
+### 3. Radar Analysis Pipeline (`analyze_radar_data()`)
+
+**Step 1: Fetch Radar Data**
+```python
+response = requests.get("https://api.rainviewer.com/public/weather-maps.json")
+api_data = response.json()
+# Returns: {host, radar: {past: [{time, path}, ...], nowcast: [...]}}
+```
+
+**Step 2: Extract Cells from Each Frame**
+
+For each of the 13 past frames (10-minute intervals, 2 hours total):
+```python
+# Download 256x256 radar tile at zoom 8
+img_url = f"https://{host}/v2/radar/{timestamp}/256/8/0/0/2/1_1.png"
+
+# Convert to grayscale and threshold
+img_array = np.array(img.convert('L'))
+rain_mask = (img_array > threshold).astype(np.uint8) * 255
+
+# Label connected rain regions
+labeled_array, num_features = label(rain_mask)
+
+# For each region, calculate centroid
+for region in regions:
+    cell = {
+        'current_lat': centroid_y,
+        'current_lon': centroid_x,
+        'intensity': max_intensity,
+        'size': region_pixels
+    }
+```
+
+**Step 3: Track Movement Across Frames**
+
+Cells from consecutive frames are matched using:
+```python
+# Simple centroid distance matching
+min_distance = float('inf')
+best_match = None
+for existing_cell in tracked_cells:
+    distance = haversine(
+        new_cell.centroid,
+        existing_cell.positions[-1][:2]
+    )
+    if distance < threshold and distance < min_distance:
+        best_match = existing_cell
+```
+
+**Step 4: Calculate Cell Velocity**
+
+For cells with 2+ positions:
+```python
+(lat1, lon1, t1), (lat2, lon2, t2) = positions[-2:]
+
+time_diff_hours = (t2 - t1).total_seconds() / 3600
+distance_km = haversine(lat1, lon1, lat2, lon2)
+speed_kph = distance_km / time_diff_hours
+bearing = calculate_bearing(lat1, lon1, lat2, lon2)
+```
+
+**Step 5: Filter Approaching Cells**
+
+Only cells moving toward user location are considered:
+```python
+# Calculate bearing FROM cell TO user
+cell_to_user = bearing(cell_lat, cell_lon, user_lat, user_lon)
+
+# Get cell's movement direction
+cell_direction = cell.velocity_direction
+
+# Check if movement is within 90° of bearing to user
+angle_diff = abs(cell_direction - cell_to_user)
+is_approaching = angle_diff <= 90
+```
+
+**Step 6: Return Threat Assessment**
+
+```python
+return {
+    'time_to_rain': minutes,      # ETA in minutes
+    'distance_km': km,             # Distance to cell
+    'speed_kph': kph,              # Cell speed
+    'direction_deg': degrees,      # Movement direction
+    'bearing_to_cell_deg': deg,    # Bearing from user to cell
+    'rain_cell_latitude': lat,     # Current cell position
+    'rain_cell_longitude': lon     # Current cell position
+}
+```
+
+### 4. Home Assistant Integration (`_update_entities()`)
+
+Updates input_number entities with prediction values:
+```python
+entities = {
+    'time': input_number.rain_arrival_minutes,
+    'distance': input_number.rain_prediction_distance,
+    'speed': input_number.rain_prediction_speed,
+    'direction': input_number.rain_cell_direction,
+    'bearing': input_number.bearing_to_rain_cell,
+    'rain_cell_latitude': input_number.rain_cell_latitude,
+    'rain_cell_longitude': input_number.rain_cell_longitude
+}
+
+for entity_id, value in values.items():
+    ha_api.call_service("input_number/set_value", entity_id, value)
+```
+
+### 5. Web UI (`web_ui.py` + `templates/index.html`)
+
+**Flask Endpoints:**
+- `GET /` - Main configuration page
+- `GET /api/data` - Returns cached prediction data
+- `POST /api/set_location` - Save lat/lng to options.json
+- `POST /api/update_view_bounds` - Store current map view for focused analysis
+
+**Frontend Features:**
+- Leaflet.js map with radar overlay tiles
+- User location marker (draggable)
+- Rain cell markers (green circle for position, red for movement)
+- Radar animation playback (13 frames)
+- Color scheme selection
+- Manual cell selection mode
+
+## File Structure
+
+```
+rain-predictor-addon/
+├── config.yaml              # HA addon configuration
+├── Dockerfile               # Container build
+├── requirements.txt         # Python dependencies
+├── run.sh                   # Container startup script
+├── rain_predictor.py        # Core prediction engine
+├── web_ui.py                # Flask web server
+├── CHANGELOG.md             # Version history
+├── README.md                # This file
+└── templates/
+    └── index.html           # Web UI frontend
+```
+
+## Configuration
+
+### Addon Options (`options.json`)
+
+```json
+{
+  "latitude": -24.981262,
+  "longitude": 151.865455,
+  "entities": {
+    "time": "input_number.rain_arrival_minutes",
+    "distance": "input_number.rain_prediction_distance",
+    "speed": "input_number.rain_prediction_speed",
+    "direction": "input_number.rain_cell_direction",
+    "bearing": "input_number.bearing_to_rain_cell",
+    "rain_cell_latitude": "input_number.rain_cell_latitude",
+    "rain_cell_longitude": "input_number.rain_cell_longitude"
+  },
+  "thresholds": {
+    "rain_threshold": 75,
+    "arrival_angle_threshold": 90,
+    "lat_range_deg": 5.0,
+    "lon_range_deg": 5.0
+  },
+  "image": {
+    "size": 256,
+    "zoom": 8
+  }
+}
+```
+
+### Key Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `rain_threshold` | 75 | Pixel intensity (0-255) to consider as rain |
+| `arrival_angle_threshold` | 90 | Degrees ± for "approaching" detection |
+| `lat_range_deg` | 5.0 | Latitude degrees covered by analysis |
+| `lon_range_deg` | 5.0 | Longitude degrees covered by analysis |
+| `run_interval` | 3.0 | Minutes between prediction cycles |
+
+## Entity Values
 
 | Entity | Value | Meaning |
 |--------|-------|---------|
-| Time to Rain | 0 | Rain is currently at your location |
-| Time to Rain | 1-999 | Minutes until rain arrives |
-| Time to Rain | 999 | No rain predicted (default) |
-| Direction | 0-360° | Direction the rain cell is moving |
-| Direction | -1 | No direction data available |
-| Bearing | 0-360° | Direction from you TO the rain cell |
-| Bearing | -1 | No bearing data available |
+| `time` | 0 | Rain currently at location |
+| `time` | 1-999 | Minutes until rain arrives |
+| `time` | 999 | No rain detected |
+| `direction` | 0-360° | Direction rain cell is moving |
+| `direction` | -1 | No valid direction |
+| `bearing` | 0-360° | Direction from user to cell |
+| `bearing` | -1 | No valid bearing |
 
-### Compass Directions
+## Processing Timeline
 
-- **N (0°)**: North
-- **E (90°)**: East  
-- **S (180°)**: South
-- **W (270°)**: West
+```
+Every 3 minutes:
+├── Fetch radar metadata (13 frames, 10 min intervals)
+├── Download 13 radar tiles (256x256 each)
+├── Extract ~20 cells per frame (~260 total)
+├── Match cells across frames to track movement
+├── Calculate velocity for tracked cells
+├── Filter for cells approaching user
+└── Update HA entities with closest threat
+
+Web UI:
+├── Reads cached prediction from /data/latest_analysis.json
+├── Displays user location on map
+├── Overlays radar tiles with animation
+└── Shows tracked rain cells with markers
+```
+
+## Dependencies
+
+```
+requests>=2.25.0      # HTTP API calls
+numpy>=1.20.0         # Image processing
+scipy>=1.6.0          # Connected component labeling
+Pillow>=8.0.0         # Image handling
+```
+
+## Debug Mode
+
+Enable debug logging:
+1. Set log level to "Debug" in addon configuration
+2. Check logs: `Settings → Add-ons → Rain Predictor → Log`
+
+Key debug messages:
+```
+"Found X cells in frame Y"     - Cell extraction
+"Movement analysis: X/Y cells" - Tracked movement
+"Found Z threat cells"         - Approaching cells
+"Track #N: X positions"        - Position history
+```
 
 ## Troubleshooting
 
-### Common Issues
+### No approaching cells detected
+- Check location coordinates are accurate
+- Verify radar data available for your region
+- Lower `rain_threshold` if cells are being missed
 
-1. **No predictions showing**:
-   - Check latitude/longitude are correct
-   - Verify internet connection for radar data
-   - Check logs for API errors
+### Inaccurate predictions
+- Adjust `lat_range_deg`/`lon_range_deg` for zoom level
+- Tune `arrival_angle_threshold` (lower = more strict)
+- Check cell velocity calculation logs
 
-2. **Inaccurate predictions**:
-   - Tune `lat_range_deg` and `lon_range_deg` for your zoom level
-   - Adjust `rain_threshold` for your region's radar sensitivity
-   - Modify `arrival_angle_threshold` (try 30-60°)
+### Addon won't start
+- Verify input_number entities exist in HA
+- Check SUPERVISOR_TOKEN is available
+- Review logs for configuration errors
 
-3. **Configuration not saving**:
-   - Check Home Assistant supervisor token permissions
-   - Verify input_number entities exist
-   - Check addon logs for errors
+## Algorithm Limitations
 
-### Debug Mode
+1. **Single frame analysis** - Uses only past frames, not nowcast
+2. **Centroid tracking** - May miss complex cell mergers/splits
+3. **Linear extrapolation** - Assumes constant velocity
+4. **2D assumption** - Doesn't account for vertical development
+5. **No interpolation** - Velocity from discrete time steps
 
-Enable debug mode to troubleshoot:
+## Future Improvements
 
-1. Set **Log Level** to "Debug" in Web UI
-2. Enable **Save Images** to see radar tiles
-3. Check logs: **Settings** → **Add-ons** → **Rain Predictor** → **Log**
-4. Debug images saved to `/config/share/rain_predictor_debug/`
-
-### Log Analysis
-
-Check addon logs for these indicators:
-
-- `✓ RAIN DETECTED AT CURRENT LOCATION!` - Rain is present
-- `Track X is approaching us` - Rain cell moving toward you
-- `No rain cells are moving toward your location` - Safe for now
-- `HTTP 4xx/5xx errors` - API connectivity issues
-
-## Advanced Configuration
-
-### Fine-Tuning for Your Region
-
-Different regions may need different settings:
-
-**Australia/Tropical**:
-```yaml
-rain_threshold: 85
-arrival_angle_threshold_deg: 45
-lat_range_deg: 1.8
-lon_range_deg: 1.99
-```
-
-**Europe/Temperate**:
-```yaml
-rain_threshold: 70
-arrival_angle_threshold_deg: 60
-lat_range_deg: 1.5
-lon_range_deg: 2.0
-```
-
-**US/Continental**:
-```yaml
-rain_threshold: 80
-arrival_angle_threshold_deg: 45
-lat_range_deg: 2.0
-lon_range_deg: 2.5
-```
-
-### API Alternatives
-
-While designed for RainViewer, you can use compatible APIs:
-- `https://api.rainviewer.com/public/weather-maps.json` (Default)
-- Other weather services with similar radar tile APIs
-
-## Contributing
-
-Found a bug or want to improve the addon? Contributions welcome!
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Credits
-
-- Original AppDaemon version inspired the core prediction algorithm
-- RainViewer API provides the radar data
-- Home Assistant community for feedback and testing
-
-## Support
-
-- 🐛 **Issues**: Report bugs on GitHub
-- 💬 **Discussion**: Home Assistant Community Forum
-- 📧 **Contact**: Open an issue for questions
-
----
-
-
-**Note**: This addon provides weather predictions based on radar analysis. Actual weather conditions may vary. Always use official weather services for critical decisions.
+- [ ] Add nowcast integration for <30 min predictions
+- [ ] Implement Kalman filtering for velocity smoothing
+- [ ] Add cell intensity tracking (dBZ values)
+- [ ] Support multiple radar sources
+- [ ] Machine learning for cell lifetime prediction
