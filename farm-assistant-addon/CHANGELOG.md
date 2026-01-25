@@ -36,6 +36,15 @@
 - Each modal type now has its own specific CSS rule
 - Main modals no longer inherit backup modal styles
 
+## 1.11.59 - 2026-01-26
+
+### Feature
+- Added Chemical Register section alongside Livestock, Assets, and Calendar
+- Tracks: name, type (herbicide/pesticide/other), purpose, supplier, purchase/expiry dates, location, PPE, MSDS link
+- Filter tabs for chemical type
+- Expiry dates shown on calendar as action items
+- Full CRUD operations (add, edit, delete, view details)
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement

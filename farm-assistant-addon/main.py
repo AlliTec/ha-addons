@@ -2394,6 +2394,133 @@ async def delete_all_asset_photos(asset_id: int):
     finally:
         await conn.close()
 
+# --- Chemical Inventory Endpoints ---
+
+class Chemical(BaseModel):
+    name: str
+    chemical_type: str = "other"
+    purpose: Optional[str] = None
+    supplier: Optional[str] = None
+    purchase_date: Optional[str] = None
+    expiry_date: Optional[str] = None
+    location: Optional[str] = None
+    ppe_requirements: Optional[str] = None
+    msds_link: Optional[str] = None
+    quantity: int = 1
+    unit: Optional[str] = None
+    notes: Optional[str] = None
+
+@app.get("/api/chemicals")
+async def get_chemicals(chemical_type: Optional[str] = None):
+    """Get all chemicals, optionally filtered by type"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        if chemical_type:
+            records = await conn.fetch("""
+                SELECT id, name, chemical_type, purpose, supplier, purchase_date,
+                       expiry_date, location, ppe_requirements, msds_link,
+                       quantity, unit, notes, created_at, updated_at
+                FROM chemical_inventory
+                WHERE chemical_type = $1
+                ORDER BY name
+            """, chemical_type)
+        else:
+            records = await conn.fetch("""
+                SELECT id, name, chemical_type, purpose, supplier, purchase_date,
+                       expiry_date, location, ppe_requirements, msds_link,
+                       quantity, unit, notes, created_at, updated_at
+                FROM chemical_inventory
+                ORDER BY name
+            """)
+        chemicals = [dict(record) for record in records]
+        for chem in chemicals:
+            for key in ['purchase_date', 'expiry_date']:
+                if chem[key]:
+                    chem[key] = chem[key].isoformat()
+        return chemicals
+    finally:
+        await conn.close()
+
+@app.get("/api/chemical/{chemical_id}")
+async def get_chemical(chemical_id: int):
+    """Get a single chemical by ID"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        record = await conn.fetchrow("""
+            SELECT id, name, chemical_type, purpose, supplier, purchase_date,
+                   expiry_date, location, ppe_requirements, msds_link,
+                   quantity, unit, notes, created_at, updated_at
+            FROM chemical_inventory
+            WHERE id = $1
+        """, chemical_id)
+        if not record:
+            raise HTTPException(status_code=404, detail="Chemical not found")
+        chem = dict(record)
+        for key in ['purchase_date', 'expiry_date']:
+            if chem[key]:
+                chem[key] = chem[key].isoformat()
+        return chem
+    finally:
+        await conn.close()
+
+@app.post("/api/chemicals")
+async def create_chemical(chemical: Chemical):
+    """Create a new chemical entry"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        record = await conn.fetchrow("""
+            INSERT INTO chemical_inventory (
+                name, chemical_type, purpose, supplier, purchase_date,
+                expiry_date, location, ppe_requirements, msds_link,
+                quantity, unit, notes
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+            RETURNING id
+        """, 
+            chemical.name, chemical.chemical_type, chemical.purpose,
+            chemical.supplier, chemical.purchase_date, chemical.expiry_date,
+            chemical.location, chemical.ppe_requirements, chemical.msds_link,
+            chemical.quantity, chemical.unit, chemical.notes
+        )
+        return {"id": record['id'], "message": "Chemical created successfully"}
+    finally:
+        await conn.close()
+
+@app.put("/api/chemical/{chemical_id}")
+async def update_chemical(chemical_id: int, chemical: Chemical):
+    """Update an existing chemical entry"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        result = await conn.execute("""
+            UPDATE chemical_inventory SET
+                name = $1, chemical_type = $2, purpose = $3, supplier = $4,
+                purchase_date = $5, expiry_date = $6, location = $7,
+                ppe_requirements = $8, msds_link = $9, quantity = $10,
+                unit = $11, notes = $12, updated_at = CURRENT_TIMESTAMP
+            WHERE id = $13
+        """,
+            chemical.name, chemical.chemical_type, chemical.purpose,
+            chemical.supplier, chemical.purchase_date, chemical.expiry_date,
+            chemical.location, chemical.ppe_requirements, chemical.msds_link,
+            chemical.quantity, chemical.unit, chemical.notes, chemical_id
+        )
+        if result == "UPDATE 0":
+            raise HTTPException(status_code=404, detail="Chemical not found")
+        return {"message": "Chemical updated successfully"}
+    finally:
+        await conn.close()
+
+@app.delete("/api/chemical/{chemical_id}")
+async def delete_chemical(chemical_id: int):
+    """Delete a chemical entry"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        result = await conn.execute("DELETE FROM chemical_inventory WHERE id = $1", chemical_id)
+        if result == "DELETE 0":
+            raise HTTPException(status_code=404, detail="Chemical not found")
+        return {"message": "Chemical deleted successfully"}
+    finally:
+        await conn.close()
+
 # --- Calendar Endpoints ---
 
 class CalendarEvent(BaseModel):
@@ -2664,6 +2791,29 @@ async def get_calendar_events(
                     "maintenance_id": record['id'],
                     "status": record['status']
                     })
+        
+        # Chemical expiry events
+        chemical_query = """
+            SELECT 
+                id, name, chemical_type, expiry_date, location, quantity, unit
+            FROM chemical_inventory 
+            WHERE expiry_date BETWEEN $1 AND $2
+        """
+        
+        chemical_records = await conn.fetch(chemical_query, datetime.strptime(start_date, '%Y-%m-%d').date(), datetime.strptime(end_date, '%Y-%m-%d').date())
+        
+        for record in chemical_records:
+            if record['expiry_date']:
+                expiry_date_str = record['expiry_date'].isoformat()
+                events.append({
+                    "title": f"Chemical Expiry: {record['name']}",
+                    "date": expiry_date_str,
+                    "entry_type": "action",
+                    "category": "chemical",
+                    "description": f"{record['chemical_type']} - {record['location']} ({record['quantity']} {record['unit'] or 'units'})",
+                    "related_id": record['id'],
+                    "related_name": record['name']
+                })
         
         # Calendar events (user-created events)
         calendar_events_query = """

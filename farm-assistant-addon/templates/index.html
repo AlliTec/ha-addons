@@ -82,6 +82,35 @@
         </table>
     </div>
     
+    <!-- Chemical Register Section -->
+    <div id="chemicals-section" class="section-content" style="display: none;">
+        <div id="chemicals-filter-bar">
+            <!-- Chemical filter tabs will be dynamically populated here -->
+        </div>
+        <div class="section-actions">
+            <button id="add-chemical-btn" class="action-btn">
+                <i class="fa-solid fa-plus"></i> Add Chemical
+            </button>
+        </div>
+        <table id="chemicals-list">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Purpose</th>
+                    <th>Supplier</th>
+                    <th>Purchase Date</th>
+                    <th>Expiry Date</th>
+                    <th>Location</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Chemical rows will be dynamically populated here -->
+            </tbody>
+        </table>
+    </div>
+    
     <!-- Calendar Section -->
     <div id="calendar-section" class="section-content" style="display: none;">
         <div class="calendar-controls">
@@ -973,6 +1002,177 @@
             <div id="animal-history-content">
                 <!-- Animal history will be populated here -->
             </div>
+        </div>
+    </div>
+    
+    <!-- Add Chemical Modal -->
+    <div id="add-chemical-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-top-left">&times;</span>
+            <div class="modal-header">
+                <h2>Add New Chemical</h2>
+            </div>
+            <form id="add-chemical-form">
+                <div class="form-grid">
+                    <div>
+                        <label for="chemical-name">Name *:</label>
+                        <input type="text" id="chemical-name" name="name" required>
+                    </div>
+                    <div>
+                        <label for="chemical-type">Type:</label>
+                        <select id="chemical-type" name="chemical_type">
+                            <option value="other">Other</option>
+                            <option value="herbicide">Herbicide</option>
+                            <option value="pesticide">Pesticide</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="chemical-purpose">Purpose/Function:</label>
+                        <input type="text" id="chemical-purpose" name="purpose">
+                    </div>
+                    <div>
+                        <label for="chemical-supplier">Supplier:</label>
+                        <input type="text" id="chemical-supplier" name="supplier">
+                    </div>
+                    <div>
+                        <label for="chemical-purchase-date">Purchase Date:</label>
+                        <input type="date" id="chemical-purchase-date" name="purchase_date">
+                    </div>
+                    <div>
+                        <label for="chemical-expiry-date">Expiry Date:</label>
+                        <input type="date" id="chemical-expiry-date" name="expiry_date">
+                    </div>
+                    <div>
+                        <label for="chemical-location">Location:</label>
+                        <input type="text" id="chemical-location" name="location">
+                    </div>
+                    <div>
+                        <label for="chemical-quantity">Quantity:</label>
+                        <input type="number" id="chemical-quantity" name="quantity" value="1" min="1">
+                    </div>
+                    <div>
+                        <label for="chemical-unit">Unit:</label>
+                        <input type="text" id="chemical-unit" name="unit" placeholder="e.g., liters, kg, bottles">
+                    </div>
+                </div>
+                <div class="form-section">
+                    <label for="chemical-ppe">PPE Requirements:</label>
+                    <textarea id="chemical-ppe" name="ppe_requirements" rows="2" placeholder="e.g., Gloves, goggles, mask required"></textarea>
+                </div>
+                <div class="form-section">
+                    <label for="chemical-msds">MSDS Link:</label>
+                    <input type="url" id="chemical-msds" name="msds_link" placeholder="https://...">
+                </div>
+                <div class="form-section">
+                    <label for="chemical-notes">Notes:</label>
+                    <textarea id="chemical-notes" name="notes" rows="2"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="action-btn update-btn">
+                        <i class="fa-solid fa-plus"></i> Add Chemical
+                    </button>
+                    <button type="button" class="close-chemical-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Chemical Details Modal -->
+    <div id="chemical-details-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-top-left">&times;</span>
+            <div class="modal-header">
+                <h2>Chemical Details</h2>
+                <div class="modal-actions">
+                    <button id="edit-chemical-btn" class="action-btn update-btn">
+                        <i class="fa-solid fa-pencil"></i> Edit
+                    </button>
+                    <button id="delete-chemical-btn" class="action-btn delete-btn">
+                        <i class="fa-solid fa-trash-can"></i> Delete
+                    </button>
+                    <button class="close-chemical-details-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Close
+                    </button>
+                </div>
+            </div>
+            <div id="chemical-details-content" class="details-grid"></div>
+        </div>
+    </div>
+    
+    <!-- Edit Chemical Modal -->
+    <div id="edit-chemical-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal close-top-left">&times;</span>
+            <div class="modal-header">
+                <h2>Edit Chemical</h2>
+            </div>
+            <form id="edit-chemical-form">
+                <input type="hidden" id="edit-chemical-id">
+                <div class="form-grid">
+                    <div>
+                        <label for="edit-chemical-name">Name *:</label>
+                        <input type="text" id="edit-chemical-name" name="name" required>
+                    </div>
+                    <div>
+                        <label for="edit-chemical-type">Type:</label>
+                        <select id="edit-chemical-type" name="chemical_type">
+                            <option value="other">Other</option>
+                            <option value="herbicide">Herbicide</option>
+                            <option value="pesticide">Pesticide</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-chemical-purpose">Purpose/Function:</label>
+                        <input type="text" id="edit-chemical-purpose" name="purpose">
+                    </div>
+                    <div>
+                        <label for="edit-chemical-supplier">Supplier:</label>
+                        <input type="text" id="edit-chemical-supplier" name="supplier">
+                    </div>
+                    <div>
+                        <label for="edit-chemical-purchase-date">Purchase Date:</label>
+                        <input type="date" id="edit-chemical-purchase-date" name="purchase_date">
+                    </div>
+                    <div>
+                        <label for="edit-chemical-expiry-date">Expiry Date:</label>
+                        <input type="date" id="edit-chemical-expiry-date" name="expiry_date">
+                    </div>
+                    <div>
+                        <label for="edit-chemical-location">Location:</label>
+                        <input type="text" id="edit-chemical-location" name="location">
+                    </div>
+                    <div>
+                        <label for="edit-chemical-quantity">Quantity:</label>
+                        <input type="number" id="edit-chemical-quantity" name="quantity" value="1" min="1">
+                    </div>
+                    <div>
+                        <label for="edit-chemical-unit">Unit:</label>
+                        <input type="text" id="edit-chemical-unit" name="unit" placeholder="e.g., liters, kg, bottles">
+                    </div>
+                </div>
+                <div class="form-section">
+                    <label for="edit-chemical-ppe">PPE Requirements:</label>
+                    <textarea id="edit-chemical-ppe" name="ppe_requirements" rows="2"></textarea>
+                </div>
+                <div class="form-section">
+                    <label for="edit-chemical-msds">MSDS Link:</label>
+                    <input type="url" id="edit-chemical-msds" name="msds_link">
+                </div>
+                <div class="form-section">
+                    <label for="edit-chemical-notes">Notes:</label>
+                    <textarea id="edit-chemical-notes" name="notes" rows="2"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="action-btn update-btn">
+                        <i class="fa-solid fa-save"></i> Save Changes
+                    </button>
+                    <button type="button" class="close-edit-chemical-btn action-btn">
+                        <i class="fa-solid fa-xmark"></i> Cancel
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
