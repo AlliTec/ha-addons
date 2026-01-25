@@ -399,7 +399,6 @@ th {
     width: 100%; 
     height: 100%; 
     overflow-y: auto; 
-    background-color: rgb(0,0,0); 
     background-color: rgba(0,0,0,0.9); 
 }
 
@@ -417,7 +416,9 @@ th {
     box-sizing: border-box;
 }
 
-.modal-content > * {
+/* All modal-content elements inside main modals */
+.modal:not(#image-modal):not(#backup-progress-modal) .modal-content,
+.modal:not(#image-modal):not(#backup-progress-modal) .modal-content > * {
     max-width: 100%;
     box-sizing: border-box;
 }
@@ -1959,7 +1960,7 @@ th {
 }
 
 /* Backup Progress Modal */
-.modal {
+#backup-progress-modal {
     display: none;
     position: fixed;
     z-index: 1000;
@@ -1970,11 +1971,11 @@ th {
     background-color: rgba(0,0,0,0.5);
 }
 
-.modal.show {
+#backup-progress-modal.show {
     display: block;
 }
 
-.modal-content {
+#backup-progress-modal .modal-content {
     background-color: #fefefe;
     margin: 10% auto;
     padding: 0;

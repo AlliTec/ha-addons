@@ -28,6 +28,14 @@
 - Changed modal centering from transform to margin: auto
 - Modals now display at full 80% width
 
+## 1.11.58 - 2026-01-26
+
+### Fix
+- Fixed CSS conflict between two .modal-content rules
+- Changed generic .modal to ID-based selectors (#backup-progress-modal)
+- Each modal type now has its own specific CSS rule
+- Main modals no longer inherit backup modal styles
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
