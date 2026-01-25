@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.54 - 2026-01-26
+
+### UI Enhancement
+- Widened all modals to 75% of viewport width
+- Changed from fixed 500-700px to responsive 75vw
+- Applied to main modals, backup modal, and maintenance history modal
+- Better use of screen space for form content
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
