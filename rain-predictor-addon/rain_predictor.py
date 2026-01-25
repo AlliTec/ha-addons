@@ -18,7 +18,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.56"
+VERSION = "1.1.57"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -1217,9 +1217,8 @@ class RainPredictor:
                 logging.debug(f"Removed track ID {cell_id} (age: {age:.1f}min > {base_retention}min)")
                 removed_count += 1
         
-        total_matches = matched_count + len(high_quality_cells)
-        logging.info(f"🎯 ENHANCED TRACKING: {matched_count} matched, {len(high_quality_cells)} new high-quality, {removed_count} removed")
-        logging.info(f"📊 Track quality: {total_matches}/{len(detected_cells)} cells tracked ({(total_matches/len(detected_cells)*100):.1f}% coverage)")
+        total_matches = matched_count
+        logging.info(f"🎯 ENHANCED TRACKING: {matched_count} matched, {removed_count} removed")
     
     def _validate_api_response(self, api_data):
         """Validate that API response has required structure"""
@@ -1310,232 +1309,67 @@ class RainPredictor:
             logging.error(f"Error updating entities: {e}")
 
     def _find_threatening_cell(self):
-        """Comprehensive analysis of ALL rain cells to find most likely threat"""
-        logging.info(f"\n🌧️ COMPREHENSIVE RAIN ANALYSIS - Evaluating {len(self.tracked_cells)} tracked cells")
-        logging.info(f"🔍 Analysis settings: threshold={self.threshold}, angle_threshold={self.arrival_angle_threshold}°, max_dist={self.max_track_dist}km")
+        """Find the closest rain cell that is moving toward user location"""
+        logging.info(f"\n🌧️ FINDING CLOSEST APPROACHING CELL - {len(self.tracked_cells)} tracked cells")
         
-        # Collect all valid rain cells with their threat potential
-        valid_cells = []
-        all_directions = []
-        all_speeds = []
+        approaching_cells = []
         
         for cell_id, cell in self.tracked_cells.items():
-            logging.info(f"\n  Cell #{cell_id}:")
-            logging.info(f"    Track length: {len(cell.positions)} position(s)")
-            
-            if len(cell.positions) < self.min_track_len:
-                logging.info(f"    ❌ Track too short (need {self.min_track_len})")
+            if len(cell.positions) < 2:
                 continue
             
-            # Get both initial detection position and current position
-            initial_lat, initial_lon, _ = cell.positions[0]  # First detection position
-            current_lat, current_lon, _ = cell.positions[-1]  # Current position
+            current_lat, current_lon, _ = cell.positions[-1]
             speed_kph, direction_deg = cell.get_velocity(self)
             
-            # Validate velocity data
-            if speed_kph is None or direction_deg is None:
-                logging.info(f"    ❌ No velocity data available")
+            if speed_kph is None or direction_deg is None or speed_kph < 1:
                 continue
             
-            if speed_kph < 0.1:
-                logging.info(f"    ❌ Cell stationary (speed: {speed_kph:.1f} km/h)")
-                continue
-                
-            logging.info(f"    ✅ Using measured velocity: {speed_kph:.1f} km/h @ {direction_deg:.1f}°")
-            
-            # Calculate threat metrics from current position (for accurate ETA)
             distance_km = self.haversine(current_lat, current_lon, self.latitude, self.longitude)
             bearing_to_user = self.calculate_bearing(current_lat, current_lon, self.latitude, self.longitude)
-            bearing_from_user_to_cell = self.calculate_bearing(self.latitude, self.longitude, current_lat, current_lon)
+            bearing_from_user = self.calculate_bearing(self.latitude, self.longitude, current_lat, current_lon)
             
-            if bearing_to_user is None or bearing_from_user_to_cell is None:
-                logging.info(f"    ❌ Cannot calculate bearing")
+            if bearing_to_user is None:
                 continue
             
-            # Calculate angle difference between rain movement and direction TO user
-            # Small angle difference = rain moving toward user
             angle_diff = abs((direction_deg - bearing_to_user + 180) % 360 - 180)
+            is_approaching = angle_diff <= 90
             
-            # Calculate probability of rain reaching location (0-100%)
-            threat_probability = self._calculate_threat_probability(
-                distance_km, speed_kph, angle_diff, cell.intensity, len(cell.positions)
-            )
+            logging.info(f"  Cell #{cell_id}: {distance_km:.1f}km, {speed_kph:.1f}kph, dir={direction_deg:.0f}°, angle_diff={angle_diff:.0f}°, approaching={is_approaching}")
             
-            logging.info(f"    Distance: {distance_km:.1f}km")
-            logging.info(f"    Speed: {speed_kph:.1f}km/h")
-            logging.info(f"    Moving: {direction_deg:.1f}°")
-            logging.info(f"    Bearing to location: {bearing_to_user:.1f}°")
-            logging.info(f"    Angle difference: {angle_diff:.1f}°")
-            logging.info(f"    Threat probability: {threat_probability:.1f}%")
-            
-            # DEBUG: Log coordinate details for troubleshooting
-            logging.info(f"    DEBUG: Cell current pos: {current_lat:.4f}, {current_lon:.4f}")
-            logging.info(f"    DEBUG: Cell initial pos: {initial_lat:.4f}, {initial_lon:.4f}")
-            logging.info(f"    DEBUG: User pos: {self.latitude:.4f}, {self.longitude:.4f}")
-            logging.info(f"    DEBUG: Distance calc: haversine({current_lat:.4f},{current_lon:.4f} -> {self.latitude:.4f},{self.longitude:.4f})")
-            
-            # Collect for overall analysis
-            valid_cells.append({
-                'cell_id': cell_id,
-                'cell': cell,
-                'lat': current_lat,  # Current position for distance/ETA calculations
-                'lon': current_lon,  # Current position for distance/ETA calculations
-                'initial_lat': initial_lat,  # Initial detection position for green marker
-                'initial_lon': initial_lon,  # Initial detection position for green marker
-                'speed': speed_kph,
-                'direction': direction_deg,
-                'distance': distance_km,
-                'bearing_to_location': bearing_to_user,
-                'bearing_from_user': bearing_from_user_to_cell,
-                'angle_diff': angle_diff,
-                'threat_probability': threat_probability,
-                'intensity': cell.intensity
-            })
-            
-            all_directions.append(direction_deg)
-            all_speeds.append(speed_kph)
+            if is_approaching:
+                approaching_cells.append({
+                    'cell_id': cell_id,
+                    'cell': cell,
+                    'lat': current_lat,
+                    'lon': current_lon,
+                    'speed': speed_kph,
+                    'direction': direction_deg,
+                    'distance_to_user': distance_km,
+                    'bearing_from_user': bearing_from_user,
+                    'angle_diff': angle_diff
+                })
         
-        # If no valid cells, return None (no tracking marker)
-        if not valid_cells:
-            logging.info("\n✅ NO VALID RAIN CELLS - No tracking marker needed")
+        if not approaching_cells:
+            logging.info("  No approaching cells found")
             return None
         
-        # Calculate overall rain system patterns
-        if all_directions:
-            # Calculate circular mean for directional data
-            x = sum(math.cos(math.radians(d)) for d in all_directions)
-            y = sum(math.sin(math.radians(d)) for d in all_directions)
-            avg_direction = math.degrees(math.atan2(y, x))
-            if avg_direction < 0:
-                avg_direction += 360
-        else:
-            avg_direction = 0
-            
-        avg_speed = sum(all_speeds) / len(all_speeds) if all_speeds else 0
+        approaching_cells.sort(key=lambda x: x['distance_to_user'])
+        best_cell = approaching_cells[0]
         
-        logging.info(f"\n📊 RAIN SYSTEM ANALYSIS:")
-        logging.info(f"    General movement direction: {avg_direction:.1f}° ({self.degrees_to_cardinal(avg_direction)})")
-        logging.info(f"    Average speed: {avg_speed:.1f} km/h")
-        logging.info(f"    Valid cells: {len(valid_cells)}")
+        logging.info(f"  Selected: Cell #{best_cell['cell_id']} at {best_cell['lat']:.4f}, {best_cell['lon']:.4f}")
+        logging.info(f"  Distance: {best_cell['distance_to_user']:.1f}km, ETA: {best_cell['distance_to_user'] / best_cell['speed'] * 60:.0f} min")
         
-        # Filter cells based on movement toward user location
-        filtered_cells = []
+        time_to_arrival_minutes = best_cell['distance_to_user'] / best_cell['speed'] * 60
         
-        for cell_data in valid_cells:
-            # Primary check: cell should be moving toward user location
-            # For interception: rain cell should be moving in direction that points toward user
-            user_relative_bearing = cell_data['bearing_from_user']  # Bearing FROM user TO cell
-            
-            # Calculate bearing FROM cell TO user (opposite direction)
-            cell_to_user_bearing = (user_relative_bearing + 180) % 360
-            
-            # Check if rain cell movement direction is roughly toward user (within 90° of cell-to-user bearing)
-            movement_to_user_diff = abs((cell_data['direction'] - cell_to_user_bearing + 180) % 360 - 180)
-            
-            # ENHANCED: More permissive filtering for visual tracking
-            # Cell passes if movement is even loosely toward user (within 135° instead of 90°)
-            passes_direction_filter = movement_to_user_diff <= 135  # More permissive for visual tracking
-            
-            if passes_direction_filter:
-                cell_data['movement_to_user'] = movement_to_user_diff
-                filtered_cells.append(cell_data)
-                logging.info(f"    ✅ Cell #{cell_data['cell_id']}: PASSED filter")
-                logging.info(f"       Movement to user: {movement_to_user_diff:.1f}° (≤90°)")
-                logging.info(f"       Cell moving {self.degrees_to_cardinal(cell_data['direction'])} "
-                           f"toward user location")
-            else:
-                logging.info(f"    ❌ Cell #{cell_data['cell_id']}: FILTERED OUT")
-                logging.info(f"       Movement to user: {movement_to_user_diff:.1f}° (> 90°)")
-                logging.info(f"       Cell moving {self.degrees_to_cardinal(cell_data['direction'])} "
-                           f"away from user location")
-        
-        # ENHANCED: Use all cells for analysis if directional filtering is too restrictive
-        # This ensures visual tracking matches what user sees on screen
-        if len(filtered_cells) == 0 and len(valid_cells) > 0:
-            logging.info("\n⚠️ DIRECTIONAL FILTER TOO RESTRICTIVE - Using all detected cells")
-            logging.info("   Visual tracking mode: tracking all visible cells regardless of perfect direction")
-            analysis_cells = valid_cells
-        else:
-            # Use filtered cells for threat analysis when available
-            analysis_cells = filtered_cells if filtered_cells else []
-        
-        if not analysis_cells:
-            logging.info("\n✅ NO CELLS AVAILABLE - No tracking marker needed")
-            logging.info("   No rain cells detected or all filtered out")
-            return None
-        
-        logging.info(f"\n🎯 ANALYZING {len(analysis_cells)} FILTERED CELLS:")
-        
-        # Log all cells with their distances for debugging
-        if len(analysis_cells) > 1:
-            logging.info("    All cells being considered:")
-            for cell_data in analysis_cells:
-                logging.info(f"        Cell #{cell_data['cell_id']}: {cell_data['distance']:.1f}km, "
-                           f"moving {self.degrees_to_cardinal(cell_data['direction'])}, "
-                           f"score: {cell_data.get('threat_probability', 0):.1f}%")
-        
-        # Find most likely threat based on multiple factors
-        best_cell = None
-        best_score = 0
-        
-        for cell_data in analysis_cells:
-            # Multi-factor scoring for most likely threat
-            score = 0
-            
-            # Factor 1: Threat probability (40% weight)
-            score += cell_data['threat_probability'] * 0.4
-            
-            # Factor 2: Proximity (25% weight) - closer is more threatening
-            proximity_score = max(0, 100 - (cell_data['distance'] / 2))  # 100% at 0km, 0% at 200km
-            score += proximity_score * 0.25
-            
-            # Factor 3: Speed (20% weight) - faster is more imminent
-            speed_score = min(100, cell_data['speed'] * 2)  # 100% at 50 km/h
-            score += speed_score * 0.2
-            
-            # Factor 4: Intensity (15% weight) - more intense is more threatening
-            intensity_score = min(100, (cell_data['intensity'] / self.threshold) * 100)
-            score += intensity_score * 0.15
-            
-            logging.info(f"    Cell #{cell_data['cell_id']}: Score={score:.1f} "
-                        f"(prob={cell_data['threat_probability']:.1f}, "
-                        f"prox={proximity_score:.1f}, "
-                        f"speed={speed_score:.1f}, "
-                        f"int={intensity_score:.1f})")
-            
-            if score > best_score:
-                best_score = score
-                best_cell = cell_data
-        
-        if best_cell:
-            time_to_arrival_hours = best_cell['distance_to_user'] / best_cell['speed']
-            time_to_arrival_minutes = time_to_arrival_hours * 60
-            
-            logging.info(f"\n⚠️ MOST LIKELY THREAT: Cell #{best_cell['cell_id']}")
-            logging.info(f"    Overall score: {best_score:.1f}")
-            logging.info(f"    ETA: {time_to_arrival_minutes:.0f} minutes")
-            logging.info(f"    Distance: {best_cell['distance_to_user']:.1f} km")
-            logging.info(f"    Speed: {best_cell['speed']:.1f} km/h")
-            logging.info(f"    Direction: {best_cell['direction']:.1f}°")
-            logging.info(f"    Position: {best_cell['lat']:.4f}, {best_cell['lon']:.4f}")
-            logging.info(f"    Bearing to user: {best_cell['bearing_from_user']:.1f}°")
-            logging.info(f"    Moving toward user: {best_cell.get('movement_to_user', 'N/A')}°")
-            
-            return {
-                'time_to_rain': round(time_to_arrival_minutes),
-                'distance_km': round(best_cell['distance_to_user'], 1),
-                'speed_kph': round(best_cell['speed'], 1),
-                'direction_deg': round(best_cell['direction'], 1),
-                'bearing_to_cell_deg': round(best_cell['bearing_from_user'], 1),
-                'rain_cell_latitude': round(best_cell['initial_lat'], 4),  # Initial detection position for green marker
-                'rain_cell_longitude': round(best_cell['initial_lon'], 4),  # Initial detection position for green marker
-                'threat_probability': round(best_cell['threat_probability'], 1),
-                'system_avg_direction': round(avg_direction, 1),
-                'system_avg_speed': round(avg_speed, 1)
-            }
-        
-        logging.info("\n✅ NO THREATENING CELLS FOUND")
-        return None
+        return {
+            'time_to_rain': round(time_to_arrival_minutes),
+            'distance_km': round(best_cell['distance_to_user'], 1),
+            'speed_kph': round(best_cell['speed'], 1),
+            'direction_deg': round(best_cell['direction'], 1),
+            'bearing_to_cell_deg': round(best_cell['bearing_from_user'], 1),
+            'rain_cell_latitude': round(best_cell['lat'], 4),
+            'rain_cell_longitude': round(best_cell['lon'], 4)
+        }
     
     def _calculate_threat_probability(self, distance_km, speed_kph, angle_diff, intensity, track_length):
         """Calculate probability (0-100%) of rain reaching location"""

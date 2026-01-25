@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## Version 1.1.57 (2026-01-26)
+
+### Fix
+- Fixed NameError crash (undefined variables `high_quality_cells`, `detected_cells`)
+- Marker now shows current rain cell position instead of initial detection position
+- Simplified threat detection to find closest approaching cell directly
+- Removed complex directional averaging that caused erratic tracking
+
+### Changed
+- Green marker now placed directly over detected rain cell location
+- Tracking now prioritizes closest approaching cell for accuracy
+
 ## Version 1.1.56 (2026-01-04)
 
 ### Fix
