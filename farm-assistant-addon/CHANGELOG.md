@@ -20,6 +20,14 @@
 - Simplified modal animation to prevent centering issues
 - Removed transform from animation to keep horizontal centering consistent
 
+## 1.11.57 - 2026-01-26
+
+### Fix
+- Removed 600px max-width limit from form elements
+- Added box-sizing: border-box to modal-content
+- Changed modal centering from transform to margin: auto
+- Modals now display at full 80% width
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
