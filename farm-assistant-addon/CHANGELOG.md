@@ -8,6 +8,12 @@
 - Applied to main modals, backup modal, and maintenance history modal
 - Better use of screen space for form content
 
+## 1.11.55 - 2026-01-26
+
+### UI Enhancement
+- Widened all modals to 80% of viewport width
+- Better visibility for animal details and asset information
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement

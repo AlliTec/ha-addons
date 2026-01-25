@@ -404,8 +404,8 @@ th {
 .modal-content {
     margin: 20px auto;
     display: block;
-    width: 75%;
-    max-width: 75vw;
+    width: 80%;
+    max-width: 80vw;
     background-color: var(--bg-color);
     color: var(--text-color);
     border-radius: 12px;
@@ -595,8 +595,8 @@ th {
 
 /* Wider modal for maintenance history to accommodate status column */
 #maintenance-history-modal .modal-content {
-    max-width: 75vw;
-    width: 75%;
+    max-width: 80vw;
+    width: 80%;
 }
 
 .status-badge {
@@ -1975,8 +1975,8 @@ th {
     margin: 10% auto;
     padding: 0;
     border-radius: 10px;
-    width: 75%;
-    max-width: 75vw;
+    width: 80%;
+    max-width: 80vw;
     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     animation: modalSlideIn 0.3s ease-out;
 }
