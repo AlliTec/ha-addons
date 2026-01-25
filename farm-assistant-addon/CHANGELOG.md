@@ -61,6 +61,14 @@
 - Add Chemical button now opens modal
 - Form submission handlers for add/edit chemical modals
 
+## 1.11.62 - 2026-01-26
+
+### Fix
+- Fixed JavaScript syntax error in script.js
+- Chemical functions were outside DOMContentLoaded listener
+- Moved chemical code inside the event listener
+- JavaScript now loads correctly without errors
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
