@@ -37,6 +37,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Fixed TypeError when velocity returns None (added None check before formatting)
 - Prevents crash when logging cell tracking with insufficient position data
 
+## Version 1.1.61 (2026-01-26)
+
+### Fix
+- Fixed position filtering that blocked multiple positions per cell
+- Reduced timestamp comparison from 60 seconds to 0.001 seconds
+- Cells can now accumulate positions from all radar frames for velocity calculation
+
 ## Version 1.1.56 (2026-01-04)
 
 ### Fix

@@ -18,7 +18,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.60"
+VERSION = "1.1.61"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -107,16 +107,16 @@ class RainCell:
     
     def add_position(self, lat, lon, timestamp, intensity=0):
         """Add a new position observation with validation"""
-        # Validate coordinates
         if not (-90 <= lat <= 90) or not (-180 <= lon <= 180):
             logging.warning(f"Invalid coordinates: ({lat}, {lon}) - skipping")
             return
-        
-        # Check for duplicate timestamps
-        if self.positions and (timestamp - self.positions[-1][2]).total_seconds() < 60:
-            logging.warning(f"Timestamp too close: {timestamp} vs {self.positions[-1][2]} - skipping")
-            return
-        
+
+        if self.positions:
+            last_timestamp = self.positions[-1][2]
+            time_diff = (timestamp - last_timestamp).total_seconds()
+            if time_diff < 0.001:
+                return
+
         self.positions.append((lat, lon, timestamp))
         self.last_seen = timestamp
         self.intensity = max(self.intensity, intensity)
