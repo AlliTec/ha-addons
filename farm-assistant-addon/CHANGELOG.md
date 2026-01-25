@@ -52,6 +52,15 @@
 - Added chemicals section to hide/show switching logic
 - Flask icon for chemical register
 
+## 1.11.61 - 2026-01-26
+
+### Feature
+- Added JavaScript functions for chemical register
+- loadChemicals(), renderChemicals(), createChemicalFilterTabs()
+- showChemicalDetails(), edit chemical, delete chemical functions
+- Add Chemical button now opens modal
+- Form submission handlers for add/edit chemical modals
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
