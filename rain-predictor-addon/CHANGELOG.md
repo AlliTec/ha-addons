@@ -51,6 +51,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - Cache now writes to correct location in Docker container
 - Fixes "No such file or directory" error for latest_analysis.json
 
+## Version 1.1.63 (2026-01-26)
+
+- Changed cache write error to debug level (non-critical, doesn't affect functionality)
+
 ## Version 1.1.56 (2026-01-04)
 
 ### Fix

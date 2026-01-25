@@ -18,7 +18,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.62"
+VERSION = "1.1.63"
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -1467,7 +1467,7 @@ class RainPredictor:
             os.replace(temp_path, self.latest_analysis_path)
             logging.info(f"Analysis results saved to cache: {self.latest_analysis_path}")
         except Exception as e:
-            logging.error(f"Error saving analysis to cache: {e}")
+            logging.debug(f"Cache write skipped: {e}")
 
     def run_prediction(self):
         """Run a single prediction cycle"""
