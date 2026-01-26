@@ -97,6 +97,13 @@
 - Database table auto-creation on startup
 - Full CRUD operations for chemical register
 
+## 1.11.67 - 2026-01-26
+
+### Fix
+- Added CORS middleware to FastAPI
+- Browser requests to API are now allowed
+- Fixes 404/405 errors for API calls
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
