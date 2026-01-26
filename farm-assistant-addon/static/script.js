@@ -6404,24 +6404,25 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Error loading chemicals:', error);
         }
     }
+    window.loadChemicals = loadChemicals;
     
     // Render chemicals table
     function renderChemicals(chemicals) {
         const tbody = document.querySelector('#chemicals-list tbody');
         if (!tbody) return;
-        
+
         tbody.innerHTML = '';
-        
+
         chemicals.forEach(chemical => {
             const row = document.createElement('tr');
             row.style.cursor = 'pointer';
             row.onclick = () => showChemicalDetails(chemical.id);
-            
+
             const purchaseDate = chemical.purchase_date ? new Date(chemical.purchase_date).toLocaleDateString() : '-';
             const expiryDate = chemical.expiry_date ? new Date(chemical.expiry_date).toLocaleDateString() : '-';
-            const typeClass = chemical.chemical_type === 'herbicide' ? 'status-pending' : 
+            const typeClass = chemical.chemical_type === 'herbicide' ? 'status-pending' :
                               chemical.chemical_type === 'pesticide' ? 'status-completed' : 'status-action';
-            
+
             row.innerHTML = `
                 <td>${chemical.name}</td>
                 <td><span class="status-badge ${typeClass}">${chemical.chemical_type}</span></td>
@@ -6435,19 +6436,20 @@ document.addEventListener('DOMContentLoaded', function() {
             tbody.appendChild(row);
         });
     }
+    window.renderChemicals = renderChemicals;
     
     // Create chemical filter tabs
     function createChemicalFilterTabs() {
         const filterBar = document.getElementById('chemicals-filter-bar');
         if (!filterBar) return;
-        
+
         filterBar.innerHTML = `
             <button class="filter-tab active" data-chemical-type="">All</button>
             <button class="filter-tab" data-chemical-type="herbicide">Herbicide</button>
             <button class="filter-tab" data-chemical-type="pesticide">Pesticide</button>
             <button class="filter-tab" data-chemical-type="other">Other</button>
         `;
-        
+
         filterBar.querySelectorAll('.filter-tab').forEach(tab => {
             tab.addEventListener('click', function() {
                 filterBar.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -6456,13 +6458,14 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+    window.createChemicalFilterTabs = createChemicalFilterTabs;
     
     // Show chemical details
     async function showChemicalDetails(chemicalId) {
         try {
             const response = await fetch(`/api/chemical/${chemicalId}`);
             const chemical = await response.json();
-            
+
             const content = document.getElementById('chemical-details-content');
             content.innerHTML = `
                 <div><span>Name:</span><span>${chemical.name}</span></div>
@@ -6477,14 +6480,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div><span>MSDS:</span><span>${chemical.msds_link ? '<a href="' + chemical.msds_link + '" target="_blank">View MSDS</a>' : '-'}</span></div>
                 <div><span>Notes:</span><span>${chemical.notes || '-'}</span></div>
             `;
-            
+
             document.getElementById('chemical-details-modal').dataset.chemicalId = chemicalId;
-            
+
             document.getElementById('chemical-details-modal').style.display = 'block';
         } catch (error) {
             console.error('Error loading chemical details:', error);
         }
     }
+    window.showChemicalDetails = showChemicalDetails;
     
     // Edit chemical button
     const editChemicalBtn = document.getElementById('edit-chemical-btn');

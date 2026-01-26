@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.11.70 - 2026-01-26
+
+### Fix
+- Fixed JavaScript scope issue preventing loadChemicals from being defined
+- Made chemical functions (loadChemicals, renderChemicals, createChemicalFilterTabs, showChemicalDetails) global by attaching to window object
+- This resolves "loadChemicals is not defined" error when clicking Chemical Register tab
+
 ## 1.11.54 - 2026-01-26
 
 ### UI Enhancement
