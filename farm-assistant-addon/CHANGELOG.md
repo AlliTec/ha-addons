@@ -90,6 +90,13 @@
 - Re-added loadChemicals() and all chemical functions
 - Functions were missing from JavaScript file
 
+## 1.11.66 - 2026-01-26
+
+### Fix
+- Chemical API endpoints added to main.py
+- Database table auto-creation on startup
+- Full CRUD operations for chemical register
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
