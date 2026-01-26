@@ -6,7 +6,7 @@ import asyncpg
 import logging
 from datetime import datetime, timedelta
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File
-from fastapi.middleware.cors import AddCORSMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -75,7 +75,7 @@ app = FastAPI()
 
 # Add CORS middleware to allow browser requests
 app.add_middleware(
-    AddCORSMiddleware,
+    CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],

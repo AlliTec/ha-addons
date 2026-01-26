@@ -104,6 +104,12 @@
 - Browser requests to API are now allowed
 - Fixes 404/405 errors for API calls
 
+## 1.11.68 - 2026-01-26
+
+### Fix
+- Fixed CORSMiddleware import (was AddCORSMiddleware)
+- Corrected middleware class name for fastapi
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
