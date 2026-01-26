@@ -69,6 +69,14 @@
 - Moved chemical code inside the event listener
 - JavaScript now loads correctly without errors
 
+## 1.11.63 - 2026-01-26
+
+### Feature
+- Chemical register API endpoints (/api/chemicals, /api/chemical/{id})
+- Database table for chemical inventory
+- Full CRUD operations for chemicals
+- Chemical expiry dates shown on calendar
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
