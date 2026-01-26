@@ -84,6 +84,12 @@
 - chemical_inventory table is now created if it doesn't exist
 - No manual database setup required
 
+## 1.11.65 - 2026-01-26
+
+### Fix
+- Re-added loadChemicals() and all chemical functions
+- Functions were missing from JavaScript file
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
