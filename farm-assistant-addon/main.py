@@ -2410,6 +2410,39 @@ class Chemical(BaseModel):
     unit: Optional[str] = None
     notes: Optional[str] = None
 
+async def create_chemical_table():
+    """Create chemical_inventory table if it doesn't exist"""
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        await conn.execute("""
+            CREATE TABLE IF NOT EXISTS chemical_inventory (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                chemical_type VARCHAR(50) DEFAULT 'other',
+                purpose VARCHAR(500),
+                supplier VARCHAR(255),
+                purchase_date DATE,
+                expiry_date DATE,
+                location VARCHAR(255),
+                ppe_requirements VARCHAR(500),
+                msds_link VARCHAR(500),
+                quantity INTEGER DEFAULT 1,
+                unit VARCHAR(50),
+                notes TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+        logging.info("Chemical inventory table created/verified successfully")
+    except Exception as e:
+        logging.error(f"Error creating chemical table: {e}")
+    finally:
+        await conn.close()
+
+# Create table on module load
+import asyncio
+asyncio.create_task(create_chemical_table())
+
 @app.get("/api/chemicals")
 async def get_chemicals(chemical_type: Optional[str] = None):
     """Get all chemicals, optionally filtered by type"""
