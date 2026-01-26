@@ -110,6 +110,12 @@
 - Fixed CORSMiddleware import (was AddCORSMiddleware)
 - Corrected middleware class name for fastapi
 
+## 1.11.69 - 2026-01-26
+
+### Fix
+- Added cache-buster to script.js to force browser reload
+- Prevents browser caching of old JavaScript files
+
 ## 1.11.53 - 2025-11-27
 
 ### Feature Enhancement
