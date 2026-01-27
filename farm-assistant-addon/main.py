@@ -85,6 +85,7 @@ app.add_middleware(
 async def startup_event():
     if not await check_connection():
         logging.error("Database connection failed. The application will not work correctly.")
+    await create_chemical_table()
 
 # Use local paths for development, production paths for container
 static_dir = "static" if os.path.exists("static") else "/app/static"
@@ -2445,12 +2446,6 @@ async def create_chemical_table():
         logging.info("Chemical inventory table created/verified successfully")
     except Exception as e:
         logging.error(f"Error creating chemical table: {e}")
-    finally:
-        await conn.close()
-
-# Create table on module load
-import asyncio
-asyncio.create_task(create_chemical_table())
 
 @app.get("/api/chemicals")
 async def get_chemicals(chemical_type: Optional[str] = None):
