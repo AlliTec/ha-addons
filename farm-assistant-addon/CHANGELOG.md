@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.11.71 - 2026-01-28
+
+### Enhancement
+- Added console logging for chemical form submission to help diagnose failures
+- Log chemical data being submitted, response status, and any errors
+
 ## 1.11.70 - 2026-01-26
 
 ### Fix

@@ -6366,21 +6366,27 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             try {
+                console.log('Submitting chemical data:', chemicalData);
                 const response = await fetch('/api/chemicals', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(chemicalData)
                 });
-                
+
+                console.log('Response status:', response.status);
+                console.log('Response OK:', response.ok);
+
                 if (response.ok) {
                     document.getElementById('add-chemical-modal').style.display = 'none';
                     loadChemicals();
                 } else {
-                    alert('Failed to add chemical');
+                    const errorText = await response.text();
+                    console.error('Failed to add chemical:', response.status, errorText);
+                    alert('Failed to add chemical: ' + response.status);
                 }
             } catch (error) {
                 console.error('Error adding chemical:', error);
-                alert('Error adding chemical');
+                alert('Error adding chemical: ' + error.message);
             }
         });
     }
