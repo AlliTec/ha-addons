@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.11.72 - 2026-01-29
+
+### Fix
+- Added config.yaml to Docker build so version reading works
+- This fixes "v=unknown" in script.js URL
+
 ## 1.11.71 - 2026-01-28
 
 ### Enhancement

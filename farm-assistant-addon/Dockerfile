@@ -15,6 +15,7 @@ RUN mkdir -p /app/templates /app/static
 COPY run.sh /
 COPY main.py /app/
 COPY vin_decoder.py /app/
+COPY config.yaml /app/
 COPY templates/ /app/templates/
 COPY static/ /app/static/
 
