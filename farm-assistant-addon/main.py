@@ -7,7 +7,8 @@ import logging
 from datetime import datetime, timedelta
 from fastapi import FastAPI, Request, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
+from fastapi.exceptions import RequestValidationError
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
@@ -81,6 +82,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Return validation errors as JSON instead of HTML"""
+    return JSONResponse(
+        status_code=422,
+        content={"detail": exc.errors()}
+    )
+
 @app.on_event("startup")
 async def startup_event():
     if not await check_connection():
@@ -93,6 +102,15 @@ templates_dir = "templates" if os.path.exists("templates") else "/app/templates"
 
 app.mount("/static", StaticFiles(directory=static_dir), name="static")
 templates = Jinja2Templates(directory=templates_dir)
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    """Catch-all handler to ensure all errors return JSON"""
+    logging.error(f"Unhandled exception: {exc}")
+    return JSONResponse(
+        status_code=500,
+        content={"detail": str(exc)}
+    )
 
 # --- Pydantic Models ---
 
@@ -2475,6 +2493,9 @@ async def get_chemicals(chemical_type: Optional[str] = None):
                 if chem[key]:
                     chem[key] = chem[key].isoformat()
         return chemicals
+    except Exception as e:
+        logging.error(f"Error fetching chemicals: {e}")
+        raise HTTPException(status_code=500, detail=f"Error fetching chemicals: {str(e)}")
     finally:
         await conn.close()
 
@@ -2497,6 +2518,11 @@ async def get_chemical(chemical_id: int):
             if chem[key]:
                 chem[key] = chem[key].isoformat()
         return chem
+    except HTTPException:
+        raise
+    except Exception as e:
+        logging.error(f"Error fetching chemical {chemical_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Error fetching chemical: {str(e)}")
     finally:
         await conn.close()
 
