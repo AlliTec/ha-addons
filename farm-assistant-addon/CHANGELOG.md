@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.73 - 2026-01-29
+
+### Fix
+- Fix JSON parsing errors on chemicals API endpoints
+- Add RequestValidationError handler to return JSON instead of HTML
+- Add catch-all exception handler for all errors
+- Add try/except logging to /api/chemicals and /api/chemical/{id} endpoints
+
 ## 1.11.72 - 2026-01-29
 
 ### Fix
