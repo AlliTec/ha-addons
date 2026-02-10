@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.11.79 - 2026-02-11
+
+### Fix
+- Fixed PUT /api/chemical/{id} 500 error by converting date strings to date objects
+- Fixed DELETE /api/chemical/{id} to include proper error handling
+- Added exception handling to update and delete endpoints
+
 ## 1.11.78 - 2026-02-11
 
 ### Enhancement

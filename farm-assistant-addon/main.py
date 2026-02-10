@@ -2566,6 +2566,14 @@ async def update_chemical(chemical_id: int, chemical: Chemical):
     """Update an existing chemical entry"""
     conn = await asyncpg.connect(DATABASE_URL)
     try:
+        purchase_date = None
+        if chemical.purchase_date:
+            purchase_date = datetime.strptime(chemical.purchase_date, '%Y-%m-%d').date()
+
+        expiry_date = None
+        if chemical.expiry_date:
+            expiry_date = datetime.strptime(chemical.expiry_date, '%Y-%m-%d').date()
+
         result = await conn.execute("""
             UPDATE chemical_inventory SET
                 name = $1, chemical_type = $2, purpose = $3, supplier = $4,
@@ -2575,13 +2583,16 @@ async def update_chemical(chemical_id: int, chemical: Chemical):
             WHERE id = $13
         """,
             chemical.name, chemical.chemical_type, chemical.purpose,
-            chemical.supplier, chemical.purchase_date, chemical.expiry_date,
+            chemical.supplier, purchase_date, expiry_date,
             chemical.location, chemical.ppe_requirements, chemical.msds_link,
             chemical.quantity, chemical.unit, chemical.notes, chemical_id
         )
         if result == "UPDATE 0":
             raise HTTPException(status_code=404, detail="Chemical not found")
         return {"message": "Chemical updated successfully"}
+    except Exception as e:
+        logging.error(f"Error updating chemical: {e}")
+        raise HTTPException(status_code=500, detail=f"Error updating chemical: {str(e)}")
     finally:
         await conn.close()
 
@@ -2594,6 +2605,9 @@ async def delete_chemical(chemical_id: int):
         if result == "DELETE 0":
             raise HTTPException(status_code=404, detail="Chemical not found")
         return {"message": "Chemical deleted successfully"}
+    except Exception as e:
+        logging.error(f"Error deleting chemical: {e}")
+        raise HTTPException(status_code=500, detail=f"Error deleting chemical: {str(e)}")
     finally:
         await conn.close()
 
