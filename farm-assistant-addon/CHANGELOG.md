@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.81 - 2026-02-11
+
+### Feature
+- Added MSDS button to chemical register table
+- New "MSDS" column with PDF icon button that opens MSDS URL in new tab
+- Button only appears when MSDS link is provided
+- Stops event propagation to prevent triggering row click
+
 ## 1.11.80 - 2026-02-11
 
 ### Fix

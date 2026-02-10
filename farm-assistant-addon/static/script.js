@@ -6425,6 +6425,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const typeClass = chemical.chemical_type === 'herbicide' ? 'status-pending' :
                               chemical.chemical_type === 'pesticide' ? 'status-completed' : 'status-action';
 
+            const msdsButton = chemical.msds_link
+                ? `<button class="action-btn msds-btn" onclick="event.stopPropagation(); window.open('${chemical.msds_link}', '_blank');" title="Open MSDS">
+                     <i class="fa-solid fa-file-pdf"></i>
+                   </button>`
+                : '-';
+
             row.innerHTML = `
                 <td>${chemical.name}</td>
                 <td><span class="status-badge ${typeClass}">${chemical.chemical_type}</span></td>
@@ -6434,6 +6440,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${expiryDate}</td>
                 <td>${chemical.location || '-'}</td>
                 <td>${chemical.quantity} ${chemical.unit || ''}</td>
+                <td>${msdsButton}</td>
             `;
             tbody.appendChild(row);
         });

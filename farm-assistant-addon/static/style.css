@@ -633,6 +633,17 @@ th {
     color: white;
 }
 
+.msds-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    min-width: auto;
+}
+
+.msds-btn i {
+    margin-right: 0;
+}
+
 .details-table {
     width: 100%;
     border-collapse: collapse;
