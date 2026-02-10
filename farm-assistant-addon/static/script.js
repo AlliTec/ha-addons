@@ -6537,7 +6537,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show chemical details
     async function showChemicalDetails(chemicalId) {
         try {
-            const response = await fetch(`/api/chemical/${chemicalId}`);
+            const response = await fetch(`api/chemical/${chemicalId}`);
             const chemical = await response.json();
 
             const content = document.getElementById('chemical-details-content');
@@ -6569,9 +6569,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (editChemicalBtn) {
         editChemicalBtn.addEventListener('click', async function() {
             const chemicalId = document.getElementById('chemical-details-modal').dataset.chemicalId;
-            
+
             try {
-                const response = await fetch(`/api/chemical/${chemicalId}`);
+                const response = await fetch(`api/chemical/${chemicalId}`);
                 const chemical = await response.json();
                 
                 document.getElementById('edit-chemical-id').value = chemical.id;
@@ -6619,7 +6619,7 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             
             try {
-                const response = await fetch(`/api/chemical/${chemicalId}`, {
+                const response = await fetch(`api/chemical/${chemicalId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(chemicalData)
@@ -6647,7 +6647,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const chemicalId = document.getElementById('chemical-details-modal').dataset.chemicalId;
             
             try {
-                const response = await fetch(`/api/chemical/${chemicalId}`, { method: 'DELETE' });
+                const response = await fetch(`api/chemical/${chemicalId}`, { method: 'DELETE' });
                 
                 if (response.ok) {
                     document.getElementById('chemical-details-modal').style.display = 'none';

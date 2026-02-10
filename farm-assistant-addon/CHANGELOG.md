@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.11.80 - 2026-02-11
+
+### Fix
+- Fixed View/Edit/Delete 404 errors by changing absolute paths to relative paths
+- Changed `/api/chemical/{id}` to `api/chemical/{id}` in all chemical functions
+- This fixes Home Assistant ingress proxy issue for chemical detail operations
+
 ## 1.11.79 - 2026-02-11
 
 ### Fix
