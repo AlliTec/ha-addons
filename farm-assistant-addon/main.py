@@ -2533,6 +2533,14 @@ async def create_chemical(chemical: Chemical):
     """Create a new chemical entry"""
     conn = await asyncpg.connect(DATABASE_URL)
     try:
+        purchase_date = None
+        if chemical.purchase_date:
+            purchase_date = datetime.strptime(chemical.purchase_date, '%Y-%m-%d').date()
+
+        expiry_date = None
+        if chemical.expiry_date:
+            expiry_date = datetime.strptime(chemical.expiry_date, '%Y-%m-%d').date()
+
         record = await conn.fetchrow("""
             INSERT INTO chemical_inventory (
                 name, chemical_type, purpose, supplier, purchase_date,
@@ -2542,7 +2550,7 @@ async def create_chemical(chemical: Chemical):
             RETURNING id
         """,
             chemical.name, chemical.chemical_type, chemical.purpose,
-            chemical.supplier, chemical.purchase_date, chemical.expiry_date,
+            chemical.supplier, purchase_date, expiry_date,
             chemical.location, chemical.ppe_requirements, chemical.msds_link,
             chemical.quantity, chemical.unit, chemical.notes
         )

@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.11.77 - 2026-02-11
+
+### Enhancement
+- Updated chemical register filter tabs to match asset/animal register style
+- Filter tabs now show dynamic counts with icons (FontAwesome)
+- Consistent styling with other registers
+
+## 1.11.76 - 2026-02-11
+
+### Fix
+- Fixed POST /api/chemicals 500 error by converting date strings to date objects
+- Database expects date objects, not strings for purchase_date and expiry_date
+
 ## 1.11.75 - 2026-02-11
 
 ### Fix

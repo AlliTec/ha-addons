@@ -6450,24 +6450,86 @@ document.addEventListener('DOMContentLoaded', function() {
     window.renderChemicals = renderChemicals;
     
     // Create chemical filter tabs
-    function createChemicalFilterTabs() {
-        const filterBar = document.getElementById('chemicals-filter-bar');
-        if (!filterBar) return;
+    async function createChemicalFilterTabs() {
+        try {
+            console.log("Populating chemical filter tabs...");
 
-        filterBar.innerHTML = `
-            <button class="filter-tab active" data-chemical-type="">All</button>
-            <button class="filter-tab" data-chemical-type="herbicide">Herbicide</button>
-            <button class="filter-tab" data-chemical-type="pesticide">Pesticide</button>
-            <button class="filter-tab" data-chemical-type="other">Other</button>
-        `;
+            // Fetch chemicals to get counts
+            const response = await fetch("api/chemicals");
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-        filterBar.querySelectorAll('.filter-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                filterBar.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                loadChemicals(this.dataset.chemicalType || null);
+            const chemicals = await response.json();
+            console.log("Chemicals data received for filter tabs:", chemicals);
+
+            const filterBar = document.getElementById('chemicals-filter-bar');
+            if (!filterBar) {
+                console.error("Chemicals filter bar not found!");
+                return;
+            }
+
+            // Count chemicals by type
+            const counts = {
+                'All': chemicals.length,
+                'herbicide': chemicals.filter(c => c.chemical_type === 'herbicide').length,
+                'pesticide': chemicals.filter(c => c.chemical_type === 'pesticide').length,
+                'other': chemicals.filter(c => c.chemical_type === 'other').length
+            };
+
+            // Get icons for each type
+            const getChemicalIcon = (type) => {
+                const icons = {
+                    'All': 'fa-flask',
+                    'herbicide': 'fa-seedling',
+                    'pesticide': 'fa-bug',
+                    'other': 'fa-flask'
+                };
+                return icons[type] || 'fa-flask';
+            };
+
+            // Build filter tabs HTML
+            let filterTabsHtml = '';
+
+            // Add "All" tab
+            filterTabsHtml += `<button class="filter-btn active" data-chemical-type="All">
+                <i class="fa-solid ${getChemicalIcon('All')}"></i> All<sup style="color: var(--accent-color); font-size: 0.7em; margin-left: 2px;">(${counts['All']})</sup>
+            </button>`;
+
+            // Add type-specific tabs
+            ['herbicide', 'pesticide', 'other'].forEach(type => {
+                const count = counts[type];
+                const icon = getChemicalIcon(type);
+                const label = type.charAt(0).toUpperCase() + type.slice(1);
+                filterTabsHtml += `<button class="filter-btn" data-chemical-type="${type}">
+                    <i class="fa-solid ${icon}"></i> ${label}<sup style="color: var(--accent-color); font-size: 0.7em; margin-left: 2px;">(${count})</sup>
+                </button>`;
             });
-        });
+
+            // Note: Add Chemical button is already in HTML template (section-actions)
+
+            filterBar.innerHTML = filterTabsHtml;
+
+            // Add click event listeners to filter tabs
+            document.querySelectorAll("#chemicals-filter-bar .filter-btn").forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all tabs
+                    document.querySelectorAll("#chemicals-filter-bar .filter-btn").forEach(tab => {
+                        tab.classList.remove('active');
+                    });
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+
+                    const selectedType = this.dataset.chemicalType;
+                    console.log("Chemical filter selected:", selectedType);
+                    loadChemicals(selectedType === 'All' ? null : selectedType);
+                });
+            });
+
+            console.log("Chemical filter tabs populated successfully");
+        } catch (error) {
+            console.error("Error populating chemical filter tabs:", error);
+        }
     }
     window.createChemicalFilterTabs = createChemicalFilterTabs;
     
