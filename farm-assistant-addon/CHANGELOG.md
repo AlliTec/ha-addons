@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.11.75 - 2026-02-11
+
+### Fix
+- Fixed chemical register 404 error by changing absolute URLs to relative paths
+- Changed `/api/chemicals` to `api/chemicals` (no leading slash) to match other registers
+- This fixes Home Assistant ingress proxy issue that was blocking chemical API calls
+
 ## 1.11.74 - 2026-02-10
 
 ### Fix

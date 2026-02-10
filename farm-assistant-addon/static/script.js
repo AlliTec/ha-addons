@@ -6367,7 +6367,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             try {
                 console.log('Submitting chemical data:', chemicalData);
-                const response = await fetch('/api/chemicals', {
+                const response = await fetch('api/chemicals', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(chemicalData)
@@ -6401,9 +6401,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load chemicals with optional filter
     async function loadChemicals(chemicalType = null) {
         try {
-            const url = chemicalType ? `/api/chemicals?chemical_type=${chemicalType}` : '/api/chemicals';
+            const url = chemicalType ? `api/chemicals?chemical_type=${chemicalType}` : 'api/chemicals';
             const response = await fetch(url);
-            const chemicals = await response.json();
+            console.log('Response status:', response.status);
+            console.log('Response headers:', [...response.headers.entries()]);
+            const text = await response.text();
+            console.log('Response text (first 100 chars):', text.substring(0, 100));
+            console.log('Response text length:', text.length);
+            const chemicals = JSON.parse(text);
             renderChemicals(chemicals);
             createChemicalFilterTabs();
         } catch (error) {
