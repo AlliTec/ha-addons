@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.11.78 - 2026-02-11
+
+### Enhancement
+- Moved "Add Chemical" button into filter tabs (matches asset register style)
+- Removed separate section-actions div
+- Add button now appears at end of filter tabs with consistent styling
+
 ## 1.11.77 - 2026-02-11
 
 ### Enhancement

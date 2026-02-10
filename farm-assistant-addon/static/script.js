@@ -6334,16 +6334,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================
     // Chemical Register Functions
     // ============================
-    
-    // Add chemical button
-    const addChemicalBtn = document.getElementById('add-chemical-btn');
-    if (addChemicalBtn) {
-        addChemicalBtn.addEventListener('click', function() {
-            document.getElementById('add-chemical-form').reset();
-            document.getElementById('add-chemical-modal').style.display = 'block';
-        });
-    }
-    
+
     // Add chemical form submission
     const addChemicalForm = document.getElementById('add-chemical-form');
     if (addChemicalForm) {
@@ -6506,13 +6497,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 </button>`;
             });
 
-            // Note: Add Chemical button is already in HTML template (section-actions)
+            // Add "Add Chemical" button at the end (like assets)
+            filterTabsHtml += `<button class="filter-btn" id="add-chemical-btn">
+                <i class="fa-solid fa-plus"></i> Add
+            </button>`;
 
             filterBar.innerHTML = filterTabsHtml;
 
             // Add click event listeners to filter tabs
             document.querySelectorAll("#chemicals-filter-bar .filter-btn").forEach(btn => {
                 btn.addEventListener('click', function() {
+                    // Check if this is the Add Chemical button
+                    if (btn.id === 'add-chemical-btn') {
+                        document.getElementById('add-chemical-form').reset();
+                        document.getElementById('add-chemical-modal').style.display = 'block';
+                        return;
+                    }
+
                     // Remove active class from all tabs
                     document.querySelectorAll("#chemicals-filter-bar .filter-btn").forEach(tab => {
                         tab.classList.remove('active');
