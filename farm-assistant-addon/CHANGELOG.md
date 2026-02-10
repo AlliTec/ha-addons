@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.11.74 - 2026-02-10
+
+### Fix
+- Added exception handling to create_chemical endpoint for proper error logging
+- POST /api/chemicals endpoint now returns proper 500 status with error details on failure
+- Verified endpoints work correctly (tested with curl - both GET and POST return 200 OK)
+
 ## 1.11.73 - 2026-01-29
 
 ### Fix

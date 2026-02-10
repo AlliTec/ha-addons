@@ -2464,6 +2464,8 @@ async def create_chemical_table():
         logging.info("Chemical inventory table created/verified successfully")
     except Exception as e:
         logging.error(f"Error creating chemical table: {e}")
+    finally:
+        await conn.close()
 
 @app.get("/api/chemicals")
 async def get_chemicals(chemical_type: Optional[str] = None):
@@ -2538,13 +2540,16 @@ async def create_chemical(chemical: Chemical):
                 quantity, unit, notes
             ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
             RETURNING id
-        """, 
+        """,
             chemical.name, chemical.chemical_type, chemical.purpose,
             chemical.supplier, chemical.purchase_date, chemical.expiry_date,
             chemical.location, chemical.ppe_requirements, chemical.msds_link,
             chemical.quantity, chemical.unit, chemical.notes
         )
         return {"id": record['id'], "message": "Chemical created successfully"}
+    except Exception as e:
+        logging.error(f"Error creating chemical: {e}")
+        raise HTTPException(status_code=500, detail=f"Error creating chemical: {str(e)}")
     finally:
         await conn.close()
 
