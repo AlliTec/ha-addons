@@ -161,7 +161,26 @@
         </div>
     </div>
 
+    <script src="static/html5-qrcode.min.js"></script>
     <script src="static/script.js?v={{ addon_version }}&t={{ timestamp }}&cb=1"></script>
+
+    <!-- Barcode Scanner Modal -->
+    <div id="barcode-scanner-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <span class="close-modal close-top-left">&times;</span>
+            <div class="modal-header">
+                <h2>Scan Barcode</h2>
+            </div>
+            <div class="barcode-scanner-container">
+                <div id="barcode-reader" style="width: 100%;"></div>
+                <p id="barcode-scan-result">Position barcode or QR code within the camera frame</p>
+            </div>
+            <div class="modal-actions">
+                <button id="barcode-scanner-close-btn" class="action-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
     <div id="image-modal" class="modal">
         <span class="close-modal">&times;</span>
         <img class="modal-content" id="modal-image">
@@ -1011,12 +1030,17 @@
             <div class="modal-header">
                 <h2>Add New Chemical</h2>
             </div>
-            <form id="add-chemical-form">
-                <div class="form-grid">
-                    <div>
-                        <label for="chemical-name">Name *:</label>
-                        <input type="text" id="chemical-name" name="name" required>
-                    </div>
+                <form id="add-chemical-form">
+                    <div class="form-grid">
+                        <div>
+                            <label for="chemical-name">Name *:</label>
+                            <div style="display: flex; align-items: center;">
+                                <input type="text" id="chemical-name" name="name" required style="flex: 1;">
+                                <button type="button" class="action-btn scan-barcode-btn" onclick="openBarcodeScanner('chemical-name')" title="Scan Barcode">
+                                    <i class="fa-solid fa-barcode"></i>
+                                </button>
+                            </div>
+                        </div>
                     <div>
                         <label for="chemical-type">Type:</label>
                         <select id="chemical-type" name="chemical_type">
@@ -1060,7 +1084,12 @@
                 </div>
                 <div class="form-section">
                     <label for="chemical-msds">MSDS Link:</label>
-                    <input type="url" id="chemical-msds" name="msds_link" placeholder="https://...">
+                    <div style="display: flex; align-items: center;">
+                        <input type="url" id="chemical-msds" name="msds_link" placeholder="https://..." style="flex: 1;">
+                        <button type="button" class="action-btn scan-barcode-btn" onclick="openBarcodeScanner('chemical-msds')" title="Scan Barcode/QR">
+                            <i class="fa-solid fa-barcode"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="form-section">
                     <label for="chemical-notes">Notes:</label>
@@ -1157,7 +1186,12 @@
                 </div>
                 <div class="form-section">
                     <label for="edit-chemical-msds">MSDS Link:</label>
-                    <input type="url" id="edit-chemical-msds" name="msds_link">
+                    <div style="display: flex; align-items: center;">
+                        <input type="url" id="edit-chemical-msds" name="msds_link" style="flex: 1;">
+                        <button type="button" class="action-btn scan-barcode-btn" onclick="openBarcodeScanner('edit-chemical-msds')" title="Scan Barcode/QR">
+                            <i class="fa-solid fa-barcode"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="form-section">
                     <label for="edit-chemical-notes">Notes:</label>

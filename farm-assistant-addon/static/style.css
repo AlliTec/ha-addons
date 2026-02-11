@@ -504,6 +504,35 @@ th {
     flex-direction: column;
 }
 
+.barcode-scanner-container {
+    text-align: center;
+    padding: 20px;
+}
+
+#barcode-reader {
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #000;
+}
+
+#barcode-reader video {
+    border-radius: 8px;
+}
+
+#barcode-scan-result {
+    margin-top: 15px;
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+.scan-barcode-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    margin-left: 5px;
+    border-radius: 4px;
+    vertical-align: middle;
+}
+
 .close-modal {
     position: absolute;
     top: 15px;

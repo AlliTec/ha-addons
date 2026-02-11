@@ -1,14 +1,17 @@
 # Changelog
 
-## 1.11.81 - 2026-02-11
+## 1.11.82 - 2026-02-11
 
 ### Feature
-- Added MSDS button to chemical register table
-- New "MSDS" column with PDF icon button that opens MSDS URL in new tab
-- Button only appears when MSDS link is provided
-- Stops event propagation to prevent triggering row click
+- Added barcode/QR code scanning capability
+- Uses device camera to scan barcodes via html5-qrcode library
+- "Scan Barcode" button added to chemical register (Name and MSDS fields)
+- Scanned codes automatically fill the target field
+- Supports EAN-13, EAN-8, UPC-A, UPC-E, CODE-39, CODE-128, and QR codes
+- Works on any device with a camera (phone, tablet, laptop)
+- Requires HTTPS (provided by Home Assistant ingress)
 
-## 1.11.80 - 2026-02-11
+## 1.11.81 - 2026-02-11
 
 ### Fix
 - Fixed View/Edit/Delete 404 errors by changing absolute paths to relative paths

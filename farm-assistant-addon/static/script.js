@@ -5974,6 +5974,121 @@ function closeImageOverlay() {
     }
 }
 
+// Barcode Scanner functionality
+let barcodeScanner = null;
+let currentScanTarget = null;
+
+async function openBarcodeScanner(targetFieldId) {
+    currentScanTarget = targetFieldId;
+    const modal = document.getElementById('barcode-scanner-modal');
+    const resultElement = document.getElementById('barcode-scan-result');
+
+    modal.style.display = 'block';
+    resultElement.textContent = 'Position barcode or QR code within the camera frame';
+
+    // Stop any existing scanner
+    if (barcodeScanner) {
+        try {
+            barcodeScanner.clear();
+        } catch (e) {
+            // Ignore errors when clearing
+        }
+    }
+
+    barcodeScanner = new Html5Qrcode('barcode-reader');
+
+    const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 150 },
+        aspectRatio: 1.7778,
+        formatsToSupport: [
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.EAN_8,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.UPC_E,
+            Html5QrcodeSupportedFormats.CODE_39,
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.QR_CODE
+        ]
+    };
+
+    try {
+        await barcodeScanner.start(
+            { facingMode: 'environment' },
+            config,
+            (decodedText, decodedResult) => {
+                console.log('Barcode scanned:', decodedText);
+                resultElement.textContent = 'Scanned: ' + decodedText;
+                resultElement.style.color = 'green';
+
+                // Fill the target field
+                if (currentScanTarget) {
+                    const targetElement = document.getElementById(currentScanTarget);
+                    if (targetElement) {
+                        targetElement.value = decodedText;
+                    }
+                }
+
+                // Stop scanner after successful scan
+                setTimeout(async () => {
+                    try {
+                        await barcodeScanner.stop();
+                        barcodeScanner = null;
+                        modal.style.display = 'none';
+                    } catch (e) {
+                        console.error('Error stopping scanner:', e);
+                    }
+                }, 1000);
+            },
+            (errorMessage) => {
+                // Scan error - ignore, this happens continuously during scanning
+            }
+        );
+    } catch (err) {
+        console.error('Error starting barcode scanner:', err);
+        resultElement.textContent = 'Error: ' + err;
+        resultElement.style.color = 'red';
+    }
+}
+
+async function closeBarcodeScanner() {
+    const modal = document.getElementById('barcode-scanner-modal');
+
+    if (barcodeScanner) {
+        try {
+            await barcodeScanner.stop();
+            barcodeScanner.clear();
+            barcodeScanner = null;
+        } catch (err) {
+            console.error('Error stopping barcode scanner:', err);
+        }
+    }
+
+    modal.style.display = 'none';
+    currentScanTarget = null;
+}
+
+window.openBarcodeScanner = openBarcodeScanner;
+window.closeBarcodeScanner = closeBarcodeScanner;
+
+// Initialize barcode scanner modal close button
+document.addEventListener('DOMContentLoaded', function() {
+    const barcodeScannerCloseBtn = document.getElementById('barcode-scanner-close-btn');
+    if (barcodeScannerCloseBtn) {
+        barcodeScannerCloseBtn.addEventListener('click', closeBarcodeScanner);
+    }
+
+    // Close barcode scanner when clicking outside the modal content
+    const barcodeScannerModal = document.getElementById('barcode-scanner-modal');
+    if (barcodeScannerModal) {
+        barcodeScannerModal.addEventListener('click', function(e) {
+            if (e.target === barcodeScannerModal) {
+                closeBarcodeScanner();
+            }
+        });
+    }
+});
+
 // Initialize overlay event listeners
 document.addEventListener("DOMContentLoaded", function() {
     const overlay = document.getElementById("image-overlay");
