@@ -55,6 +55,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - Changed cache write error to debug level (non-critical, doesn't affect functionality)
 
+## Version 1.1.64 (2026-09-25)
+
+### Fix
+- Fixed add-on build failure in Home Assistant: removed unneeded `gcc`, `musl-dev` and `python3-dev` from the Dockerfile, which conflicted with the `musl` version in the base image (`apk: unable to select packages`)
+- numpy, scipy, Pillow and requests come from apk; the remaining requirements are pure Python, so no compiler is needed
+
+### Maintenance
+- Synchronized version numbers across `config.yaml`, `Dockerfile` and `rain_predictor.py`
+
 ## Version 1.1.56 (2026-01-04)
 
 ### Fix

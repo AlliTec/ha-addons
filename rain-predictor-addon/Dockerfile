@@ -8,10 +8,7 @@ RUN apk add --no-cache \
     py3-numpy \
     py3-scipy \
     py3-pillow \
-    py3-requests \
-    gcc \
-    musl-dev \
-    python3-dev
+    py3-requests
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt /tmp/
@@ -40,6 +37,6 @@ LABEL \
   io.hass.description="Advanced rain prediction using radar image analysis" \
   io.hass.arch="armhf|aarch64|amd64|armv7|i386" \
   io.hass.type="addon" \
-  io.hass.version="1.1.63"
+  io.hass.version="1.1.64"
 
 CMD [ "/run.sh" ]
