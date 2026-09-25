@@ -138,20 +138,26 @@ speed_kph = distance_km / time_diff_hours
 bearing = calculate_bearing(lat1, lon1, lat2, lon2)
 ```
 
-**Step 5: Filter Approaching Cells**
+**Step 5: Find the Next Cell to Reach You**
 
-Only cells moving toward user location are considered:
+A cell only counts if its predicted path actually passes over your location. Being "somewhere
+towards you" is not enough: a cell south-east of you moving west-south-west gets closer at first but
+passes far to the south. Each tracked cell's speed and direction come from a straight-line fit through its
+last few positions (far steadier than the last two frames), then:
 ```python
-# Calculate bearing FROM cell TO user
-cell_to_user = bearing(cell_lat, cell_lon, user_lat, user_lon)
+# Split the distance to the user into the part along the cell's path and the sideways miss distance
+angle = cell_direction - bearing(cell -> user)
+along_km = distance_km * cos(angle)
+miss_km = abs(distance_km * sin(angle))
 
-# Get cell's movement direction
-cell_direction = cell.velocity_direction
+# It must be heading your way, and its path must pass within the cell's radius, plus a 5 km margin
+# and 5 degrees of heading uncertainty (which is a bigger sideways error the farther away it is)
+reaches_you = along_km > 0 and miss_km <= radius_km + 5 + distance_km * sin(5°)
 
-# Check if movement is within 90° of bearing to user
-angle_diff = abs(cell_direction - cell_to_user)
-is_approaching = angle_diff <= 90
+# Arrival: when the leading edge of the cell gets here
+eta_hours = (along_km - sqrt(radius_km**2 - miss_km**2)) / speed_kph
 ```
+Of the cells that pass this test, the one that arrives first is reported. If none does, no rain is predicted.
 
 **Step 6: Return Threat Assessment**
 
@@ -264,7 +270,7 @@ rain-predictor-addon/
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `rain_threshold` | 75 | Pixel intensity (0-255) to consider as rain |
-| `arrival_angle_threshold` | 90 | Degrees ± for "approaching" detection |
+| `arrival_angle_threshold` | 90 | Not used to decide whether a cell reaches you (see Step 5) |
 | `lat_range_deg` | 5.0 | Latitude degrees covered by analysis |
 | `lon_range_deg` | 5.0 | Longitude degrees covered by analysis |
 | `run_interval` | 3.0 | Minutes between prediction cycles |

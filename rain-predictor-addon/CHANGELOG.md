@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Versions are listed newest first.
 
+## Version 1.1.71 (2026-09-25)
+
+### Fix
+- Fixed the add-on predicting rain for cells that could never reach your location. A cell only had to be moving within 90 degrees of the direction to you to count as "approaching", and its time to rain was then calculated as if it were heading straight at you. A cell south-east of you moving west-south-west is 74 degrees off the line to you, so it passed the test, yet it goes past about 160 km to the south and the app reported it arriving in 3 hours 23 minutes. A cell now only counts if its predicted path actually passes over your location: the distance to you is split into the part along the cell's path and the sideways miss distance, the cell must be heading your way, and the miss distance must be within the cell's radius plus a 5 km margin plus 5 degrees of heading uncertainty (a bigger sideways error the farther away the cell is)
+- The time to rain is now the time until the leading edge of the cell reaches you, not the time for its centre to travel the straight-line distance. If the predicted path passes just outside the cell (within the allowance above), it is the time of closest approach
+- Of the cells that will reach you, the one that arrives first is now chosen (it used to be the nearest one, which is not always the next to arrive, for example a near but slow cell against a farther fast one)
+- Cell speed and direction are now a straight-line fit through up to the last 6 positions instead of just the last two. Rain cell centroids wobble by a few km between frames, which made the two-frame direction unreliable: in a simulation with 3 km of position noise the median direction error was 25 degrees with two frames and 4 degrees with the fit, and the median speed error 15 km/h against 2.5 km/h
+- The earlier "cells moving toward you" filter uses the same path test, so cells that miss you are no longer passed on to the tracker
+- The log now shows, for each cell that will reach you, how far from you it passes and when it arrives
+
+### Documentation
+- README describes the new rule (Step 5) and notes that `arrival_angle_threshold` no longer decides whether a cell reaches you
+
 ## Version 1.1.70 (2026-09-25)
 
 ### Fix

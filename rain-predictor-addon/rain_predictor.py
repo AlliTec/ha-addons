@@ -18,13 +18,19 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.70"
+VERSION = "1.1.71"
 
 # RainViewer only serves radar tiles up to this zoom level (higher zooms return a placeholder image)
 MAX_RADAR_ZOOM = 7
 
 # Fastest a rain cell is assumed to travel when matching it between radar frames
 MAX_CELL_SPEED_KPH = 100
+
+# How far outside a cell's radius its predicted path may pass the user and still count as reaching them
+INTERCEPT_MARGIN_KM = 5.0
+
+# A cell's heading is only known to a few degrees, which is a bigger sideways error the farther away it is
+INTERCEPT_HEADING_TOLERANCE_DEG = 5.0
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -171,6 +177,32 @@ class RainCell:
         
         return speed_kph, bearing
     
+    def get_smoothed_velocity(self, max_points=6):
+        """Velocity from a straight-line fit through the last few positions.
+
+        Far less noisy than the last two positions: a rain cell's centroid wobbles by a few km between
+        frames as it grows and shrinks, which is a large error in speed and direction over 10 minutes.
+        """
+        points = self.positions[-max_points:]
+        if len(points) < 2:
+            return None, None
+
+        lat0, lon0, t0 = points[-1]
+        km_per_deg_lat = 110.57
+        km_per_deg_lon = 111.32 * math.cos(math.radians(lat0))
+
+        times = np.array([(t - t0).total_seconds() / 3600.0 for _, _, t in points])
+        if times.max() - times.min() <= 0:
+            return None, None
+        xs = np.array([(lon - lon0) * km_per_deg_lon for _, lon, _ in points])
+        ys = np.array([(lat - lat0) * km_per_deg_lat for lat, _, _ in points])
+
+        vx = np.polyfit(times, xs, 1)[0]
+        vy = np.polyfit(times, ys, 1)[0]
+        speed_kph = min(float(math.hypot(vx, vy)), 200.0)
+        direction_deg = math.degrees(math.atan2(vx, vy)) % 360
+        return speed_kph, direction_deg
+
     def _haversine_fallback(self, lat1, lon1, lat2, lon2):
         """Fallback haversine calculation"""
         R = 6371
@@ -961,18 +993,10 @@ class RainPredictor:
         return threat_cells
     
     def _will_intercept_user(self, cell):
-        """Check if rain cell is on course to intercept user location"""
-        # Calculate bearing from cell to user
-        bearing_to_user = self.calculate_bearing(
-            cell['current_lat'], cell['current_lon'],
-            self.latitude, self.longitude
-        )
-        
-        # Calculate angle difference between cell movement and bearing to user
-        angle_diff = abs((cell['direction'] - bearing_to_user + 180) % 360 - 180)
-        
-        # Cell is threat if moving generally toward user (within 90 degrees)
-        return angle_diff <= 90
+        """Check if rain cell's path actually passes over the user location"""
+        radius_km = self._cell_radius_km(cell.get('size'), cell['current_lat'])
+        return self._intercept(cell['current_lat'], cell['current_lon'],
+                               cell['speed'], cell['direction'], radius_km) is not None
     
     def _track_cell_backwards(self, target_cell, frame_cells, cell_idx):
         """Track a single cell backwards through frames"""
@@ -1164,18 +1188,49 @@ class RainPredictor:
         tile_px = self.image_size if self.image_size in (256, 512) else 256
         return 156.54303392 * math.cos(math.radians(lat)) / (2 ** zoom) * (256.0 / tile_px)
 
+    def _cell_radius_km(self, size_px, lat):
+        """Radius (km) of a circle around a cell of size_px radar pixels, slightly larger than the cell
+        and kept within a sensible range"""
+        radius_km = math.sqrt((size_px or 0) / math.pi) * self._km_per_pixel(lat)
+        return min(25.0, max(4.0, radius_km + 2.0))
+
     def _track_point(self, pos):
         """One tracked position of a cell, in the form the web UI needs to draw the green highlight"""
-        size_px = pos.get('size') or 0
-        radius_km = math.sqrt(size_px / math.pi) * self._km_per_pixel(pos['lat'])
-        # Ring slightly larger than the cell, kept within a sensible range on the map
-        radius_km = min(25.0, max(4.0, radius_km + 2.0))
         return {
             'lat': round(float(pos['lat']), 4),
             'lng': round(float(pos['lon']), 4),
             'time': int(pos['timestamp']),
-            'radius_km': round(radius_km, 1)
+            'radius_km': round(self._cell_radius_km(pos.get('size'), pos['lat']), 1)
         }
+
+    def _intercept(self, lat, lon, speed_kph, direction_deg, radius_km):
+        """Whether a cell at (lat, lon) moving at speed_kph towards direction_deg will actually reach the user.
+
+        Splits the distance to the user into the part along the cell's path and the sideways miss
+        distance. The cell only reaches the user if it is heading their way and that miss distance is
+        within its radius plus a small margin and an allowance for the few degrees its heading is uncertain
+        by (which grows with distance). Returns None if it never does, otherwise the hours until its
+        leading edge reaches the user and the miss distance.
+        """
+        distance_km = self.haversine(lat, lon, self.latitude, self.longitude)
+        if distance_km <= radius_km:
+            return {'eta_hours': 0.0, 'miss_km': 0.0}
+        if not speed_kph or speed_kph < 1:
+            return None
+
+        bearing_to_user = self.calculate_bearing(lat, lon, self.latitude, self.longitude)
+        angle = math.radians(direction_deg - bearing_to_user)
+        along_km = distance_km * math.cos(angle)
+        miss_km = abs(distance_km * math.sin(angle))
+
+        reach_km = (radius_km + INTERCEPT_MARGIN_KM
+                    + distance_km * math.sin(math.radians(INTERCEPT_HEADING_TOLERANCE_DEG)))
+        if along_km <= 0 or miss_km > reach_km:
+            return None
+
+        # Distance until the leading edge of the cell reaches the user
+        chord_km = math.sqrt(radius_km ** 2 - miss_km ** 2) if miss_km < radius_km else 0.0
+        return {'eta_hours': max(0.0, along_km - chord_km) / speed_kph, 'miss_km': miss_km}
 
     def _create_tracked_cells_from_movement(self, moving_cells):
         """Rebuild tracked cells from the movement analysis of the latest set of frames"""
@@ -1503,58 +1558,68 @@ class RainPredictor:
             logging.error(f"Error updating entities: {e}")
 
     def _find_threatening_cell(self):
-        """Find the closest rain cell that is moving toward user location"""
-        logging.info(f"\n🌧️ FINDING CLOSEST APPROACHING CELL - {len(self.tracked_cells)} tracked cells")
-        
-        approaching_cells = []
-        
+        """Find the next rain cell to reach the user's location.
+
+        A cell only counts if its predicted path, from its recent movement, actually passes over the
+        user, not merely if it is somewhere in the user's general direction. Of those, the cell whose
+        leading edge arrives first is chosen.
+        """
+        logging.info(f"\n🌧️ FINDING NEXT CELL TO ARRIVE - {len(self.tracked_cells)} tracked cells")
+
+        arriving_cells = []
+        checked = 0
+
         for cell_id, cell in self.tracked_cells.items():
             if len(cell.positions) < 2:
                 continue
-            
-            current_lat, current_lon, _ = cell.positions[-1]
-            speed_kph, direction_deg = cell.get_velocity(self)
-            
+
+            speed_kph, direction_deg = cell.get_smoothed_velocity()
             if speed_kph is None or direction_deg is None or speed_kph < 1:
                 continue
-            
-            distance_km = self.haversine(current_lat, current_lon, self.latitude, self.longitude)
-            bearing_to_user = self.calculate_bearing(current_lat, current_lon, self.latitude, self.longitude)
-            bearing_from_user = self.calculate_bearing(self.latitude, self.longitude, current_lat, current_lon)
-            
-            if bearing_to_user is None:
+            checked += 1
+
+            current_lat, current_lon, _ = cell.positions[-1]
+            track = getattr(cell, 'track', None) or []
+            radius_km = track[-1]['radius_km'] if track else self._cell_radius_km(None, current_lat)
+
+            intercept = self._intercept(current_lat, current_lon, speed_kph, direction_deg, radius_km)
+            if intercept is None:
                 continue
-            
-            angle_diff = abs((direction_deg - bearing_to_user + 180) % 360 - 180)
-            is_approaching = angle_diff <= 90
-            
-            logging.info(f"  Cell #{cell_id}: {distance_km:.1f}km, {speed_kph:.1f}kph, dir={direction_deg:.0f}°, angle_diff={angle_diff:.0f}°, approaching={is_approaching}")
-            
-            if is_approaching:
-                approaching_cells.append({
-                    'cell_id': cell_id,
-                    'cell': cell,
-                    'lat': current_lat,
-                    'lon': current_lon,
-                    'speed': speed_kph,
-                    'direction': direction_deg,
-                    'distance_to_user': distance_km,
-                    'bearing_from_user': bearing_from_user,
-                    'angle_diff': angle_diff
-                })
-        
-        if not approaching_cells:
-            logging.info("  No approaching cells found")
+
+            distance_km = self.haversine(current_lat, current_lon, self.latitude, self.longitude)
+            bearing_from_user = self.calculate_bearing(self.latitude, self.longitude, current_lat, current_lon)
+
+            logging.info(f"  Cell #{cell_id}: {distance_km:.1f}km away, {speed_kph:.1f}kph, dir={direction_deg:.0f}°, "
+                         f"passes {intercept['miss_km']:.1f}km from you (cell radius {radius_km:.1f}km), "
+                         f"arrives in {intercept['eta_hours'] * 60:.0f} min")
+
+            arriving_cells.append({
+                'cell_id': cell_id,
+                'cell': cell,
+                'lat': current_lat,
+                'lon': current_lon,
+                'speed': speed_kph,
+                'direction': direction_deg,
+                'distance_to_user': distance_km,
+                'bearing_from_user': bearing_from_user,
+                'eta_hours': intercept['eta_hours']
+            })
+
+        logging.info(f"  {len(arriving_cells)} of {checked} moving cells are on a path that reaches the location")
+
+        if not arriving_cells:
+            logging.info("  No cells will reach the location")
             return None
-        
-        approaching_cells.sort(key=lambda x: x['distance_to_user'])
-        best_cell = approaching_cells[0]
-        
+
+        # The next rain to arrive is the one whose leading edge gets here first
+        arriving_cells.sort(key=lambda x: x['eta_hours'])
+        best_cell = arriving_cells[0]
+
+        time_to_arrival_minutes = best_cell['eta_hours'] * 60
+
         logging.info(f"  Selected: Cell #{best_cell['cell_id']} at {best_cell['lat']:.4f}, {best_cell['lon']:.4f}")
-        logging.info(f"  Distance: {best_cell['distance_to_user']:.1f}km, ETA: {best_cell['distance_to_user'] / best_cell['speed'] * 60:.0f} min")
-        
-        time_to_arrival_minutes = best_cell['distance_to_user'] / best_cell['speed'] * 60
-        
+        logging.info(f"  Distance: {best_cell['distance_to_user']:.1f}km, ETA: {time_to_arrival_minutes:.0f} min")
+
         return {
             'time_to_rain': round(time_to_arrival_minutes),
             'time_to_rain_seconds': round(time_to_arrival_minutes * 60),
@@ -1566,7 +1631,7 @@ class RainPredictor:
             'rain_cell_longitude': round(best_cell['lon'], 4),
             'track': getattr(best_cell['cell'], 'track', [])
         }
-    
+
     def _calculate_threat_probability(self, distance_km, speed_kph, angle_diff, intensity, track_length):
         """Calculate probability (0-100%) of rain reaching location"""
         probability = 0
