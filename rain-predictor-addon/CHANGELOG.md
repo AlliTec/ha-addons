@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Versions are listed newest first.
 
+## Version 1.1.72 (2026-09-25)
+
+### Added
+- An app icon and logo, so Rain Predictor no longer shows Home Assistant's generic puzzle-piece icon. `icon.png` (256x256) is shown in the app list and store and `logo.png` (500x200) on the app's page. The artwork is a rain cloud with radar rings and a sweep on a deep blue background, with a green ring in the same green as the tracked-cell highlight in the web UI. Both work on light and dark themes and stay readable at small sizes
+
 ## Version 1.1.71 (2026-09-25)
 
 ### Fix
