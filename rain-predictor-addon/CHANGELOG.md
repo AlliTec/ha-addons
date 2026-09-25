@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Versions are listed newest first.
 
+## Version 1.1.70 (2026-09-25)
+
+### Fix
+- Fixed Home Assistant restarting the add-on about every 65 seconds, about 10 times after every start or update. While it happened the web UI sat on "The app is starting, this can take some time..." and every analysis cycle was interrupted. The Supervisor logged `Watchdog found app Rain Predictor is unhealthy, restarting...` each time because Docker's health check for the container always failed. It never reached the web UI at all: the check called `wget` on `http://localhost:8099/health`, and in a container with IPv6 on its loopback interface `localhost` resolves to `::1`, but the web UI only listens on IPv4, so every check was refused (`Connecting to localhost:8099 ([::1]:8099)` / `Connection refused`). Three failed checks in a row mark the container unhealthy. The health check now uses `http://127.0.0.1:8099/health`
+- The health check also gets a 60 second start period (was 5 seconds) so a slow start on busy hardware is not counted as a failure
+- Verified in the add-on image with IPv6 enabled on the container's loopback, 3 runs each: with the old check all 3 containers went unhealthy, with the new check all 3 were healthy within 40 seconds and stayed healthy
+
 ## Version 1.1.69 (2026-09-25)
 
 ### Changed

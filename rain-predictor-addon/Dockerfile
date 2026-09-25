@@ -28,8 +28,8 @@ COPY static/ /app/static/
 RUN chmod a+x /run.sh
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:8099/health || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:8099/health || exit 1
 
 # Labels
 LABEL \
@@ -37,6 +37,6 @@ LABEL \
   io.hass.description="Advanced rain prediction using radar image analysis" \
   io.hass.arch="armhf|aarch64|amd64|armv7|i386" \
   io.hass.type="addon" \
-  io.hass.version="1.1.69"
+  io.hass.version="1.1.70"
 
 CMD [ "/run.sh" ]
