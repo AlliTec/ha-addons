@@ -185,6 +185,18 @@ for entity_id, value in values.items():
     ha_api.call_service("input_number/set_value", entity_id, value)
 ```
 
+**Required helper ranges.** When no rain is predicted the add-on writes its "no rain" defaults (`no_rain_value` 999, `no_direction_value` -1, `no_bearing_value` -1). Home Assistant rejects values outside a helper's range with `400 Bad Request`, so create the `input_number` helpers with at least these ranges:
+
+| Helper | Min | Max | Step |
+|--------|-----|-----|------|
+| `rain_arrival_minutes` | 0 | 1440 | 1 |
+| `rain_prediction_distance` | 0 | 1000 | 1 |
+| `rain_prediction_speed` | 0 | 200 | 0.1 |
+| `rain_cell_direction` | -1 | 360 | 1 |
+| `bearing_to_rain_cell` | -1 | 360 | 1 |
+| `rain_cell_latitude` | -90 | 90 | 0.0001 |
+| `rain_cell_longitude` | -180 | 180 | 0.0001 |
+
 ### 5. Web UI (`web_ui.py` + `templates/index.html`)
 
 **Flask Endpoints:**

@@ -3,66 +3,9 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Version 1.1.57 (2026-01-26)
-
-### Fix
-- Fixed NameError crash (undefined variables `high_quality_cells`, `detected_cells`)
-- Marker now shows current rain cell position instead of initial detection position
-- Simplified threat detection to find closest approaching cell directly
-- Removed complex directional averaging that caused erratic tracking
-
-### Changed
-- Green marker now placed directly over detected rain cell location
-- Tracking now prioritizes closest approaching cell for accuracy
-
-## Version 1.1.58 (2026-01-26)
-
-### Fix
-- Fixed UnboundLocalError when API call fails (prediction variable not initialized)
-- Added proper initialization of prediction variable before try block
-- Prevents crash when RainViewer API returns 404 or times out
-
-## Version 1.1.59 (2026-01-26)
-
-### Fix
-- Fixed tracked cells being cleared each cycle (positions now accumulate over time)
-- Cells now accumulate positions across prediction cycles for velocity calculation
-- Added 15-minute stale track expiration to remove old cells
-- Prevents "Not enough data yet" velocity errors by maintaining cell history
-
-## Version 1.1.60 (2026-01-26)
-
-### Fix
-- Fixed TypeError when velocity returns None (added None check before formatting)
-- Prevents crash when logging cell tracking with insufficient position data
-
-## Version 1.1.61 (2026-01-26)
-
-### Fix
-- Fixed position filtering that blocked multiple positions per cell
-- Reduced timestamp comparison from 60 seconds to 0.001 seconds
-- Cells can now accumulate positions from all radar frames for velocity calculation
-
-## Version 1.1.62 (2026-01-26)
-
-### Fix
-- Fixed cache file path to use /data/ directory
-- Cache now writes to correct location in Docker container
-- Fixes "No such file or directory" error for latest_analysis.json
-
-## Version 1.1.63 (2026-01-26)
-
-- Changed cache write error to debug level (non-critical, doesn't affect functionality)
-
-## Version 1.1.64 (2026-09-25)
-
-### Fix
-- Fixed add-on build failure in Home Assistant: removed unneeded `gcc`, `musl-dev` and `python3-dev` from the Dockerfile, which conflicted with the `musl` version in the base image (`apk: unable to select packages`)
-- numpy, scipy, Pillow and requests come from apk; the remaining requirements are pure Python, so no compiler is needed
-
-### Maintenance
-- Synchronized version numbers across `config.yaml`, `Dockerfile` and `rain_predictor.py`
+Versions are listed newest first.
 
 ## Version 1.1.65 (2026-09-25)
 
@@ -76,6 +19,73 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 - Default radar image zoom changed from 8 to 7 (a saved zoom above 7 is capped automatically)
 - README updated to document the new radar tile download (frame path, zoom 7) and the zoom 7 default
+
+### Documentation
+- README now lists the ranges the `input_number` helpers need. The "no rain" values (999 / -1 / -1) are rejected with `400 Bad Request` if a helper's range is too small, e.g. `rain_prediction_distance` needs a maximum of at least 1000 and `rain_cell_direction` / `bearing_to_rain_cell` need a minimum of -1
+
+### Upgrade notes
+- HA will rebuild the app image on update; the first analysis cycle after a restart takes about a minute while radar frames are downloaded, later cycles only fetch new frames
+- If you previously changed `image_settings.zoom` above 7 you don't need to change it; it is capped at 7 automatically
+
+## Version 1.1.64 (2026-09-25)
+
+### Fix
+- Fixed add-on build failure in Home Assistant: removed unneeded `gcc`, `musl-dev` and `python3-dev` from the Dockerfile, which conflicted with the `musl` version in the base image (`apk: unable to select packages`)
+- numpy, scipy, Pillow and requests come from apk; the remaining requirements are pure Python, so no compiler is needed
+
+### Maintenance
+- Synchronized version numbers across `config.yaml`, `Dockerfile` and `rain_predictor.py`
+
+## Version 1.1.63 (2026-01-26)
+
+- Changed cache write error to debug level (non-critical, doesn't affect functionality)
+
+## Version 1.1.62 (2026-01-26)
+
+### Fix
+- Fixed cache file path to use /data/ directory
+- Cache now writes to correct location in Docker container
+- Fixes "No such file or directory" error for latest_analysis.json
+
+## Version 1.1.61 (2026-01-26)
+
+### Fix
+- Fixed position filtering that blocked multiple positions per cell
+- Reduced timestamp comparison from 60 seconds to 0.001 seconds
+- Cells can now accumulate positions from all radar frames for velocity calculation
+
+## Version 1.1.60 (2026-01-26)
+
+### Fix
+- Fixed TypeError when velocity returns None (added None check before formatting)
+- Prevents crash when logging cell tracking with insufficient position data
+
+## Version 1.1.59 (2026-01-26)
+
+### Fix
+- Fixed tracked cells being cleared each cycle (positions now accumulate over time)
+- Cells now accumulate positions across prediction cycles for velocity calculation
+- Added 15-minute stale track expiration to remove old cells
+- Prevents "Not enough data yet" velocity errors by maintaining cell history
+
+## Version 1.1.58 (2026-01-26)
+
+### Fix
+- Fixed UnboundLocalError when API call fails (prediction variable not initialized)
+- Added proper initialization of prediction variable before try block
+- Prevents crash when RainViewer API returns 404 or times out
+
+## Version 1.1.57 (2026-01-26)
+
+### Fix
+- Fixed NameError crash (undefined variables `high_quality_cells`, `detected_cells`)
+- Marker now shows current rain cell position instead of initial detection position
+- Simplified threat detection to find closest approaching cell directly
+- Removed complex directional averaging that caused erratic tracking
+
+### Changed
+- Green marker now placed directly over detected rain cell location
+- Tracking now prioritizes closest approaching cell for accuracy
 
 ## Version 1.1.56 (2026-01-04)
 
@@ -793,9 +803,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 - **Core Functionality Restored**: Auto-tracker feature now functions without JavaScript errors
 - **Stability**: Eliminated console spam and improved user experience
 - **Animation Support**: Rain cell tracking animation now works correctly during movement
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.11] - 2025-11-09
+## Version 1.1.11 (2025-11-09)
 ### Fixed
 - Version consistency across all files (config.yaml, Dockerfile, rain_predictor.py)
 - Missing rain_cell_latitude and rain_cell_longitude entities in test_data/options.json
@@ -807,47 +816,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated version from 1.1.10-debug to 1.1.11 for stable release
 - Cleaned up dependency management for better compatibility
 
-## [1.1.10-debug] - 2025-11-01
+## Version 1.1.10-debug (2025-11-01)
 ### Added
 - Extensive logging to the `createTracker` function in the web UI to help diagnose the missing auto-track marker.
 
-## [1.1.9-debug] - 2025-11-01
+## Version 1.1.9-debug (2025-11-01)
 ### Changed
 - Auto track marker color and style updated for better visibility.
 
-## [1.1.8-debug] - 2025-11-01
+## Version 1.1.8-debug (2025-11-01)
 ### Fixed
 - Reverted threat detection logic to use bearing from cell to location, while displaying bearing from location to cell in the UI.
 
-## [1.1.7-debug] - 2025-11-01
+## Version 1.1.7-debug (2025-11-01)
 ### Changed
 - Auto track marker is now a circle around the tracked cell for better visibility.
 
-## [1.1.6-debug] - 2025-11-01
+## Version 1.1.6-debug (2025-11-01)
 ### Fixed
 - Auto track marker not appearing due to a JavaScript error.
 - Rain cell tracking accuracy improved by ensuring cell coordinates are always sent to the UI.
 ### Added
 - Additional logging to help diagnose tracking issues.
 
-## [1.1.4-debug] - 2025-11-01
+## Version 1.1.4-debug (2025-11-01)
 ### Fixed
 - Location marker appearing in incorrect location (Antarctica) by ensuring user's configured latitude/longitude are passed to the UI.
 
-## [1.1.3-debug] - 2025-11-01
+## Version 1.1.3-debug (2025-11-01)
 ### Fixed
 - Addon crashing due to `IndentationError` in `web_ui.py`.
 - Auto track marker not moving and sitting over location marker.
 - Auto track marker size unchanged (now reduced to half).
 - Auto track prediction logic refined to start from the current rain cell location.
 
-## [1.1.2-debug] - 2025-11-01
+## Version 1.1.2-debug (2025-11-01)
 ### Fixed
 - Auto track marker not tracking the target cell by exposing rain cell coordinates (`rain_cell_latitude`, `rain_cell_longitude`) to Home Assistant entities from `rain_predictor.py`.
 ### Added
 - `input_number.rain_cell_latitude` and `input_number.rain_cell_longitude` entities to `config.yaml` for tracking rain cell location.
 
-## [1.1.1-debug] - 2025-11-01
+## Version 1.1.1-debug (2025-11-01)
 ### Fixed
 - Web UI not displaying metrics (Time to Rain, Distance, Speed, Direction, Bearing) by correctly passing `all_data` to `index.html` and updating `updateDataDisplay` to use direct values.
 ### Changed
