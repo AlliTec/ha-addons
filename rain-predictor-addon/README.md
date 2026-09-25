@@ -185,7 +185,7 @@ for entity_id, value in values.items():
     ha_api.call_service("input_number/set_value", entity_id, value)
 ```
 
-**Required helper ranges.** When no rain is predicted the add-on writes its "no rain" defaults (`no_rain_value` 999, `no_direction_value` -1, `no_bearing_value` -1). Home Assistant rejects values outside a helper's range with `400 Bad Request`, so create the `input_number` helpers with at least these ranges:
+**Required helper ranges.** When no rain is predicted the add-on writes its "no rain" defaults (`no_rain_value` 999, `no_direction_value` -1, `no_bearing_value` -1). Home Assistant rejects values outside a helper's range with `400 Bad Request`, so create the `input_number` helpers with at least these ranges. Helpers defined in YAML (`configuration.yaml`) can't be edited from the helper settings dialog: change `min` / `max` in the YAML, then reload them from Developer tools > YAML > Input numbers.
 
 | Helper | Min | Max | Step |
 |--------|-----|-----|------|

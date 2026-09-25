@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Versions are listed newest first.
 
+## Version 1.1.66 (2026-09-25)
+
+### Fix
+- Fixed the add-on never predicting rain, even when rain was detected: each tracked cell's position history was built newest-first, but `RainCell.add_position()` only accepts positions oldest-first, so every history point was rejected. Every track ended up with 1 position and no velocity, `_find_threatening_cell` skipped all of them and the log always said "No threatening cells detected" after "Found N threat cells on intercept course". Histories are now passed oldest-first, so tracks get up to 10 positions and a real speed and direction
+- Tracks are now rebuilt from scratch every analysis cycle. Cell ids are only indexes into the latest radar frame, so merging tracks between cycles could attach a cell's history to a different cell
+
+### Performance
+- Rain cell centroids, sizes and intensities are now calculated in a single vectorised pass instead of scanning the whole radar mosaic once per cell. Results are identical, but each frame is about 10x faster (about 4 seconds per frame on Home Assistant hardware in 1.1.65, so a full analysis cycle took over two minutes of a three-minute interval)
+
+### Documentation
+- README explains that helpers defined in YAML (`configuration.yaml`) must be changed there and reloaded (Developer tools > YAML > Input numbers), because they cannot be edited from the helper settings dialog
+
+### Upgrade notes
+- Predictions now actually populate the helpers (`rain_arrival_minutes`, `rain_prediction_distance`, speed, direction, bearing and the cell position) when rain is approaching, so any automations that trigger on them will start firing. Check them before updating
+
 ## Version 1.1.65 (2026-09-25)
 
 ### Fix

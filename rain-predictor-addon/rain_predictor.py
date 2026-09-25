@@ -18,7 +18,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.65"
+VERSION = "1.1.66"
 
 # RainViewer only serves radar tiles up to this zoom level (higher zooms return a placeholder image)
 MAX_RADAR_ZOOM = 7
@@ -686,14 +686,24 @@ class RainPredictor:
         first_tile_x, first_tile_y, zoom, tile_px = geo
         cells = []
 
+        # Per-label sums in one pass (a np.where scan per label over the whole mosaic is far too
+        # slow on Home Assistant hardware)
+        flat_labels = labeled_image.ravel()
+        rows, cols = np.indices(labeled_image.shape)
+        counts = np.bincount(flat_labels, minlength=num_labels + 1)
+        sum_x = np.bincount(flat_labels, weights=cols.ravel(), minlength=num_labels + 1)
+        sum_y = np.bincount(flat_labels, weights=rows.ravel(), minlength=num_labels + 1)
+        sum_intensity = np.bincount(flat_labels, weights=img_array.ravel().astype(np.float64),
+                                    minlength=num_labels + 1)
+
         for i in range(1, num_labels + 1):
-            y_coords, x_coords = np.where(labeled_image == i)
-            cell_size = len(y_coords)
+            cell_size = int(counts[i])
 
             if cell_size < 5:
                 continue
 
-            centroid_x, centroid_y = np.mean(x_coords), np.mean(y_coords)
+            centroid_x = sum_x[i] / cell_size
+            centroid_y = sum_y[i] / cell_size
             est_lat, est_lon = self._tile_to_latlon(
                 first_tile_x + (centroid_x + 0.5) / tile_px,
                 first_tile_y + (centroid_y + 0.5) / tile_px,
@@ -703,7 +713,7 @@ class RainPredictor:
             cells.append({
                 'lat': float(est_lat),
                 'lon': float(est_lon),
-                'intensity': float(np.mean(img_array[y_coords, x_coords])),
+                'intensity': float(sum_intensity[i] / cell_size),
                 'size': cell_size
             })
 
@@ -1134,7 +1144,10 @@ class RainPredictor:
         return direction_consistent and speed_consistent
     
     def _create_tracked_cells_from_movement(self, moving_cells):
-        """Update tracked cells from movement analysis, accumulating positions over time"""
+        """Rebuild tracked cells from the movement analysis of the latest set of frames"""
+        # Cell ids are only indexes into the latest frame and each analysis re-derives the full
+        # position history from all frames, so tracks are rebuilt every cycle rather than merged
+        self.tracked_cells = {}
         current_timestamp = datetime.now()
         seen_cell_ids = set()
 
@@ -1142,22 +1155,20 @@ class RainPredictor:
             cell_id = cell_data['cell_id']
             seen_cell_ids.add(cell_id)
 
-            if cell_id in self.tracked_cells:
-                existing_cell = self.tracked_cells[cell_id]
-                existing_cell.intensity = cell_data['intensity']
-                logging.info(f"📍 Updated track ID {cell_id} with new position")
-            else:
-                existing_cell = RainCell(
-                    cell_id=cell_id,
-                    lat=cell_data['initial_lat'],
-                    lon=cell_data['initial_lon'],
-                    timestamp=datetime.fromtimestamp(cell_data['positions'][0]['timestamp']),
-                    intensity=cell_data['intensity']
-                )
-                self.tracked_cells[cell_id] = existing_cell
-                logging.info(f"➕ Created new track ID {cell_id}")
+            # Positions arrive newest-first from _track_cell_backwards, but a RainCell needs them
+            # oldest-first (add_position rejects any position that is not newer than the last one)
+            chronological = list(reversed(cell_data['positions']))
+            first_pos = chronological[0]
+            existing_cell = RainCell(
+                cell_id=cell_id,
+                lat=first_pos['lat'],
+                lon=first_pos['lon'],
+                timestamp=datetime.fromtimestamp(first_pos['timestamp']),
+                intensity=cell_data['intensity']
+            )
+            self.tracked_cells[cell_id] = existing_cell
 
-            for pos in cell_data['positions']:
+            for pos in chronological[1:]:
                 existing_cell.add_position(
                     pos['lat'],
                     pos['lon'],
