@@ -89,8 +89,9 @@ api_data = response.json()
 
 For each of the 13 past frames (10-minute intervals, 2 hours total):
 ```python
-# Download 256x256 radar tile at zoom 8
-img_url = f"https://{host}/v2/radar/{timestamp}/256/8/0/0/2/1_1.png"
+# Download the 3x3 block of 256x256 radar tiles around your location
+# (zoom is capped at 7 - RainViewer does not serve higher zoom levels)
+img_url = f"{host}{frame['path']}/256/{zoom}/{tile_x}/{tile_y}/{color}/{options}.png"
 
 # Convert to grayscale and threshold
 img_array = np.array(img.convert('L'))
@@ -241,7 +242,7 @@ rain-predictor-addon/
   },
   "image": {
     "size": 256,
-    "zoom": 8
+    "zoom": 7
   }
 }
 ```

@@ -75,6 +75,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Changed
 - Default radar image zoom changed from 8 to 7 (a saved zoom above 7 is capped automatically)
+- README updated to document the new radar tile download (frame path, zoom 7) and the zoom 7 default
 
 ## Version 1.1.56 (2026-01-04)
 
