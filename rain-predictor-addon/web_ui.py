@@ -300,7 +300,10 @@ def index():
 
 @app.route("/api/data")
 def api_data():
-    return jsonify(get_all_data())
+    data = dict(get_all_data())
+    # Lets the UI work out how old the estimate is without depending on the browser's clock
+    data["server_time"] = time.time()
+    return jsonify(data)
 
 @app.route("/api/set_location", methods=["POST"])
 def set_location():

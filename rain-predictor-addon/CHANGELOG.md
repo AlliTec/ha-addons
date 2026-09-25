@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Versions are listed newest first.
 
+## Version 1.1.67 (2026-09-25)
+
+### Changed
+- The green highlight now follows the tracked rain cell. Previously it was drawn once at the cell's current position and never moved, while a separate red dot animated along a straight projection. The backend now sends the cell's real position (and size) in every radar frame it was tracked through, and the highlight moves onto that position as the radar animation plays. Its radius matches the size of the cell. It is hidden in older frames where the cell was not tracked yet
+- Removed the gold dotted line to your location and the moving red dot. Manual tracking now moves the green highlight itself along the storm's direction instead of using a red dot
+- The highlight is created once and only updated, instead of being rebuilt every 5 seconds. Each rebuild also started another animation loop that was never stopped
+
+### Fix
+- The time to rain no longer stays fixed at the value it was calculated with. Each estimate is stamped with the time it was made and the displayed time counts down from it (rounded up to the next minute, "NOW" at zero), so it stays correct between the 3-minute analysis cycles. The countdown uses the add-on's clock to work out the age of the estimate, so it is correct even if your browser's clock is off. A new estimate replaces the snapshot when it arrives. The ETA in the map tooltip counts down too
+- Fixed the tracker jumping between neighbouring or merged cells when following a cell back through the radar frames. It accepted any cell within 100 km of the previous position, which allowed jumps of over 250 km/h. A cell can now move at most 100 km/h between frames (plus a small allowance for centroid jitter), otherwise its track ends there
+
+### Documentation
+- README documents the new `estimated_at`, `server_time` and `track` fields of `/api/data`
+
 ## Version 1.1.66 (2026-09-25)
 
 ### Fix

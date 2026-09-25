@@ -612,6 +612,10 @@
         let locationMarker;
         let manualMode = false;
         
+        // Snapshot of the latest estimated time to rain: { minutes, estimatedAt, madeAt }.
+        // The displayed time counts down from this instead of staying at the value it was calculated with.
+        let etaSnapshot = null;
+
         // Tracking markers and data
         let trackerMarkers = {};
         let trackerPositions = [];
@@ -631,6 +635,50 @@
         const apiDataUrl = `${baseUrl}/api/data`;
         const apiSetLocationUrl = `${baseUrl}/api/set_location`;
         const apiManualSelectionUrl = `${baseUrl}/api/manual_selection`;
+
+        // Remember when the estimate was made so the time to rain can count down from it
+        function updateEtaSnapshot(data, timeToRain) {
+            const estimatedAt = parseFloat(data.estimated_at);
+            const serverTime = parseFloat(data.server_time);
+
+            if (timeToRain === 999 || isNaN(timeToRain) || isNaN(estimatedAt)) {
+                etaSnapshot = null;
+                return;
+            }
+
+            // Same estimate as before (the UI polls every few seconds): keep the existing snapshot
+            if (etaSnapshot && etaSnapshot.estimatedAt === estimatedAt && etaSnapshot.minutes === timeToRain) {
+                return;
+            }
+
+            // Age of the estimate measured on the server's clock, applied to this browser's clock
+            const ageSeconds = isNaN(serverTime) ? 0 : Math.max(0, serverTime - estimatedAt);
+            etaSnapshot = {
+                minutes: timeToRain,
+                estimatedAt: estimatedAt,
+                madeAt: Date.now() - ageSeconds * 1000
+            };
+        }
+
+        // Minutes to rain right now: the estimate minus the time that has passed since it was made
+        function etaMinutesNow(estimatedMinutes) {
+            const minutes = parseFloat(estimatedMinutes);
+            if (!etaSnapshot || isNaN(minutes) || minutes === 999) return minutes;
+
+            const remaining = etaSnapshot.minutes - (Date.now() - etaSnapshot.madeAt) / 60000;
+            return remaining <= 0 ? 0 : Math.ceil(remaining);
+        }
+
+        function renderEtaCountdown() {
+            const timeElement = document.getElementById('time-to-rain');
+            if (!timeElement || !etaSnapshot) return;
+
+            const text = formatTimeToRain(etaMinutesNow(etaSnapshot.minutes));
+            timeElement.classList.toggle('now', text === 'NOW');
+            timeElement.innerText = text;
+        }
+
+        setInterval(renderEtaCountdown, 1000);
 
         function formatTimeToRain(minutes) {
             if (minutes <= 0) return 'NOW';
@@ -895,8 +943,98 @@
             }, radarAnimationSpeed);
         }
 
+        // True when the backend supplied the real per-frame positions of the tracked cell
+        function hasCellTrack(mode) {
+            return mode === 'auto' && !!cellData.auto && Array.isArray(cellData.auto.track) && cellData.auto.track.length > 0;
+        }
+
+        // Where the tracked cell actually was in the radar frame being shown (null if it was not tracked that far back)
+        function trackedPositionForFrame(mode, frameIndex) {
+            const track = cellData[mode] && cellData[mode].track;
+            if (!Array.isArray(track) || track.length === 0 || !frameTimestamps || frameTimestamps.length === 0) {
+                return null;
+            }
+
+            const frameTime = frameTimestamps[Math.min(frameIndex, frameTimestamps.length - 1)];
+            let best = null;
+            let bestDiff = Infinity;
+            track.forEach(function(point) {
+                const diff = Math.abs(point.time - frameTime);
+                if (diff < bestDiff) {
+                    bestDiff = diff;
+                    best = point;
+                }
+            });
+
+            // Only accept a track point that belongs to this frame (within half a frame)
+            return bestDiff <= timePerFrame / 2 ? best : null;
+        }
+
+        // Move the green highlight onto the tracked cell for the radar frame being shown
+        function updateFollowingTracker(mode, frameIndex) {
+            const trackerKey = mode + 'Tracker';
+            const circle = trackerMarkers[trackerKey];
+            if (!circle) return;
+
+            const point = trackedPositionForFrame(mode, frameIndex);
+            if (!point) {
+                // The cell was not tracked this far back, so there is nothing to highlight in this frame
+                circle.setStyle({ opacity: 0, fillOpacity: 0 });
+                return;
+            }
+
+            circle.setLatLng([point.lat, point.lng]);
+            circle.setRadius(point.radius_km * 1000);
+            circle.setStyle({ opacity: 1, fillOpacity: 0.3 });
+        }
+
+        function trackerLabelHtml(mode) {
+            return mode === 'manual' ?
+                `Manual Point<br>Speed: ${cellData[mode].speed || 0} kph<br>Direction: ${degreesToCardinal(cellData[mode].direction || -1)}` :
+                `🌧️ RAIN CELL THREAT<br>
+                 Threat Level: ${cellData[mode].threat_probability || 0}%<br>
+                 ETA: ${formatTimeToRain(etaMinutesNow(cellData[mode].time_to_rain || 999))}<br>
+                 Distance: ${cellData[mode].distance || 0} km<br>
+                 Speed: ${cellData[mode].speed || 0} kph<br>
+                 Direction: ${degreesToCardinal(cellData[mode].direction || -1)}`;
+        }
+
+        // Green highlight that stays on the tracked cell as the radar animation plays.
+        // Created once and then only updated, so polling does not rebuild it every few seconds.
+        function createFollowingTracker(mode) {
+            const trackerKey = mode + 'Tracker';
+            let circle = trackerMarkers[trackerKey];
+
+            if (!circle) {
+                removeTracker(mode);
+                circle = L.circle([cellData[mode].center.lat, cellData[mode].center.lng], {
+                    radius: 8000,
+                    color: '#00FF00',
+                    weight: 4,
+                    fillColor: '#00FF00',
+                    fillOpacity: 0.3,
+                    className: 'green-mask-overlay'
+                }).addTo(map);
+                circle.bindTooltip(trackerLabelHtml(mode), {
+                    permanent: false,
+                    direction: 'top',
+                    offset: [0, -30],
+                    className: 'tracker-label-enhanced'
+                });
+                trackerMarkers[trackerKey] = circle;
+            } else {
+                circle.setTooltipContent(trackerLabelHtml(mode));
+            }
+
+            updateFollowingTracker(mode, animationPosition);
+        }
+
         function updateTrackerForFrame(frameIndex) {
             const activeMode = manualMode ? 'manual' : 'auto';
+            if (hasCellTrack(activeMode)) {
+                updateFollowingTracker(activeMode, frameIndex);
+                return;
+            }
             const activeCell = cellData[activeMode];
             if (!activeCell || !activeCell.center) return;
 
@@ -941,9 +1079,9 @@
         function updateMovingMarker(lat, lng, mode) {
             const trackerKey = mode + 'Tracker';
             
-            // Update ONLY the red moving marker, NOT the green circle
-            if (trackerMarkers[trackerKey + 'MovingMarker']) {
-                trackerMarkers[trackerKey + 'MovingMarker'].setLatLng([lat, lng]);
+            // The green highlight itself moves (manual tracking projects it along the storm's direction)
+            if (trackerMarkers[trackerKey]) {
+                trackerMarkers[trackerKey].setLatLng([lat, lng]);
             }
         }
 
@@ -969,10 +1107,16 @@
 
             const trackerKey = mode + 'Tracker';
 
+            // Auto tracking with a real per-frame track: highlight follows the actual cell
+            if (hasCellTrack(mode)) {
+                createFollowingTracker(mode);
+                return;
+            }
+
             // Remove old tracker if exists
             removeTracker(mode);
 
-            // Create static green circle for rain cell position (DOES NOT MOVE)
+            // Green highlight on the tracked rain cell (moved per radar frame by updateTrackerForFrame)
             console.log('Creating static green circle for rain cell at:', [lat, lng]);
             const greenCircle = L.circle([lat, lng], {
                 radius: 8000, // 8km radius - marks rain cell area
@@ -987,45 +1131,12 @@
 
             trackerMarkers[trackerKey] = greenCircle;
 
-            // Create static gold dotted line from rain cell to user location (DOES NOT MOVE)
-            if (currentLocation) {
-                const trajectoryLine = L.polyline([[lat, lng], [currentLocation.latitude, currentLocation.longitude]], {
-                    color: '#FFD700', // Gold dotted line
-                    weight: 3,
-                    opacity: 0.8,
-                    dashArray: '10, 5', // Dotted pattern
-                    zIndex: 9999,
-                    className: 'trajectory-line' // Add flow animation
-                }).addTo(map);
-                trackerMarkers[trackerKey + 'TrajectoryLine'] = trajectoryLine;
-                console.log('Static gold trajectory line added to map');
-
-                // Create red moving marker that travels along the static line at cloud speed
-                const redMarker = L.divIcon({
-                    className: 'trajectory-marker',
-                    iconSize: [16, 16],
-                    iconAnchor: [8, 8]
-                });
-
-                const movingMarker = L.marker([lat, lng], {
-                    icon: redMarker,
-                    zIndex: 10001 // On top of everything
-                }).addTo(map);
-
-                trackerMarkers[trackerKey + 'MovingMarker'] = movingMarker;
-                console.log('Red moving marker added to map');
-
-                // Start animating red marker along static trajectory at actual cloud speed
-                const speed = parseFloat(cellData[mode].speed) || 20; // Default to 20 kph if no speed
-                animateMarkerAlongTrajectory(movingMarker, lat, lng, currentLocation.latitude, currentLocation.longitude, speed);
-            }
-
             // Add comprehensive tooltip with threat info
             const labelContent = mode === 'manual' ? 
                 `Manual Point<br>Speed: ${cellData[mode].speed || 0} kph<br>Direction: ${degreesToCardinal(cellData[mode].direction || -1)}` : 
                 `🌧️ RAIN CELL THREAT<br>
                  Threat Level: ${cellData[mode].threat_probability || 0}%<br>
-                 ETA: ${formatTimeToRain(cellData[mode].time_to_rain || 999)}<br>
+                 ETA: ${formatTimeToRain(etaMinutesNow(cellData[mode].time_to_rain || 999))}<br>
                  Distance: ${cellData[mode].distance || 0} km<br>
                  Speed: ${cellData[mode].speed || 0} kph<br>
                  Direction: ${degreesToCardinal(cellData[mode].direction || -1)}`;
@@ -1096,7 +1207,7 @@
             // Update simple tooltip with threat info
             const labelContent = mode === 'manual' ? 
                 'Manual Point' : 
-                `Threat: ${cellData[mode].threat_probability || 0}%<br>ETA: ${formatTimeToRain(cellData[mode].time_to_rain || 999)}`;
+                `Threat: ${cellData[mode].threat_probability || 0}%<br>ETA: ${formatTimeToRain(etaMinutesNow(cellData[mode].time_to_rain || 999))}`;
             
             if (trackerMarkers[trackerKey]) {
                 trackerMarkers[trackerKey].setTooltipContent(labelContent);
@@ -1627,7 +1738,8 @@
                     return;
                 }
 
-                const formattedTime = (timeToRain === 999) ? '--' : formatTimeToRain(timeToRain);
+                updateEtaSnapshot(data, timeToRain);
+                const formattedTime = (timeToRain === 999) ? '--' : formatTimeToRain(etaMinutesNow(timeToRain));
                 timeElement.classList.toggle('now', formattedTime === 'NOW');
                 timeElement.innerText = formattedTime;
 
@@ -1729,7 +1841,7 @@
                 const metrics = [
                     `Speed: ${data.speed || 0} kph`,
                     `Dist: ${data.distance || 0} km`,
-                    `ETA: ${formatTimeToRain(data.time_to_rain || 999)}`,
+                    `ETA: ${formatTimeToRain(etaMinutesNow(data.time_to_rain || 999))}`,
                     `Dir: ${degreesToCardinal(data.direction || -1)}`
                 ];
                 trackerMarkers['autoTracker'].setTooltipContent(`Auto Track<br>${metrics.join('<br>')}`);

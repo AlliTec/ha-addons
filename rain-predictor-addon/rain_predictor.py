@@ -18,10 +18,13 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.66"
+VERSION = "1.1.67"
 
 # RainViewer only serves radar tiles up to this zoom level (higher zooms return a placeholder image)
 MAX_RADAR_ZOOM = 7
+
+# Fastest a rain cell is assumed to travel when matching it between radar frames
+MAX_CELL_SPEED_KPH = 100
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -557,7 +560,7 @@ class RainPredictor:
             threat = self._find_threatening_cell()
             
             if threat:
-                logging.info(f"\n⚠️  THREAT DETECTED: {threat}")
+                logging.info(f"\n⚠️  THREAT DETECTED: { {k: v for k, v in threat.items() if k != 'track'} }")
                 prediction.update(threat)
             else:
                 logging.info("\n✅ No threatening cells detected")
@@ -977,12 +980,14 @@ class RainPredictor:
         positions.append({
             'lat': target_cell['lat'],
             'lon': target_cell['lon'],
+            'size': target_cell.get('size'),
             'timestamp': frame_cells[-1]['timestamp']
         })
         
         # Work backwards through frames
         current_lat = target_cell['lat']
         current_lon = target_cell['lon']
+        last_timestamp = frame_cells[-1]['timestamp']
         
         logging.debug(f"Tracking cell {cell_idx} backwards from {current_lat:.4f}, {current_lon:.4f}")
         
@@ -990,11 +995,16 @@ class RainPredictor:
             frame = frame_cells[frame_idx]
             best_match = None
             best_distance = float('inf')
+
+            # Farthest this cell can plausibly have moved since the previous frame; matching anything
+            # further away just jumps to a neighbouring or merged cell
+            gap_hours = abs(last_timestamp - frame['timestamp']) / 3600.0
+            max_step_km = min(max_distance_km, MAX_CELL_SPEED_KPH * gap_hours + 5.0)
             
             # Find closest cell in this frame
             for cell in frame['cells']:
                 distance = self.haversine(current_lat, current_lon, cell['lat'], cell['lon'])
-                if distance < max_distance_km and distance < best_distance:
+                if distance < max_step_km and distance < best_distance:
                     best_distance = distance
                     best_match = cell
             
@@ -1002,10 +1012,12 @@ class RainPredictor:
                 positions.append({
                     'lat': best_match['lat'],
                     'lon': best_match['lon'],
+                    'size': best_match.get('size'),
                     'timestamp': frame['timestamp']
                 })
                 current_lat = best_match['lat']
                 current_lon = best_match['lon']
+                last_timestamp = frame['timestamp']
                 logging.debug(f"  Frame {frame_idx}: matched at {best_distance:.1f}km")
             else:
                 logging.debug(f"  Frame {frame_idx}: no match (lost track) - checked {len(frame['cells'])} cells")
@@ -1143,6 +1155,25 @@ class RainPredictor:
         
         return direction_consistent and speed_consistent
     
+    def _km_per_pixel(self, lat):
+        """Ground size of one radar pixel (km) at the given latitude for the tile zoom in use"""
+        zoom = max(1, min(int(self.image_zoom), MAX_RADAR_ZOOM))
+        tile_px = self.image_size if self.image_size in (256, 512) else 256
+        return 156.54303392 * math.cos(math.radians(lat)) / (2 ** zoom) * (256.0 / tile_px)
+
+    def _track_point(self, pos):
+        """One tracked position of a cell, in the form the web UI needs to draw the green highlight"""
+        size_px = pos.get('size') or 0
+        radius_km = math.sqrt(size_px / math.pi) * self._km_per_pixel(pos['lat'])
+        # Ring slightly larger than the cell, kept within a sensible range on the map
+        radius_km = min(25.0, max(4.0, radius_km + 2.0))
+        return {
+            'lat': round(float(pos['lat']), 4),
+            'lng': round(float(pos['lon']), 4),
+            'time': int(pos['timestamp']),
+            'radius_km': round(radius_km, 1)
+        }
+
     def _create_tracked_cells_from_movement(self, moving_cells):
         """Rebuild tracked cells from the movement analysis of the latest set of frames"""
         # Cell ids are only indexes into the latest frame and each analysis re-derives the full
@@ -1175,6 +1206,9 @@ class RainPredictor:
                     datetime.fromtimestamp(pos['timestamp']),
                     cell_data['intensity']
                 )
+
+            # Real position of the cell in every radar frame it was tracked through (oldest first)
+            existing_cell.track = [self._track_point(p) for p in chronological]
 
             speed, direction = existing_cell.get_velocity(self)
             dist = self.haversine(existing_cell.positions[-1][0], existing_cell.positions[-1][1],
@@ -1525,7 +1559,8 @@ class RainPredictor:
             'direction_deg': round(best_cell['direction'], 1),
             'bearing_to_cell_deg': round(best_cell['bearing_from_user'], 1),
             'rain_cell_latitude': round(best_cell['lat'], 4),
-            'rain_cell_longitude': round(best_cell['lon'], 4)
+            'rain_cell_longitude': round(best_cell['lon'], 4),
+            'track': getattr(best_cell['cell'], 'track', [])
         }
     
     def _calculate_threat_probability(self, distance_km, speed_kph, angle_diff, intensity, track_length):
@@ -1582,6 +1617,9 @@ class RainPredictor:
                 "bearing": str(values.get('bearing', 'N/A')),
                 "rain_cell_latitude": prediction.get('rain_cell_latitude') if prediction else None,
                 "rain_cell_longitude": prediction.get('rain_cell_longitude') if prediction else None,
+                "track": prediction.get('track') if prediction else None,
+                # When this estimate was made, so the UI can count the time to rain down from it
+                "estimated_at": time.time(),
                 "cells": ui_cells
             }
 
