@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Versions are listed newest first.
 
+## Version 1.1.69 (2026-09-25)
+
+### Changed
+- The green highlight on the tracked rain cell is now more subtle: a softer green (`#3FA870` instead of the pure `#00FF00`), a thinner outline (3px instead of 4px), and a lighter, more transparent outline and fill (about 80% and 16% opacity instead of 100% and 30%). It is still easy to spot but no longer glaringly bright. The border of its hover label uses the same green
+- The highlight's colour and opacity are defined once (`TRACKER_STYLE` in `index.html`), so all trackers stay consistent and it is easy to adjust
+
 ## Version 1.1.68 (2026-09-25)
 
 ### Changed

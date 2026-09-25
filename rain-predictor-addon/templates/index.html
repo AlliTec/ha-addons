@@ -465,7 +465,7 @@
 
         .tracker-label-enhanced {
             background: rgba(0, 0, 0, 0.8) !important;
-            border: 2px solid #00FF00 !important;
+            border: 2px solid rgba(63, 168, 112, 0.8) !important;
             border-radius: 6px !important;
             font-weight: bold !important;
             font-size: 12px !important;
@@ -607,6 +607,14 @@
         // and only supports tile zoom levels up to 7.
         let radarHost = 'https://tilecache.rainviewer.com';
         const RADAR_MAX_NATIVE_ZOOM = 7;
+        // Green highlight on the tracked rain cell: noticeable without being harsh
+        const TRACKER_STYLE = {
+            color: '#3FA870',
+            weight: 3,
+            opacity: 0.8,
+            fillColor: '#3FA870',
+            fillOpacity: 0.16
+        };
         let currentColorScheme = currentSettings.colorScheme;
         let baseLayer;
         let locationMarker;
@@ -1021,7 +1029,7 @@
 
             circle.setLatLng([point.lat, point.lng]);
             circle.setRadius(point.radius_km * 1000);
-            circle.setStyle({ opacity: 1, fillOpacity: 0.3 });
+            circle.setStyle({ opacity: TRACKER_STYLE.opacity, fillOpacity: TRACKER_STYLE.fillOpacity });
         }
 
         function trackerLabelHtml(mode) {
@@ -1045,10 +1053,7 @@
                 removeTracker(mode);
                 circle = L.circle([cellData[mode].center.lat, cellData[mode].center.lng], {
                     radius: 8000,
-                    color: '#00FF00',
-                    weight: 4,
-                    fillColor: '#00FF00',
-                    fillOpacity: 0.3,
+                    ...TRACKER_STYLE,
                     className: 'green-mask-overlay'
                 }).addTo(map);
                 circle.bindTooltip(trackerLabelHtml(mode), {
@@ -1156,10 +1161,7 @@
             console.log('Creating static green circle for rain cell at:', [lat, lng]);
             const greenCircle = L.circle([lat, lng], {
                 radius: 8000, // 8km radius - marks rain cell area
-                color: '#00FF00', // Green border
-                weight: 4,
-                fillColor: '#00FF00', // Green fill
-                fillOpacity: 0.3, // Semi-transparent
+                ...TRACKER_STYLE,
                 zIndex: 10000, // Ensure it's on top
                 className: 'green-mask-overlay' // Add pulsing animation
             }).addTo(map);
