@@ -18,7 +18,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.67"
+VERSION = "1.1.68"
 
 # RainViewer only serves radar tiles up to this zoom level (higher zooms return a placeholder image)
 MAX_RADAR_ZOOM = 7
@@ -272,6 +272,9 @@ class RainPredictor:
 
         # Radar imagery per frame never changes once published, so cache it by frame path
         self._mosaic_cache = {}
+
+        # Latest time-to-rain estimate ({'minutes', 'at', 'sent'}) so it can be counted down between cycles
+        self._eta_snapshot = None
 
         # Wind validation settings
         self.openweather_api_key = config.get('openweather_api_key', None)
@@ -1554,6 +1557,7 @@ class RainPredictor:
         
         return {
             'time_to_rain': round(time_to_arrival_minutes),
+            'time_to_rain_seconds': round(time_to_arrival_minutes * 60),
             'distance_km': round(best_cell['distance_to_user'], 1),
             'speed_kph': round(best_cell['speed'], 1),
             'direction_deg': round(best_cell['direction'], 1),
@@ -1620,6 +1624,7 @@ class RainPredictor:
                 "track": prediction.get('track') if prediction else None,
                 # When this estimate was made, so the UI can count the time to rain down from it
                 "estimated_at": time.time(),
+                "eta_seconds": prediction.get('time_to_rain_seconds') if prediction else None,
                 "cells": ui_cells
             }
 
@@ -1698,7 +1703,13 @@ class RainPredictor:
         
         self._save_analysis_to_cache(values, prediction)
         self._update_entities(values)
-        
+
+        # Snapshot of this estimate so the time to rain can be counted down until the next cycle
+        if values['time'] != self.defaults['no_rain']:
+            self._eta_snapshot = {'minutes': values['time'], 'at': time.time(), 'sent': values['time']}
+        else:
+            self._eta_snapshot = None
+
         logging.info("\n" + "=" * 60)
         logging.info(f"FINAL VALUES TO BE SENT:")
         logging.info(f"  Time to rain: {values['time']} minutes")
@@ -1707,6 +1718,35 @@ class RainPredictor:
         logging.info(f"  Direction: {values['direction']}°")
         logging.info(f"  Bearing: {values['bearing']}°")
         logging.info("=" * 60 + "\n")
+
+    def _tick_countdown(self):
+        """Count the time to rain down in Home Assistant using the time the estimate was made"""
+        snapshot = self._eta_snapshot
+        if not snapshot or not self.entities.get('time'):
+            return
+
+        remaining = snapshot['minutes'] - (time.time() - snapshot['at']) / 60.0
+        value = 0 if remaining <= 0 else math.ceil(remaining)
+        if value == snapshot['sent']:
+            return
+
+        snapshot['sent'] = value
+        logging.info(f"Time to rain counted down to {value} minutes")
+        try:
+            self.ha_api.call_service("input_number/set_value", self.entities['time'], value)
+        except Exception as e:
+            logging.warning(f"Could not update the time to rain countdown: {e}")
+
+    def _sleep_with_countdown(self, seconds):
+        """Wait for the next analysis cycle, counting the time to rain down once a minute meanwhile"""
+        end = time.time() + seconds
+        while self.running:
+            remaining = end - time.time()
+            if remaining <= 0:
+                break
+            time.sleep(min(60.0, remaining))
+            if end - time.time() > 1:
+                self._tick_countdown()
 
     def run(self):
         """Main execution loop"""
@@ -1718,8 +1758,8 @@ class RainPredictor:
 
         try:
             while self.running:
-                # Wait for next interval
-                time.sleep(self.run_interval)
+                # Wait for next interval, counting the time to rain down in the meantime
+                self._sleep_with_countdown(self.run_interval)
 
                 # Run prediction cycle
                 self.run_prediction()

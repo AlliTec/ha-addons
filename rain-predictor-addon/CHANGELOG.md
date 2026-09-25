@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Versions are listed newest first.
 
+## Version 1.1.68 (2026-09-25)
+
+### Changed
+- The time to rain now counts down in real time in the web UI, as a live clock that ticks every second (for example `33m 12s`, `1h 08m 34s`, then `9s` and `NOW`), instead of only changing once a minute. It counts down from the precise arrival time of the latest estimate (in seconds, not the rounded minutes), and the ETA in the map tooltip ticks in step with it
+- The Home Assistant helper for the time to rain (`rain_arrival_minutes`) now counts down once a minute between analysis cycles, using the time the estimate was made, instead of staying at the same value for up to 3 minutes. It is written as whole minutes (rounded up) and reads 0 when the estimated arrival time has passed, until the next analysis replaces the estimate. Nothing is written while there is no rain estimate
+
+### Documentation
+- README documents the new `eta_seconds` field of `/api/data`
+
 ## Version 1.1.67 (2026-09-25)
 
 ### Changed

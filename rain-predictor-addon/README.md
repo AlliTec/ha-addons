@@ -201,7 +201,7 @@ for entity_id, value in values.items():
 
 **Flask Endpoints:**
 - `GET /` - Main configuration page
-- `GET /api/data` - Returns cached prediction data, including `estimated_at` (when the estimate was made), `server_time` (used to count the time to rain down from that estimate) and `track` (the tracked cell's position and highlight radius in each radar frame it was followed through)
+- `GET /api/data` - Returns cached prediction data, including `estimated_at` (when the estimate was made), `eta_seconds` (the precise time to rain at that moment), `server_time` (used to count the time to rain down from that estimate) and `track` (the tracked cell's position and highlight radius in each radar frame it was followed through)
 - `POST /api/set_location` - Save lat/lng to options.json
 - `POST /api/update_view_bounds` - Store current map view for focused analysis
 
