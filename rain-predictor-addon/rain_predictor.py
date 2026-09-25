@@ -18,7 +18,10 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.64"
+VERSION = "1.1.65"
+
+# RainViewer only serves radar tiles up to this zoom level (higher zooms return a placeholder image)
+MAX_RADAR_ZOOM = 7
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -263,7 +266,10 @@ class RainPredictor:
         # View bounds for focused analysis
         self.view_bounds = None
         self.view_center = None
-        
+
+        # Radar imagery per frame never changes once published, so cache it by frame path
+        self._mosaic_cache = {}
+
         # Wind validation settings
         self.openweather_api_key = config.get('openweather_api_key', None)
         self.enable_wind_validation = config.get('wind_validation.enabled', False)
@@ -566,31 +572,142 @@ class RainPredictor:
         return False
     
 
+    def _get_tile_coords(self, lat, lon, zoom):
+        """Convert lat/lon to slippy-map tile (x, y) at the given zoom level (Web Mercator)"""
+        n = 2 ** zoom
+        x = int((lon + 180.0) / 360.0 * n)
+        y = int((1.0 - math.asinh(math.tan(math.radians(lat))) / math.pi) / 2.0 * n)
+        return max(0, min(x, n - 1)), max(0, min(y, n - 1))
+
+    @staticmethod
+    def _tile_to_latlon(tile_x, tile_y, zoom):
+        """Convert (fractional) slippy-map tile coordinates to the lat/lon of that point"""
+        n = 2 ** zoom
+        lon = tile_x / n * 360.0 - 180.0
+        lat = math.degrees(math.atan(math.sinh(math.pi * (1.0 - 2.0 * tile_y / n))))
+        return lat, lon
+
+    def _download_radar_tile(self, session, url):
+        """Download one radar tile as a grayscale array, or None on failure"""
+        for attempt in range(2):
+            try:
+                response = session.get(url, timeout=10)
+            except requests.RequestException as e:
+                logging.warning(f"Radar tile request failed: {e}")
+                return None
+
+            if response.status_code == 429 and attempt == 0:
+                time.sleep(1.5)
+                continue
+            if response.status_code != 200:
+                logging.warning(f"Radar tile HTTP {response.status_code}: {url}")
+                return None
+
+            try:
+                return np.array(Image.open(io.BytesIO(response.content)).convert('L'))
+            except Exception as e:
+                logging.warning(f"Radar tile is not a valid image ({e}): {url}")
+                return None
+        return None
+
+    def _fetch_radar_mosaic(self, frame, api_data, radius=1):
+        """Fetch the block of radar tiles around the user's location for one frame.
+
+        Returns (grayscale array, geo) where geo = (first_tile_x, first_tile_y, zoom, tile_px),
+        or (None, None) if no tile could be downloaded.
+        """
+        host = api_data.get('host', 'https://tilecache.rainviewer.com')
+        frame_path = frame.get('path') or f"/v2/radar/{frame['time']}"
+        zoom = max(1, min(int(self.image_zoom), MAX_RADAR_ZOOM))
+        tile_px = self.image_size if self.image_size in (256, 512) else 256
+
+        n = 2 ** zoom
+        center_x, center_y = self._get_tile_coords(self.latitude, self.longitude, zoom)
+        x_start, x_end = max(0, center_x - radius), min(n - 1, center_x + radius)
+        y_start, y_end = max(0, center_y - radius), min(n - 1, center_y + radius)
+
+        cache_key = (frame_path, zoom, tile_px, x_start, y_start, x_end, y_end, self.image_color, self.image_opts)
+        cached = self._mosaic_cache.get(cache_key)
+        if cached is not None:
+            return cached
+
+        session = requests.Session()
+        rows = []
+        downloaded = 0
+        total = (x_end - x_start + 1) * (y_end - y_start + 1)
+        for tile_y in range(y_start, y_end + 1):
+            row = []
+            for tile_x in range(x_start, x_end + 1):
+                url = (f"{host}{frame_path}/{tile_px}/{zoom}/{tile_x}/{tile_y}/"
+                       f"{self.image_color}/{self.image_opts}.png")
+                tile = self._download_radar_tile(session, url)
+                if tile is None or tile.shape != (tile_px, tile_px):
+                    tile = np.zeros((tile_px, tile_px), dtype=np.uint8)
+                else:
+                    downloaded += 1
+                row.append(tile)
+            rows.append(np.concatenate(row, axis=1))
+
+        if downloaded == 0:
+            logging.error(f"No radar tiles could be downloaded for frame {frame_path}")
+            return None, None
+
+        result = (np.concatenate(rows, axis=0), (x_start, y_start, zoom, tile_px))
+        # Only cache complete mosaics so a transient failure is retried next cycle
+        if downloaded == total:
+            if len(self._mosaic_cache) > 40:
+                self._mosaic_cache.pop(next(iter(self._mosaic_cache)))
+            self._mosaic_cache[cache_key] = result
+        else:
+            logging.warning(f"Only {downloaded}/{total} radar tiles downloaded for frame {frame_path}")
+        return result
+
     def _extract_cells_from_frame(self, frame, api_data):
         """Extract rain cells from a single radar frame"""
         try:
-            timestamp = frame['time']
-            host = api_data.get('host', 'https://tilecache.rainviewer.com').replace('https://', '')
-            img_url = f"https://{host}/v2/radar/{timestamp}/256/0/0/0/2/1_1.png"
-            
-            response = requests.get(img_url, timeout=5)
-            img = Image.open(io.BytesIO(response.content))
-            
-            # Convert to grayscale and threshold
-            img_gray = img.convert('L')
-            img_array = np.array(img_gray)
-            
+            img_array, geo = self._fetch_radar_mosaic(frame, api_data)
+            if img_array is None:
+                return []
+
             # Apply threshold to identify rain areas
             thresholded = (img_array > self.threshold).astype(np.uint8) * 255
-            
+
             # Find connected components (rain cells)
             labeled_image, num_labels = label(thresholded)
-            
+
             # Convert cells to lat/lon coordinates
-            return self._convert_cells_to_coordinates(img_array, labeled_image, num_labels)
+            return self._convert_cells_to_coordinates(img_array, labeled_image, num_labels, geo)
         except Exception as e:
-            logging.error(f"Error extracting cells from frame: {e}")
+            logging.error(f"Error extracting cells from frame: {e}", exc_info=True)
             return []
+
+    def _convert_cells_with_geo(self, img_array, labeled_image, num_labels, geo):
+        """Convert pixel cells to lat/lon using the exact Web Mercator tile geometry"""
+        first_tile_x, first_tile_y, zoom, tile_px = geo
+        cells = []
+
+        for i in range(1, num_labels + 1):
+            y_coords, x_coords = np.where(labeled_image == i)
+            cell_size = len(y_coords)
+
+            if cell_size < 5:
+                continue
+
+            centroid_x, centroid_y = np.mean(x_coords), np.mean(y_coords)
+            est_lat, est_lon = self._tile_to_latlon(
+                first_tile_x + (centroid_x + 0.5) / tile_px,
+                first_tile_y + (centroid_y + 0.5) / tile_px,
+                zoom
+            )
+
+            cells.append({
+                'lat': float(est_lat),
+                'lon': float(est_lon),
+                'intensity': float(np.mean(img_array[y_coords, x_coords])),
+                'size': cell_size
+            })
+
+        return cells
 
     def _extract_cells_from_all_frames(self, api_data):
         """Extract rain cells from ALL radar frames and analyze movement patterns"""
@@ -637,8 +754,11 @@ class RainPredictor:
             logging.error(f"Error extracting cells from all frames: {e}", exc_info=True)
             return []
     
-    def _convert_cells_to_coordinates(self, img_array, labeled_image, num_labels):
+    def _convert_cells_to_coordinates(self, img_array, labeled_image, num_labels, geo=None):
         """Convert pixel cells to lat/lon coordinates"""
+        if geo is not None:
+            return self._convert_cells_with_geo(img_array, labeled_image, num_labels, geo)
+
         cells = []
         img_height, img_width = img_array.shape
         

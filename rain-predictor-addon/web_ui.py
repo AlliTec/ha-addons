@@ -175,8 +175,14 @@ def _fetch_rainviewer_meta() -> Dict[str, Any]:
     _meta_cache["ts"] = now
     return meta
 
-def _download_tile(ts: int, z: int, x: int, y: int, color: int = TILE_COLOR_SCHEME) -> Image.Image:
-    url = f"https://tilecache.rainviewer.com/v2/radar/{ts}/256/{z}/{x}/{y}/{color}/1_1.png"
+# RainViewer only serves radar tiles up to zoom 7 (higher zooms return a placeholder image)
+RADAR_MAX_ZOOM = 7
+
+def _download_tile(frame: Dict[str, Any], z: int, x: int, y: int, color: int = TILE_COLOR_SCHEME,
+                   host: str = "https://tilecache.rainviewer.com") -> Image.Image:
+    # Frames are addressed by a hashed path; the old timestamp URLs return 410 Gone
+    frame_path = frame.get("path") or f"/v2/radar/{frame['time']}"
+    url = f"{host}{frame_path}/256/{z}/{x}/{y}/{color}/1_1.png"
     r = requests.get(url, timeout=8)
     if r.status_code != 200:
         return Image.new("L", (256, 256), 0)
@@ -222,7 +228,8 @@ def _avg_motion_over_view(meta: Dict[str, Any], bounds: Dict[str, float], zoom_f
 
     # Choose a moderate zoom to keep tile count small
     z = int(zoom_for_tiles or 6)
-    z = max(3, min(8, z))
+    z = max(3, min(RADAR_MAX_ZOOM, z))
+    host = meta.get("host") or "https://tilecache.rainviewer.com"
 
     x_min, x_max, y_min, y_max = _tilexy_bounds(bounds["west"], bounds["south"], bounds["east"], bounds["north"], z)
     # Cap the grid size
@@ -240,7 +247,7 @@ def _avg_motion_over_view(meta: Dict[str, Any], bounds: Dict[str, float], zoom_f
         for y in y_idxs:
             row = []
             for x in x_idxs:
-                im = _download_tile(f["time"], z, x, y)
+                im = _download_tile(f, z, x, y, host=host)
                 row.append(np.asarray(im, dtype=np.float32))
             tiles.append(np.concatenate(row, axis=1))
         canvas = np.concatenate(tiles, axis=0) if tiles else None
@@ -267,8 +274,10 @@ def _avg_motion_over_view(meta: Dict[str, Any], bounds: Dict[str, float], zoom_f
     center_lat = (bounds["north"] + bounds["south"]) / 2.0
     m_per_pixel = 156543.03392 * math.cos(math.radians(center_lat)) / (2 ** z)
 
-    # RainViewer "past" frames are ~5 minutes apart
-    minutes_per_step = 5.0
+    # Use the real spacing between the frames (RainViewer frames are ~10 minutes apart)
+    minutes_per_step = (frames[-1]["time"] - frames[0]["time"]) / (len(frames) - 1) / 60.0
+    if minutes_per_step <= 0:
+        return None
     # dy positive = south, so invert to meters north
     meters_y = -dy * m_per_pixel
     meters_x = dx * m_per_pixel

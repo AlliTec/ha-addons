@@ -64,6 +64,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Maintenance
 - Synchronized version numbers across `config.yaml`, `Dockerfile` and `rain_predictor.py`
 
+## Version 1.1.65 (2026-09-25)
+
+### Fix
+- Fixed rain never being detected: RainViewer changed its API, so radar frames are now addressed by a hashed `path` (the old timestamp URLs return HTTP 410) and tiles above zoom 7 are no longer served. The backend was requesting the zoom-0 world tile by timestamp, so every frame failed and no cells were found
+- Backend now downloads a 3x3 block of real radar tiles around the configured location (frame `path` + API `host`), caps the zoom at 7 and converts pixels to lat/lon with exact Web Mercator maths; frame imagery is cached so only new frames are downloaded each cycle
+- Fixed the map showing "API KEY REQUIRED" tiles: CARTO basemaps require an API key from 2026-09-23, so the light map style now uses the keyless Esri Light Gray Canvas
+- Fixed "Zoom Level Not Supported" radar tiles in the web UI: radar overlay now uses the frame path and stops requesting tiles above zoom 7 (imagery is scaled up instead)
+- Fixed manual selection speed being about double the real value: frame spacing is now taken from the frame timestamps (10 minutes) instead of a fixed 5 minutes; it also uses the new tile URLs
+
+### Changed
+- Default radar image zoom changed from 8 to 7 (a saved zoom above 7 is capped automatically)
+
 ## Version 1.1.56 (2026-01-04)
 
 ### Fix
