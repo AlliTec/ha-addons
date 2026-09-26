@@ -23,6 +23,9 @@ Versions are listed newest first.
 - Rain that forms or grows near you cannot be predicted from motion. In the replay the arrival was reported too late for exactly this reason when a small echo appeared near the location after 30 dry minutes
 - Any echo above `rain_threshold` counts as rain, including the lightest drizzle, so "0 minutes" can mean very light rain. There is no rain intensity or severity yet
 
+### Documentation
+- The README was rewritten to match how the app works now: installation, the helpers it writes (with a complete YAML example and the ranges they need), what each value means, when they update (every cycle, plus a countdown once a minute), the web UI, how the prediction works step by step, measured accuracy and limits, the full options table (marking the options that no longer affect the prediction), troubleshooting for the problems found so far, and copy-and-paste examples for an arrival-time sensor, rain warnings, a voice question and a dashboard card
+
 ## Version 1.1.73 (2026-09-26)
 
 ### Changed

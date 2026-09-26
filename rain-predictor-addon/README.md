@@ -1,334 +1,509 @@
-# Rain Predictor Home Assistant Addon
+# Rain Predictor
 
-Advanced rain prediction using radar image analysis. Tracks rain cells across consecutive radar frames to predict arrival time at your location.
+Predicts when the next rain will reach your location, using live radar from [RainViewer](https://www.rainviewer.com/).
+It measures how the whole rain pattern is moving, looks upwind of your location for the first rain that is heading
+your way, and keeps a countdown to its arrival in Home Assistant and on a live map.
 
-## Architecture Overview
+- **Time to rain**, counting down in real time (to the second on the map, once a minute in Home Assistant)
+- **How far away** the rain is, how fast it is moving, and in which direction
+- **A live map** with the radar animation and a green highlight that follows the cell that will reach you
+- **Sensors for automations**: warnings at 30, 15, 10 and 5 minutes, voice answers, dashboard cards
+- Works anywhere RainViewer has radar coverage
 
-The addon consists of three main components:
+## Contents
 
-1. **rain_predictor.py** - Core prediction engine (background service)
-2. **web_ui.py** - Flask web server (port 8099)
-3. **templates/index.html** - Interactive Leaflet.js map frontend
+1. [Installation](#installation)
+2. [Home Assistant entities (sensors)](#home-assistant-entities-sensors)
+3. [Using the entities](#using-the-entities)
+4. [Web UI](#web-ui)
+5. [How it works](#how-it-works)
+6. [Accuracy and limits](#accuracy-and-limits)
+7. [Configuration](#configuration)
+8. [Troubleshooting](#troubleshooting)
+9. [Code map and files](#code-map-and-files)
 
-### Data Flow
+---
 
-```
-RainViewer API (https://api.rainviewer.com/public/weather-maps.json)
-         ↓
-    rain_predictor.py (runs every 3 minutes)
-         ↓
-    Extracts rain cells from 13 radar frames
-         ↓
-    Tracks movement across frames
-         ↓
-    Filters cells approaching user location
-         ↓
-    Home Assistant API (input_number entities)
-         ↓
-    web_ui.py serves cache to frontend
-         ↓
-    index.html displays on interactive map
-```
+## Installation
 
-## Core Components
+1. In Home Assistant go to **Settings → Apps → App store → ⋮ → Repositories** and add
+   `https://github.com/AlliTec/ha-addons`.
+2. Install **Rain Predictor**.
+3. Create the helpers it writes to (see [the helpers below](#create-the-helpers)).
+4. Open the app's **Configuration** tab and set your **latitude** and **longitude** (you can also drag the location
+   marker on the map and press *Save Location*).
+5. Start the app and turn on **Show in sidebar**. The map opens from the sidebar, or directly at
+   `http://<your-home-assistant>:8099/`.
 
-### 1. RainCell Class (`rain_predictor.py:99-170`)
+The app needs Home Assistant's API (`homeassistant_api: true`) to write the helpers. It does not need an account or
+an API key with RainViewer.
 
-Represents a single rain cell being tracked across multiple radar frames.
+### Create the helpers
 
-**Key Attributes:**
-- `id` - Unique cell identifier
-- `positions` - List of (lat, lon, timestamp) tuples
-- `intensity` - Maximum radar return intensity observed
-- `last_seen` - Most recent timestamp
+The app writes its results to `input_number` helpers. Add them to your `input_number:` YAML (or create them in
+**Settings → Devices & services → Helpers**). The entity IDs are configurable, these are the defaults:
 
-**Key Methods:**
-```python
-add_position(lat, lon, timestamp, intensity)
-    # Adds validated position, stores last 10 positions max
-
-get_velocity(predictor=None)
-    # Returns (speed_kph, direction_deg) from last 2 positions
-    # Requires 2+ positions to calculate
-```
-
-### 2. RainPredictor Class (`rain_predictor.py:172-1600+`)
-
-Main prediction engine that orchestrates radar analysis.
-
-**Initialization Flow:**
-```
-AddonConfig (loads /data/options.json)
-    ↓
-RainPredictor.__init__()
-    ↓
-Read configuration (latitude, longitude, entities, thresholds)
-    ↓
-Create HomeAssistantAPI client
-    ↓
-Initialize tracked_cells dictionary
-```
-
-**Main Loop (`run()`):**
-```python
-while running:
-    run_prediction()  # Analyze radar, update entities
-    sleep(run_interval)  # Default: 3 minutes
-```
-
-### 3. Radar Analysis Pipeline (`analyze_radar_data()`)
-
-**Step 1: Fetch Radar Data**
-```python
-response = requests.get("https://api.rainviewer.com/public/weather-maps.json")
-api_data = response.json()
-# Returns: {host, radar: {past: [{time, path}, ...], nowcast: [...]}}
-```
-
-**Step 2: Read the Radar Frames**
-
-For each of the 13 past frames (10-minute intervals, 2 hours total), download the 3x3 block of radar tiles
-around your location (zoom is capped at 7, because RainViewer does not serve higher zoom levels) and turn it
-into a map of where there is rain:
-```python
-img_url = f"{host}{frame['path']}/256/{zoom}/{tile_x}/{tile_y}/{color}/{options}.png"
-echo = np.array(img.convert('L')) > threshold      # is there rain here?
-echo = remove_specks_smaller_than_5_pixels(echo)
-```
-
-**Step 3: Measure How the Whole Rain Pattern Is Moving**
-
-The speed and heading of single cells are unreliable: their centroids wobble by several km between frames
-as they grow, shrink, merge and split, so neighbouring cells can appear to move in completely different
-directions. Instead the motion of the *whole* pattern within about 220 km of you is measured from every echo
-at once, using phase correlation between frames 1, 2 and 3 steps apart (longer gaps let real motion add up
-while the random changes in shape do not):
-```python
-dy, dx, strength = phase_shift(earlier_frame, later_frame)   # how far the pattern moved, in pixels
-speed_kph, direction = ...                                   # averaged, weighted by match strength
+```yaml
+input_number:
+  rain_arrival_minutes:
+    name: Rain Arrival Minutes
+    initial: 999          # 999 = no rain; see "After a restart" below
+    min: 0
+    max: 1440
+    step: 1
+    mode: box
+  rain_prediction_distance:
+    name: Rain Prediction Distance
+    initial: 0
+    min: 0
+    max: 1000
+    step: 0.1
+    unit_of_measurement: km
+    mode: box
+  rain_prediction_speed:
+    name: Rain Prediction Speed
+    initial: 0
+    min: 0
+    max: 200
+    step: 0.1
+    unit_of_measurement: km/h
+    mode: box
+  rain_cell_direction:
+    name: Rain Cell Direction
+    initial: 0
+    min: -1
+    max: 360
+    step: 1
+    unit_of_measurement: degrees
+    mode: box
+  bearing_to_rain_cell:
+    name: Bearing to Rain Cell
+    initial: 0
+    min: -1
+    max: 360
+    step: 1
+    unit_of_measurement: degrees
+    mode: box
+  rain_cell_latitude:
+    name: Rain Cell Latitude
+    initial: 0
+    min: -90
+    max: 90
+    step: 0.0001
+    mode: box
+  rain_cell_longitude:
+    name: Rain Cell Longitude
+    initial: 0
+    min: -180
+    max: 180
+    step: 0.0001
+    mode: box
 ```
 
-**Step 4: Look Upwind for the First Rain**
+The ranges matter. When there is no rain the app writes its "no rain" values (999, -1, -1), and Home Assistant rejects
+a value outside a helper's range with `400 Bad Request`, so the maximum of the distance helper must be at least 1000
+and the minimum of the two direction helpers must be -1.
 
-Walk backwards from your location along that motion. The rain found there is the rain that will reach you,
-and how far you walked (at the pattern's speed) is the time to rain:
-```python
-for minutes in 1..180:                          # looking up to 3 hours ahead
-    point = your_location - motion * minutes    # where the rain arriving in `minutes` is now
-    if distance_from(point, nearest_echo) <= reach:
-        # `reach` = 5 km plus 5 degrees of heading uncertainty, which is a bigger sideways error the
-        # farther away it is. It decides whether the rain reaches you at all
-        arrival = when the echo edge gets within 3 km of you (or the closest approach if it only skirts you)
-        break
+Helpers defined in YAML cannot be edited from the helper settings dialog. Change `min` / `max` in the YAML, then
+reload them from **Developer tools → YAML → Input numbers**.
+
+**After a restart.** Home Assistant resets a helper that has an `initial:` value every time it restarts. For
+`rain_arrival_minutes` use `initial: 999`. With `initial: 0` the helper reads "raining now" until the app's first
+analysis finishes, which can trigger automations that fire below a number of minutes.
+
+---
+
+## Home Assistant entities (sensors)
+
+The app does not create entities of its own. It writes to the `input_number` helpers configured under `entities`
+in the app's options, so they appear in Home Assistant as ordinary helpers you can use in dashboards, automations
+and templates.
+
+| Entity (default) | Unit | Meaning | When there is no rain |
+|---|---|---|---|
+| `input_number.rain_arrival_minutes` | minutes | Minutes until the next rain reaches you. **0** means there is rain over your location now | 999 |
+| `input_number.rain_prediction_distance` | km | Distance from you to the leading edge of that rain | 999 |
+| `input_number.rain_prediction_speed` | km/h | How fast the rain pattern is moving | 0 |
+| `input_number.rain_cell_direction` | degrees | Direction the rain is moving *towards* (270 = moving west, so it comes from the east) | -1 |
+| `input_number.bearing_to_rain_cell` | degrees | Compass bearing from you to the rain (90 = it is to your east) | -1 |
+| `input_number.rain_cell_latitude` | degrees | Latitude of the centre of the cell that will reach you | left at its last value |
+| `input_number.rain_cell_longitude` | degrees | Longitude of the centre of the cell that will reach you | left at its last value |
+
+Only `entities.time` is required. Leave any of the others empty to skip it.
+
+**How often they update**
+
+- **Every analysis cycle** (every 3 minutes by default, `run_interval_minutes`): all values are recalculated
+  from the newest radar and written.
+- **Once a minute in between:** `rain_arrival_minutes` counts down from the time the estimate was made. It is written
+  in whole minutes (rounded up) and reads 0 once the estimated arrival has passed, until the next analysis replaces
+  the estimate. Nothing is written while there is no rain estimate.
+
+**Reading the values**
+
+- `time` **999** = no rain will reach you within the next 3 hours. `0` = there is echo over your location now.
+- Direction is where the rain is going, bearing is where it is now. Rain coming from the east has a bearing of about
+  90° and a direction of about 270°.
+- The distance is to the *edge* of the rain that arrives first, which is consistent with the time. The
+  latitude/longitude are the *centre* of that cell, and are only written while there is a cell to report.
+
+**Also available: the web page's data**
+
+The web UI serves the same data as JSON at `/api/data`, plus the fields the map uses: `estimated_at` (when the
+estimate was made), `eta_seconds` (the time to rain in seconds at that moment), `server_time`, and `track` (the
+tracked cell's position and size in each radar frame). It can be read with a REST sensor if you want it in Home
+Assistant.
+
+---
+
+## Using the entities
+
+These are examples to copy. They are not installed by the app.
+
+### A sensor holding the arrival time
+
+A `timestamp` sensor shows the clock time the rain arrives ("in 3 hours", "at 9:47 pm"). The helper counts down each
+minute and its `last_updated` moves with it, so `last_updated + minutes` stays at the estimated arrival time.
+
+```yaml
+template:
+  - sensor:
+      - name: Rain Arrival (Minutes)
+        unique_id: rain_arrival_minutes_sensor
+        unit_of_measurement: minutes
+        state: "{{ states('input_number.rain_arrival_minutes') | int(999) }}"
+
+      - name: Rain ETA
+        unique_id: rain_eta
+        device_class: timestamp
+        availability: "{{ states('input_number.rain_arrival_minutes') | int(999) < 999 }}"
+        state: >
+          {% set minutes = states('input_number.rain_arrival_minutes') | int(999) %}
+          {{ (states.input_number.rain_arrival_minutes.last_updated + timedelta(minutes=minutes)).isoformat() }}
 ```
-If there is echo over your location now, the time to rain is 0. If nothing is upwind within 3 hours, no rain is
-predicted.
 
-**Step 5: Follow the Arriving Cell**
+### Rain warnings
 
-The echo blob found in Step 4 is the cell that arrives. Its position in each earlier frame is where the
-measured motion says it was, and it is only drawn in frames where an echo really was near that spot. This is
-the track the web UI follows with the green highlight. The distance shown is to the leading edge of the rain.
+An automation that fires as the time to rain drops below a limit, with a phone notification and a spoken message:
 
-**Step 6: Return Threat Assessment**
-
-```python
-return {
-    'time_to_rain': minutes,      # ETA in minutes
-    'distance_km': km,             # Distance to cell
-    'speed_kph': kph,              # Cell speed
-    'direction_deg': degrees,      # Movement direction
-    'bearing_to_cell_deg': deg,    # Bearing from user to cell
-    'rain_cell_latitude': lat,     # Current cell position
-    'rain_cell_longitude': lon     # Current cell position
-}
+```yaml
+automation:
+  - alias: Rain warning - 15 minutes
+    triggers:
+      - trigger: numeric_state
+        entity_id: input_number.rain_arrival_minutes
+        below: 15
+    conditions:
+      - condition: template
+        value_template: >
+          {{ this.attributes.last_triggered is none or
+             (now() - this.attributes.last_triggered).total_seconds() > 5 * 60 }}
+    actions:
+      - action: notify.mobile_app_your_phone
+        data:
+          title: Weather Warning
+          message: Rain in 15 minutes.
+      - action: tts.speak
+        target:
+          entity_id: tts.piper
+        data:
+          media_player_entity_id: media_player.your_speaker
+          message: I have detected an approaching rain cell. E.T.A. is fifteen minutes.
 ```
 
-### 4. Home Assistant Integration (`_update_entities()`)
+A `numeric_state` trigger only fires when the value *crosses* the limit, so it does not fire again while the value
+stays below it. Use the `initial: 999` helper setting above so a restart does not count as a crossing.
 
-Updates input_number entities with prediction values:
-```python
-entities = {
-    'time': input_number.rain_arrival_minutes,
-    'distance': input_number.rain_prediction_distance,
-    'speed': input_number.rain_prediction_speed,
-    'direction': input_number.rain_cell_direction,
-    'bearing': input_number.bearing_to_rain_cell,
-    'rain_cell_latitude': input_number.rain_cell_latitude,
-    'rain_cell_longitude': input_number.rain_cell_longitude
-}
+### A voice question
 
-for entity_id, value in values.items():
-    ha_api.call_service("input_number/set_value", entity_id, value)
+Save as `custom_sentences/en/rain.yaml`:
+
+```yaml
+language: "en"
+intents:
+  RainArrivalIntent:
+    data:
+      - sentences:
+          - "when will it rain [next]"
+          - "when is the next rain"
+          - "how long (until|till) it rains"
+          - "is it going to rain [soon]"
 ```
 
-**Required helper ranges.** When no rain is predicted the add-on writes its "no rain" defaults (`no_rain_value` 999, `no_direction_value` -1, `no_bearing_value` -1). Home Assistant rejects values outside a helper's range with `400 Bad Request`, so create the `input_number` helpers with at least these ranges. Helpers defined in YAML (`configuration.yaml`) can't be edited from the helper settings dialog: change `min` / `max` in the YAML, then reload them from Developer tools > YAML > Input numbers.
+and add to your `intent_script:` file:
 
-| Helper | Min | Max | Step |
-|--------|-----|-----|------|
-| `rain_arrival_minutes` | 0 | 1440 | 1 |
-| `rain_prediction_distance` | 0 | 1000 | 1 |
-| `rain_prediction_speed` | 0 | 200 | 0.1 |
-| `rain_cell_direction` | -1 | 360 | 1 |
-| `bearing_to_rain_cell` | -1 | 360 | 1 |
-| `rain_cell_latitude` | -90 | 90 | 0.0001 |
-| `rain_cell_longitude` | -180 | 180 | 0.0001 |
+```yaml
+RainArrivalIntent:
+  speech:
+    text: >-
+      {% set m = states('input_number.rain_arrival_minutes') | int(999) %}
+      {% if m >= 999 %} No rain is expected soon.
+      {% elif m <= 0 %} Rain is at your location now.
+      {% else %}
+        {% set eta = (states.input_number.rain_arrival_minutes.last_updated + timedelta(minutes=m)) | as_local %}
+        Rain is expected in {{ m }} minute{{ 's' if m != 1 }}, at around {{ eta.strftime('%-I:%M %p') }}.
+      {% endif %}
+```
 
-### 5. Web UI (`web_ui.py` + `templates/index.html`)
+Reload with **Developer tools → YAML → Intent script** and **Conversation**.
 
-**Flask Endpoints:**
-- `GET /` - Main configuration page
-- `GET /api/data` - Returns cached prediction data, including `estimated_at` (when the estimate was made), `eta_seconds` (the precise time to rain at that moment), `server_time` (used to count the time to rain down from that estimate) and `track` (the tracked cell's position and highlight radius in each radar frame it was followed through)
-- `POST /api/set_location` - Save lat/lng to options.json
-- `POST /api/update_view_bounds` - Store current map view for focused analysis
+### The map on a dashboard
 
-**Frontend Features:**
-- Leaflet.js map with radar overlay tiles
-- User location marker (draggable)
-- Rain cell markers (green circle for position, red for movement)
-- Radar animation playback (13 frames)
-- Color scheme selection
-- Manual cell selection mode
+Add an iframe card that shows the app's page:
 
-## File Structure
+```yaml
+type: iframe
+url: http://192.168.1.10:8099/      # your Home Assistant's address and the app's port
+aspect_ratio: 110%
+```
+
+This loads the page straight from the app's port, so it works when you open Home Assistant over plain `http://` on
+your home network. It will not work through an `https://` address (a browser will not show an `http` page inside an
+`https` one), so give Home Assistant a fixed address if you use it this way. In a card under 700 px wide the page uses
+a compact layout, described below.
+
+---
+
+## Web UI
+
+The map is at `http://<home-assistant>:8099/` and in the sidebar (it uses Home Assistant ingress).
+
+- **Map and radar:** the radar animation for the last 2 hours (13 frames), with your location as a draggable marker.
+  Base map styles: Light, Standard, Satellite, Terrain. Several radar colour schemes.
+- **Green highlight:** a soft green ring around the cell that will reach you first. It moves with the cell as the
+  animation plays, is sized to the cell, and is hidden in frames from before the cell existed.
+- **Readings bar:** time to rain, distance, speed, direction and bearing. The time counts down every second from the
+  time the estimate was made (`33m 12s`, `1h 08m 34s`, then `NOW`).
+- **Controls:** play or pause, animation speed, colour scheme, map style, *Save Location*, and *Manual Select* (click a
+  point to follow it along the storm's direction).
+- **Compact layout:** in windows under 700 px wide (a dashboard card, a phone) the readings bar becomes a single line
+  and the map opens at zoom 9 instead of 10, showing about twice the area. The compact layout keeps its own saved
+  settings, separate from the full size page.
+
+**Endpoints**
+
+| Endpoint | Purpose |
+|---|---|
+| `GET /` | The map page |
+| `GET /api/data` | The latest prediction as JSON (see above) |
+| `POST /api/set_location` | Save a new latitude and longitude to the app's options (and, if the helpers `input_number.rain_prediction_latitude` / `rain_prediction_longitude` exist, to them too) |
+| `POST /api/update_config` | Save a new latitude and longitude to the app's options |
+| `POST /api/manual_selection` | Estimate the motion of the radar pattern in the current map view (Manual Select) |
+| `POST /api/update_view_bounds` | Store the current map view (kept for compatibility; it no longer affects the prediction) |
+| `GET /health` | Health check (used by Docker) |
+
+---
+
+## How it works
 
 ```
-rain-predictor-addon/
-├── config.yaml              # HA addon configuration
-├── Dockerfile               # Container build
-├── requirements.txt         # Python dependencies
-├── run.sh                   # Container startup script
-├── rain_predictor.py        # Core prediction engine
-├── web_ui.py                # Flask web server
-├── CHANGELOG.md             # Version history
-├── README.md                # This file
-└── templates/
-    └── index.html           # Web UI frontend
+RainViewer radar (13 frames, 10 minutes apart = the last 2 hours)
+        ↓  every 3 minutes
+Download the radar tiles around you (only frames not already downloaded)
+        ↓
+Turn each frame into a map of where there is rain
+        ↓
+Measure how the WHOLE rain pattern is moving
+        ↓
+Look UPWIND from your location for the first rain heading your way
+        ↓
+Time to rain, distance, speed, direction, and the cell that arrives
+        ↓
+Home Assistant helpers  +  cache for the map  (+ a countdown once a minute)
 ```
+
+**1. Read the radar.** For each frame the app downloads the 3×3 block of radar tiles around your location (RainViewer
+serves tiles up to zoom 7, which is about 1 km per pixel; at latitude 25° the block covers roughly 850 km across, so
+at least 280 km in every direction. The block is smaller at higher latitudes). A pixel counts
+as rain when it is brighter than `rain_threshold`, and specks smaller than 5 pixels are ignored. A frame never changes
+once published, so each is downloaded only once.
+
+**2. Measure the motion of the whole pattern.** Tracking single cells does not work well: a cell's centre wobbles by
+several km between frames as it grows, shrinks, merges and splits, so neighbouring cells can appear to move in
+completely different directions. Instead the motion of the whole pattern within about 220 km of you is measured from
+every echo at once, using phase correlation between frames 1, 2 and 3 steps apart. Longer gaps let real motion add up
+while the random changes in the cells' shapes do not, which makes the result steadier. This gives one speed and one
+direction for the weather around you.
+
+**3. Look upwind for the first rain.** Walk backwards from your location along that motion, one minute at a time, for
+up to 3 hours. The rain you find there is the rain that will reach you, and how far you walked is the time to rain. Two
+allowances apply:
+
+- The path only has to pass near rain to count: within 5 km, plus 5 degrees of heading uncertainty, which is a
+  bigger sideways error the farther away the rain is.
+- The time to rain is when the edge of the echo gets within 3 km of you, or the time of closest approach if the path
+  only skirts the rain.
+
+If there is already echo over your location the time is 0. If nothing upwind will reach you within 3 hours, no rain is
+predicted. Rain that passes to the side of you is not reported.
+
+**4. Follow the cell that arrives.** The echo blob found in step 3 is the cell that reaches you first. It is followed
+back through the earlier frames by where the measured motion says it was, and only in frames where an echo really was
+near that spot. That track, with the cell's size in each frame, is what the map's green highlight follows.
+
+**5. Report.** The values are written to the helpers and a JSON cache the map reads. Between analyses the countdown
+keeps the time to rain up to date.
+
+### Timeline
+
+```
+Every run_interval_minutes (default 3):
+├── Fetch the radar frame list from RainViewer
+├── Download radar tiles for frames not seen before (the first run after a start downloads all 13)
+├── Measure motion, search upwind, follow the cell (about half a second on a PC)
+├── Write the helpers and the cache for the map
+└── Every 60 seconds until the next run: count rain_arrival_minutes down
+
+Web page:
+├── Polls /api/data every 5 seconds
+├── Counts the time to rain down every second
+└── Moves the green highlight with the animation
+```
+
+---
+
+## Accuracy and limits
+
+The method was tested against simulated weather where the true answer is known (150 random scenes with clutter, and cells
+that each move a little differently), and by replaying the last two hours of real radar for one location:
+
+- Rain that really arrived within 3 hours was predicted in about **84%** of scenes, and **93%** for rain within the hour.
+- The median timing error was about **2 minutes**.
+- Warnings less than an hour ahead had no clear-cut false alarms. Every false alarm was a cell that really did come
+  within 15 km.
+- A cell passing 60 km to one side of you is correctly not reported.
+
+These are results on simulated weather and one real replay, not a guarantee. Limits to know about:
+
+1. **Rain that forms or grows over you cannot be predicted from motion.** A patch of drizzle that suddenly develops near
+   your location will appear without warning.
+2. **The pattern is assumed to keep moving at its current speed and direction.** Storms that speed up, slow down or
+   change direction are not anticipated.
+3. **Three hour lookahead.** Beyond about 3 hours the heading uncertainty grows so large that predictions are
+   unreliable (`FLOW_MAX_HORIZON_MIN` in `rain_predictor.py`). Further rain shows as no rain until it comes within 3 hours.
+4. **Faint echoes count as rain.** Any echo brighter than `rain_threshold` counts, including the lightest drizzle, so
+   a time to rain of 0 can mean very light rain. There is no rain intensity or severity yet.
+5. **Only past frames are used**, not RainViewer's forecast frames.
+6. **Coverage and quality depend on RainViewer's radar** for your region.
+
+---
 
 ## Configuration
 
-### Addon Options (`options.json`)
+Options are in the app's **Configuration** tab (stored in `/data/options.json`).
 
-```json
-{
-  "latitude": -24.981262,
-  "longitude": 151.865455,
-  "entities": {
-    "time": "input_number.rain_arrival_minutes",
-    "distance": "input_number.rain_prediction_distance",
-    "speed": "input_number.rain_prediction_speed",
-    "direction": "input_number.rain_cell_direction",
-    "bearing": "input_number.bearing_to_rain_cell",
-    "rain_cell_latitude": "input_number.rain_cell_latitude",
-    "rain_cell_longitude": "input_number.rain_cell_longitude"
-  },
-  "thresholds": {
-    "rain_threshold": 75,
-    "arrival_angle_threshold": 90,
-    "lat_range_deg": 5.0,
-    "lon_range_deg": 5.0
-  },
-  "image": {
-    "size": 256,
-    "zoom": 7
-  }
-}
-```
+| Option | Default | Description |
+|---|---|---|
+| `latitude`, `longitude` | | Your location (also set by dragging the marker on the map) |
+| `run_interval_minutes` | 3 | Minutes between analyses (1 to 60) |
+| `api_url` | RainViewer's public URL | Where the radar frame list comes from |
+| `entities.time` | `input_number.rain_arrival_minutes` | Required. Helper for the time to rain |
+| `entities.distance`, `speed`, `direction`, `bearing` | see the table above | Optional helpers |
+| `entities.rain_cell_latitude`, `rain_cell_longitude` | see the table above | Optional helpers |
+| `defaults.no_rain_value` | 999 | Written to the time and distance helpers when there is no rain |
+| `defaults.no_direction_value`, `no_bearing_value` | -1 | Written to the direction and bearing helpers when there is no rain |
+| `image_settings.size` | 256 | Radar tile size in pixels (256 or 512; 128 falls back to 256) |
+| `image_settings.zoom` | 7 | Radar tile zoom. Capped at 7 because RainViewer does not serve tiles above that |
+| `image_settings.color_scheme` | 3 | RainViewer colour scheme for the tiles the analysis reads |
+| `image_settings.options` | `0_0` | RainViewer tile options (smooth and snow flags) |
+| `analysis_settings.rain_threshold` | 50 | How bright a radar pixel must be (1 to 255) to count as rain. Raise it to ignore the faintest echoes |
+| `debug.log_level` | DEBUG | `DEBUG`, `INFO`, `WARNING` or `ERROR` |
 
-### Key Parameters
+These options are kept so existing configurations stay valid, but **no longer affect the prediction**:
+`analysis_settings.lat_range_deg`, `lon_range_deg`, `arrival_angle_threshold_deg`, `tracking_settings.max_tracking_distance_km`,
+`min_track_length` and `debug.save_images`. They were used by the earlier per-cell tracking, which the prediction no longer
+uses.
 
-| Parameter | Default | Description |
-|-----------|---------|-------------|
-| `rain_threshold` | 75 | Pixel intensity (0-255) to consider as rain |
-| `arrival_angle_threshold` | 90 | Not used to decide whether a cell reaches you (see Step 5) |
-| `lat_range_deg` | 5.0 | Latitude degrees covered by analysis |
-| `lon_range_deg` | 5.0 | Longitude degrees covered by analysis |
-| `run_interval` | 3.0 | Minutes between prediction cycles |
-
-## Entity Values
-
-| Entity | Value | Meaning |
-|--------|-------|---------|
-| `time` | 0 | Rain currently at location |
-| `time` | 1-999 | Minutes until rain arrives |
-| `time` | 999 | No rain detected |
-| `direction` | 0-360° | Direction rain cell is moving |
-| `direction` | -1 | No valid direction |
-| `bearing` | 0-360° | Direction from user to cell |
-| `bearing` | -1 | No valid bearing |
-
-## Processing Timeline
-
-```
-Every 3 minutes:
-├── Fetch radar metadata (13 frames, 10 min intervals)
-├── Download 13 radar tiles (256x256 each)
-├── Extract ~20 cells per frame (~260 total)
-├── Match cells across frames to track movement
-├── Calculate velocity for tracked cells
-├── Filter for cells approaching user
-└── Update HA entities with closest threat
-
-Web UI:
-├── Reads cached prediction from /data/latest_analysis.json
-├── Displays user location on map
-├── Overlays radar tiles with animation
-└── Shows tracked rain cells with markers
-```
-
-## Dependencies
-
-```
-requests>=2.25.0      # HTTP API calls
-numpy>=1.20.0         # Image processing
-scipy>=1.6.0          # Connected component labeling
-Pillow>=8.0.0         # Image handling
-```
-
-## Debug Mode
-
-Enable debug logging:
-1. Set log level to "Debug" in addon configuration
-2. Check logs: `Settings → Add-ons → Rain Predictor → Log`
-
-Key debug messages:
-```
-"Found X cells in frame Y"     - Cell extraction
-"Movement analysis: X/Y cells" - Tracked movement
-"Found Z threat cells"         - Approaching cells
-"Track #N: X positions"        - Position history
-```
+---
 
 ## Troubleshooting
 
-### No approaching cells detected
-- Check location coordinates are accurate
-- Verify radar data available for your region
-- Lower `rain_threshold` if cells are being missed
+Open the app's **Log** tab. Useful lines:
 
-### Inaccurate predictions
-- Adjust `lat_range_deg`/`lon_range_deg` for zoom level
-- Tune `arrival_angle_threshold` (lower = more strict)
-- Check cell velocity calculation logs
+```
+Rain pattern is moving 21.0 km/h towards 275°     - the measured motion of the whole pattern
+Rain arrives in 26 min: leading edge 24.4km away ... - a prediction, with the cell that was followed
+No rain upwind of the location                    - nothing in the path within 3 hours
+The motion of the rain pattern could not be measured reliably - too little rain around to measure
+Time to rain counted down to 25 minutes           - the once a minute countdown
+```
 
-### Addon won't start
-- Verify input_number entities exist in HA
-- Check SUPERVISOR_TOKEN is available
-- Review logs for configuration errors
+**The helpers show errors or `400 Bad Request` in the log.** A helper's range is too small for the values the app writes
+(999, -1). See [Create the helpers](#create-the-helpers). If the helpers are defined in YAML, change them there and
+reload them; editing them in the helper dialog does nothing.
 
-## Algorithm Limitations
+**The map says "The app is starting" and the app keeps restarting about every minute.** Update to 1.1.70 or later. Older
+versions used a Docker health check that failed on Home Assistant's network, and the Supervisor kept restarting the app.
 
-1. **Rain that forms or grows over you** cannot be predicted from motion. Rain that suddenly develops near your location, or a drizzle patch that grows, will appear without warning
-2. **Constant motion is assumed** - the whole pattern is assumed to keep moving at its current speed and direction. Cells that speed up, slow down or change direction are not anticipated
-3. **Three hour lookahead** - beyond about 3 hours the heading uncertainty grows so large that predictions are unreliable (set by `FLOW_MAX_HORIZON_MIN` in `rain_predictor.py`)
-4. **Faint echoes count as rain** - any echo above `rain_threshold` counts, including the lightest drizzle. There is no rain intensity or severity yet
-5. **Only past frames are used**, not RainViewer's nowcast frames
+**The map shows "API KEY REQUIRED" tiles or "Zoom Level Not Supported" radar.** Update to 1.1.65 or later. The old base
+map provider began requiring an API key and RainViewer stopped serving radar tiles above zoom 7.
 
-## Future Improvements
+**The time to rain reads 0 but it is not really raining.** A faint echo is over your location. Raise
+`analysis_settings.rain_threshold` to ignore the lightest echoes.
 
-- [ ] Add nowcast integration for <30 min predictions
-- [ ] Implement Kalman filtering for velocity smoothing
-- [ ] Add cell intensity tracking (dBZ values)
-- [ ] Support multiple radar sources
-- [ ] Machine learning for cell lifetime prediction
+**Rain is visible on the map but nothing is predicted.** It may be more than 3 hours away, it may be passing to one side
+of you, or there may be too little rain around to measure the pattern's motion reliably.
+
+**The time to rain is 0 after every Home Assistant restart.** Give the helper `initial: 999` (see above).
+
+**Automations fire when they should not.** Automations with a `numeric_state` trigger fire when the value crosses the
+limit, including from 999 straight to a small number. Use a condition to limit how often they can run.
+
+**The app will not start.** Check that the helper named in `entities.time` exists, and look at the log for the error.
+
+---
+
+## Code map and files
+
+| Where | What it does |
+|---|---|
+| `rain_predictor.py` `run()` | Main loop: run an analysis, then wait `run_interval_minutes`, counting the time to rain down each minute |
+| `run_prediction()` | One cycle: fetch the frame list, analyse, save the cache, write the helpers |
+| `analyze_radar_data()` | Runs the prediction for one set of frames |
+| `_fetch_radar_mosaic()` | Downloads and stitches the 3×3 tile block for a frame (cached per frame) |
+| `_bulk_motion()`, `_phase_shift()` | Measure the motion of the whole pattern |
+| `_predict_from_radar_flow()` | The upwind search, the arrival time and the tracked cell |
+| `_save_analysis_to_cache()` | Writes `/data/latest_analysis.json` for the map |
+| `_update_entities()`, `_tick_countdown()` | Write the helpers, and count the time down between cycles |
+| `web_ui.py` | Flask server for the map (port 8099) |
+| `templates/index.html` | The map page (Leaflet) |
+
+```
+rain-predictor-addon/
+├── config.yaml              # Home Assistant app configuration and options
+├── Dockerfile               # Container build (with its health check)
+├── requirements.txt         # Python dependencies
+├── run.sh                   # Starts the web server and the prediction service
+├── rain_predictor.py        # Prediction engine
+├── web_ui.py                # Flask web server
+├── templates/index.html     # Web UI
+├── icon.png, logo.png       # App icon and logo
+├── CHANGELOG.md             # Version history
+├── README.md                # This file
+├── run_local.sh             # Run both services locally for development
+├── test_*.py                # Older test scripts
+└── dashboard/               # A demo React component with mock data (not used by the app)
+```
+
+Some older functions from the earlier per-cell tracking (`RainCell`, `_extract_cells_from_all_frames`,
+`_find_threatening_cell` and related) remain in `rain_predictor.py` but are not called by the current prediction.
+
+**Dependencies:** `requests`, `numpy`, `scipy`, `Pillow` and `flask`, installed by the Dockerfile.
+
+**Running locally:** with the Python dependencies installed, `./run_local.sh` starts both services using the options in
+`test_data/options.json` and writes its log to `addon.log`. No Home Assistant is connected, so writing the helpers fails
+(and is logged), but the map and the analysis work. `docker build -t rain-predictor .` builds the same image Home
+Assistant uses.
+
+See `CHANGELOG.md` for the history of changes.
+
+## Possible future improvements
+
+- Rain intensity and severity (using the radar colours as an estimate of rainfall rate)
+- Ignore very faint echoes by intensity instead of a single brightness threshold
+- Use RainViewer's forecast frames for short-term prediction
+- Support other radar sources
+
+## License
+
+MIT. See `LICENSE`.
