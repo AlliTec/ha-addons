@@ -85,79 +85,50 @@ api_data = response.json()
 # Returns: {host, radar: {past: [{time, path}, ...], nowcast: [...]}}
 ```
 
-**Step 2: Extract Cells from Each Frame**
+**Step 2: Read the Radar Frames**
 
-For each of the 13 past frames (10-minute intervals, 2 hours total):
+For each of the 13 past frames (10-minute intervals, 2 hours total), download the 3x3 block of radar tiles
+around your location (zoom is capped at 7, because RainViewer does not serve higher zoom levels) and turn it
+into a map of where there is rain:
 ```python
-# Download the 3x3 block of 256x256 radar tiles around your location
-# (zoom is capped at 7 - RainViewer does not serve higher zoom levels)
 img_url = f"{host}{frame['path']}/256/{zoom}/{tile_x}/{tile_y}/{color}/{options}.png"
-
-# Convert to grayscale and threshold
-img_array = np.array(img.convert('L'))
-rain_mask = (img_array > threshold).astype(np.uint8) * 255
-
-# Label connected rain regions
-labeled_array, num_features = label(rain_mask)
-
-# For each region, calculate centroid
-for region in regions:
-    cell = {
-        'current_lat': centroid_y,
-        'current_lon': centroid_x,
-        'intensity': max_intensity,
-        'size': region_pixels
-    }
+echo = np.array(img.convert('L')) > threshold      # is there rain here?
+echo = remove_specks_smaller_than_5_pixels(echo)
 ```
 
-**Step 3: Track Movement Across Frames**
+**Step 3: Measure How the Whole Rain Pattern Is Moving**
 
-Cells from consecutive frames are matched using:
+The speed and heading of single cells are unreliable: their centroids wobble by several km between frames
+as they grow, shrink, merge and split, so neighbouring cells can appear to move in completely different
+directions. Instead the motion of the *whole* pattern within about 220 km of you is measured from every echo
+at once, using phase correlation between frames 1, 2 and 3 steps apart (longer gaps let real motion add up
+while the random changes in shape do not):
 ```python
-# Simple centroid distance matching
-min_distance = float('inf')
-best_match = None
-for existing_cell in tracked_cells:
-    distance = haversine(
-        new_cell.centroid,
-        existing_cell.positions[-1][:2]
-    )
-    if distance < threshold and distance < min_distance:
-        best_match = existing_cell
+dy, dx, strength = phase_shift(earlier_frame, later_frame)   # how far the pattern moved, in pixels
+speed_kph, direction = ...                                   # averaged, weighted by match strength
 ```
 
-**Step 4: Calculate Cell Velocity**
+**Step 4: Look Upwind for the First Rain**
 
-For cells with 2+ positions:
+Walk backwards from your location along that motion. The rain found there is the rain that will reach you,
+and how far you walked (at the pattern's speed) is the time to rain:
 ```python
-(lat1, lon1, t1), (lat2, lon2, t2) = positions[-2:]
-
-time_diff_hours = (t2 - t1).total_seconds() / 3600
-distance_km = haversine(lat1, lon1, lat2, lon2)
-speed_kph = distance_km / time_diff_hours
-bearing = calculate_bearing(lat1, lon1, lat2, lon2)
+for minutes in 1..180:                          # looking up to 3 hours ahead
+    point = your_location - motion * minutes    # where the rain arriving in `minutes` is now
+    if distance_from(point, nearest_echo) <= reach:
+        # `reach` = 5 km plus 5 degrees of heading uncertainty, which is a bigger sideways error the
+        # farther away it is. It decides whether the rain reaches you at all
+        arrival = when the echo edge gets within 3 km of you (or the closest approach if it only skirts you)
+        break
 ```
+If there is echo over your location now, the time to rain is 0. If nothing is upwind within 3 hours, no rain is
+predicted.
 
-**Step 5: Find the Next Cell to Reach You**
+**Step 5: Follow the Arriving Cell**
 
-A cell only counts if its predicted path actually passes over your location. Being "somewhere
-towards you" is not enough: a cell south-east of you moving west-south-west gets closer at first but
-passes far to the south. Each tracked cell's speed and direction come from a straight-line fit through its
-last few positions (far steadier than the last two frames), then:
-```python
-# Split the distance to the user into the part along the cell's path and the sideways miss distance
-angle = cell_direction - bearing(cell -> user)
-along_km = distance_km * cos(angle)
-miss_km = abs(distance_km * sin(angle))
-
-# It must be heading your way, and its path must pass within the cell's radius, plus a 5 km margin
-# and 5 degrees of heading uncertainty (which is a bigger sideways error the farther away it is)
-reaches_you = along_km > 0 and miss_km <= radius_km + 5 + distance_km * sin(5°)
-
-# Arrival: when the leading edge of the cell gets here
-eta_hours = (along_km - sqrt(radius_km**2 - miss_km**2)) / speed_kph
-```
-Of the cells that pass this test, the one that arrives first is reported. If none does, no rain is predicted.
+The echo blob found in Step 4 is the cell that arrives. Its position in each earlier frame is where the
+measured motion says it was, and it is only drawn in frames where an echo really was near that spot. This is
+the track the web UI follows with the green highlight. The distance shown is to the leading edge of the rain.
 
 **Step 6: Return Threat Assessment**
 
@@ -348,11 +319,11 @@ Key debug messages:
 
 ## Algorithm Limitations
 
-1. **Single frame analysis** - Uses only past frames, not nowcast
-2. **Centroid tracking** - May miss complex cell mergers/splits
-3. **Linear extrapolation** - Assumes constant velocity
-4. **2D assumption** - Doesn't account for vertical development
-5. **No interpolation** - Velocity from discrete time steps
+1. **Rain that forms or grows over you** cannot be predicted from motion. Rain that suddenly develops near your location, or a drizzle patch that grows, will appear without warning
+2. **Constant motion is assumed** - the whole pattern is assumed to keep moving at its current speed and direction. Cells that speed up, slow down or change direction are not anticipated
+3. **Three hour lookahead** - beyond about 3 hours the heading uncertainty grows so large that predictions are unreliable (set by `FLOW_MAX_HORIZON_MIN` in `rain_predictor.py`)
+4. **Faint echoes count as rain** - any echo above `rain_threshold` counts, including the lightest drizzle. There is no rain intensity or severity yet
+5. **Only past frames are used**, not RainViewer's nowcast frames
 
 ## Future Improvements
 

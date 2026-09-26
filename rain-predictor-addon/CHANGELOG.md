@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Versions are listed newest first.
 
+## Version 1.1.74 (2026-09-26)
+
+### Fix
+- Fixed the app tracking a cell far away while nearer rain was the real threat. Rain used to be predicted by tracking each cell separately and taking its own speed and heading, but those are very unreliable: a cell's centroid wobbles by several km between radar frames as it grows, shrinks, merges and splits, so neighbouring cells within 60 km appeared to move at speeds from 4 to 97 km/h in every direction. On a real two-hour replay the tracker flipped between "raining now", "none", 44, 214, 301 and 522 minutes, and at one point reported a cell 190 km away while there was already echo over the location
+- Rain is now predicted from the motion of the **whole radar pattern**, measured from every echo within about 220 km at once using phase correlation between frames 1, 2 and 3 steps apart. From your location the app then looks **upwind** along that motion for the first rain that will reach you: that echo is the rain that arrives first, and the time to rain is when its edge gets within 3 km of you. If there is echo over the location now the time to rain is 0. Rain that passes to the side is not reported, allowing 5 km plus 5 degrees of heading uncertainty (a bigger sideways error the farther away it is)
+- The cell that arrives is followed back through the earlier frames by where the measured motion says it was, and only in frames where an echo really was near that spot, so the green highlight glides with the cell instead of jumping as big echoes merge and split. The distance shown is to the leading edge of the rain
+
+### Changed
+- Looks up to **3 hours** ahead (`FLOW_MAX_HORIZON_MIN`). Testing on 150 random simulated weather scenes showed predictions more than 3 hours out are unreliable (23 of 39 false alarms and most of the clear-cut ones were in the 3 to 4 hour band). Rain further away than that shows as no rain until it comes within 3 hours
+- Testing the measurement against simulated weather where the true answer is known: rain arriving within 3 hours was predicted in 84% of scenes (93% for rain within the hour) with a median timing error of 2 minutes; warnings under 1 hour ahead had no clear-cut false alarms (every false alarm was a cell that really came within 15 km); a cell passing 60 km to the side is correctly not reported, and the measured speed and direction were within about 10% and 6 degrees
+- The per-cell tracking is no longer used to decide the prediction. The new analysis is a little more work than the old one: about 0.5 seconds on a PC once the radar tiles are cached, about twice as long as before. It is small next to the 3 minute cycle, and the first cycle after a start is dominated by downloading the radar tiles
+
+### Known limits
+- Rain that forms or grows near you cannot be predicted from motion. In the replay the arrival was reported too late for exactly this reason when a small echo appeared near the location after 30 dry minutes
+- Any echo above `rain_threshold` counts as rain, including the lightest drizzle, so "0 minutes" can mean very light rain. There is no rain intensity or severity yet
+
 ## Version 1.1.73 (2026-09-26)
 
 ### Changed
