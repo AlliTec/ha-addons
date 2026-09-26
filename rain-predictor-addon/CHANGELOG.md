@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Versions are listed newest first.
 
+## Version 1.1.73 (2026-09-26)
+
+### Changed
+- The web page now has a compact layout for narrow windows (under 700 px wide), such as the app shown as an iframe card on a Home Assistant dashboard, or a phone. The bar of readings at the bottom (time to rain, distance, speed, direction, bearing) was wrapping onto several lines at card width. It is now a single tidy line that never wraps: smaller values and labels, less padding, and long values are trimmed rather than pushed onto a new line. The full size page is unchanged
+- The map opens at zoom 9 instead of zoom 10 in that compact layout, so it shows about twice the area (roughly 135 km across at a 490 px wide card instead of 70 km). It can be changed with `COMPACT_DEFAULT_ZOOM` near the top of the script in `index.html`
+- The compact layout keeps its own saved settings (zoom, map style, colour scheme and animation speed), separate from the full size page, so a zoom chosen in a small card does not change the full size page and the other way round
+
 ## Version 1.1.72 (2026-09-25)
 
 ### Added

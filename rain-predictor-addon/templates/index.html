@@ -51,9 +51,38 @@
             font-weight: bold; 
         }
         
-        .data-label { 
-            font-size: 0.8em; 
-            color: #aaa; 
+        .data-label {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        /* Compact bar for narrow windows such as a dashboard card or a phone: one tidy line, nothing wraps */
+        @media (max-width: 699px) {
+            #data-panel {
+                padding: 5px 2px;
+                justify-content: stretch;
+            }
+
+            .data-item {
+                flex: 1 1 0;
+                min-width: 0;
+                padding: 0 1px;
+            }
+
+            .data-value {
+                font-size: 0.86em;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+            .data-label {
+                font-size: 0.55em;
+                letter-spacing: 0;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
         }
 
         .animation-controls {
@@ -567,9 +596,15 @@
     </div>
 
     <script>
+        // Small windows (a dashboard card or a phone) get a compact layout and a wider default view of the map.
+        // They keep their own saved settings so they do not fight with the full size page.
+        const COMPACT_LAYOUT = window.innerWidth < 700;
+        const COMPACT_DEFAULT_ZOOM = 9;
+        const SETTINGS_KEY = COMPACT_LAYOUT ? 'rainPredictor_settings_compact' : 'rainPredictor_settings';
+
         // Settings persistence functions
         function getSavedSettings() {
-            const saved = localStorage.getItem('rainPredictor_settings');
+            const saved = localStorage.getItem(SETTINGS_KEY);
             if (saved) {
                 try {
                     return JSON.parse(saved);
@@ -580,13 +615,13 @@
             return {
                 colorScheme: 2,
                 mapStyle: 'light',
-                zoomLevel: 10,
+                zoomLevel: COMPACT_LAYOUT ? COMPACT_DEFAULT_ZOOM : 10,
                 animationSpeedLevel: 5
             };
         }
 
         function saveSettings() {
-            localStorage.setItem('rainPredictor_settings', JSON.stringify(currentSettings));
+            localStorage.setItem(SETTINGS_KEY, JSON.stringify(currentSettings));
         }
 
         // Load saved settings
