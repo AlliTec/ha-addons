@@ -19,7 +19,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.74"
+VERSION = "1.1.75"
 
 # RainViewer only serves radar tiles up to this zoom level (higher zooms return a placeholder image)
 MAX_RADAR_ZOOM = 7
@@ -34,15 +34,27 @@ INTERCEPT_MARGIN_KM = 5.0
 INTERCEPT_HEADING_TOLERANCE_DEG = 5.0
 
 # Radar pattern motion: the area around the user used to measure how the whole pattern moves, the slowest
-# motion treated as real, how far ahead to look for rain, and how far from its expected position an echo can
-# be and still count as the same cell in an earlier frame
+# motion treated as real, how far ahead to look for rain, how large the tracked cell is (the rain within this
+# distance of where the path meets it), and how much of that circle must hold rain in an earlier frame for
+# the cell to count as having existed there
 FLOW_WINDOW_KM = 220.0
 FLOW_MIN_SPEED_KPH = 3.0
 FLOW_MAX_HORIZON_MIN = 180
-FLOW_TRACK_MATCH_KM = 15.0
+FLOW_CELL_RADIUS_KM = 12.0
+FLOW_TRACK_MIN_COVER = 0.25
 
 # Rain counts as having arrived once the edge of an echo is this close to the location
 FLOW_ARRIVAL_EDGE_KM = 3.0
+
+# The motion of the whole pattern is measured from the blurred radar intensity over long baselines (the
+# newest few frames compared with the frames 4 and 6 steps earlier) and the median of all the comparisons
+# is taken. Short comparisons can land on a stretch where the radar picture barely changed
+FLOW_GAPS = (4, 6)
+FLOW_RECENT_ENDS = 4
+FLOW_BLUR_KM = 7.0
+FLOW_MIN_MATCH = 0.5
+FLOW_MIN_PAIRS = 4
+FLOW_MAX_SPEED_KPH = 120
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -596,67 +608,79 @@ class RainPredictor:
         return self._tile_to_latlon(first_tile_x + px / tile_px, first_tile_y + py / tile_px, zoom)
 
     @staticmethod
-    def _phase_shift(earlier, later):
+    def _ncc_shift(earlier, later, max_shift):
         """How far the pattern in `later` has shifted relative to `earlier`, as (dy, dx) in pixels (dy is
-        positive southwards, dx positive eastwards), plus how strong the match is"""
+        positive southwards, dx positive eastwards), and how well the two match (1 is identical).
+
+        Plain normalised cross-correlation of the two fields. Unlike phase correlation it does not give
+        every spatial frequency the same weight, so thin fixed features (the seams between radars, the edge
+        of the window) cannot outvote the broad rain pattern that actually moves.
+        """
         window = np.outer(np.hanning(earlier.shape[0]), np.hanning(earlier.shape[1]))
-        first = np.fft.rfft2((earlier - earlier.mean()) * window)
-        second = np.fft.rfft2((later - later.mean()) * window)
-        cross = second * np.conj(first)
-        cross /= np.maximum(1e-9, np.abs(cross))
-        corr = np.fft.irfft2(cross, s=earlier.shape)
-        peak_y, peak_x = np.unravel_index(np.argmax(corr), corr.shape)
+        first = (earlier - earlier.mean()) * window
+        second = (later - later.mean()) * window
+        norm = math.sqrt(float((first ** 2).sum()) * float((second ** 2).sum()))
+        if norm <= 0:
+            return 0.0, 0.0, 0.0
+        spectrum = np.fft.rfft2(second) * np.conj(np.fft.rfft2(first))
+        corr = np.fft.fftshift(np.fft.irfft2(spectrum, s=earlier.shape)) / norm
+        mid_y, mid_x = corr.shape[0] // 2, corr.shape[1] // 2
+        limit = max(1, min(max_shift, mid_y - 2, mid_x - 2))
+        sub = corr[mid_y - limit:mid_y + limit + 1, mid_x - limit:mid_x + limit + 1]
+        peak_y, peak_x = np.unravel_index(np.argmax(sub), sub.shape)
 
         def refine(index, line):
-            size = len(line)
-            before, centre, after = line[(index - 1) % size], line[index], line[(index + 1) % size]
-            denominator = before - 2 * centre + after
-            return 0.0 if denominator == 0 else 0.5 * (before - after) / denominator
+            if index == 0 or index == len(line) - 1:
+                return 0.0
+            denominator = line[index - 1] - 2 * line[index] + line[index + 1]
+            return 0.0 if denominator == 0 else 0.5 * (line[index - 1] - line[index + 1]) / denominator
 
-        dy = peak_y + refine(peak_y, corr[:, peak_x])
-        dx = peak_x + refine(peak_x, corr[peak_y, :])
-        if dy > earlier.shape[0] / 2:
-            dy -= earlier.shape[0]
-        if dx > earlier.shape[1] / 2:
-            dx -= earlier.shape[1]
-        return float(dy), float(dx), float(corr.max())
+        dy = peak_y - limit + refine(peak_y, sub[:, peak_x])
+        dx = peak_x - limit + refine(peak_x, sub[peak_y, :])
+        return float(dy), float(dx), float(sub[peak_y, peak_x])
 
-    def _bulk_motion(self, masks, user_px, km_per_px, minutes_per_frame):
-        """Motion of the whole radar pattern around the user, from consecutive frames (oldest first).
+    def _bulk_motion(self, images, user_px, km_per_px, minutes_per_frame):
+        """Motion of the whole radar pattern around the user, from the radar images (oldest first).
 
-        Every echo contributes, so it is far steadier than the speed and heading of single cells, whose
-        centroids wobble as they grow, shrink, merge and split. Returns None if there is nothing reliable.
+        The radar intensity is blurred and compared between frames several steps apart, ending at each of
+        the newest few frames, and the median of all those measurements is taken. Long baselines are used
+        because over 10 or 20 minutes the pattern can barely change (or the picture can jump after a slow
+        update) while over 40 to 60 minutes the net movement is clear. The median means a few bad
+        comparisons cannot decide the answer. Returns None if there is nothing reliable.
         """
         half = int(FLOW_WINDOW_KM / km_per_px)
         ux, uy = int(round(user_px[0])), int(round(user_px[1]))
-        windows = [m[max(0, uy - half):uy + half, max(0, ux - half):ux + half].astype(np.float32) for m in masks]
-        # Shifts over 1, 2 and 3 frames: real motion adds up with the time gap while the random changes in
-        # the shapes of the cells do not, so the longer gaps make the measurement steadier
-        shifts = []
-        for gap in (1, 2, 3):
-            for earlier, later in zip(windows[:-gap], windows[gap:]):
+        sigma = max(1.0, FLOW_BLUR_KM / km_per_px)
+        windows = [ndimage.gaussian_filter(img[max(0, uy - half):uy + half, max(0, ux - half):ux + half], sigma)
+                   for img in images]
+        count = len(windows)
+
+        velocities = []
+        for gap in FLOW_GAPS:
+            minutes = gap * minutes_per_frame
+            max_shift = int(FLOW_MAX_SPEED_KPH * minutes / 60.0 / km_per_px) + 2
+            for end in range(max(gap, count - FLOW_RECENT_ENDS), count):
+                earlier, later = windows[end - gap], windows[end]
                 if earlier.shape != later.shape or min(earlier.shape) < 32:
                     continue
-                if earlier.sum() < 200 or later.sum() < 200:
+                dy, dx, match = self._ncc_shift(earlier, later, max_shift)
+                if match < FLOW_MIN_MATCH:
                     continue
-                dy, dx, strength = self._phase_shift(earlier, later)
-                shifts.append((dy / gap, dx / gap, strength))
-        if not shifts:
+                velocities.append((dx * km_per_px * 60.0 / minutes, -dy * km_per_px * 60.0 / minutes))
+        if len(velocities) < FLOW_MIN_PAIRS:
             return None
 
-        weights = np.array([s[2] for s in shifts])
-        dy = float(np.average([s[0] for s in shifts], weights=weights))
-        dx = float(np.average([s[1] for s in shifts], weights=weights))
-        east_kph = dx * km_per_px * 60.0 / minutes_per_frame
-        north_kph = -dy * km_per_px * 60.0 / minutes_per_frame
+        east_kph = float(np.median([v[0] for v in velocities]))
+        north_kph = float(np.median([v[1] for v in velocities]))
         speed_kph = math.hypot(east_kph, north_kph)
-        if speed_kph < FLOW_MIN_SPEED_KPH or speed_kph > 150:
+        if speed_kph < FLOW_MIN_SPEED_KPH or speed_kph > FLOW_MAX_SPEED_KPH:
             return None
         return {
             'speed_kph': speed_kph,
             'direction_deg': math.degrees(math.atan2(east_kph, north_kph)) % 360,
-            'dx_per_min': dx / minutes_per_frame,
-            'dy_per_min': dy / minutes_per_frame,
+            'dx_per_min': east_kph / 60.0 / km_per_px,
+            'dy_per_min': -north_kph / 60.0 / km_per_px,
+            'pairs': len(velocities),
         }
 
     def _predict_from_radar_flow(self, sorted_frames, api_data):
@@ -667,7 +691,7 @@ class RainPredictor:
         it divided by the speed is the time to rain. The cell that arrives is then followed back through
         the earlier frames by where it is expected to have been, for the highlight on the map.
         """
-        used, masks, geo = [], [], None
+        used, masks, images, geo = [], [], [], None
         for frame in sorted_frames[-13:]:
             image, frame_geo = self._fetch_radar_mosaic(frame, api_data)
             if image is None:
@@ -683,6 +707,7 @@ class RainPredictor:
                 echo = keep[labels]
             used.append(frame)
             masks.append(echo)
+            images.append(image.astype(np.float32))
         if len(masks) < 3:
             logging.warning("Not enough radar frames to measure the motion of the rain")
             return None
@@ -701,9 +726,10 @@ class RainPredictor:
             logging.warning("The location is outside the radar area")
             return None
 
-        motion = self._bulk_motion(masks[-7:], (ux, uy), km_per_px, minutes_per_frame)
+        motion = self._bulk_motion(images[-(max(FLOW_GAPS) + FLOW_RECENT_ENDS):], (ux, uy), km_per_px, minutes_per_frame)
         if motion:
-            logging.info(f"Rain pattern is moving {motion['speed_kph']:.1f} km/h towards {motion['direction_deg']:.0f}°")
+            logging.info(f"Rain pattern is moving {motion['speed_kph']:.1f} km/h towards {motion['direction_deg']:.0f}° "
+                         f"(median of {motion['pairs']} comparisons)")
         else:
             logging.info("The motion of the rain pattern could not be measured reliably")
 
@@ -739,18 +765,37 @@ class RainPredictor:
             logging.info("No rain upwind of the location")
             return None
 
-        # The cell that arrives: the echo blob nearest to the point where the path meets rain
+        # The cell that arrives: the rain right where the path meets it. Widespread rain is one connected echo
+        # hundreds of km across, whose centre says nothing about the part that is about to reach you, so only
+        # the echo within a few km of the arrival point counts as the cell
         edge_x, edge_y = int(near_x[hit[1], hit[0]]), int(near_y[hit[1], hit[0]])
-        labels, _ = ndimage.label(latest)
-        blob = labels == labels[edge_y, edge_x]
-        size_px = int(blob.sum())
-        cy, cx = ndimage.center_of_mass(blob)
+        radius_px = FLOW_CELL_RADIUS_KM / km_per_px
+
+        def echo_around(mask, px, py):
+            """Rain pixels within the cell radius of (px, py): (count, share of that circle, their centre)"""
+            reach = int(math.ceil(radius_px))
+            x0, x1 = max(0, int(px) - reach), min(mask.shape[1], int(px) + reach + 1)
+            y0, y1 = max(0, int(py) - reach), min(mask.shape[0], int(py) + reach + 1)
+            if x1 <= x0 or y1 <= y0:
+                return 0, 0.0, (px, py)
+            yy, xx = np.ogrid[y0:y1, x0:x1]
+            circle = (xx - px) ** 2 + (yy - py) ** 2 <= radius_px ** 2
+            inside = mask[y0:y1, x0:x1] & circle
+            count = int(inside.sum())
+            if not count:
+                return 0, 0.0, (px, py)
+            cy_local, cx_local = ndimage.center_of_mass(inside)
+            return count, count / max(1, int(circle.sum())), (x0 + cx_local, y0 + cy_local)
+
+        size_px, _, (cx, cy) = echo_around(latest, edge_x, edge_y)
         cell_lat, cell_lon = self._mosaic_px_to_latlon(cx, cy, geo)
         edge_lat, edge_lon = self._mosaic_px_to_latlon(edge_x, edge_y, geo)
         distance_km = self.haversine(self.latitude, self.longitude, edge_lat, edge_lon)
         bearing = self.calculate_bearing(self.latitude, self.longitude, edge_lat, edge_lon)
 
-        # Follow the cell back through the earlier frames by where it is expected to have been
+        # Follow the cell back through the earlier frames by where the measured motion says it was, showing it
+        # only in frames where there really was rain around that spot. The position is the expected one rather
+        # than the centre of whatever echo is there, which jumps around as echoes merge and split
         track = []
         for index, (frame, mask) in enumerate(zip(used, masks)):
             if index == len(masks) - 1:
@@ -759,19 +804,10 @@ class RainPredictor:
                 ago = (times[-1] - frame['time']) / 60.0
                 expect_x = cx - (motion['dx_per_min'] * ago if motion else 0.0)
                 expect_y = cy - (motion['dy_per_min'] * ago if motion else 0.0)
-                frame_labels, count = ndimage.label(mask)
-                if not count:
+                count, share, _ = echo_around(mask, expect_x, expect_y)
+                if share < FLOW_TRACK_MIN_COVER:
                     continue
-                ids = np.arange(1, count + 1)
-                centres = np.array(ndimage.center_of_mass(mask, frame_labels, ids))
-                offsets = np.hypot(centres[:, 1] - expect_x, centres[:, 0] - expect_y) * km_per_px
-                nearest = int(np.argmin(offsets))
-                if offsets[nearest] > FLOW_TRACK_MATCH_KM:
-                    continue
-                # Only whether the cell existed then, and how big it was, comes from the matched echo. Its
-                # position is where the measured motion says it was: the centroid of a big irregular echo
-                # jumps around as it merges and splits, which would make the highlight jump
-                point = (expect_x, expect_y, int(ndimage.sum(mask, frame_labels, ids[nearest])))
+                point = (expect_x, expect_y, count)
             lat, lon = self._mosaic_px_to_latlon(point[0], point[1], geo)
             track.append(self._track_point({'lat': lat, 'lon': lon, 'timestamp': frame['time'], 'size': point[2]}))
 

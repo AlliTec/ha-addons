@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Versions are listed newest first.
 
+## Version 1.1.75 (2026-10-06)
+
+### Fix
+- Fixed the app saying there was no rain, and tracking nothing, while rain was clearly approaching on the radar (a band from the west-south-west with its leading edge 10 to 20 km from the farm). On 6 October the app predicted well until about 19:30 (80, 50, 43, 39 minutes), then the measured speed of the rain pattern fell from 27 km/h to 3 km/h, the estimate jumped to 167 minutes and then to "no rain", and the helpers read 999 for over an hour. Two separate faults caused it
+- **The motion was measured badly.** It was measured by comparing short 10, 20 and 30 minute gaps between flat "rain / no rain" masks, with each comparison weighted by how well it matched. The radar data had a stretch (about 40 minutes) where the picture barely changed, then jumped. Those near-identical pairs matched the best, so they got the biggest weight and dragged the speed down to zero. A test of the old method showed it was also open to fixed features such as the straight seams between radars. The motion is now measured from the blurred radar intensity over long baselines (the newest few frames against the frames 4 and 6 steps, 40 and 60 minutes, earlier) and the **median** of all those comparisons is used, so one bad stretch cannot decide the answer, and it follows the pattern as it speeds up or slows down. On the same radar this gave a prediction at every step, easing from 22 km/h to about 9 km/h as the rain really slowed, where the old method gave none for the last 40 minutes
+- **The "tracked cell" was the whole rain shield.** The cell was the entire connected area of rain around the arrival point. For widespread rain that is one region tens of thousands of pixels across (95,892 in the log), whose centre is nowhere near the part about to reach you, so the green highlight and the cell latitude/longitude pointed at the wrong place. The tracked cell is now the rain within 12 km of the point where the path meets it. It is followed back through the earlier frames by where the measured motion says it was, and shown only where there really was rain around that spot, so the highlight sits on the leading edge of the rain and glides in towards you
+
+### Changed
+- The motion measurement uses normalised cross-correlation of the blurred intensity in place of whitened phase correlation, and no longer gives fine details and thin fixed features the same weight as the broad rain pattern
+- Tested on 200 simulated weather scenes with known answers, the new method is more accurate than the one it replaces: rain arriving within 3 hours was predicted in 90% of scenes (it was 84%) and within the hour in 100% (it was 93%), median timing error 3 minutes (80% within 10), clear-cut false alarms 5% (it was 10%), and a cell passing to the side is still correctly not reported
+- The log shows how many comparisons the motion was taken from: `Rain pattern is moving 8.7 km/h towards 31° (median of 8 comparisons)`
+
+### Known limits
+- When the rain is moving slowly, its direction is less certain: on the live replay the direction moved from 74° to 31° as the speed fell to about 9 km/h. The time to rain comes from the speed and the distance to the leading edge, so it stays sensible, but the bearing and direction can wander at low speeds
+- The motion is measured over the last 40 to 60 minutes, so a recent change of speed or direction shows up with some delay
+
+### Documentation
+- README updated for the new motion measurement, how the tracked cell is chosen and the new accuracy figures
+
 ## Version 1.1.74 (2026-09-26)
 
 ### Fix

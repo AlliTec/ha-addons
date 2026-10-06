@@ -321,9 +321,13 @@ once published, so each is downloaded only once.
 **2. Measure the motion of the whole pattern.** Tracking single cells does not work well: a cell's centre wobbles by
 several km between frames as it grows, shrinks, merges and splits, so neighbouring cells can appear to move in
 completely different directions. Instead the motion of the whole pattern within about 220 km of you is measured from
-every echo at once, using phase correlation between frames 1, 2 and 3 steps apart. Longer gaps let real motion add up
-while the random changes in the cells' shapes do not, which makes the result steadier. This gives one speed and one
-direction for the weather around you.
+all the rain at once. The radar intensity is blurred (about 7 km) and compared between the newest few frames and the
+frames 4 and 6 steps earlier (40 and 60 minutes at the usual 10 minute spacing), and the median of those comparisons
+is taken. Long baselines are used because over 10 or 20 minutes the pattern can barely change, or the picture can
+jump after a slow radar update, while over 40 to 60 minutes the net movement is clear. The median means a few bad
+comparisons cannot decide the answer. This gives one speed and one direction for the weather around you, and it
+follows the pattern as it speeds up or slows down. If the rain barely moves (under 3 km/h) or the frames do not
+match, the motion is treated as unmeasurable and no rain is predicted.
 
 **3. Look upwind for the first rain.** Walk backwards from your location along that motion, one minute at a time, for
 up to 3 hours. The rain you find there is the rain that will reach you, and how far you walked is the time to rain. Two
@@ -337,9 +341,11 @@ allowances apply:
 If there is already echo over your location the time is 0. If nothing upwind will reach you within 3 hours, no rain is
 predicted. Rain that passes to the side of you is not reported.
 
-**4. Follow the cell that arrives.** The echo blob found in step 3 is the cell that reaches you first. It is followed
-back through the earlier frames by where the measured motion says it was, and only in frames where an echo really was
-near that spot. That track, with the cell's size in each frame, is what the map's green highlight follows.
+**4. Follow the cell that arrives.** The cell is the rain within 12 km of the point where the path meets it, that is the
+part that is about to reach you, not a whole widespread rain shield, which can be hundreds of km across. It is followed
+back through the earlier frames by where the measured motion says it was, and only in frames where there really was rain
+around that spot. That track, with the cell's size in each frame, is what the map's green highlight follows. The
+`rain_cell_latitude` / `rain_cell_longitude` helpers hold the centre of this cell.
 
 **5. Report.** The values are written to the helpers and a JSON cache the map reads. Between analyses the countdown
 keeps the time to rain up to date.
@@ -364,21 +370,24 @@ Web page:
 
 ## Accuracy and limits
 
-The method was tested against simulated weather where the true answer is known (150 random scenes with clutter, and cells
+The method was tested against simulated weather where the true answer is known (200 random scenes with clutter, and cells
 that each move a little differently), and by replaying the last two hours of real radar for one location:
 
-- Rain that really arrived within 3 hours was predicted in about **84%** of scenes, and **93%** for rain within the hour.
-- The median timing error was about **2 minutes**.
+- Rain that really arrived within 3 hours was predicted in about **90%** of scenes, and **100%** for rain within the hour.
+- The median timing error was about **3 minutes** (80% of predictions were within 10 minutes).
 - Warnings less than an hour ahead had no clear-cut false alarms. Every false alarm was a cell that really did come
-  within 15 km.
+  within 15 km. Over all the dry scenes, 20% produced a warning, but only 5% when no cell came within 15 km.
 - A cell passing 60 km to one side of you is correctly not reported.
+- On a real evening where the rain slowed from 25 km/h to about 9 km/h, the measured motion followed the slowdown
+  and gave a prediction at every step, where measuring over short 10 to 30 minute gaps had lost the motion altogether.
 
 These are results on simulated weather and one real replay, not a guarantee. Limits to know about:
 
 1. **Rain that forms or grows over you cannot be predicted from motion.** A patch of drizzle that suddenly develops near
    your location will appear without warning.
 2. **The pattern is assumed to keep moving at its current speed and direction.** Storms that speed up, slow down or
-   change direction are not anticipated.
+   change direction are not anticipated. The motion is measured over the last 40 to 60 minutes, so a recent slowdown
+   or change of direction shows up with some delay, and when the rain is moving slowly its direction is less certain.
 3. **Three hour lookahead.** Beyond about 3 hours the heading uncertainty grows so large that predictions are
    unreliable (`FLOW_MAX_HORIZON_MIN` in `rain_predictor.py`). Further rain shows as no rain until it comes within 3 hours.
 4. **Faint echoes count as rain.** Any echo brighter than `rain_threshold` counts, including the lightest drizzle, so
@@ -461,7 +470,7 @@ limit, including from 999 straight to a small number. Use a condition to limit h
 | `run_prediction()` | One cycle: fetch the frame list, analyse, save the cache, write the helpers |
 | `analyze_radar_data()` | Runs the prediction for one set of frames |
 | `_fetch_radar_mosaic()` | Downloads and stitches the 3×3 tile block for a frame (cached per frame) |
-| `_bulk_motion()`, `_phase_shift()` | Measure the motion of the whole pattern |
+| `_bulk_motion()`, `_ncc_shift()` | Measure the motion of the whole pattern |
 | `_predict_from_radar_flow()` | The upwind search, the arrival time and the tracked cell |
 | `_save_analysis_to_cache()` | Writes `/data/latest_analysis.json` for the map |
 | `_update_entities()`, `_tick_countdown()` | Write the helpers, and count the time down between cycles |
