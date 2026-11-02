@@ -326,11 +326,17 @@ frames 4 and 6 steps earlier (40 and 60 minutes at the usual 10 minute spacing),
 is taken. Long baselines are used because over 10 or 20 minutes the pattern can barely change, or the picture can
 jump after a slow radar update, while over 40 to 60 minutes the net movement is clear. The median means a few bad
 comparisons cannot decide the answer. This gives one speed and one direction for the weather around you, and it
-follows the pattern as it speeds up or slows down. If the rain barely moves (under 3 km/h) or the frames do not
-match, the motion is treated as unmeasurable and no rain is predicted.
+follows the pattern as it speeds up or slows down. If the rain barely moves (under 3 km/h), the frames do not
+match, or the comparisons do not agree with each other (fewer than 60% within 12 km/h or 35% of the median speed),
+the motion is treated as unmeasurable and no rain is predicted. A scene of scattered speckle or fading showers gives
+comparisons that point every which way, and a median of those would be a made-up speed.
 
 **3. Look upwind for the first rain.** Walk backwards from your location along that motion, one minute at a time, for
-up to 3 hours. The rain you find there is the rain that will reach you, and how far you walked is the time to rain. Two
+up to 3 hours. The rain you find there is the rain that will reach you, and how far you walked is the time to rain.
+Only **established cells** count as rain here, not every pixel above the threshold. A cell must be at least 8 pixels
+(about 10 km²) and must already have been there in at least 2 of the 3 frames before, where the measured motion says it
+came from (with a 3 km margin, growing with the distance travelled). A speck that flickers on in the newest frame or
+two, or the radar's scattered clutter, is ignored, and the search carries on upwind to the next real cell. Two
 allowances apply:
 
 - The path only has to pass near rain to count: within 5 km, plus 5 degrees of heading uncertainty, which is a
@@ -378,6 +384,10 @@ that each move a little differently), and by replaying the last two hours of rea
 - Warnings less than an hour ahead had no clear-cut false alarms. Every false alarm was a cell that really did come
   within 15 km. Over all the dry scenes, 20% produced a warning, but only 5% when no cell came within 15 km.
 - A cell passing 60 km to one side of you is correctly not reported.
+- Scattered radar speckle is not reported. A real scene of speckle that gave a false 25 minute warning now reads no
+  rain. In a simulated check of 40 scenes of pure speckle and 40 scenes whose only cell passed 45 to 100 km to the
+  side, none produced a warning (the previous version warned in 17 of the 40 side-pass scenes, because speckle and
+  other cells were counted as rain).
 - On a real evening where the rain slowed from 25 km/h to about 9 km/h, the measured motion followed the slowdown
   and gave a prediction at every step, where measuring over short 10 to 30 minute gaps had lost the motion altogether.
 
@@ -470,7 +480,8 @@ limit, including from 999 straight to a small number. Use a condition to limit h
 | `run_prediction()` | One cycle: fetch the frame list, analyse, save the cache, write the helpers |
 | `analyze_radar_data()` | Runs the prediction for one set of frames |
 | `_fetch_radar_mosaic()` | Downloads and stitches the 3×3 tile block for a frame (cached per frame) |
-| `_bulk_motion()`, `_ncc_shift()` | Measure the motion of the whole pattern |
+| `_bulk_motion()`, `_ncc_shift()` | Measure the motion of the whole pattern, and check the measurements agree |
+| `_persistent_echo()` | Keep only established cells (big enough, and already there in the earlier frames) |
 | `_predict_from_radar_flow()` | The upwind search, the arrival time and the tracked cell |
 | `_save_analysis_to_cache()` | Writes `/data/latest_analysis.json` for the map |
 | `_update_entities()`, `_tick_countdown()` | Write the helpers, and count the time down between cycles |

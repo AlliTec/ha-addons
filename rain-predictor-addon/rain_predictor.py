@@ -19,7 +19,7 @@ import math
 from math import radians, cos, sin, asin, sqrt, atan2, degrees
 import signal
 
-VERSION = "1.1.75"
+VERSION = "1.1.76"
 
 # RainViewer only serves radar tiles up to this zoom level (higher zooms return a placeholder image)
 MAX_RADAR_ZOOM = 7
@@ -55,6 +55,17 @@ FLOW_BLUR_KM = 7.0
 FLOW_MIN_MATCH = 0.5
 FLOW_MIN_PAIRS = 4
 FLOW_MAX_SPEED_KPH = 120
+# The measurements must agree with each other, or the "motion" is just noise in a patchy or fading scene
+FLOW_AGREE_KPH = 12.0
+FLOW_AGREE_FRACTION = 0.35
+FLOW_AGREE_SHARE = 0.6
+# A threatening echo must be a real cell: big enough, and already there in the earlier frames where the
+# motion says it came from, not a speck that appeared in the latest frame or two
+FLOW_MIN_CELL_PX = 8
+FLOW_PERSIST_FRAMES = 3
+FLOW_PERSIST_MIN = 2
+FLOW_PERSIST_TOL_KM = 3.0
+FLOW_PERSIST_TOL_GROWTH = 0.1
 
 class AddonConfig:
     """Load and manage addon configuration"""
@@ -675,6 +686,13 @@ class RainPredictor:
         speed_kph = math.hypot(east_kph, north_kph)
         if speed_kph < FLOW_MIN_SPEED_KPH or speed_kph > FLOW_MAX_SPEED_KPH:
             return None
+        # Scattered, fading or patchy echoes give comparisons that point every which way, and their median is
+        # meaningless. Only trust the motion if most of the comparisons agree with it
+        tolerance = max(FLOW_AGREE_KPH, FLOW_AGREE_FRACTION * speed_kph)
+        agreeing = sum(1 for v in velocities if math.hypot(v[0] - east_kph, v[1] - north_kph) <= tolerance)
+        if agreeing < max(FLOW_MIN_PAIRS, FLOW_AGREE_SHARE * len(velocities)):
+            logging.info(f"Motion measurements disagree ({agreeing} of {len(velocities)} agree on {speed_kph:.0f} km/h)")
+            return None
         return {
             'speed_kph': speed_kph,
             'direction_deg': math.degrees(math.atan2(east_kph, north_kph)) % 360,
@@ -682,6 +700,32 @@ class RainPredictor:
             'dy_per_min': -north_kph / 60.0 / km_per_px,
             'pairs': len(velocities),
         }
+
+    @staticmethod
+    def _persistent_echo(masks, times, motion, km_per_px):
+        """The echoes of the newest mask that are real cells rather than flickers or specks.
+
+        An echo counts if it is at least FLOW_MIN_CELL_PX across and, in at least FLOW_PERSIST_MIN of the
+        FLOW_PERSIST_FRAMES frames before, there was rain where the measured motion says it came from (with
+        a margin for the motion's uncertainty). Without a measured motion it is expected to be where it is.
+        """
+        latest = masks[-1]
+        support = np.zeros(latest.shape, dtype=np.int8)
+        for back in range(1, min(FLOW_PERSIST_FRAMES, len(masks) - 1) + 1):
+            ago = (times[-1] - times[-1 - back]) / 60.0
+            travelled_km = motion['speed_kph'] * ago / 60.0 if motion else 0.0
+            margin = int(math.ceil((FLOW_PERSIST_TOL_KM + FLOW_PERSIST_TOL_GROWTH * travelled_km) / km_per_px))
+            earlier = ndimage.maximum_filter(masks[-1 - back].astype(np.uint8), size=2 * margin + 1)
+            if motion:
+                earlier = ndimage.shift(earlier, (motion['dy_per_min'] * ago, motion['dx_per_min'] * ago), order=0)
+            support += earlier.astype(np.int8)
+        cells = latest & (support >= FLOW_PERSIST_MIN)
+        labels, count = ndimage.label(cells)
+        if not count:
+            return cells
+        keep = np.bincount(labels.ravel()) >= FLOW_MIN_CELL_PX
+        keep[0] = False
+        return keep[labels]
 
     def _predict_from_radar_flow(self, sorted_frames, api_data):
         """Predict when the next rain reaches the user from the motion of the whole radar pattern.
@@ -733,8 +777,15 @@ class RainPredictor:
         else:
             logging.info("The motion of the rain pattern could not be measured reliably")
 
-        # Distance from every point to the nearest echo, and which echo that is
-        dist_px, (near_y, near_x) = ndimage.distance_transform_edt(~latest, return_indices=True)
+        # Only echoes that are real cells count as a threat: they were already there in the earlier frames,
+        # where the motion says they came from, and are more than a few pixels across
+        cells = self._persistent_echo(masks, times, motion, km_per_px)
+        if not cells.any():
+            logging.info("No established rain cells in the radar area")
+            return None
+
+        # Distance from every point to the nearest cell, and which cell that is
+        dist_px, (near_y, near_x) = ndimage.distance_transform_edt(~cells, return_indices=True)
         dist_km = dist_px * km_per_px
 
         arrival_min, hit = None, None
@@ -787,7 +838,7 @@ class RainPredictor:
             cy_local, cx_local = ndimage.center_of_mass(inside)
             return count, count / max(1, int(circle.sum())), (x0 + cx_local, y0 + cy_local)
 
-        size_px, _, (cx, cy) = echo_around(latest, edge_x, edge_y)
+        size_px, _, (cx, cy) = echo_around(cells, edge_x, edge_y)
         cell_lat, cell_lon = self._mosaic_px_to_latlon(cx, cy, geo)
         edge_lat, edge_lon = self._mosaic_px_to_latlon(edge_x, edge_y, geo)
         distance_km = self.haversine(self.latitude, self.longitude, edge_lat, edge_lon)

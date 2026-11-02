@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Versions are listed newest first.
 
+## Version 1.1.76 (2026-11-02)
+
+### Fix
+- Fixed the app tracking a "rain cell" that was never going to deliver anything. The map showed a green ring about 20 km west-south-west of the farm with "25m 49s, 19.9 km, 41.7 km/h, NE", while the only real rain on the radar was a few small showers far to the south-east. Replaying the same radar showed three faults working together
+- **Radar speckle was treated as rain.** The scene was mostly scattered 1 to 4 pixel specks (radar clutter and the lightest echoes) that appear and vanish from one frame to the next. One of them, a few pixels across, had appeared in the newest two frames near the ring, and the app took it for the cell that arrives. Only **established cells** now count as rain for the prediction: the echo must be at least 8 pixels (about 10 km²), and must already have been there in at least 2 of the 3 frames before, at the place the measured motion says it came from (3 km margin, growing by 10% of the distance travelled). In the replay the ring's echo was followed in 1 of 13 frames and is now ignored. If a speck is rejected the search carries on upwind to the next real cell
+- **The "motion" was a median of random numbers.** In that scene the 7 comparisons gave directions all around the compass (speeds from 57 to 116 km/h pointing 4°, 81°, 141° and 304°), and their median, 64 km/h towards 81°, was reported as the speed and direction of the rain (it was 42 km/h towards 53° on the earlier run). The motion is now trusted only if most of the comparisons agree with it: at least 60% (and at least 4) within 12 km/h or 35% of the median speed. In the replay 1 of 7 agreed, so the motion is reported as unmeasurable and the app reads no rain, which matches the radar
+- The tracked cell, its size and its latitude/longitude now come from the established cells, so the highlight can no longer sit on a speck
+
+### Changed
+- New log lines: `Motion measurements disagree (1 of 7 agree on 64 km/h)` and `No established rain cells in the radar area`
+- Tested on simulated scenes with a known answer, each with radar speckle that changes every frame, a texture that evolves, and a cell moving with the flow (random speed 10 to 60 km/h and heading), against the 1.1.75 logic: 40 scenes where the only cell passed 45 to 100 km to the side gave 0 warnings (17 before, set off by speckle and the other cells), 40 scenes of pure speckle still gave 0 warnings (also 0 before: the simulated speckle is milder than the real scene, which is why the live replay was the real proof), and the timing was within tolerance in all 33 scenes where the cell was detected (25 of 34 before). The seven cells not detected were slow ones more than 90 km away, which would arrive after the 3 hour lookahead
+
+### Known limits
+- A cell that forms or intensifies close upwind in under about 20 minutes has not been "there" in the earlier frames, so it is ignored until it has persisted. This trades a late warning for that rare case against many false alarms from speckle
+- Scenes with only scattered small showers (no broad pattern to follow) have no reliable motion, so no rain is predicted until a coherent pattern appears
+- The simulated check is 40 scenes per case, not the 200-scene set used for 1.1.75, so its percentages are rougher
+
+### Documentation
+- README updated: the motion agreement check, established cells and their rules, the new check results and the code map
+
 ## Version 1.1.75 (2026-10-06)
 
 ### Fix
