@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.12.2 - 2026-11-11
+
+### Fix
+- Dockerfile: drop postgresql-dev/gcc/musl-dev (they conflicted with the base image's OpenSSL); asyncpg installs from a prebuilt wheel
+
 ## 1.12.1 - 2026-11-11
 
 ### Fix
