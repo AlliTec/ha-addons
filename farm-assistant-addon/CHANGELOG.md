@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.12.0 - 2026-11-11
+
+### Feature
+- Read-only `GET /api/hal/summary?days=14` for HAL: overdue/upcoming maintenance, calendar actions, animals needing attention
+- Port 8000 published on the LAN, guarded: only `/api/hal/*` GET with `Authorization: Bearer <hal_api_token>`; all other routes stay ingress-only
+- New optional option `hal_api_token` (without it the LAN port refuses everything)
+
 ## 1.11.82 - 2026-02-11
 
 ### Feature

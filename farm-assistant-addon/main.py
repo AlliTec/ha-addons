@@ -82,6 +82,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+HAL_TOKEN = config.get("hal_api_token") or ""
+INGRESS_HOSTS = {"172.30.32.2", "127.0.0.1"}   # HA Supervisor ingress proxy (and the container itself)
+
+@app.middleware("http")
+async def lan_guard(request: Request, call_next):
+    """The add-on port is published on the LAN for HAL. The full app (edit, delete, restore) stays ingress-only;
+    the LAN gets ONLY the read-only /api/hal/* routes, and only with the bearer token."""
+    if request.client and request.client.host in INGRESS_HOSTS:
+        return await call_next(request)
+    if (request.url.path.startswith("/api/hal/") and request.method == "GET" and HAL_TOKEN
+            and request.headers.get("authorization") == f"Bearer {HAL_TOKEN}"):
+        return await call_next(request)
+    return JSONResponse(status_code=401, content={"detail": "unauthorised"})
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     """Return validation errors as JSON instead of HTML"""
@@ -231,6 +245,49 @@ async def read_item(request: Request):
 
 
 
+
+@app.get("/api/hal/summary")
+async def hal_summary(days: int = 14):
+    """Read-only digest for HAL: what is overdue or due soon on the farm. One call, small, no writes."""
+    days = max(1, min(days, 90))
+    conn = await asyncpg.connect(DATABASE_URL)
+    try:
+        async with conn.transaction(readonly=True):
+            maint = await conn.fetch("""
+                SELECT ms.id, ai.name AS asset, ms.task_description AS task, ms.due_date, ms.status, ms.notes,
+                       (ms.due_date - CURRENT_DATE) AS days_until_due
+                FROM maintenance_schedules ms JOIN asset_inventory ai ON ai.id = ms.asset_id
+                WHERE ms.status IS DISTINCT FROM 'completed' AND ms.completed_date IS NULL
+                  AND ms.due_date <= CURRENT_DATE + $1::int
+                ORDER BY ms.due_date LIMIT 50""", days)
+            cal = await conn.fetch("""
+                SELECT id, entry_date, entry_type, category, title, description, related_name, event_time,
+                       (entry_date - CURRENT_DATE) AS days_until
+                FROM calendar_entries
+                WHERE entry_type IN ('action', 'event') AND date_completed IS NULL
+                  AND entry_date BETWEEN CURRENT_DATE - 30 AND CURRENT_DATE + $1::int
+                ORDER BY entry_date, event_time NULLS LAST LIMIT 80""", days)
+            sick = await conn.fetch("""
+                SELECT id, name, tag_id, health_status, notes FROM livestock_records
+                WHERE dod IS NULL AND health_status IS NOT NULL AND btrim(health_status) <> ''
+                  AND lower(btrim(health_status)) NOT IN ('health', 'healthy', 'ok', 'normal', 'well')
+                  AND lower(health_status) NOT LIKE '%good%'
+                ORDER BY name LIMIT 30""")
+            herd = await conn.fetch("""
+                SELECT gender, count(*) AS n FROM livestock_records WHERE dod IS NULL GROUP BY gender""")
+        rows = lambda rs: [dict(r) for r in rs]
+        m, c = rows(maint), rows(cal)
+        return {"as_of": datetime.now().isoformat(timespec="minutes"), "window_days": days,
+                "maintenance_overdue": [x for x in m if x["days_until_due"] < 0],
+                "maintenance_due_soon": [x for x in m if x["days_until_due"] >= 0],
+                "calendar_overdue": [x for x in c if x["days_until"] < 0],
+                "calendar_upcoming": [x for x in c if x["days_until"] >= 0],
+                "animals_needing_attention": rows(sick), "living_animals_by_gender": rows(herd)}
+    except Exception as e:
+        logging.error(f"hal_summary failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        await conn.close()
 
 @app.get("/get_animals")
 async def get_animals():
