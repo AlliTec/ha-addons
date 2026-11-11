@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.12.1 - 2026-11-11
+
+### Fix
+- Dockerfile: default `BUILD_FROM` base image (current Supervisor no longer injects it, so the build failed)
+
 ## 1.12.0 - 2026-11-11
 
 ### Feature
